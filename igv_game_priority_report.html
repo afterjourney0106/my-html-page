@@ -8,21 +8,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 :root{
-  --bg: #0e1013;
-  --panel: #16191f;
-  --panel-2: #1c2028;
-  --line: rgba(255,255,255,0.08);
-  --line-strong: rgba(255,255,255,0.16);
-  --text: #eae7e0;
-  --text-dim: #9298a5;
-  --text-faint: #5b6270;
-  --accent: #ff7a3d;
-  --accent-dim: rgba(255,122,61,0.14);
-  --good: #3ddc97;
-  --good-dim: rgba(61,220,151,0.12);
-  --bad: #ef5b6c;
-  --bad-dim: rgba(239,91,108,0.12);
-  --gold: #e8c468;
+  --bg: #faf8f4;
+  --panel: #ffffff;
+  --panel-2: #f4f1ea;
+  --line: rgba(20,18,14,0.09);
+  --line-strong: rgba(20,18,14,0.18);
+  --heading: #1a1a1a;
+  --text: #2b2b2b;
+  --text-dim: #6b6b6b;
+  --text-faint: #9a968c;
+  --accent: #c65a2e;
+  --accent-dim: rgba(198,90,46,0.10);
+  --good: #1f8f5f;
+  --good-dim: rgba(31,143,95,0.10);
+  --bad: #c0394a;
+  --bad-dim: rgba(192,57,74,0.09);
+  --gold: #a8791a;
 }
 
 *{box-sizing:border-box; margin:0; padding:0;}
@@ -39,8 +40,8 @@ body::before{
   content:"";
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(circle at 15% 8%, rgba(255,122,61,0.05), transparent 40%),
-                     radial-gradient(circle at 85% 92%, rgba(61,220,151,0.04), transparent 40%);
+  background-image: radial-gradient(circle at 15% 8%, rgba(198,90,46,0.05), transparent 40%),
+                     radial-gradient(circle at 85% 92%, rgba(31,143,95,0.04), transparent 40%);
   pointer-events: none;
   z-index: 0;
 }
@@ -79,7 +80,7 @@ h1{
   font-weight: 700;
   font-size: 44px;
   letter-spacing: 0.01em;
-  color: #fff;
+  color: var(--heading);
   margin-bottom: 14px;
 }
 .subtitle{
@@ -115,7 +116,7 @@ h2{
   font-family: 'Rajdhani', sans-serif;
   font-weight: 700;
   font-size: 28px;
-  color: #fff;
+  color: var(--heading);
   margin-top: 4px;
 }
 .section-desc{
@@ -141,7 +142,7 @@ h2{
   transition: border-color .2s ease;
 }
 .rank-card:hover{ border-color: var(--line-strong); }
-.rank-card.gold{ border-color: rgba(232,196,104,0.35); background: linear-gradient(160deg, rgba(232,196,104,0.07), var(--panel) 60%); }
+.rank-card.gold{ border-color: rgba(168,121,26,0.35); background: linear-gradient(160deg, rgba(168,121,26,0.06), var(--panel) 60%); }
 .rank-num{
   font-family:'JetBrains Mono', monospace;
   font-size: 13px;
@@ -153,7 +154,7 @@ h2{
   font-family:'Rajdhani', sans-serif;
   font-weight: 700;
   font-size: 24px;
-  color: #fff;
+  color: var(--heading);
   margin: 6px 0 10px;
 }
 .rank-verdict{
@@ -190,7 +191,7 @@ h2{
   font-family:'Rajdhani', sans-serif;
   font-weight: 600;
   font-size: 16px;
-  color: #fff;
+  color: var(--heading);
   margin-bottom: 6px;
   display:flex;
   align-items:center;
@@ -219,7 +220,7 @@ h2{
   font-family:'Rajdhani', sans-serif;
   font-weight: 700;
   font-size: 19px;
-  color: #fff;
+  color: var(--heading);
 }
 .game-status{
   font-family:'JetBrains Mono', monospace;
@@ -272,7 +273,7 @@ h2{
   border: 1px dashed var(--line-strong);
   border-radius: 10px;
   padding: 18px 22px;
-  background: rgba(255,255,255,0.015);
+  background: rgba(20,18,14,0.02);
 }
 .callout-title{
   font-family:'JetBrains Mono', monospace;
@@ -308,7 +309,7 @@ h2{
   font-family:'Rajdhani', sans-serif;
   font-weight: 700;
   font-size: 22px;
-  color: #fff;
+  color: var(--heading);
   margin-bottom: 6px;
 }
 .spotlight-desc{ font-size: 13.5px; color: var(--text-dim); line-height: 1.6; }
@@ -333,7 +334,7 @@ h2{
 .traffic-country{ font-size: 13.5px; color: var(--text); font-weight: 500; }
 .traffic-bar-bg{
   height: 8px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(20,18,14,0.05);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -383,7 +384,7 @@ h2{
 .matrix th:not(:first-child), .matrix td:not(:first-child){
   text-align: center;
 }
-.matrix tr:hover td{ background: rgba(255,255,255,0.015); }
+.matrix tr:hover td{ background: rgba(20,18,14,0.02); }
 .pill{
   display:inline-block;
   padding: 3px 12px;
@@ -399,8 +400,8 @@ h2{
 
 /* ---------- Conclusion ---------- */
 .conclusion{
-  background: linear-gradient(160deg, rgba(232,196,104,0.06), var(--panel) 55%);
-  border: 1px solid rgba(232,196,104,0.25);
+  background: linear-gradient(160deg, rgba(168,121,26,0.05), var(--panel) 55%);
+  border: 1px solid rgba(168,121,26,0.28);
   border-radius: 12px;
   padding: 32px 34px;
 }
@@ -408,7 +409,7 @@ h2{
   font-family:'Rajdhani', sans-serif;
   font-weight: 700;
   font-size: 22px;
-  color: #fff;
+  color: var(--heading);
   display:flex;
   align-items:center;
   gap: 12px;
@@ -832,10 +833,6 @@ footer a{ color: var(--text-dim); }
       <div class="reason-text">不是体量问题（它体量最大），而是一个结构性短板依然存在：账号交易和 Robux 场外交易在 ToS 里是高压雷区，可售品类被大幅压缩。流量匹配度这一项其实不差 — iGV 真实流量里美国占 18%，而 Roblox 的核心市场正是美国，重合度不算低。放最后主要是合规风险的问题，而不是市场匹配的问题，需要先完成一轮合规排查，摸清哪些品类能做。</div>
     </div>
   </section>
-
-  <footer>
-    数据来源：iGV 内部流量数据（2026年4–6月，剔除中国）· SteamDB · Steam Charts · Similarweb · 腾讯财报 · 公开游戏媒体报道　|　整理时间 2026年7月
-  </footer>
 
 </div>
 </body>
