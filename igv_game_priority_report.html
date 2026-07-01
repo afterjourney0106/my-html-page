@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>选品优先级研究 — 暗黑4 / 三角洲行动 / Roblox</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root{
+  --bg: #0e1013;
+  --panel: #16191f;
+  --panel-2: #1c2028;
+  --line: rgba(255,255,255,0.08);
+  --line-strong: rgba(255,255,255,0.16);
+  --text: #eae7e0;
+  --text-dim: #9298a5;
+  --text-faint: #5b6270;
+  --accent: #ff7a3d;
+  --accent-dim: rgba(255,122,61,0.14);
+  --good: #3ddc97;
+  --good-dim: rgba(61,220,151,0.12);
+  --bad: #ef5b6c;
+  --bad-dim: rgba(239,91,108,0.12);
+  --gold: #e8c468;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle at 15% 8%, rgba(255,122,61,0.05), transparent 40%),
+                     radial-gradient(circle at 85% 92%, rgba(61,220,151,0.04), transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 28px 100px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Header ---------- */
+header{
+  padding: 72px 0 48px;
+  border-bottom: 1px solid var(--line);
+}
+.eyebrow{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before{
+  content:"";
+  width: 20px; height: 1px;
+  background: var(--accent);
+}
+h1{
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 44px;
+  letter-spacing: 0.01em;
+  color: #fff;
+  margin-bottom: 14px;
+}
+.subtitle{
+  font-size: 16px;
+  color: var(--text-dim);
+  max-width: 640px;
+}
+.meta-row{
+  display:flex;
+  gap: 28px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+.meta-item{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+.meta-item span{ color: var(--text-dim); }
+
+/* ---------- Section shell ---------- */
+section{ padding: 56px 0; border-bottom: 1px solid var(--line); }
+section:last-of-type{ border-bottom: none; }
+
+.section-head{ margin-bottom: 32px; }
+.section-num{
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+}
+h2{
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  color: #fff;
+  margin-top: 4px;
+}
+.section-desc{
+  color: var(--text-dim);
+  font-size: 14.5px;
+  margin-top: 8px;
+  max-width: 620px;
+}
+
+/* ---------- Ranking strip ---------- */
+.ranking{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.rank-card{
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 24px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s ease;
+}
+.rank-card:hover{ border-color: var(--line-strong); }
+.rank-card.gold{ border-color: rgba(232,196,104,0.35); background: linear-gradient(160deg, rgba(232,196,104,0.07), var(--panel) 60%); }
+.rank-num{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-faint);
+  letter-spacing: 0.08em;
+}
+.rank-card.gold .rank-num{ color: var(--gold); }
+.rank-game{
+  font-family:'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #fff;
+  margin: 6px 0 10px;
+}
+.rank-verdict{
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+.rank-tag{
+  display:inline-block;
+  margin-top: 14px;
+  font-family:'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  padding: 4px 9px;
+  border-radius: 4px;
+}
+.tag-go{ background: var(--good-dim); color: var(--good); }
+.tag-hold{ background: var(--accent-dim); color: var(--accent); }
+.tag-wait{ background: var(--bad-dim); color: var(--bad); }
+
+/* ---------- Framework tags ---------- */
+.dims{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.dim-card{
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+.dim-title{
+  font-family:'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 6px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.dim-title .dot{ width:6px; height:6px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+.dim-desc{ font-size: 12.5px; color: var(--text-dim); }
+
+/* ---------- Data cards per game ---------- */
+.game-block{
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  background: var(--panel);
+}
+.game-head{
+  padding: 16px 22px;
+  display:flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-2);
+}
+.game-name{
+  font-family:'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: #fff;
+}
+.game-status{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+.stat-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0;
+}
+.stat{
+  padding: 18px 22px;
+  border-right: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+}
+.stat:nth-child(-n+3){ border-top: none; }
+.stat-label{ font-size: 11.5px; color: var(--text-faint); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;}
+.stat-value{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+.stat-value.up{ color: var(--good); }
+.stat-value.down{ color: var(--bad); }
+.stat-note{ font-size: 11.5px; color: var(--text-dim); margin-top: 4px; }
+
+/* ---------- Traffic bars ---------- */
+.traffic-panel{
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 26px 28px;
+}
+.channel-label{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 14px;
+}
+.traffic-bar-fill.good{ background: linear-gradient(90deg, var(--good), #9ff0cf); }
+.traffic-bar-fill.bad{ background: linear-gradient(90deg, var(--bad), #f5a0ab); }
+.callout{
+  margin-top: 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 10px;
+  padding: 18px 22px;
+  background: rgba(255,255,255,0.015);
+}
+.callout-title{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.callout-text{ font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
+.spotlight-panel{
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 26px 28px;
+  margin-top: 16px;
+}
+.spotlight-row{
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.spotlight-rank{
+  font-family:'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--gold);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.spotlight-country{
+  font-family:'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.spotlight-desc{ font-size: 13.5px; color: var(--text-dim); line-height: 1.6; }
+.spotlight-audience{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 20px 0 4px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.aud-item{ font-size: 12.5px; }
+.aud-label{ display:block; color: var(--text-faint); font-family:'JetBrains Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.aud-value{ color: var(--text); }
+.traffic-row{
+  display: grid;
+  grid-template-columns: 110px 1fr 130px;
+  align-items: center;
+  gap: 16px;
+  padding: 9px 0;
+}
+.traffic-country{ font-size: 13.5px; color: var(--text); font-weight: 500; }
+.traffic-bar-bg{
+  height: 8px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.traffic-bar-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #ffb385);
+  border-radius: 4px;
+}
+.traffic-pct{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  text-align: right;
+}
+.traffic-caption{
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.traffic-caption b{ color: var(--text); font-weight: 600; }
+
+/* ---------- Match matrix ---------- */
+.matrix{
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.matrix th, .matrix td{
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.matrix th{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 500;
+}
+.matrix td:first-child, .matrix th:first-child{
+  color: var(--text-dim);
+  font-size: 12.5px;
+}
+.matrix th:not(:first-child), .matrix td:not(:first-child){
+  text-align: center;
+}
+.matrix tr:hover td{ background: rgba(255,255,255,0.015); }
+.pill{
+  display:inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.pill.high{ background: var(--good-dim); color: var(--good); }
+.pill.mid{ background: var(--accent-dim); color: var(--accent); }
+.pill.low{ background: var(--bad-dim); color: var(--bad); }
+.matrix .game-col-1{ color: var(--gold); font-family:'Rajdhani',sans-serif; font-weight:700; font-size:14px; }
+.matrix th.game-col-1{ color: var(--gold); }
+
+/* ---------- Conclusion ---------- */
+.conclusion{
+  background: linear-gradient(160deg, rgba(232,196,104,0.06), var(--panel) 55%);
+  border: 1px solid rgba(232,196,104,0.25);
+  border-radius: 12px;
+  padding: 32px 34px;
+}
+.conclusion-order{
+  font-family:'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #fff;
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.conclusion-order .arrow{ color: var(--text-faint); font-size: 18px; }
+.conclusion-order .n1{ color: var(--gold); }
+.conclusion-order .n2{ color: var(--text); }
+.conclusion-order .n3{ color: var(--text-dim); }
+.reason-block{ margin-top: 16px; }
+.reason-title{
+  font-family:'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.reason-text{ font-size: 14px; color: var(--text-dim); }
+.reason-text + .reason-title{ margin-top: 18px; }
+
+footer{
+  padding: 40px 0 10px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  font-family:'JetBrains Mono', monospace;
+}
+footer a{ color: var(--text-dim); }
+
+@media (max-width: 720px){
+  h1{ font-size: 32px; }
+  .ranking{ grid-template-columns: 1fr; }
+  .stat{ border-right: none; }
+  .stat:nth-child(n){ border-top: 1px solid var(--line); }
+  .stat:first-child{ border-top: none; }
+  .traffic-row{ grid-template-columns: 80px 1fr 60px; }
+  .matrix{ font-size: 12px; }
+  .matrix th, .matrix td{ padding: 10px 8px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">iGVault · 选品优先级研究</div>
+    <h1>先做哪款游戏？</h1>
+    <p class="subtitle">暗黑4 / 三角洲行动 / Roblox 三选一 — 结合游戏规模、玩家需求、可售品类与 iGV 实际流量结构的综合研判。</p>
+    <div class="meta-row">
+      <div class="meta-item">范围 <span>C2C 游戏账号 · 金币 · 道具 · 代练</span></div>
+      <div class="meta-item">市场 <span>国际站，不含中国大陆</span></div>
+      <div class="meta-item">数据截至 <span>2026年7月</span></div>
+    </div>
+  </header>
+
+  <!-- 结论前置 -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">00 / 结论速览</div>
+      <h2>优先级排序</h2>
+    </div>
+    <div class="ranking">
+      <div class="rank-card gold">
+        <div class="rank-num">RANK 01</div>
+        <div class="rank-game">三角洲行动</div>
+        <div class="rank-verdict">国际服仍处爬坡期，欧美二级市场需求已被验证但未饱和，法德本地化基础已具备，ROI 最高。</div>
+        <span class="rank-tag tag-go">优先立项</span>
+      </div>
+      <div class="rank-card">
+        <div class="rank-num">RANK 02</div>
+        <div class="rank-game">暗黑4</div>
+        <div class="rank-verdict">存量见顶但法德核心用户根基深厚，合规边界清晰，作为稳健现金流品类并行推进。</div>
+        <span class="rank-tag tag-hold">并行维护</span>
+      </div>
+      <div class="rank-card">
+        <div class="rank-num">RANK 03</div>
+        <div class="rank-game">Roblox</div>
+        <div class="rank-verdict">用户体量最大，法德为主的流量结构里美国占比也不小（18%），实际匹配度不差，但账号/Robux 交易受 ToS 限制，需先做合规排查。</div>
+        <span class="rank-tag tag-wait">审慎评估</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 研究框架 -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">01 / 研究方法</div>
+      <h2>评分框架</h2>
+      <p class="section-desc">排序不是凭直觉判断"哪个游戏更火"，而是用六个维度做资源分配决策。</p>
+    </div>
+    <div class="dims">
+      <div class="dim-card">
+        <div class="dim-title"><span class="dot"></span>游戏规模与增长动能</div>
+        <div class="dim-desc">DAU/MAU 是否在增长期，还是已过峰值进入衰退期。</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-title"><span class="dot"></span>二级市场合规空间</div>
+        <div class="dim-desc">官方对代练/金币/账号交易的态度 — 默许、灰色地带，还是明令封号高压打击。</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-title"><span class="dot"></span>可售品类丰富度</div>
+        <div class="dim-desc">能否覆盖金币、道具、账号、代练、点卡多个 SKU，还是只能做单一品类。</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-title"><span class="dot"></span>竞对饱和度</div>
+        <div class="dim-desc">主流欧美 C2C 平台上该游戏的卖家密度 — 是蓝海还是红海。</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-title"><span class="dot"></span>iGV 流量匹配度</div>
+        <div class="dim-desc">游戏的核心市场国家分布，与 iGV 现有流量的国家结构是否重合。</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-title"><span class="dot"></span>窗口期</div>
+        <div class="dim-desc">现在切入是卡位期，还是错过窗口后只能和已布局的卖家抢存量。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 游戏数据对比 -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">02 / 规模数据</div>
+      <h2>三款游戏详细数据对比</h2>
+    </div>
+
+    <div class="game-block">
+      <div class="game-head">
+        <div class="game-name">三角洲行动 · Delta Force（国际服）</div>
+        <div class="game-status" style="background:var(--good-dim); color:var(--good);">增长期</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Steam 近30天均值</div>
+          <div class="stat-value">~68,000</div>
+          <div class="stat-note">同时在线，3月峰值曾达 7.9万</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Steam 历史峰值</div>
+          <div class="stat-value up">247,028</div>
+          <div class="stat-note">2025年9月26日，一度进入 Steam 排行前五</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">移动端首月表现</div>
+          <div class="stat-value">169国</div>
+          <div class="stat-note">App Store 免费榜第一，125国 Google Play 免费榜第一</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">5月全球收入环比</div>
+          <div class="stat-value up">+108%</div>
+          <div class="stat-note">单月流水逼近3000万美元</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">上线时间</div>
+          <div class="stat-value">2024.12</div>
+          <div class="stat-note">2025.08 登陆 PS5 / Xbox，仍在扩张期</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">欧美二级市场</div>
+          <div class="stat-value">已验证</div>
+          <div class="stat-note">PlayerAuctions 已上线专属交易页</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-block">
+      <div class="game-head">
+        <div class="game-name">暗黑4 · Diablo 4</div>
+        <div class="game-status" style="background:var(--bad-dim); color:var(--bad);">存量衰退</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">Steam 当前同时在线</div>
+          <div class="stat-value down">~19,600</div>
+          <div class="stat-note">24小时峰值约 2.5万</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Steam 历史峰值</div>
+          <div class="stat-value">64,518</div>
+          <div class="stat-note">2026年5月3日</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">6月月活同比</div>
+          <div class="stat-value down">-65%</div>
+          <div class="stat-note">连续多月下滑</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">系列累计玩家</div>
+          <div class="stat-value">1亿+</div>
+          <div class="stat-note">D1~D4 全系列口径，非单代数据</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">内容更新节奏</div>
+          <div class="stat-value">延期</div>
+          <div class="stat-note">第二资料片延至2026年底，社区反馈趋于负面</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">欧美二级市场</div>
+          <div class="stat-value">成熟红海</div>
+          <div class="stat-note">竞对深耕多年，合规边界清晰</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="game-block">
+      <div class="game-head">
+        <div class="game-name">Roblox</div>
+        <div class="game-status" style="background:var(--accent-dim); color:var(--accent);">体量最大 · 匹配度低</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat">
+          <div class="stat-label">全平台日活（2026 Q1）</div>
+          <div class="stat-value">1.32亿</div>
+          <div class="stat-note">月活 3.818 亿</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">流量第一国家</div>
+          <div class="stat-value">美国</div>
+          <div class="stat-note">占比约 31.7%</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">流量第二/三国家</div>
+          <div class="stat-value">菲律宾/巴西</div>
+          <div class="stat-note">分别约 8.05% / 4.57%，法德不在前五</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">账号交易合规性</div>
+          <div class="stat-value down">明令禁止</div>
+          <div class="stat-note">ToS 明确禁止出售账号/凭证，永久封号风险</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Robux 场外交易</div>
+          <div class="stat-value down">明令禁止</div>
+          <div class="stat-note">违反服务条款，可售品类被大幅压缩</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">可行品类方向</div>
+          <div class="stat-value">待排查</div>
+          <div class="stat-note">特定游戏内道具交易 + 代练服务</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IGV流量结构 -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">03 / 流量匹配</div>
+      <h2>iGV 实际流量结构</h2>
+      <p class="section-desc">一手数据 · 2026年4–6月近三个月 UV 明细，已剔除中国流量 — 直接访问与自然搜索合计贡献近九成。</p>
+    </div>
+
+    <div class="traffic-panel">
+      <div class="channel-label">渠道占比（近3个月均值）</div>
+      <div class="traffic-row">
+        <div class="traffic-country">直接访问</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill good" style="width:100%"></div></div>
+        <div class="traffic-pct">48.38%，最大来源</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">自然搜索</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill good" style="width:84%"></div></div>
+        <div class="traffic-pct">40.51%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">付费广告</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill bad" style="width:16%"></div></div>
+        <div class="traffic-pct">7.51%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">站外引荐</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:8%"></div></div>
+        <div class="traffic-pct">3.60%</div>
+      </div>
+      <div class="traffic-caption">
+        直接访问 + 自然搜索合计 <b>88.9%</b>，说明 iGV 已经建立起较强的品牌认知和 SEO 基础；付费广告只贡献 7.5% 的流量，验证了此前的判断方向。
+      </div>
+    </div>
+
+    <div class="traffic-panel" style="margin-top:16px;">
+      <div class="channel-label">国家分布（全渠道 UV，近3个月合计，剔除中国，覆盖92国）</div>
+      <div class="traffic-row">
+        <div class="traffic-country">法国</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:100%"></div></div>
+        <div class="traffic-pct">25.11%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">美国</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:72%"></div></div>
+        <div class="traffic-pct">18.07%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">德国</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:32%"></div></div>
+        <div class="traffic-pct">8.06%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">西班牙</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:17%"></div></div>
+        <div class="traffic-pct">4.24%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">新加坡</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:17%"></div></div>
+        <div class="traffic-pct">4.18%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">英国</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:15%"></div></div>
+        <div class="traffic-pct">3.72%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">比利时</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:9%"></div></div>
+        <div class="traffic-pct">2.36%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">意大利</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:8%"></div></div>
+        <div class="traffic-pct">2.07%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">加拿大</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:8%"></div></div>
+        <div class="traffic-pct">1.88%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">墨西哥</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:6%"></div></div>
+        <div class="traffic-pct">1.55%</div>
+      </div>
+      <div class="traffic-row">
+        <div class="traffic-country">其他 82 国</div>
+        <div class="traffic-bar-bg"><div class="traffic-bar-fill" style="width:115%; opacity:.5;"></div></div>
+        <div class="traffic-pct">28.76%</div>
+      </div>
+      <div class="traffic-caption">
+        法国是第一大市场，占比 25.11%；<b>真实格局是法国主导、美国紧随、德国第三，长尾覆盖 82 个国家</b>，并非单一国家的绝对垄断。三个月的趋势也值得注意：<b>美国流量在稳步上升</b>（4月4.68万 → 5月5.04万 → 6月5.81万），<b>法国流量在小幅回落</b>（4月7.49万 → 5月7.75万 → 6月6.35万）。美国正在成长为与法国并列的核心市场，这也提升了 Roblox（核心市场为美国）与 iGV 流量结构的实际匹配度，值得在排序中重新权衡。</div>
+    </div>
+  </section>
+
+  <!-- 综合评分矩阵 -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">04 / 综合评分</div>
+      <h2>六维度评分矩阵</h2>
+    </div>
+    <table class="matrix">
+      <thead>
+        <tr>
+          <th>维度</th>
+          <th class="game-col-1">三角洲行动</th>
+          <th>暗黑4</th>
+          <th>Roblox</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>规模与增长动能</td>
+          <td><span class="pill high">高</span></td>
+          <td><span class="pill low">低</span></td>
+          <td><span class="pill mid">中</span></td>
+        </tr>
+        <tr>
+          <td>二级市场合规空间</td>
+          <td><span class="pill high">高</span></td>
+          <td><span class="pill high">高</span></td>
+          <td><span class="pill low">低</span></td>
+        </tr>
+        <tr>
+          <td>可售品类丰富度</td>
+          <td><span class="pill high">高</span></td>
+          <td><span class="pill high">高</span></td>
+          <td><span class="pill low">低</span></td>
+        </tr>
+        <tr>
+          <td>竞对饱和度（越低越好）</td>
+          <td><span class="pill high">低饱和</span></td>
+          <td><span class="pill low">高饱和</span></td>
+          <td><span class="pill mid">中</span></td>
+        </tr>
+        <tr>
+          <td>iGV 流量匹配度</td>
+          <td><span class="pill mid">中高</span></td>
+          <td><span class="pill high">高</span></td>
+          <td><span class="pill mid">中</span></td>
+        </tr>
+        <tr>
+          <td>窗口期</td>
+          <td><span class="pill high">爬坡期</span></td>
+          <td><span class="pill mid">无窗口压力</span></td>
+          <td><span class="pill mid">无明显窗口</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 结论 -->
+  <section>
+    <div class="section-head">
+      <div class="section-num">05 / 结论</div>
+      <h2>最终排序与依据</h2>
+    </div>
+    <div class="conclusion">
+      <div class="conclusion-order">
+        <span class="n1">三角洲行动</span>
+        <span class="arrow">→</span>
+        <span class="n2">暗黑4</span>
+        <span class="arrow">→</span>
+        <span class="n3">Roblox</span>
+      </div>
+
+      <div class="reason-title">为什么三角洲行动排第一</div>
+      <div class="reason-text">这是唯一一个"欧美盘子在增长、需求已验证、还没被做透"的游戏 — 窗口期属性最强。虽然目前的爆发式增长更多来自亚太与拉美移动端，但法德市场已有本地化基础和媒体曝光，现在切入能吃到增长红利，晚半年可能就要和已卡位的卖家抢存量。</div>
+
+      <div class="reason-title">为什么暗黑4排第二</div>
+      <div class="reason-text">不是因为它更好，而是它是最稳、最不容易踩雷的"现金流型"品类 — 法德核心用户根基深厚、合规边界清晰、已有卖家 onboarding 基础，可以边推三角洲边低成本维护，不冲突。</div>
+
+      <div class="reason-title">为什么 Roblox 排第三</div>
+      <div class="reason-text">不是体量问题（它体量最大），而是一个结构性短板依然存在：账号交易和 Robux 场外交易在 ToS 里是高压雷区，可售品类被大幅压缩。流量匹配度这一项其实不差 — iGV 真实流量里美国占 18%，而 Roblox 的核心市场正是美国，重合度不算低。放最后主要是合规风险的问题，而不是市场匹配的问题，需要先完成一轮合规排查，摸清哪些品类能做。</div>
+    </div>
+  </section>
+
+  <footer>
+    数据来源：iGV 内部流量数据（2026年4–6月，剔除中国）· SteamDB · Steam Charts · Similarweb · 腾讯财报 · 公开游戏媒体报道　|　整理时间 2026年7月
+  </footer>
+
+</div>
+</body>
+</html>
