@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>维度一 · 游戏基本调研 — Clash Royale</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+  :root{
+    --paper:#FBF8F1;
+    --panel:#FFFFFF;
+    --ink:#2B2620;
+    --ink-2:#5C554B;
+    --ink-3:#8A8175;
+    --rule:#E4DCCB;
+    --red:#B0392C;
+    --red-soft:#F6E7E3;
+    --gold:#B7862B;
+    --gold-soft:#F7EFDD;
+    --green:#4E6B51;
+    --green-soft:#E9EFE7;
+    --blue:#4A5E75;
+    --blue-soft:#E8EDF3;
+    --gray-soft:#EFEBE2;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Noto Sans SC',-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+    font-size:14px;line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:1080px;margin:0 auto;padding:56px 40px 80px;}
+  .serif{font-family:'Noto Serif SC','Songti SC',serif;}
+
+  /* ===== Header ===== */
+  .doc-head{display:flex;justify-content:space-between;align-items:baseline;gap:24px;border-bottom:3px solid var(--ink);padding-bottom:14px;}
+  .doc-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:30px;letter-spacing:.06em;}
+  .doc-title .dim{color:var(--red);}
+  .doc-meta{font-size:12px;color:var(--ink-3);letter-spacing:.05em;white-space:nowrap;}
+  .doc-sub{margin-top:12px;font-size:13.5px;color:var(--ink-2);}
+  .doc-sub b{color:var(--ink);}
+
+  /* ===== Conclusion cards ===== */
+  .concl{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px;}
+  .c-card{background:var(--panel);border:1px solid var(--rule);border-top:4px solid var(--ink);padding:16px 16px 14px;}
+  .c-card.red{border-top-color:var(--red);}
+  .c-card.gold{border-top-color:var(--gold);}
+  .c-card.green{border-top-color:var(--green);}
+  .c-card.blue{border-top-color:var(--blue);}
+  .c-tag{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--ink-3);margin-bottom:8px;}
+  .c-card.red .c-tag{color:var(--red);}
+  .c-card.gold .c-tag{color:var(--gold);}
+  .c-card.green .c-tag{color:var(--green);}
+  .c-card.blue .c-tag{color:var(--blue);}
+  .c-body{font-size:12.8px;color:var(--ink-2);line-height:1.7;}
+  .c-body b{color:var(--ink);}
+
+  /* ===== Module label ===== */
+  .module{margin-top:64px;}
+  .mod-head{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+  .mod-label{font-size:11px;font-weight:700;letter-spacing:.28em;color:var(--red);white-space:nowrap;}
+  .mod-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:21px;letter-spacing:.08em;white-space:nowrap;}
+  .mod-rule{flex:1;height:1px;background:var(--rule);}
+
+  /* ===== Info table (Module A) ===== */
+  .info-table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--rule);}
+  .info-table tr{border-bottom:1px solid var(--rule);}
+  .info-table tr:last-child{border-bottom:none;}
+  .info-table th{width:150px;text-align:left;vertical-align:top;padding:13px 18px;font-size:12.5px;font-weight:700;color:var(--ink-3);letter-spacing:.08em;background:#FDFCF8;border-right:1px solid var(--rule);}
+  .info-table td{padding:13px 20px;font-size:13.5px;color:var(--ink-2);}
+  .info-table td b{color:var(--ink);}
+  .info-table td .hl{color:var(--red);font-weight:700;}
+
+  /* ===== Mode cards (Module B) ===== */
+  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .mode-card{background:var(--panel);border:1px solid var(--rule);padding:20px 18px 16px;position:relative;}
+  .mode-card.primary{border:1.5px solid var(--red);}
+  .mode-badge{position:absolute;top:-11px;right:14px;background:var(--red);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;padding:2px 10px;}
+  .mode-name{font-family:'Noto Serif SC',serif;font-weight:900;font-size:17px;margin-bottom:2px;}
+  .mode-en{font-size:11px;color:var(--ink-3);letter-spacing:.14em;margin-bottom:12px;}
+  .mode-desc{font-size:12.8px;color:var(--ink-2);min-height:112px;}
+  .mode-kv{border-top:1px dashed var(--rule);margin-top:12px;padding-top:10px;}
+  .mode-kv .k{font-size:11px;color:var(--ink-3);letter-spacing:.1em;}
+  .mode-kv .v{font-size:12.8px;color:var(--ink);font-weight:500;}
+  .mode-kv .v.red{color:var(--red);font-weight:700;}
+
+  .callout{margin-top:20px;border-left:4px solid var(--gold);background:var(--gold-soft);padding:13px 18px;font-size:13.5px;color:var(--ink);}
+  .callout b{color:var(--red);}
+
+  /* ===== Sub section label ===== */
+  .sub-head{display:flex;align-items:baseline;gap:12px;margin:44px 0 18px;}
+  .sub-crumb{font-size:11px;color:var(--ink-3);letter-spacing:.2em;font-weight:700;}
+  .sub-title{font-family:'Noto Serif SC',serif;font-weight:900;font-size:17px;letter-spacing:.06em;}
+
+  /* ===== Mechanism grid ===== */
+  .mech-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .mech{background:var(--panel);border:1px solid var(--rule);padding:18px 20px 14px;}
+  .mech-id{font-size:11px;font-weight:700;color:var(--red);letter-spacing:.16em;}
+  .mech-name{font-family:'Noto Serif SC',serif;font-weight:900;font-size:15.5px;margin:4px 0 8px;}
+  .mech-body{font-size:12.8px;color:var(--ink-2);}
+  .mech-body b{color:var(--ink);}
+  .mech-arrow{margin-top:10px;border-top:1px dashed var(--rule);padding-top:9px;font-size:12.8px;color:var(--red);font-weight:700;}
+
+  /* progression bars in M-03 */
+  .bars{display:flex;align-items:flex-end;gap:10px;margin:12px 0 6px;height:96px;}
+  .bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;text-align:center;}
+  .bar .fill{border-radius:2px 2px 0 0;}
+  .bar .num{font-size:11px;font-weight:700;color:var(--ink-2);margin-bottom:3px;}
+  .bar .lab{font-size:10.5px;color:var(--ink-3);margin-top:5px;line-height:1.3;}
+  .fill.g1{background:#CFC7B4;height:16px;}
+  .fill.g2{background:var(--gold);height:48px;}
+  .fill.g3{background:var(--red);height:82px;}
+
+  /* ===== Field note ===== */
+  .field-note{margin-top:22px;background:#F4F0E5;border:1px solid var(--rule);padding:20px 24px;}
+  .fn-tag{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--gold);margin-bottom:8px;}
+  .fn-body{font-size:13.5px;color:var(--ink-2);}
+  .fn-body b{color:var(--ink);}
+  .fn-body .em{color:var(--red);font-weight:700;}
+
+  /* ===== Priority table (Module C) ===== */
+  .prio{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--rule);}
+  .prio thead th{font-size:11.5px;font-weight:700;color:var(--ink-3);letter-spacing:.12em;text-align:left;padding:11px 14px;border-bottom:2px solid var(--ink);background:#FDFCF8;}
+  .prio tbody td{padding:16px 14px;border-bottom:1px solid var(--rule);vertical-align:top;font-size:12.8px;color:var(--ink-2);}
+  .prio tbody tr:last-child td{border-bottom:none;}
+  .rank{display:inline-flex;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-weight:700;font-size:13px;align-items:center;justify-content:center;font-family:'Noto Serif SC',serif;}
+  .rank.r1{background:var(--red);}
+  .rank.r2{background:var(--gold);}
+  .rank.r3{background:var(--green);}
+  .rank.x{background:#C9C2B4;color:#fff;}
+  .p-name{font-family:'Noto Serif SC',serif;font-weight:900;font-size:15.5px;color:var(--ink);}
+  .p-en{font-size:11px;color:var(--ink-3);letter-spacing:.1em;}
+  .stars{color:var(--red);font-size:12px;letter-spacing:.15em;white-space:nowrap;}
+  .stars .off{color:#D9D2C3;}
+  .pos-tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;white-space:nowrap;}
+  .pos-tag.red{background:var(--red-soft);color:var(--red);}
+  .pos-tag.gold{background:var(--gold-soft);color:var(--gold);}
+  .pos-tag.green{background:var(--green-soft);color:var(--green);}
+  .pos-tag.blue{background:var(--blue-soft);color:var(--blue);}
+  .pos-tag.gray{background:var(--gray-soft);color:var(--ink-3);}
+  .why b{color:var(--ink);}
+  .why .lead{color:var(--red);font-weight:700;}
+
+  /* ===== Persona grid (Module D) ===== */
+  .persona-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .persona{background:var(--panel);border:1px solid var(--rule);border-left:4px solid var(--ink);padding:16px 18px 13px;}
+  .persona.p1{border-left-color:var(--red);}
+  .persona.p2{border-left-color:var(--gold);}
+  .persona.p3{border-left-color:var(--blue);}
+  .persona.p4{border-left-color:var(--green);}
+  .ps-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .ps-name{font-family:'Noto Serif SC',serif;font-weight:900;font-size:15px;}
+  .ps-price{font-size:12px;font-weight:700;color:var(--red);white-space:nowrap;}
+  .ps-body{font-size:12.6px;color:var(--ink-2);margin-top:6px;}
+  .ps-body b{color:var(--ink);}
+
+  .trust{margin-top:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .trust-card{background:var(--panel);border:1px solid var(--rule);padding:15px 16px 12px;}
+  .trust-id{font-size:11px;font-weight:700;color:var(--red);letter-spacing:.16em;}
+  .trust-name{font-family:'Noto Serif SC',serif;font-weight:900;font-size:14.5px;margin:3px 0 6px;}
+  .trust-body{font-size:12.4px;color:var(--ink-2);}
+  .trust-body b{color:var(--ink);}
+
+  /* attribute chips */
+  .chips{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{background:var(--gray-soft);border:1px solid var(--rule);font-size:12px;color:var(--ink-2);padding:3px 11px;border-radius:2px;}
+  .chip.hot{background:var(--red-soft);border-color:#E3C4BE;color:var(--red);font-weight:700;}
+
+  /* ===== Glossary ===== */
+  .gloss{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;background:var(--panel);border:1px solid var(--rule);padding:8px 24px;}
+  .g-row{display:flex;gap:14px;padding:9px 0;border-bottom:1px dashed var(--rule);}
+  .gloss .g-row:nth-last-child(-n+2){border-bottom:none;}
+  .g-term{flex:0 0 118px;font-weight:700;font-size:12.6px;color:var(--ink);}
+  .g-def{font-size:12.4px;color:var(--ink-2);}
+  @media (max-width:900px){
+    .gloss{grid-template-columns:1fr;}
+    .gloss .g-row:nth-last-child(2){border-bottom:1px dashed var(--rule);}
+  }
+
+  /* ===== Q&A ===== */
+  .qa-list{display:flex;flex-direction:column;gap:14px;}
+  .qa{background:var(--panel);border:1px solid var(--rule);padding:16px 20px 14px;}
+  .qa-q{display:flex;gap:12px;align-items:baseline;}
+  .qa-badge{flex:0 0 auto;font-size:11px;font-weight:700;letter-spacing:.1em;color:#fff;background:var(--red);padding:1px 8px;}
+  .qa-qtext{font-family:'Noto Serif SC',serif;font-weight:900;font-size:14.5px;color:var(--ink);}
+  .qa-a{margin-top:9px;padding-top:10px;border-top:1px dashed var(--rule);font-size:12.8px;color:var(--ink-2);}
+  .qa-a b{color:var(--ink);}
+  .qa-a .em{color:var(--red);font-weight:700;}
+  .qa-a table{width:100%;border-collapse:collapse;margin:8px 0 4px;}
+  .qa-a th{font-size:11.5px;font-weight:700;color:var(--ink-3);text-align:left;padding:6px 10px;border-bottom:1.5px solid var(--rule);background:#FDFCF8;}
+  .qa-a td{font-size:12.2px;color:var(--ink-2);padding:7px 10px;border-bottom:1px solid var(--rule);vertical-align:top;}
+  .qa-a tr:last-child td{border-bottom:none;}
+
+  /* ===== Footer ===== */
+  .doc-foot{margin-top:64px;border-top:1px solid var(--rule);padding-top:14px;display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink-3);letter-spacing:.05em;}
+
+  .small-note{margin-top:14px;font-size:11.5px;color:var(--ink-3);}
+
+  @media (max-width:900px){
+    .concl{grid-template-columns:1fr 1fr;}
+    .modes{grid-template-columns:1fr;}
+    .mech-grid{grid-template-columns:1fr;}
+    .persona-grid{grid-template-columns:1fr;}
+    .trust{grid-template-columns:1fr;}
+    .page{padding:36px 20px 60px;}
+    .doc-head{flex-direction:column;gap:6px;}
+    .info-table th{width:104px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ============ HEADER ============ -->
+  <header>
+    <div class="doc-head">
+      <div class="doc-title"><span class="dim">维度一</span> · 游戏基本调研 — Clash Royale</div>
+      <div class="doc-meta">v1.0 · 2026-07-14 · 基于公开资料，数值项待国际服实测复核</div>
+    </div>
+    <p class="doc-sub">回答三个问题：这是一款什么游戏、它的经济怎么运转、交易需求从哪里长出来。结论先行，四个模块支撑。</p>
+  </header>
+
+  <!-- ============ CONCLUSIONS ============ -->
+  <div class="concl">
+    <div class="c-card red">
+      <div class="c-tag">需求在哪</div>
+      <div class="c-body">交易需求几乎 <b>100% 沉淀在「账号」</b>——CR 无自由交易机制（仅存受限且正在退场的部落内换卡系统），金币、卡牌、表情无法直接变现。账号是唯一的「钱包」，也是唯一的变现载体。</div>
+    </div>
+    <div class="c-card gold">
+      <div class="c-tag">第一品类</div>
+      <div class="c-body"><b>账号是结构性刚需</b>：F2P 满级一套卡组要 1–2 年；2025 年约 3000 万回流玩家面临进化 / Hero / 16 级<b>三重版本断代</b>——买号等于买「版本入场券」。</div>
+    </div>
+    <div class="c-card green">
+      <div class="c-tag">复购引擎</div>
+      <div class="c-body">代充按<b>月度赛季 + 季度大版本</b>脉冲复购：Pass Royale / Diamond Pass 每月重置；每次 Hero、进化、传奇发布都拉动一波囤宝石——需求按日历自动再生。</div>
+    </div>
+    <div class="c-card blue">
+      <div class="c-tag">优先级初判</div>
+      <div class="c-body"><b>账号 &gt; 代充 &gt; 代练</b>；金币、物品机制上不可做。竞对已验证跑通：Eldorado 账号 8,560 条 listing，PlayerAuctions 年 5,200+ 单买家评价。</div>
+    </div>
+  </div>
+
+  <!-- ============ MODULE A ============ -->
+  <section class="module">
+    <div class="mod-head">
+      <span class="mod-label">MODULE A</span>
+      <span class="mod-title">游戏基本信息</span>
+      <span class="mod-rule"></span>
+    </div>
+
+    <table class="info-table">
+      <tr><th>游戏</th><td>《部落冲突：皇室战争》Clash Royale · <b>Supercell</b>（芬兰）研发发行，《部落冲突》同宇宙衍生作</td></tr>
+      <tr><th>类型 / 收费</th><td>实时策略 + 卡牌收集 + 塔防 · <b>免费游玩 + 内购</b>（单笔 $0.29–239.99）+ <b>Pass Royale / Diamond Pass</b> 月度订阅型通行证</td></tr>
+      <tr><th>游戏模式</th><td>天梯 Trophy Road / Ranked 竞技天梯 / 挑战赛 &amp; 全球锦标赛 / 2v2 / <b>Merge Tactics</b>（自走棋，2025.07 上线）/ CHAOS 等限时活动模式——具体见下方「游戏模式 &amp; 玩法」</td></tr>
+      <tr><th>可玩平台</th><td><span class="hl">仅移动端</span>：iOS / Android 双端 · <b>Supercell ID</b> 跨端通用——这是账号交付与代充交付的技术基础（邮箱验证码登录，无需密码）</td></tr>
+      <tr><th>上线时间</th><td>2016.03.02 全球公测 · <b>2026.03 十周年</b>（Season 81）</td></tr>
+      <tr><th>赛季节奏</th><td>约 <b>1 个月一季</b>；Pass Royale 每月重置，平衡性调整随赛季发布——代充与代练需求的基础节拍器</td></tr>
+      <tr><th>版本大事记</th><td><b>2025.03</b> 经济系统重做（复苏起点）→ <b>2025.07</b> Merge Tactics 新模式 → <b>2025.11</b> 大改：新增 16 级、移除 Elite 等级 / Books / Magic Coins（账号估值维度全部重写）→ <b>2026.03</b> 十周年：Hero 系统改版、奖杯路延长至 14,000、全球锦标赛回归——<span class="hl">每次大改 = 一次账号价值重估</span></td></tr>
+      <tr><th>体量 · 规模</th><td>平均 <b>DAU 约 2,500 万 / MAU 约 7,220 万</b>——移动端仅次于 Mobile Legends 的量级；累计下载 12.5 亿+；<b>2025 年收入约 $4.87 亿</b>（同比翻倍以上，发行初期以来最强年份），生涯总收入约 $36 亿，当前月流水约 $5,000 万量级</td></tr>
+      <tr><th>体量 · 地区</th><td>付费端 <b>美国 &gt; 德国 &gt; 法国</b>——正面命中 IGV 的 EN / DE / FR 核心语言市场；下载端印度 19.7%、美国 15.3%、巴西 10.4%、俄罗斯 8.2%、墨西哥 6.9%；玩家年均消费约 $17.4，美 / 日达 $52.8</td></tr>
+      <tr><th>生命周期判断</th><td><b>复苏后的高位平台期</b>：2025 年活跃玩家从约 3,400 万涨至 5,600 万（其中约 3,000 万为回流），2026 年自假期高峰缓慢回落但仍显著高于 2023–24 低谷，十周年再拉一波消费。<span class="hl">曲线方向缓降——需求窗口真实存在，入场动作宜快</span></td></tr>
+    </table>
+  </section>
+
+  <!-- ============ MODULE B ============ -->
+  <section class="module">
+    <div class="mod-head">
+      <span class="mod-label">MODULE B</span>
+      <span class="mod-title">游戏模式 &amp; 玩法</span>
+      <span class="mod-rule"></span>
+    </div>
+
+    <div class="modes">
+      <div class="mode-card primary">
+        <div class="mode-badge">交易主战场</div>
+        <div class="mode-name">天梯 &amp; Ranked</div>
+        <div class="mode-en">TROPHY ROAD · RANKED</div>
+        <div class="mode-desc">核心玩法：8 卡组 3 分钟实时对战，推塔定胜负。天梯按杯数爬竞技场（现已延至 14,000 杯），Ranked 为月度重置的竞技段位。<b>等级压制、版本断代的全部痛苦都发生在这里</b>——卡等直接决定塔血与伤害，练度差距无法用技术完全弥补。</div>
+        <div class="mode-kv"><div class="k">衍生交易需求</div><div class="v red">账号 · 代练（全部核心品类）</div></div>
+      </div>
+      <div class="mode-card">
+        <div class="mode-name">赛季 &amp; 限时活动</div>
+        <div class="mode-en">SEASON · CHALLENGES · GT</div>
+        <div class="mode-desc">每月赛季（Pass Royale / Diamond Pass 奖励轨）+ 各类限时挑战：20 胜挑战、Grand Challenge、全球锦标赛（2026.03 回归，附 Hall of Fame 排名与限定徽章）、CHAOS 等活动模式。限时奖励<b>过期不候</b>，与稀有表情、徽章绑定。</div>
+        <div class="mode-kv"><div class="k">衍生交易需求</div><div class="v">代充 · 挑战代打（两条复购线）</div></div>
+      </div>
+      <div class="mode-card">
+        <div class="mode-name">Merge Tactics</div>
+        <div class="mode-en">AUTO BATTLER · 2025.07</div>
+        <div class="mode-desc">自走棋子模式（脱胎于被砍的 Clash Mini），是 2025 复苏的功臣之一，给了流失玩家回归理由。有独立的段位与奖励轨，但资产不独立、不与主模式练度强耦合。</div>
+        <div class="mode-kv"><div class="k">衍生交易需求</div><div class="v">基本无（可作代练长尾 SKU）</div></div>
+      </div>
+    </div>
+
+    <div class="callout">CR 的资产没有流通性——<b>所有价值都沉淀在账号里，账号就是唯一的「钱包」</b>。机制与需求分析全部围绕这一点。</div>
+
+    <!-- mechanisms -->
+    <div class="sub-head">
+      <span class="sub-crumb">玩法详解</span>
+      <span class="sub-title">决定交易需求的六个核心机制</span>
+    </div>
+
+    <div class="mech-grid">
+      <div class="mech">
+        <div class="mech-id">M-01</div>
+        <div class="mech-name">养成以年计 · 一切需求的源头</div>
+        <div class="mech-body">F2P 满级<b>一套卡组需 1–2 年</b>活跃游玩，全卡满级社区戏称「大概 8 年」——有玩家 2018 年入坑至今仅满 15 张卡。买号把「年」压缩成「分钟」。</div>
+        <div class="mech-arrow">→ 跳过养成 = 买号的第一触发场景，账号业务的基本盘。</div>
+      </div>
+      <div class="mech">
+        <div class="mech-id">M-02</div>
+        <div class="mech-name">等级压制 · 中端局的持续性痛苦</div>
+        <div class="mech-body">卡 10–11 级的玩家频繁匹配满级对手，连败掉杯 150–200；社区共识<b>「只有满级对满级才是纯技术局」</b>。这不是「慢」，是每天都在被虐——付费转化最强的痛点。</div>
+        <div class="mech-arrow">→ 「刚好越过压制线」的 KT14–15 中端号 = 走量主力（$25–150 价位带）。</div>
+      </div>
+      <div class="mech">
+        <div class="mech-id">M-03</div>
+        <div class="mech-name">版本断代 · 回流潮制造的增量需求</div>
+        <div class="mech-body">追平新系统的 F2P 成本极其具体（单位：时间）：</div>
+        <div class="bars">
+          <div class="bar"><div class="num">≈3 个月</div><div class="fill g2"></div><div class="lab">1 个 Hero<br>（共 9 个）</div></div>
+          <div class="bar"><div class="num">≈3 赛季/张</div><div class="fill g2"></div><div class="lab">指定进化卡<br>（共 30+ 张）</div></div>
+          <div class="bar"><div class="num">1 年以上</div><div class="fill g3"></div><div class="lab">Hero 集齐<br>或大量 16 级卡</div></div>
+        </div>
+        <div class="mech-body">2025 年约 3,000 万回流玩家整体面临这道墙——「像拿黄油刀去打龙」。</div>
+        <div class="mech-arrow">→ 回流玩家买的是「版本入场券」：Hero 已解锁 2–3 个的账号溢价 30–50%。</div>
+      </div>
+      <div class="mech">
+        <div class="mech-id">M-04</div>
+        <div class="mech-name">资产近零流通 · 决定品类宽窄</div>
+        <div class="mech-body">金币、宝石不可在玩家间转移（宝石只能经 Supercell ID 代充进入指定账号）。唯一的例外是 <b>Trade Token 部落内换卡系统</b>：同稀有度卡换卡的以物易物，需同部落 + 代币 + KT16，冠军卡不可换——且 <b>2025.10 起代币已停止产出</b>，官方客服口径暗示系统将最终移除，<b>正在退场</b>。Discord 上的「卡牌交易」群组即围绕此系统，无法建成稳定 SKU。</div>
+        <div class="mech-arrow">→ 金币 / 物品品类不可做；账号做大、代充做补充，是唯一的品类结构。</div>
+      </div>
+      <div class="mech">
+        <div class="mech-id">M-05</div>
+        <div class="mech-name">稀有资产不可再生 · 收藏溢价的来源</div>
+        <div class="mech-body">CRL 20 胜表情达成率 <b>&lt; 1/16,000</b>；多个顶级稀有表情在前 1,000 名收藏家中仅 20–62 人持有；5 年 / 10 年徽章、S1 表情、老赛季奖励<b>完全绝版</b>。唯一获取方式 = 买下持有它的账号。</div>
+        <div class="mech-arrow">→ 稀有表情是账号定价权重最高的单一变量：单项增值 $200–1,000+，且只会升值。</div>
+      </div>
+      <div class="mech">
+        <div class="mech-id">M-06</div>
+        <div class="mech-name">赛季节奏 · 需求的日历</div>
+        <div class="mech-body">每月赛季重置（Pass 购买窗口）+ 季度级大版本（Hero / 进化 / 传奇发布拉动限时囤宝石）。行业观察：<b>每逢新 Hero、进化、强力赛季奖励上线，代充需求即上升</b>——买家意图与「即时到账 + 赛季时点」强绑定。</div>
+        <div class="mech-arrow">→ 代充按日历脉冲复购；每次大版本 = 账号估值重写 + 一波换号需求。</div>
+      </div>
+    </div>
+
+    <!-- field note -->
+    <div class="field-note">
+      <div class="fn-tag">FIELD NOTE · 一个真实的购买动线（据社区讨论合成）</div>
+      <div class="fn-body">
+        玩家老 K 2019 年弃坑，2025 年被 Jynxzi 的直播拉回来。登录第一晚：对面满级卡 + 进化 + Hero，自己 11 级的卡组<b>连掉 200 杯</b>。他去查攻略，得到的数字是——想追平，指定进化<b>一张要肝 3 个赛季</b>，Hero <b>一个要肝 2–3 个月</b>，一共 9 个；16 级卡还得从头攒。他算了算，这至少是一年半。<span class="em">当晚他开始搜「clash royale account with heroes」。</span>——账号买家不是不爱玩，是不接受被版本抛下。
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MODULE C ============ -->
+  <section class="module">
+    <div class="mod-head">
+      <span class="mod-label">MODULE C</span>
+      <span class="mod-title">交易需求全景 · 品类优先级</span>
+      <span class="mod-rule"></span>
+    </div>
+
+    <table class="prio">
+      <thead>
+        <tr>
+          <th style="width:40px"></th>
+          <th style="width:120px">品类</th>
+          <th style="width:120px">需求强度 / 频次</th>
+          <th style="width:110px">业务定位</th>
+          <th>玩家为什么需要 · 需求怎么成为刚需 · 竞对验证</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="rank r1">1</span></td>
+          <td><div class="p-name">账号</div><div class="p-en">ACCOUNTS</div></td>
+          <td><span class="stars">★★★★★</span><br><span style="font-size:11.5px">高客单 · 低频高价</span></td>
+          <td><span class="pos-tag red">基本盘 + 客单天花板</span></td>
+          <td class="why">
+            <span class="lead">有了能干什么：</span>直接获得练度、版本资产与绝版收藏——跳过 1–2 年养成、越过等级压制线、补齐进化 / Hero / 16 级断代。<br>
+            <span class="lead">为什么会刚需：</span>M-01 / 02 / 03 / 05 四个机制同时指向账号；且 M-04 决定了它是<b>唯一的价值载体</b>。四类买家分层清晰（详见 Module D）：越级实用 $25–150 走量、版本追平 Hero 溢价 30–50%、收藏身份 $400–5,000+ 拉客单、起步小号 $0.5–5 引流。<br>
+            <span class="lead">竞对验证：</span>Eldorado <b>8,560 条 listing</b>（357 页）；PlayerAuctions 年 <b>5,200+ 单</b>买家评价，并细分出 Max / All Cards / Legendary / Level 11–16 等 SEO 子类目。<b>IGV 站内已有 CR 账号页——本项目实为扩供给 + 属性标准化。</b>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="rank r2">2</span></td>
+          <td><div class="p-name">代充</div><div class="p-en">TOP-UP</div></td>
+          <td><span class="stars">★★★★<span class="off">★</span></span><br><span style="font-size:11.5px">赛季复购 · 中客单</span></td>
+          <td><span class="pos-tag gold">复购引擎</span></td>
+          <td class="why">
+            <span class="lead">有了能干什么：</span>折价获取宝石、Diamond Pass / Pass Royale——加速开箱、买齐限时商店、赶上进化 / Hero 发布窗口。<br>
+            <span class="lead">为什么会刚需：</span>官方定价不满是持续情绪（「复活一次 100 宝石」引发社区激烈反弹，P2W 争议贯穿讨论区）；第三方折扣（U7BUY $1 ≈ 80 Gems，14,000 Gems $89）明显低于官价。需求随 M-06 的日历<b>脉冲式自动再生</b>。<br>
+            <span class="lead">竞对验证：</span>三条标准 SKU 线（Gems 分档 / Diamond Pass / Pass Royale）全竞对在售；交付走 Supercell ID 邮箱验证码，流程已被跑通。U7BUY 2025.12 专门为 CR 代充发 PR——竞对在重点押注。<b>注意：官方 Supercell Store 网页商店构成直接挤压，差异化只能靠价格与多币种支付。</b>
+          </td>
+        </tr>
+        <tr>
+          <td><span class="rank r3">3</span></td>
+          <td><div class="p-name">代练</div><div class="p-en">BOOSTING</div></td>
+          <td><span class="stars">★★★<span class="off">★★</span></span><br><span style="font-size:11.5px">版本脉冲 · 中客单</span></td>
+          <td><span class="pos-tag green">毛利担当</span></td>
+          <td class="why">
+            <span class="lead">有了能干什么：</span>推杯（竞品已有 12K→15K 段 SKU）、20 胜挑战代打（达成率 &lt; 1/16,000，产出绝版表情）、GT 排名冲榜、Ranked 上分、冠军勋章 farm。<br>
+            <span class="lead">为什么会刚需：</span>限时挑战奖励过期不候，且高难挑战「技术上不去、时间不够」双重卡点；2026.03 更新直接扩容需求面——<b>14,000 杯新奖杯路 + 全球锦标赛回归（Hall of Fame 新炫耀点）+ Ranked 无等级压制更吃技术</b>。<br>
+            <span class="lead">竞对验证：</span>Eldorado / G2G / U7BUY 均设独立 Boosting 专区，Eldorado 甚至在 TikTok 投 CR 代练广告；交付同样走登录验证码、无需密码。
+          </td>
+        </tr>
+        <tr>
+          <td><span class="rank x">✕</span></td>
+          <td><div class="p-name">金币</div><div class="p-en">CURRENCY</div></td>
+          <td><span class="stars"><span class="off">★★★★★</span></span></td>
+          <td><span class="pos-tag gray">不可做</span></td>
+          <td class="why">游戏无玩家间货币转移机制——金币 / 宝石不可赠送、不可交易；卡牌仅剩受限的部落内 Trade Token 换卡（同稀有度以物易物，代币 2025.10 起绝版，系统退场中）。四家竞对均未开设此品类。<b>避免误开类目。</b></td>
+        </tr>
+        <tr>
+          <td><span class="rank x">✕</span></td>
+          <td><div class="p-name">物品</div><div class="p-en">ITEMS</div></td>
+          <td><span class="stars"><span class="off">★★★★★</span></span></td>
+          <td><span class="pos-tag gray">不可做（独立品类）</span></td>
+          <td class="why">表情、塔皮、徽章全部锁账号，不可拆卖——但它们是账号溢价的最大来源（M-05）。<b>正确做法：作为账号 listing 的结构化属性字段呈现，而非独立类目。</b></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="small-note">强度为机制推导 + 竞对铺货的综合判断；各品类规模与最终排序，以维度二的竞品销量数据为准。</p>
+  </section>
+
+  <!-- ============ MODULE D ============ -->
+  <section class="module">
+    <div class="mod-head">
+      <span class="mod-label">MODULE D</span>
+      <span class="mod-title">账号买家 · 画像、顾虑与上架启发</span>
+      <span class="mod-rule"></span>
+    </div>
+
+    <div class="sub-head" style="margin-top:0">
+      <span class="sub-crumb">需求分层</span>
+      <span class="sub-title">四类买家画像（按业务价值排序）</span>
+    </div>
+
+    <div class="persona-grid">
+      <div class="persona p1">
+        <div class="ps-top"><span class="ps-name">① 越级实用型 · 走量主力</span><span class="ps-price">$25–150</span></div>
+        <div class="ps-body">被 M-02 等级压制逼出来的买家。要 <b>KT14–15、meta 卡满级 / 次满级、若干进化卡、5,000–10,000 杯</b>。决策看卡组是否当前 meta——16 级 Hog Rider / Fireball 这类主流卡，比冷门卡每张多值 $2–8。KT15 标准号市场均价约 $150。</div>
+      </div>
+      <div class="persona p2">
+        <div class="ps-top"><span class="ps-name">② 版本追平型 · 当前增量最大</span><span class="ps-price">溢价 +30–50%</span></div>
+        <div class="ps-body">2025 回流潮的产物，2025 年前不存在的买家类型。要 <b>Hero 已解锁（尤其 Hero Knight / Magic Archer）、进化卡多、有 16 级卡</b>。全 9 Hero 账号相当于打包一年多的肝度。文案卖点：<b>「版本入场券」</b>，不是练度是断代。</div>
+      </div>
+      <div class="persona p3">
+        <div class="ps-top"><span class="ps-name">③ 收藏 / 身份型 · 客单天花板</span><span class="ps-price">$400–5,000+</span></div>
+        <div class="ps-body">要 <b>CRL 20 胜表情、GT 100 胜表情、S1 表情、10 年徽章、Top 100/200 赛季徽章、稀有 ID</b>。硬数据：普通 KT15 号 $150，加一个 CRL 20 胜表情即 $400–600；顶配 KT16 收藏号 $1,000–5,000+。绝版属性 = 只涨不跌。</div>
+      </div>
+      <div class="persona p4">
+        <div class="ps-top"><span class="ps-name">④ 起步 / 小号型 · 引流品</span><span class="ps-price">$0.5–5</span></div>
+        <div class="ps-body">Jynxzi 潮带来的新玩家试水 + 老玩家开小号。可免费改名是关键属性。低毛利，但是<b>流量入口与首单信任</b>的建立点——竞品用 $0.50 starter 号占「cheap clash royale account」这条搜索词。</div>
+      </div>
+    </div>
+
+    <div class="sub-head">
+      <span class="sub-crumb">转化障碍</span>
+      <span class="sub-title">三道信任坎 · 与行业标准应对</span>
+    </div>
+
+    <div class="trust" style="margin-top:0">
+      <div class="trust-card">
+        <div class="trust-id">T-01 · 第一大顾虑</div>
+        <div class="trust-name">找回恐惧</div>
+        <div class="trust-body">所有竞对都把「原主找回怎么办」放 FAQ 首位。行业标准应对：<b>保险期（Eldorado ≥5 天 / PA 7–30 天）+ 找回即全额退款或补号</b>；配套买家教育：到手立即改邮箱密码、更新恢复信息、开 2FA。IGV 上线需同等售后规则。</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-id">T-02</div>
+        <div class="trust-name">封号恐惧</div>
+        <div class="trust-body">买卖账号违反 Supercell ToS，存在永封风险且 Supercell 执行较严。竞对话术处理：<b>「verified sellers + 遵循卖家交付指引」</b>，不做绝对安全承诺。内容侧用「如何安全接收账号」类指南承接焦虑。</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-id">T-03</div>
+        <div class="trust-name">货不对板</div>
+        <div class="trust-body">练度虚标、卡组不合打法。应对：<b>截图 / 视频验号 + 描述不符可退</b>；PA 的折中方案值得借鉴——买家可选「保留账号 + 协商降价」，降低全额退货率。结构化属性字段本身就是防虚标工具。</div>
+      </div>
+    </div>
+
+    <div class="sub-head">
+      <span class="sub-crumb">落地模板</span>
+      <span class="sub-title">Listing 属性字段 · 按买家决策权重排序</span>
+    </div>
+    <div class="chips" style="margin-top:0">
+      <span class="chip hot">KT 等级（14/15/16）</span>
+      <span class="chip hot">满级 / 16 级卡数量</span>
+      <span class="chip hot">Hero 数量与名称</span>
+      <span class="chip hot">EVO 进化卡数量</span>
+      <span class="chip hot">稀有表情清单（独立字段）</span>
+      <span class="chip">杯数 / 历史最高杯</span>
+      <span class="chip">年限徽章（5Y/10Y）</span>
+      <span class="chip">竞技徽章（20 Win / GT / Ultimate Champion）</span>
+      <span class="chip">Gems / 金币余量</span>
+      <span class="chip">是否可免费改名</span>
+      <span class="chip">交付方式（Instant / Manual）</span>
+      <span class="chip">平台（Supercell ID 双端通用）</span>
+    </div>
+    <p class="small-note">该字段集与 Eldorado / Skycoach 的筛选标签、买家搜索词一一对应，可直接接入标品重构的属性结构。SEO 优先词：buy clash royale account / maxed account / KT 15·16 account / old account / rare emotes；新词窗口（竞争尚浅）：<b>account with heroes / account with evolutions</b>。</p>
+  </section>
+
+  <!-- ============ APPENDIX · GLOSSARY ============ -->
+  <section class="module">
+    <div class="mod-head">
+      <span class="mod-label">APPENDIX</span>
+      <span class="mod-title">名词注释</span>
+      <span class="mod-rule"></span>
+    </div>
+    <div class="gloss">
+      <div class="g-row"><span class="g-term">F2P</span><span class="g-def">Free-to-Play，免费游玩。报告中「F2P 玩家」指不氪金的纯白嫖玩家——其时间成本正是买号 / 代充需求的来源。</span></div>
+      <div class="g-row"><span class="g-term">P2W</span><span class="g-def">Pay-to-Win，氪金变强。社区对 CR 的核心争议：不花钱难以对抗付费玩家的等级优势。</span></div>
+      <div class="g-row"><span class="g-term">KT</span><span class="g-def">King Tower，国王塔等级（当前上限 16）。决定塔血与伤害，是账号练度和定价的第一维度。</span></div>
+      <div class="g-row"><span class="g-term">EVO / 进化卡</span><span class="g-def">Evolution，卡牌进化形态。需攒进化碎片解锁，F2P 攒指定一张约需 3 个赛季，共 30+ 张。</span></div>
+      <div class="g-row"><span class="g-term">Hero</span><span class="g-def">2025 年底新增的英雄卡系统（共 9 个，带主动技能）。每个需 200 Hero 币 ≈ F2P 肝 2–3 个月，是当前账号溢价的新维度。</span></div>
+      <div class="g-row"><span class="g-term">杯数 / Trophy</span><span class="g-def">天梯奖杯数，衡量段位高低。奖杯路 2026.03 起延长至 14,000 杯。</span></div>
+      <div class="g-row"><span class="g-term">Ranked</span><span class="g-def">月度重置的竞技天梯模式，无卡牌等级压制、更看技术——也因此催生「技术不够」的代打需求。</span></div>
+      <div class="g-row"><span class="g-term">GT</span><span class="g-def">Global Tournament，全球锦标赛。2026.03 回归，附 Hall of Fame 排名；历史 GT 限定表情为顶级绝版资产。</span></div>
+      <div class="g-row"><span class="g-term">CRL</span><span class="g-def">Clash Royale League，官方职业联赛。CRL 20 胜挑战表情达成率 &lt; 1/16,000，是账号收藏溢价的最大来源之一。</span></div>
+      <div class="g-row"><span class="g-term">20 胜挑战</span><span class="g-def">限时高难挑战，需一轮内取得 20 胜。奖励绝版表情 / 徽章，对应的代打是代练品类的高价 SKU。</span></div>
+      <div class="g-row"><span class="g-term">Pass Royale / Diamond Pass</span><span class="g-def">月度付费通行证（奖励轨）。每月赛季重置 = 代充需求的固定节拍器。</span></div>
+      <div class="g-row"><span class="g-term">Gems / 宝石</span><span class="g-def">游戏内高级货币。玩家间不可转移，只能经 Supercell ID 代充进入指定账号——代充品类的交付基础。</span></div>
+      <div class="g-row"><span class="g-term">Supercell ID</span><span class="g-def">官方跨端账号体系（邮箱验证码登录，无需密码）。账号交付与代充交付均依赖它；也是「找回」风险的技术根源。</span></div>
+      <div class="g-row"><span class="g-term">Meta</span><span class="g-def">当前版本的主流强势打法 / 卡组。账号中 meta 卡的满级数量直接影响定价。</span></div>
+      <div class="g-row"><span class="g-term">小号 / Smurf</span><span class="g-def">老玩家另开的低段位新账号。对应 $0.5–5 的起步号 SKU，是引流与首单信任的入口。</span></div>
+      <div class="g-row"><span class="g-term">Merge Tactics</span><span class="g-def">2025.07 上线的自走棋子模式，复苏功臣之一；资产不独立，衍生交易需求薄。</span></div>
+      <div class="g-row"><span class="g-term">DAU / MAU</span><span class="g-def">日活跃 / 月活跃用户数，衡量游戏体量与需求池规模的基础指标。</span></div>
+      <div class="g-row"><span class="g-term">ToS</span><span class="g-def">Terms of Service，服务条款。Supercell ToS 明确禁止账号买卖，构成封号风险（见 T-02）。</span></div>
+      <div class="g-row"><span class="g-term">2FA</span><span class="g-def">两步验证。买家接收账号后的标准安全动作之一（改密 + 更新恢复信息 + 开 2FA）。</span></div>
+      <div class="g-row"><span class="g-term">Trade Token</span><span class="g-def">部落内换卡代币（2018 上线）：同稀有度卡换卡的以物易物，需同部落 + KT16。2025.10 起代币停止产出、系统退场中——不构成可运营的交易品类。</span></div>
+      <div class="g-row"><span class="g-term">Ultimate Champion</span><span class="g-def">Ranked 天梯最高段位。历史赛季达成记录是「竞技履历型」买家看重的账号资产。</span></div>
+    </div>
+  </section>
+
+  <!-- ============ APPENDIX · Q&A ============ -->
+  <section class="module">
+    <div class="mod-head">
+      <span class="mod-label">APPENDIX</span>
+      <span class="mod-title">评审 Q&amp;A</span>
+      <span class="mod-rule"></span>
+    </div>
+
+    <div class="qa-list">
+
+      <div class="qa">
+        <div class="qa-q"><span class="qa-badge">Q1</span><span class="qa-qtext">在竞品平台和 Discord 群组看到过卡牌交易的内容，确认玩家之间无法进行卡牌交易吗？</span></div>
+        <div class="qa-a">看到的是真的——CR 存在 <b>Trade Token 部落内换卡系统</b>（2018 上线），Discord 上的「卡牌交易」群组即围绕它组织换卡。但它不是自由交易：只能<b>同稀有度卡换卡</b>（以物易物），不能换金币 / 宝石，冠军卡不可换，且需同部落 + 代币 + KT16。关键现状：<span class="em">2025.10 起代币已停止产出，官方客服口径暗示系统将最终移除，正在退场</span>。<b>结论不变：无法在其上建立稳定 SKU，金币 / 物品品类仍不可做</b>（详见 M-04）。</div>
+      </div>
+
+      <div class="qa">
+        <div class="qa-q"><span class="qa-badge">Q2</span><span class="qa-qtext">「3000 万回流玩家面临进化 / Hero / 16 级三重版本断代」具体指什么？</span></div>
+        <div class="qa-a">指 2019–2023 年间弃坑、2025 年回流的玩家，回来后发现游戏多了三套他们完全没有的核心系统：<b>① 进化卡</b>（2023 年年中上线，30+ 张，主流卡组标配，F2P 攒指定一张 ≈3 赛季）；<b>② Hero</b>（2025 年底上线，共 9 个，F2P 解锁一个 ≈2–3 个月）；<b>③ 16 级</b>（2025.11 等级上限从 15 提至 16，老账号的「满级」瞬间不再是满级）。三者叠加 = 账号全方位落后于当前环境，靠肝追平需一年以上。<span class="em">2025 年恰有约 3,000 万人回流，这批人构成「买号追版本」的集中需求</span>——即买家画像②「版本追平型」。</div>
+      </div>
+
+      <div class="qa">
+        <div class="qa-q"><span class="qa-badge">Q3</span><span class="qa-qtext">「月度赛季 + 季度大版本脉冲复购」是什么？Pass Royale / Diamond Pass 价值多少、能获取什么？</span></div>
+        <div class="qa-a">「脉冲」指代充需求不是匀速的，而是按日历周期性爆发：<b>月度</b>——每月新赛季 Pass 奖励轨重置清零，想要奖励就得再买，每月一个固定购买窗口；<b>季度</b>——新 Hero / 进化 / 新卡发布时，玩家需限时升级追新，囤宝石需求集中爆发。<br>Pass 体系为两轨制（2024.10 起取消 Gold Pass）：<b>Free Pass</b> 免费轨，含金币箱、少量宝石等基础奖励；<b>Diamond Pass</b> 唯一付费档，<span class="em">约 $11.99 / 月</span>（各地区 / 商店定价有差异），典型赛季含 225 宝石、赛季限定塔皮 + 表情、2500 普通 / 480 稀有 / 90 史诗 / 7 传奇 / 3 冠军万能卡、金币箱等，部分赛季直送赛季 Hero；另有连续开箱队列、挑战免费重试、金色玩家名等特权。2026.05 更新新增连续购买 Streak 奖励（断月清零）——官方在机制上强化「月月买」。<b>社区对「每月都要买」的价格抱怨，正是第三方折扣代充的需求土壤。</b></div>
+      </div>
+
+      <div class="qa">
+        <div class="qa-q"><span class="qa-badge">Q4</span><span class="qa-qtext">竞技比赛都是单人吗？2v2 没有比赛吗？</span></div>
+        <div class="qa-a">天梯、Ranked、20 胜挑战、GT、CRL 等竞技体系<b>全部是 1v1 单人</b>——CR 的竞技主轴就是单挑。2v2 是长期存在的组队休闲模式，原本无正式竞技轨道；2025 年复苏期间官方曾上线 2v2 League 给它一条段位线，但重心仍在娱乐社交。<span class="em">对业务的含义：代练 SKU 几乎全部围绕 1v1，2v2 衍生需求可忽略。</span></div>
+      </div>
+
+      <div class="qa">
+        <div class="qa-q"><span class="qa-badge">Q5</span><span class="qa-qtext">「8 卡组」指一个卡组只有 8 张卡吗？杯数和段位有什么区别？</span></div>
+        <div class="qa-a">是——一个卡组即 <b>8 张卡</b>（外加 1 张 2024 年加入的「塔卡」，决定防御塔类型），对局中 8 张循环、手持 4 张。因此练度单位很收敛：<b>「满级一套 meta 卡组」就是账号定价的核心单位</b>。杯数与段位是两套并行体系：
+          <table>
+            <tr><th style="width:80px"></th><th>杯数（Trophy）</th><th>段位（Ranked）</th></tr>
+            <tr><td><b>属于</b></td><td>天梯 Trophy Road</td><td>Ranked 竞技模式</td></tr>
+            <tr><td><b>性质</b></td><td>累积积分，赢加输减，解锁竞技场，基本不重置</td><td>每月赛季重置，重新打</td></tr>
+            <tr><td><b>意义</b></td><td>账号的长期资产 / 履历（现上限 14,000）</td><td>当期实力证明（顶端 Ultimate Champion）</td></tr>
+            <tr><td><b>对业务</b></td><td>账号定价属性（10K / 12K 杯是筛选标签）</td><td>代练的月度复购 SKU</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="qa">
+        <div class="qa-q"><span class="qa-badge">Q6</span><span class="qa-qtext">表情有什么作用？为什么在报告中反复出现？</span></div>
+        <div class="qa-a">表情是对局中发送的小动画（嘲讽 / 互动用），<b>零数值作用，纯社交炫耀</b>。它重要恰恰因为「无用但绝版」：大量表情与成就 / 限时绑定——CRL 20 胜挑战表情（达成率 &lt;1/16,000）、GT 百胜表情、赛季 Pass 限定表情，全部过期不可再得，想要只有一条路：<span class="em">买下拥有它的账号</span>。类比其他品类：相当于 CS 的稀有刀皮、老 WoW 号的绝版坐骑——CR 里唯一的稀缺性硬通货。这就是单个顶级稀有表情能让账号溢价 $200–1,000+、权重超过练度本身的原因（见 M-05）。</div>
+      </div>
+
+      <div class="qa">
+        <div class="qa-q"><span class="qa-badge">Q7</span><span class="qa-qtext">Hero 是什么？与普通卡有什么区别？进化卡又是什么？</span></div>
+        <div class="qa-a">
+          <table>
+            <tr><th style="width:90px"></th><th>普通卡</th><th>进化卡（EVO）</th><th>Hero</th></tr>
+            <tr><td><b>是什么</b></td><td>基础兵种 / 法术 / 建筑</td><td><b>不是新卡</b>，是现有卡的「超级形态」：解锁后同一张卡在对局中循环若干次触发强化状态（如骑士进化 = 冲锋 + 减伤）</td><td>独立的新卡类型（2025 年底新增），带<b>主动技能</b>需手动释放，共 9 个</td></tr>
+            <tr><td><b>怎么获取</b></td><td>开箱攒卡 + 金币升级（1–16 级）</td><td>攒进化碎片解锁，F2P 一张 ≈3 赛季</td><td>Hero 币解锁升级，F2P 一个 ≈2–3 个月</td></tr>
+            <tr><td><b>对账号估值</b></td><td>基础盘：满级 / 16 级卡数量</td><td>强溢价：主流卡组标配</td><td>最强溢价：持有 2–3 个溢价 30–50%</td></tr>
+          </table>
+          一句话记忆：<span class="em">普通卡是「兵」，进化是给兵穿的「神装」，Hero 是带技能的「将」。</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <div class="doc-foot">
+    <span>iGV · Clash Royale 品类拓展调研 · 内部资料</span>
+    <span>维度二（竞对铺货详版）· 维度三（玩家需求与来源）另见调研报告全文</span>
+  </div>
+
+</div>
+</body>
+</html>
