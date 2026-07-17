@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yalla Ludo 游戏基本调研报告 · IGV 业务拓展评估</title>
+<style>
+  :root{
+    --paper:#faf7f0;
+    --ink:#2b2620;
+    --ink-soft:#5c554a;
+    --red:#b3402a;
+    --red-soft:#f3e0da;
+    --green:#3d6b4f;
+    --green-soft:#e2ede6;
+    --amber:#9a6b1f;
+    --amber-soft:#f5ecd8;
+    --blue:#3a5a78;
+    --blue-soft:#e2eaf1;
+    --line:#d8d0c2;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Noto Serif SC","Songti SC","SimSun",serif;
+    line-height:1.85;
+    font-size:16px;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:48px 28px 80px;}
+
+  /* ---------- header ---------- */
+  header{border-bottom:3px double var(--line);padding-bottom:28px;margin-bottom:36px;}
+  .kicker{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:14px;}
+  h1{font-size:34px;font-weight:700;letter-spacing:.02em;line-height:1.4;}
+  .subtitle{margin-top:10px;color:var(--ink-soft);font-size:15px;}
+  .meta{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft);}
+  .meta span{border:1px solid var(--line);padding:3px 10px;border-radius:3px;background:#fff;}
+
+  /* ---------- module label ---------- */
+  .module{margin-top:56px;}
+  .module-label{
+    display:inline-block;
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    background:var(--red);
+    color:#fff;
+    font-size:12px;
+    letter-spacing:.25em;
+    padding:5px 14px;
+    border-radius:2px;
+    margin-bottom:12px;
+  }
+  h2{font-size:25px;font-weight:700;margin-bottom:6px;}
+  .module-intro{color:var(--ink-soft);font-size:14.5px;margin-bottom:22px;}
+  h3{font-size:18px;font-weight:700;margin:30px 0 12px;padding-left:12px;border-left:4px solid var(--red);}
+  p{margin-bottom:14px;}
+  strong{font-weight:700;}
+
+  /* ---------- conclusion cards ---------- */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:20px 24px;
+    margin:18px 0;
+    box-shadow:0 1px 3px rgba(60,50,30,.06);
+  }
+  .card .tag{
+    display:inline-block;font-family:"Helvetica Neue",Arial,sans-serif;
+    font-size:11px;letter-spacing:.15em;padding:2px 10px;border-radius:2px;margin-bottom:10px;
+  }
+  .card.verdict{border-left:6px solid var(--green);background:var(--green-soft);}
+  .card.verdict .tag{background:var(--green);color:#fff;}
+  .card.risk{border-left:6px solid var(--red);background:var(--red-soft);}
+  .card.risk .tag{background:var(--red);color:#fff;}
+  .card.note{border-left:6px solid var(--amber);background:var(--amber-soft);}
+  .card.note .tag{background:var(--amber);color:#fff;}
+  .card.info{border-left:6px solid var(--blue);background:var(--blue-soft);}
+  .card.info .tag{background:var(--blue);color:#fff;}
+  .card p:last-child{margin-bottom:0;}
+
+  /* ---------- mechanism cards ---------- */
+  .mech-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .mech{
+    background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px 20px;
+  }
+  .mech .mid{
+    font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;font-weight:700;color:var(--red);letter-spacing:.15em;
+  }
+  .mech h4{font-size:16px;margin:6px 0 8px;}
+  .mech p{font-size:14px;color:var(--ink-soft);margin-bottom:8px;}
+  .mech .impact{font-size:13px;border-top:1px dashed var(--line);padding-top:8px;color:var(--ink);}
+  .mech .impact b{color:var(--red);}
+
+  /* ---------- persona cards ---------- */
+  .persona-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .persona{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px 20px;border-top:4px solid var(--blue);}
+  .persona h4{font-size:16px;margin-bottom:8px;}
+  .persona .row{font-size:14px;margin-bottom:6px;color:var(--ink-soft);}
+  .persona .row b{color:var(--ink);font-weight:700;}
+
+  /* ---------- trust cards ---------- */
+  .trust-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .trust{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px 20px;border-top:4px solid var(--amber);}
+  .trust h4{font-size:15.5px;margin-bottom:8px;}
+  .trust p{font-size:14px;color:var(--ink-soft);margin-bottom:8px;}
+  .trust .fix{font-size:13.5px;border-top:1px dashed var(--line);padding-top:8px;}
+  .trust .fix b{color:var(--green);}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;margin:18px 0;background:#fff;font-size:14.5px;}
+  th{background:#efe9dd;font-weight:700;text-align:left;padding:10px 12px;border:1px solid var(--line);white-space:nowrap;}
+  td{padding:10px 12px;border:1px solid var(--line);vertical-align:top;}
+  tr:nth-child(even) td{background:#fbf9f4;}
+  .pri{display:inline-block;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;font-weight:700;padding:2px 9px;border-radius:2px;color:#fff;white-space:nowrap;}
+  .p0{background:var(--red);}
+  .p1{background:var(--amber);}
+  .p2{background:var(--blue);}
+  .px{background:#8a8477;}
+
+  /* ---------- appendix ---------- */
+  .appendix-label{background:var(--ink);}
+  dl{margin:16px 0;}
+  dt{font-weight:700;margin-top:14px;}
+  dd{margin-left:0;color:var(--ink-soft);font-size:14.5px;}
+
+  .footnote{margin-top:60px;border-top:3px double var(--line);padding-top:18px;font-size:12.5px;color:var(--ink-soft);font-family:"Helvetica Neue",Arial,sans-serif;line-height:1.7;}
+
+  @media (max-width:680px){
+    .mech-grid,.persona-grid,.trust-grid{grid-template-columns:1fr;}
+    h1{font-size:26px;}
+    .wrap{padding:32px 16px 60px;}
+    table{font-size:13px;display:block;overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">IGV Business Development Research</div>
+  <h1>Yalla Ludo 游戏基本调研报告</h1>
+  <div class="subtitle">三层结构:游戏基本面 · 交易生态 · 玩家需求与风险 —— 面向 IGV.com 业务拓展决策</div>
+  <div class="meta">
+    <span>报告版本 V1.4</span>
+    <span>调研日期 2026-07-17</span>
+    <span>研究框架:与 Delta Force / Clash Royale 调研同源</span>
+    <span>数据口径:公开财报 · 应用商店数据 · 竞对实拍 SKU</span>
+  </div>
+</header>
+
+<!-- ======================== 总结论 ======================== -->
+<div class="card verdict">
+  <span class="tag">总结论</span>
+  <p><strong>值得做,且商业模式已被同类平台验证。</strong>Yalla Ludo 是 MENA 最大社交游戏平台 Yalla Group(NYSE: YALA)的旗舰产品,4,800 万集团 MAU、累计 2.8 亿下载、Google Play 桌游类第一。消费逻辑由"语音房送礼面子经济"驱动,复购率与 LTV 结构优于养成类游戏。可做品类为钻石代充、VIP 订阅、金币、账号四条线;综合 C2C 平台模式已被 Eldorado(百万评价级大卖家在营)与 G2G(溢价 12–15% 仍成交)验证——<strong>该品类不需要卷价格,平价 + 担保即可成立</strong>,IGV 的多语言能力与欧洲侨民流量是差异化切入点。</p>
+  <p><strong>核心前提:</strong>官方对非官方第三方充值执行严厉的体系化封号(永封级)。转售平台均不披露货源渠道,买家侧唯一可验证信号是到账是否附带 Royale Points:带积分供给折扣浅(指定竞品区间约 -5%~+15%,专业站叠加拉新券可至 -15~-20%),无积分供给折扣深(20–60%)但封号风险高。IGV 入场必须要求卖家承诺"带积分到账"并强制标注供给类型,否则纠纷率将直接冲击 Trustpilot 体系。</p>
+</div>
+
+<!-- ======================== MODULE A ======================== -->
+<div class="module">
+  <div class="module-label">MODULE A</div>
+  <h2>第一层:游戏基本面</h2>
+  <div class="module-intro">回答"值不值得做":公司、产品、用户规模、趋势、地区分布。</div>
+
+  <h3>A-1 母公司与产品定位</h3>
+  <p>Yalla Ludo 由 Yalla Group(总部迪拜,NYSE 上市)开发运营,是 MENA 地区最大的在线社交与游戏平台之一。产品本质是 <strong>Ludo / Domino / Jackaroo 桌游 + 实时语音房</strong>的混合体:Ludo 含 2/4 人与组队模式(Classic / Master / Quick / Arrow 四种玩法,另有 Magic 道具玩法与新上线的 Lucky Ludo);Domino 含 Draw Game / All Five;Jackaroo(海湾地区国民桌游)是面向沙特/海湾市场的关键本地化玩法。全球公共语音聊天室支持互送礼物,并持续加码社交功能(私聊送礼、Lucky Drop、Singing Queue 唱歌排麦等)。</p>
+
+  <h3>A-2 用户规模与趋势</h3>
+  <table>
+    <tr><th>指标</th><th>数值</th><th>口径/备注</th></tr>
+    <tr><td>集团平均 MAU</td><td>4,800 万(2026 Q1)</td><td>同比 +7.7%;含 Yalla 语音等全线产品</td></tr>
+    <tr><td>集团付费用户</td><td>约 1,050 万(2026 Q1)</td><td>同比下滑(去年同期约 1,180 万)</td></tr>
+    <tr><td>集团 2025 全年营收</td><td>3.419 亿美元</td><td>净利润 1.481 亿美元,净利率 43.3%</td></tr>
+    <tr><td>游戏业务收入占比</td><td>38.3%(2026 Q1,3,030 万美元)</td><td>管理层定位为核心增长引擎</td></tr>
+    <tr><td>Google Play 累计下载</td><td>2.8 亿次</td><td>桌游类排名第一,评分 4.30(120 万评分)</td></tr>
+    <tr><td>近 30 天下载(2026-04)</td><td>约 420 万次</td><td>2026-02 口径为 270 万——下载在加速(斋月效应)</td></tr>
+    <tr><td>美区月收入估算</td><td>Google Play 约 $200 万 + iOS 约 $200 万</td><td>Sensor Tower 估算,仅美区;MENA 主力市场收入远高于此</td></tr>
+  </table>
+
+  <div class="card note">
+    <span class="tag">逆风信号</span>
+    <p>2026 Q1 集团营收 7,900 万美元,同比下滑(去年同期 8,390 万),管理层归因于中东地缘政治不确定性抑制付费意愿,并预计传统业务(Yalla 语音 + Yalla Ludo)2026 年收入下滑低至中个位数百分比。<strong>业务解读:MAU 上涨 + 付费下跌 = 用户盘稳但官方定价的付费转化承压,这正是第三方折扣充值需求上升的典型信号。</strong></p>
+  </div>
+
+  <h3>A-3 地区与语言分布(映射 IGV 语言市场)</h3>
+  <table>
+    <tr><th>优先级</th><th>市场</th><th>IGV 语言</th><th>说明</th></tr>
+    <tr><td><span class="pri p0">第一</span></td><td>海湾/中东北非:沙特、埃及、伊拉克、阿联酋、摩洛哥</td><td>AR</td><td>绝对核心盘;Jackaroo 玩法、斋月活动均针对此市场</td></tr>
+    <tr><td><span class="pri p1">第二</span></td><td>南亚:印度、巴基斯坦、孟加拉</td><td>EN</td><td>下载量大、客单价低;小面额 SKU 主力</td></tr>
+    <tr><td><span class="pri p1">第二</span></td><td>东南亚:印尼、马来</td><td>ID / MS</td><td>SEAGM / Kaleoz 的既有优势区</td></tr>
+    <tr><td><span class="pri p2">第三</span></td><td>欧洲/北美 MENA 侨民:法国、德国、英国、北美</td><td>FR / DE / EN + AR</td><td><strong>IGV 缝隙客群:</strong>支付能力强,阿语垂直站(纯阿语+海湾支付)覆盖不到</td></tr>
+  </table>
+  <div class="card risk">
+    <span class="tag">与既有业务的差异</span>
+    <p>本品类与 CR / Delta Force 的欧美主力盘完全错位。<strong>阿语站点能力与阿语客服是做深这个品类的前置条件</strong>;若短期不具备,应优先切"欧洲侨民 + 英语南亚"两个可用现有语言能力覆盖的客群。</p>
+  </div>
+</div>
+
+<!-- ======================== MODULE B ======================== -->
+<div class="module">
+  <div class="module-label">MODULE B</div>
+  <h2>第二层:交易生态与竞对铺货</h2>
+  <div class="module-intro">回答"能做什么品类":货币机制、官方定价、双供给链、竞对格局、封号风险。</div>
+
+  <h3>B-1 核心交易机制</h3>
+  <div class="mech-grid">
+    <div class="mech">
+      <div class="mid">M-01</div>
+      <h4>双货币体系</h4>
+      <p>金币(Golds)= 对局燃料:进房门票、下注筹码,可对局赢取、随输赢流转。钻石(Diamonds)= 特权货币:仅充值获得,用于礼物、皮肤、VIP、活动入场、Lucky Spin。</p>
+      <div class="impact"><b>业务含义:</b>钻石对应"代充"品类,金币对应"游戏币"品类,两条产品线均成立。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-02</div>
+      <h4>UID 直充</h4>
+      <p>主流交付方式:买家提供 11 位游戏 ID(以 7 开头),卖家完成充值,无需账号密码。交付摩擦极低,天然适合平台化撮合。</p>
+      <div class="impact"><b>业务含义:</b>商品模板必须强制"复制粘贴 ID + 下单二次确认"——手输错号是社区最高频客诉。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-03</div>
+      <h4>金币的两种来源</h4>
+      <p>金币本身是官方 UID 直充商品(与钻石共用 $2–$50 档位,大档效率约 20.9 万金币/美元)。另存在"牌桌过金":卖家在高注房间对局故意输给买家 ID,转移玩家存量金币,惯例收约 10% 损耗。</p>
+      <div class="impact"><b>业务含义:</b>金币品类主体为官方档位直充;<b>牌桌过金仅为玩家存量变现通道,风险高,不作默认供给</b>。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-04</div>
+      <h4>Royale Points 渠道指纹</h4>
+      <p>官方渠道充值累积 Royale Points(充值积分);灰链到账钻石不带积分。阿语站已把"无积分钻石"单独设类,买家以"是否带积分"识别供给渠道——行业已透明化。</p>
+      <div class="impact"><b>业务含义:</b>供给类型可被买家验证,<b>"带 Royale Points 到账"本身就是可营销的信任卖点</b>。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-05</div>
+      <h4>VIP 订阅体系</h4>
+      <p>两档月费:Knight $11.99 / Baron $39.99。提供每日免费金币钻石、VIP 特权房(更高下注选项)、语音与身份特权。阿语站已将 VIP 代充做成独立 SKU 类目。</p>
+      <div class="impact"><b>业务含义:</b>房主/公会玩家的刚性月费,稳定复购的附加品类。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-06</div>
+      <h4>体系化封号执行</h4>
+      <p>官方明文禁止非官方第三方充值;实际执行含内容审查(房间内转发售卖贴纸即封)与资金流检测("fake diamonds" 异常来源检测),封禁期限可达 2106/2108 年(实质永封)。</p>
+      <div class="impact"><b>业务含义:</b>Yalla 为上市公司,充值收入是命脉,打击是持续性的——<b>本品类第一风险项</b>。</div>
+    </div>
+  </div>
+
+  <h3>B-2 官方钻石档位</h3>
+  <p>官方充值档位如下,钻石数在 Eldorado / G2G / LootBar / LDShop 各平台在售面额中完全一致,可在官方网页充值门户 yallapay.live 直接核对:</p>
+  <table>
+    <tr><th>官方档位</th><th>钻石数</th></tr>
+    <tr><td>$2</td><td>830</td></tr>
+    <tr><td>$5</td><td>2,320</td></tr>
+    <tr><td>$10</td><td>5,150</td></tr>
+    <tr><td>$25</td><td>13,580</td></tr>
+    <tr><td>$50</td><td>27,640</td></tr>
+    <tr><td>$100</td><td>55,800</td></tr>
+    <tr><td>$300</td><td>168,860</td></tr>
+    <tr><td>$500(推断)</td><td>283,460</td></tr>
+  </table>
+  <div class="card note">
+    <span class="tag">供给渠道声明</span>
+    <p>各转售平台(含 Kaleoz、LootBar、LDShop 等)均<strong>不披露货源渠道</strong>,单从商品页无法判定供给是官方渠道转售还是其他来源——不应仅凭折扣浅就推定为官方转售。买家侧唯一可验证的信号是到账钻石是否附带 Royale Points(见 M-04)。官方价与第三方价的折扣对比以业务方指定的四家竞品(Eldorado / G2G / LootBar / LDShop)为基准,详见 B-4 比价表。另据 Kaleoz 历史成交分布(单一平台样本),$5–$25 小面额档位成交笔数最多——与"封号顾虑导致小额多次充值"的玩家行为互相印证,上架时小面额 SKU 应铺全。</p>
+  </div>
+
+  <h3>B-3 灰链行情(阿语垂直站实拍)</h3>
+  <table>
+    <tr><th>SKU</th><th>售价</th><th>对照官方价值</th><th>折扣深度</th></tr>
+    <tr><td>148,800 钻</td><td>AED 860(约 $234)</td><td>官方档位价值约 $264+</td><td>划线价折扣 23%</td></tr>
+    <tr><td>744,000 钻</td><td>AED 4,300(约 $1,171)</td><td>划线价 AED 11,100</td><td><strong>62%</strong></td></tr>
+    <tr><td>1,015,300 钻</td><td>AED 7,481.85(约 $2,037)</td><td>—</td><td>大 R(高消费玩家)/代理批发盘</td></tr>
+    <tr><td>33,800,000 金币</td><td>AED 582.68(约 $159)</td><td>—</td><td>折合约 21 万金币 / 美元</td></tr>
+  </table>
+  <p>典型阿语垂直站(yallaplay.shop / charger-quick 系,迪拜注册)特征:WhatsApp 客服成单、Apple Pay / Visa / Mastercard 收款、同站覆盖 Jawaker / Baloot / Kammelna / Jackaroo King 等 MENA 桌游集群、以及大量语音房 App 充值——<strong>本质是"中东语音房经济"的综合充值商,Yalla Ludo 只是其品类之一</strong>。</p>
+
+  <h3>B-4 跨平台比价与三价格带</h3>
+  <p><strong>钻石档位比价</strong>(以官方名义档位价为基准,对比业务方指定四家竞品):</p>
+  <table>
+    <tr><th>档位(钻石)</th><th>官方名义价</th><th>LDShop</th><th>LootBar</th><th>Eldorado</th><th>G2G(最低)</th></tr>
+    <tr><td>830</td><td>$2</td><td>$1.97(-1.5%)</td><td>$1.97(-1.5%)</td><td>$1.99(平价)</td><td>$2.25(+13%)</td></tr>
+    <tr><td>2,320</td><td>$5</td><td>$4.96(-0.8%)</td><td>$4.91(-1.8%)</td><td>$4.99(平价)</td><td>$5.63(+13%)</td></tr>
+    <tr><td>5,150</td><td>$10</td><td>$9.63(-3.7%)</td><td>$9.81(-1.9%)</td><td>$10.34(+3%)</td><td>$11.24(+12%)</td></tr>
+    <tr><td>13,580</td><td>$25</td><td>$23.79(-4.8%,售罄)</td><td>$24.53(-1.9%)</td><td>$25.95(+4%)</td><td>$28.11(+12%)</td></tr>
+    <tr><td>27,640</td><td>$50</td><td>$47.72(-4.6%)</td><td>$49.05(-1.9%)</td><td>$52.41(+5%)</td><td>$56.20(+12%)</td></tr>
+    <tr><td>55,800</td><td>$100</td><td>$96.61(-3.4%)</td><td>$99.00(-1%)</td><td>$99.55(-0.5%)</td><td>$115.28(+15%)</td></tr>
+    <tr><td>168,860</td><td>$300</td><td>—</td><td>—</td><td>$298.89(-0.4%)</td><td>—</td></tr>
+    <tr><td>283,460</td><td>$500(推断)</td><td>—</td><td>—</td><td>$547.99(+10%)</td><td>—</td></tr>
+  </table>
+  <p><strong>金币档位比价</strong>——关键发现:金币与钻石共用同一套官方充值档位(各平台金币面额完全一致),<strong>金币本身即官方 UID 直充商品</strong>:</p>
+  <table>
+    <tr><th>档位(金币)</th><th>对应官方档位</th><th>LDShop</th><th>LootBar</th><th>G2G(最低)</th><th>折合金币/美元(按 LDShop)</th></tr>
+    <tr><td>68,500</td><td>$2</td><td>$1.97</td><td>$1.97</td><td>$2.31</td><td>约 3.5 万</td></tr>
+    <tr><td>223,700</td><td>$5</td><td>$4.96</td><td>$4.91</td><td>$5.77</td><td>约 4.5 万</td></tr>
+    <tr><td>1,463,320</td><td>$10</td><td>$9.63</td><td>$9.81</td><td>$11.87</td><td>约 15.2 万</td></tr>
+    <tr><td>3,666,470</td><td>$25</td><td>$23.79</td><td>$24.53</td><td>$28.82</td><td>约 15.4 万</td></tr>
+    <tr><td>9,973,990</td><td>$50</td><td>$47.72</td><td>$49.05</td><td>$57.64</td><td>约 20.9 万</td></tr>
+  </table>
+  <div class="card note">
+    <span class="tag">金币品类定性修正</span>
+    <p>官方大档金币效率约 20.9 万金币/美元($50 档),且档位间效率差极大($2 档仅 3.5 万/美元,大档是小档的 6 倍)——买金币的正确姿势天然是买大档。阿语站散称金币(33.8M ≈ 21.3 万/美元)仅比官方 $50 档便宜约 2%,<strong>说明金币市场主体是官方档位直充,"牌桌过金"只是玩家存量金币(对局赢取/囤积)的变现通道,不是主流供给</strong>。这大幅降低了金币品类的风险评级:按官方档位上架金币 UID 直充,与钻石代充同类处理。</p>
+  </div>
+  <div class="card info">
+    <span class="tag">价格带结论(基于四家指定竞品)</span>
+    <p><strong>① 充值专业站(LootBar / LDShop,港资同模板家族):</strong>挂牌 -1~-5%(LDShop 略低于 LootBar),真正的杀伤力在拉新券——LootBar 新客 10% off、LDShop 新会员 15% off + 邮箱确认再 5%,叠加后实际 -15~-20%;两站划线价均虚高约 9%(如 $10 档划线 $10.90)制造折扣观感。<strong>② 综合 C2C 平台(Eldorado / G2G):</strong>平价至溢价——Eldorado 贴官方价(±5%),G2G 统一 +12~15%(金币同样比官方档贵约 15%)。注:各平台均不披露货源渠道,以上仅为价格行为分层,不构成供给性质判断。</p>
+    <p><strong>对 IGV 的定价含义:</strong>综合平台不打价格战,卖担保、支付便利与信任照样成交(Eldorado 大卖家 CNLTeam 好评率 99.3%、105 万评价即为证明)。IGV 无需卷专业站补贴价,<strong>对齐官方价 ±5% + 平台担保即可成立</strong>;G2G 的 +12% 溢价说明定价上限仍有空间。专业站的复购留存依赖持续发券,券后毛利极薄,IGV 不宜跟进该模式。</p>
+  </div>
+
+  <h3>B-5 品类可行性与竞对格局</h3>
+  <table>
+    <tr><th>平台</th><th>在售品类</th><th>特点</th></tr>
+    <tr><td>Eldorado</td><td>钻石代充(8 档,含 $500 档)</td><td><strong>成熟业务:</strong>百万评价级大卖家 CNLTeam(好评率 99.3%)在营,8–20 分钟交付,Apple Pay/G Pay;定价贴官方(±5%),卖便利与担保</td></tr>
+    <tr><td>G2G</td><td>充值 16 条 + 激活码 6 条 + 游戏账号 5 条</td><td>三类目齐备;定价溢价 +12~15% 仍成交,金币约 17.3 万/美元(比阿语站贵约 19%)——溢价卖担保的典型样本</td></tr>
+    <tr><td>充值专业站(LootBar / LDShop 系)</td><td>钻石 + 金币 UID 直充</td><td>港资同模板家族;挂牌 -1~-5%,叠加拉新券(LootBar 新客 10% / LDShop 新会员 15% + 邮箱 5%)实际 -15~-20%,补贴拉新打法</td></tr>
+    <tr><td>SEAGM / Kaleoz</td><td>钻石+金币 UID 直充</td><td>转售折扣约 2%(货源渠道未披露),东南亚支付强</td></tr>
+    <tr><td>U7BUY</td><td>钻石(礼品卡形式)</td><td>独立游戏页,面额至 $300;礼品卡经 yallapay.live 兑换</td></tr>
+    <tr><td>Eneba</td><td>钻石(MENA 区)</td><td>欧洲流量入口</td></tr>
+    <tr><td>Carry1st</td><td>钻石直充</td><td>独占非洲本地支付(尼日利亚/南非/肯尼亚/摩洛哥/埃及/加纳)</td></tr>
+    <tr><td>阿语垂直站群</td><td>全品类(含灰链、VIP、无积分钻石)</td><td>深折扣、WhatsApp 成单,MENA 本土主战场</td></tr>
+    <tr><td>Z2U / PlayerUp</td><td>账号</td><td>类目存在但铺货浅</td></tr>
+    <tr><td>PlayerAuctions</td><td>未见有效铺货</td><td>头部平台中唯一明显缺位者</td></tr>
+  </table>
+</div>
+
+<!-- ======================== MODULE C ======================== -->
+<div class="module">
+  <div class="module-label">MODULE C</div>
+  <h2>第三层:玩家需求与画像</h2>
+  <div class="module-intro">回答"怎么做":消费动机、买家画像、信任壁垒。</div>
+
+  <h3>C-1 消费动机:面子经济</h3>
+  <p>Yalla Ludo 的消费逻辑不是"变强",而是<strong>购买社交能见度</strong>:送礼是社交货币,在房间里送礼的玩家会被注意、被回请、被回赠;动态头像框、伴侣(Companion)、VIP 表情直接影响 15 麦位语音房的拿麦机会与收礼频率,形成滚雪球;段位阶梯(Bronze→Legend)亦受房间参与度和送礼活跃度影响。版本节奏是钻石消费的抽水机:2026 年 2 月 1.4.9.0 版本一次上线 7 个新功能且全部需钻石解锁,免费获取每日上限约 1,000 活动道具,远不足以参与斋月排行榜竞争。<strong>斋月是年度消费最高峰</strong>(集团财报确认斋月活动带动付费用户创历史新高)。</p>
+
+  <h3>C-2 买家画像</h3>
+  <div class="persona-grid">
+    <div class="persona">
+      <h4>① 房主 / 公会主</h4>
+      <div class="row"><b>消费:</b>VIP 订阅(刚性月费)+ 钻石礼物,维持房间人气</div>
+      <div class="row"><b>频次:</b>高频复购,LTV 最高的客群之一</div>
+      <div class="row"><b>切入:</b>VIP 代充 + 钻石订阅式复购优惠</div>
+    </div>
+    <div class="persona">
+      <h4>② 送礼大 R(高消费玩家)</h4>
+      <div class="row"><b>消费:</b>大额钻石(阿语站 100 万钻 SKU 即为其准备)</div>
+      <div class="row"><b>频次:</b>脉冲式大额,对折扣敏感度极高</div>
+      <div class="row"><b>切入:</b>大面额档位 + 专属客服通道;严控供给来源</div>
+    </div>
+    <div class="persona">
+      <h4>③ 活动竞赛党</h4>
+      <div class="row"><b>消费:</b>斋月/赛季排行榜冲榜,活动期集中爆发</div>
+      <div class="row"><b>频次:</b>强季节性——斋月前 2 周为备货窗口</div>
+      <div class="row"><b>切入:</b>活动日历驱动的营销节奏(对齐斋月/国庆日)</div>
+    </div>
+    <div class="persona">
+      <h4>④ 高注赌桌玩家</h4>
+      <div class="row"><b>消费:</b>金币消耗大户,金币需求最刚性</div>
+      <div class="row"><b>频次:</b>高频小额,输光即回购</div>
+      <div class="row"><b>切入:</b>金币品类的核心客群;注意灰链交付风险披露</div>
+    </div>
+    <div class="persona">
+      <h4>⑤ 侨民社交玩家</h4>
+      <div class="row"><b>消费:</b>用游戏维系家乡社交,支付能力强于本土市场</div>
+      <div class="row"><b>分布:</b>法国/德国/英国/北美的 MENA 侨民</div>
+      <div class="row"><b>切入:</b><b>IGV 独有缝隙:</b>FR/DE/EN 站点 + 欧美支付 + AR 客服</div>
+    </div>
+  </div>
+
+  <h3>C-3 信任壁垒与化解方案</h3>
+  <div class="trust-grid">
+    <div class="trust">
+      <h4>T-01 封号恐惧</h4>
+      <p>大量玩家因"非法途径买卖钻石/金币/账号"被永封;甚至转发售卖贴纸即封号,社区对第三方充值高度警惕。</p>
+      <div class="fix"><b>化解:</b>强制卖家标注供给类型;主推"带 Royale Points 到账"的供给;商品页明确风险披露。</div>
+    </div>
+    <div class="trust">
+      <h4>T-02 充错 ID</h4>
+      <p>UID 手输错号导致充值给他人,是社区最高频的客诉之一,且官方客服普遍不予追回。</p>
+      <div class="fix"><b>化解:</b>下单流程强制二次确认 ID(11 位、7 开头校验)+ 提示复制粘贴。</div>
+    </div>
+    <div class="trust">
+      <h4>T-03 余额清零恐惧</h4>
+      <p>账号被封时钻石/Royale Points 余额全部损失,申诉基本只收到模板回复——玩家因此倾向小额多次充值。</p>
+      <div class="fix"><b>化解:</b>小面额 SKU 铺全;避免诱导买家单次大额囤钻。</div>
+    </div>
+    <div class="trust">
+      <h4>T-04 灰链识别透明化</h4>
+      <p>买家已学会用"是否带积分"识别渠道,灰链折扣深但被视为高危;虚假"零封号"承诺充斥竞对软文。</p>
+      <div class="fix"><b>化解:</b>不做绝对安全承诺,以真实交付类型 + 平台担保取信,与 IGV Trustpilot 体系一致。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== MODULE D ======================== -->
+<div class="module">
+  <div class="module-label">MODULE D</div>
+  <h2>业务建议与品类优先级</h2>
+  <div class="module-intro">面向上线决策的行动清单。</div>
+
+  <table>
+    <tr><th>优先级</th><th>品类</th><th>交付方式</th><th>理由</th><th>关键控制点</th></tr>
+    <tr>
+      <td><span class="pri p0">P0</span></td>
+      <td>钻石代充(带 Royale Points 供给)</td>
+      <td>UID 直充</td>
+      <td>需求最大、交付摩擦最低、带积分供给风险可控;小面额为成交主力</td>
+      <td>供给类型强制标注;ID 二次确认;$5–$25 档位铺全</td>
+    </tr>
+    <tr>
+      <td><span class="pri p1">P1</span></td>
+      <td>VIP 订阅代充</td>
+      <td>UID / 代付</td>
+      <td>房主客群刚性月费,复购稳定;竞对已验证独立类目成立</td>
+      <td>Knight / Baron 双档;订阅到期提醒做复购触达</td>
+    </tr>
+    <tr>
+      <td><span class="pri p1">P1</span></td>
+      <td>金币</td>
+      <td>UID 直充(官方档位)</td>
+      <td>金币本身是官方档位直充商品,与钻石代充同类处理;大档效率约 20.9 万金币/美元,高注赌桌客群需求刚性</td>
+      <td>按官方档位($2–$50)上架并引导买大档;"牌桌过金"类玩家存量供给不作默认开放</td>
+    </tr>
+    <tr>
+      <td><span class="pri p2">P2</span></td>
+      <td>账号</td>
+      <td>账密交割</td>
+      <td>长尾需求(VIP 等级 / 靓号 ID / 皮肤收藏),竞对铺货浅</td>
+      <td>属性字段:VIP 等级、ID 位数/靓号、段位、皮肤/头像框持有</td>
+    </tr>
+    <tr>
+      <td><span class="pri px">不做</span></td>
+      <td>代练 / Boosting</td>
+      <td>—</td>
+      <td>掷骰对局无技巧养成属性,需求不成立</td>
+      <td>—</td>
+    </tr>
+  </table>
+
+  <div class="card verdict">
+    <span class="tag">切入策略</span>
+    <p><strong>第一阶段(现有能力即可启动):</strong>以 EN / FR / DE 站点承接欧洲 MENA 侨民 + 南亚英语客群,上线 P0 钻石代充(带 Royale Points 供给)与 P1 VIP;营销节奏对齐斋月与沙特国庆日等消费峰值。<strong>第二阶段(需阿语能力):</strong>建 AR 站点与阿语客服后进攻海湾主力盘,并评估金币与账号类目开放。招商侧可直接触达 Kaleoz / 阿语垂直站现有卖家(批发盘特征明显,多平台分销意愿强)。</p>
+  </div>
+
+  <div class="card risk">
+    <span class="tag">风险红线</span>
+    <p>① 不引入"无积分钻石"类灰链供给作为默认品类;② 不在任何物料中做"零封号风险"承诺;③ 金币"牌桌过金"类交付在风控与披露方案落地前不开放;④ 密切跟踪官方封号政策变化——本品类的政策风险波动性高于 CR 账号交易,建议每季度复核一次执行力度。</p>
+  </div>
+</div>
+
+<!-- ======================== APPENDIX 1 ======================== -->
+<div class="module">
+  <div class="module-label appendix-label">APPENDIX Ⅰ</div>
+  <h2>术语表</h2>
+  <dl>
+    <dt>Golds(金币)</dt><dd>对局货币:进房门票与下注筹码,可通过对局赢取,随输赢在玩家间流转。</dd>
+    <dt>Diamonds(钻石)</dt><dd>特权货币:仅充值获得,用于礼物、皮肤、VIP、活动入场与 Lucky Spin。</dd>
+    <dt>Royale Points(皇家积分)</dt><dd>官方渠道充值累积的积分体系;灰链到账钻石不带积分,因此成为买家识别供给渠道的"指纹"。</dd>
+    <dt>UID 直充</dt><dd>凭 11 位游戏 ID(以 7 开头)完成充值的交付方式,无需账号密码。</dd>
+    <dt>牌桌过金</dt><dd>金币灰色转移方式:卖家在高注房间通过对局故意输给买家 ID,行业惯例收取约 10% 转移损耗。</dd>
+    <dt>VIP Knight / Baron</dt><dd>两档月度订阅($11.99 / $39.99),提供每日资源、VIP 特权房与语音身份特权。</dd>
+    <dt>Jackaroo</dt><dd>海湾地区流行的传统桌游,Yalla Ludo 的关键本地化玩法,主攻沙特/海湾市场。</dd>
+    <dt>Fake Diamonds 检测</dt><dd>官方对异常来源钻石的资金流检测机制,触发后账号冻结("blackout")。</dd>
+    <dt>白链 / 灰链</dt><dd>本报告的供给分层用语,以买家可验证的信号划分:到账附带 Royale Points 的供给(推定经官方渠道)为"白链",不附带积分的供给(非官方来源,折扣深但封号风险高)为"灰链"。转售平台通常不披露货源,该划分不构成对任何具体平台供给性质的判定。</dd>
+  </dl>
+</div>
+
+<!-- ======================== APPENDIX 2 ======================== -->
+<div class="module">
+  <div class="module-label appendix-label">APPENDIX Ⅱ</div>
+  <h2>数据来源与验证提示</h2>
+  <p>本报告数据来自:Yalla Group 2025 全年及 2026 Q1 财报与业绩会公开披露(Yahoo Finance / StockTitan / Motley Fool 转载)、AppBrain 与 Sensor Tower 应用商店估算、Kaleoz / SEAGM / U7BUY / Eneba / Carry1st / Z2U 竞对页面实拍、<strong>Eldorado / G2G / LootBar / LDShop 商品页人工截图(2026-07-17,业务方提供)</strong>、阿语垂直站(yallaplay.shop 等)在售 SKU 实拍、玩家投诉平台封号案例、以及社区攻略对社交经济机制的描述。专业站划线价存在约 9% 虚高,比价一律以实际成交价对齐官方名义档位计算。</p>
+  <div class="card note">
+    <span class="tag">验证提示</span>
+    <p>以下数据时效性强,上线前建议实测复核:① 官方钻石档位与钻石数(藏于 App 内购弹窗且分区定价,以实机内购页截图为准);② 阿语站灰链折扣深度与金币行情(波动大,划线价存在营销水分);③ VIP 订阅定价与 Knight/Baron 两档精确权益表(可开注额上限、每日返还量——做 VIP 代充详情页前必须实机订阅验证);④ 官方封号政策的最新执行口径;⑤ 各注额对局房的精确金币门槛、对局房是否支持围观、语音房是否嵌有小游戏。竞对成交量字段(Kaleoz trading volume)为历史累计口径,不代表当前月销。</p>
+  </div>
+</div>
+
+<!-- ======================== APPENDIX 3 ======================== -->
+<div class="module">
+  <div class="module-label appendix-label">APPENDIX Ⅲ</div>
+  <h2>调研问答(Q&amp;A)</h2>
+  <div class="module-intro">调研过程中提出并已解答的关键问题,与正文互为补充。</div>
+
+  <h3>Q1 这个游戏到底是干嘛的?是打牌吗?</h3>
+  <p>不是打牌,主体是掷骰/出牌驱动的"走棋"类桌游,可理解为"中东版联机飞行棋 + 语音房"。<strong>Ludo:</strong>起源于印度的十字戏,与中国飞行棋几乎相同——掷骰子,每人 4 颗棋子从起点绕棋盘回终点,掷到 6 出兵,踩到对方棋子将其送回老家,运气占大头、门槛极低,是其成为全民社交游戏的根基。<strong>Domino:</strong>骨牌接龙,轮流把点数能对上的牌接到桌面牌链两端,先出完牌(Draw Game)或按两端点数计分(All Five)获胜,在埃及/北非咖啡馆文化中是国民消遣。<strong>Jackaroo:</strong>海湾地区(尤其沙特)的国民桌游,可理解为"用扑克牌当骰子的飞行棋"——出扑克牌驱动棋子移动,不同牌对应不同走法,通常 4 人组队 2v2;该玩法是攻占沙特市场的关键武器,产品副标题已从 "Ludo&amp;Domino" 改为 "Ludo&amp;Jackaroo"。游戏部分本质是轻度、强运气、强社交的棋盘游戏——重点不在游戏,而在四人边走棋边开麦聊天。</p>
+
+  <h3>Q2 语音聊天室和对局房是什么关系?区别在哪?</h3>
+  <p>注意:<strong>对局房也有语音</strong>(实时语音是全局招牌功能),所以区别不在"有无语音",而在结构与消费线:</p>
+  <table>
+    <tr><th></th><th>对局房</th><th>语音聊天室</th></tr>
+    <tr><td>核心活动</td><td>打一局游戏,赢注金</td><td>上麦聊天/唱歌,收送礼物</td></tr>
+    <tr><td>人数结构</td><td>2–4 个游戏座位(由玩法规则决定)</td><td>15 麦位 + 不限量听众(直播房形态)</td></tr>
+    <tr><td>语音</td><td>有(局内语音)</td><td>有(房间主体就是语音)</td></tr>
+    <tr><td>主要消耗货币</td><td>金币(注金,赢家通吃)</td><td>钻石(礼物)</td></tr>
+    <tr><td>门槛</td><td>金币门票/注金,低注房数百金币、高注房可达千万级;私人房/本地房可免费与好友玩</td><td>公共房免费;部分高级房需钻石兑换的入场券;创建 VIP 房需订阅</td></tr>
+  </table>
+  <p>一句话:对局房是"赌桌",烧金币;语音房是"秀场",烧钻石——分别对应本报告的金币品类与钻石品类两条消费线。<strong>待实测项:</strong>对局房是否支持局外观众围观、语音房内是否嵌有小游戏、各注额房的精确金币门槛。</p>
+
+  <h3>Q3 语音房和对局房在玩法与人数上一样吗?</h3>
+  <p>不一样。对局房席位就是游戏座位(2–4 人,由 Ludo/Domino/Jackaroo 规则决定),活动围绕单局输赢;语音聊天室是 15 麦位 + 不限量听众的直播房形态,房内不进行对局,活动围绕聊天、唱歌、刷礼物。详见 Q2 对照表。</p>
+
+  <h3>Q4 VIP 是针对对局房还是语音聊天室的?</h3>
+  <p>两边都覆盖,分三层:<strong>① 对局房侧(核心功能特权):</strong>官方描述即"特权游戏房:在 VIP 房中创建你的房间,邀请他人一起玩,拥有更多下注选项"——VIP 房本质是订阅者才能开设的高级对局房,注额档位更高,2026 年 2 月版本已支持组队模式;这解释了房主/桌主是 VIP 订阅刚性客群的原因。<strong>② 语音房侧(身份特权):</strong>VIP 徽章、专属表情、语音特权在语音房兑现,是"面子经济"中的可见身份,影响拿麦机会与收礼频率。<strong>③ 全局侧(资源返还):</strong>每日免费金币 + 钻石 + 每日礼包,不分房间类型,摊薄月费。Knight($11.99/月)与 Baron($39.99/月)的差异在特权深度与每日返还量,<strong>两档精确权益表(可开注额上限、每日返还量)公开资料无可靠数字,做 VIP 代充商品详情页前必须实机订阅验证。</strong></p>
+</div>
+
+<div class="footnote">
+  IGV.com 内部调研文档 · 仅供业务决策参考,不构成对任何第三方平台或供给方式的合规背书。<br>
+  研究框架沿用 Delta Force / Clash Royale 三层调研结构:Layer 1 基本面 → Layer 2 交易生态 → Layer 3 玩家需求与风险。
+</div>
+
+</div>
+</body>
+</html>
