@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGV · Yalla Ludo Prototype (ZH / EN / AR)</title>
+<style>
+  :root{
+    --ink:#1C2340; --paper:#F4F5F9; --card:#FFFFFF; --line:#E4E7EF;
+    --red:#E4462B; --red-dk:#C93518;
+    --gold:#DB9414; --blue:#2E6FE4; --green:#279B63;
+    --muted:#7A8098; --note:#FFF7DB; --note-bd:#E8C34A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",Tahoma,Arial,sans-serif;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.55}
+  button{font-family:inherit;cursor:pointer}
+  input,select{font-family:inherit}
+  .num{font-family:"Trebuchet MS","Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
+
+  .topbar{background:var(--ink);color:#fff}
+  .topbar-in{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:20px;padding:0 20px;height:56px}
+  .logo{font-weight:800;font-size:21px;letter-spacing:.5px}
+  .logo em{color:var(--red);font-style:normal}
+  .top-nav{display:flex;gap:18px;font-size:13px;color:#C6CBDD}
+  .top-nav span{cursor:pointer}
+  .top-nav span:hover{color:#fff}
+  .searchbox{margin-inline-start:auto;display:flex;align-items:center;background:#2A3355;border-radius:18px;padding:6px 14px;gap:8px;min-width:220px}
+  .searchbox input{background:none;border:none;outline:none;color:#fff;font-size:13px;flex:1}
+  .searchbox input::placeholder{color:#8A92B0}
+  .top-user{font-size:13px;color:#C6CBDD;white-space:nowrap}
+  .lang-sw{display:flex;border:1px solid #3A4468;border-radius:14px;overflow:hidden}
+  .lang-sw button{background:none;border:none;color:#8A92B0;font-size:11.5px;padding:4px 10px}
+  .lang-sw button.on{background:var(--red);color:#fff;font-weight:700}
+  .ludo-strip{height:4px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr}
+  .ludo-strip i:nth-child(1){background:var(--red)}
+  .ludo-strip i:nth-child(2){background:var(--gold)}
+  .ludo-strip i:nth-child(3){background:var(--green)}
+  .ludo-strip i:nth-child(4){background:var(--blue)}
+
+  .crumbs{max-width:1120px;margin:0 auto;padding:12px 20px;font-size:12.5px;color:var(--muted)}
+  .crumbs a{color:var(--muted);text-decoration:none;cursor:pointer}
+  .crumbs a:hover{color:var(--red)}
+  .crumbs b{color:var(--ink);font-weight:600}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px 64px}
+  .view{display:none}
+  .view.active{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .cat-hero{border-radius:12px 12px 0 0;color:#fff;padding:22px 26px;position:relative;overflow:hidden;display:flex;gap:18px;align-items:center}
+  .cat-hero::after{content:"";position:absolute;inset-inline-end:-30px;top:-60px;width:260px;height:260px;border-radius:50%;
+    background-image:radial-gradient(rgba(255,255,255,.16) 3px,transparent 3.5px);background-size:24px 24px;transform:rotate(12deg)}
+  .cat-hero.h-blue{background:linear-gradient(115deg,#1E3A78,#2E6FE4)}
+  .cat-hero.h-gold{background:linear-gradient(115deg,#7A4E08,#DB9414)}
+  .cat-hero.h-green{background:linear-gradient(115deg,#125237,#279B63)}
+  .mini-cover{width:64px;height:64px;border-radius:15px;flex:none;background:conic-gradient(var(--red) 0 25%,var(--gold) 0 50%,var(--green) 0 75%,var(--blue) 0 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 5px 14px rgba(0,0,0,.3)}
+  .mini-cover span{background:#fff;color:var(--ink);width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:9.5px;text-align:center;line-height:1.15}
+  .cat-hero .t{position:relative;z-index:1}
+  .cat-hero .eyebrow{font-size:12px;opacity:.85;letter-spacing:.5px}
+  .cat-hero h1{font-size:21px;font-weight:800;margin:2px 0 4px}
+  .save-tag{font-size:13px;background:#FFD84D;color:#7A4E08;border-radius:12px;padding:3px 12px;vertical-align:middle;font-weight:800}
+  .cat-hero .desc{font-size:12.5px;opacity:.92;max-width:560px}
+  .cat-hero .pill-row{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+  .cat-hero .pill{font-size:11px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);padding:2px 9px;border-radius:11px}
+  .cat-hero .hstats{margin-inline-start:auto;display:flex;gap:22px;text-align:center;position:relative;z-index:1}
+  .cat-hero .hstats b{display:block;font-size:18px}
+  .cat-hero .hstats span{font-size:11px;opacity:.8}
+  .cat-tabs{background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;display:flex;align-items:center;padding:0 8px;margin-bottom:16px}
+  .cat-tab{padding:12px 18px;font-size:13.5px;color:var(--muted);border:none;background:none;position:relative;font-weight:600}
+  .cat-tab.on{color:var(--ink)}
+  .cat-tab.on::after{content:"";position:absolute;left:16px;right:16px;bottom:0;height:3px;border-radius:2px}
+  .cat-tab.t-blue.on::after{background:var(--blue)}
+  .cat-tab.t-gold.on::after{background:var(--gold)}
+  .cat-tab.t-green.on::after{background:var(--green)}
+  .cat-tabs .to-brand{margin-inline-start:auto;font-size:12px;color:var(--muted);padding-inline-end:12px;cursor:pointer}
+  .cat-tabs .to-brand:hover{color:var(--red)}
+
+  .hero{background:linear-gradient(115deg,#232C52 0%,#1C2340 55%,#2A1B3D 100%);border-radius:14px;color:#fff;padding:30px 34px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;inset-inline-end:-40px;top:-40px;width:340px;height:340px;border-radius:50%;
+    background-image:radial-gradient(rgba(255,255,255,.14) 3px,transparent 3.5px);background-size:26px 26px;transform:rotate(12deg)}
+  .hero-in{display:flex;gap:24px;align-items:center;position:relative;z-index:1}
+  .game-cover{width:104px;height:104px;border-radius:22px;flex:none;background:conic-gradient(var(--red) 0 25%,var(--gold) 0 50%,var(--green) 0 75%,var(--blue) 0 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .game-cover span{background:#fff;color:var(--ink);width:62px;height:62px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;text-align:center;line-height:1.15}
+  .hero h1{font-size:26px;font-weight:800}
+  .hero .sub{color:#B9C0DA;font-size:13px;margin-top:5px}
+  .tags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .tag{font-size:11.5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:3px 10px;border-radius:12px;color:#DDE2F2}
+  .hero-stats{margin-inline-start:auto;display:flex;gap:28px;text-align:center}
+  .hero-stats b{display:block;font-size:20px}
+  .hero-stats span{font-size:11.5px;color:#9AA2C2}
+  .sec-title{margin:28px 0 14px;display:flex;align-items:baseline;gap:10px}
+  .sec-title h2{font-size:17px;font-weight:800}
+  .sec-title small{color:var(--muted);font-size:12.5px}
+  .biz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .biz-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 20px 18px;position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s}
+  .biz-card:hover{box-shadow:0 10px 26px rgba(28,35,64,.12);transform:translateY(-2px)}
+  .biz-card::before{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:5px}
+  .biz-card.c-blue::before{background:var(--blue)}
+  .biz-card.c-gold::before{background:var(--gold)}
+  .biz-card.c-green::before{background:var(--green)}
+  .biz-ico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
+  .c-blue .biz-ico{background:#EAF1FE}
+  .c-gold .biz-ico{background:#FCF3E0}
+  .c-green .biz-ico{background:#E5F5EC}
+  .biz-card h3{font-size:15.5px;font-weight:700}
+  .biz-card p{color:var(--muted);font-size:12.5px;margin-top:6px;min-height:38px}
+  .biz-meta{display:flex;justify-content:space-between;align-items:center;margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+  .biz-meta .from{font-size:12px;color:var(--muted)}
+  .biz-meta .from b{font-size:16px;color:var(--red)}
+  .go{font-size:12.5px;font-weight:600}
+  .c-blue .go{color:var(--blue)} .c-gold .go{color:var(--gold)} .c-green .go{color:var(--green)}
+  .trust{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px}
+  .trust div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:13px 15px;font-size:12.5px;color:var(--muted);display:flex;gap:9px;align-items:center}
+  .trust b{color:var(--ink);display:block;font-size:13px}
+  .dot4{width:16px;height:16px;flex:none;border-radius:4px;background:conic-gradient(var(--red) 0 25%,var(--gold) 0 50%,var(--green) 0 75%,var(--blue) 0 100%)}
+
+  .list-head{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:14px;flex-wrap:wrap}
+  .f-label{font-size:12.5px;color:var(--muted)}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:15px;padding:5px 13px;font-size:12.5px;color:var(--ink)}
+  .chip.on{border-color:var(--red);color:var(--red);background:#FDEEEA;font-weight:600}
+  .sortbar{margin-inline-start:auto;display:flex;gap:6px}
+  .listing{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;display:flex;gap:16px;align-items:center;margin-bottom:10px;transition:box-shadow .15s}
+  .listing.clickable{cursor:pointer}
+  .listing:hover{box-shadow:0 8px 20px rgba(28,35,64,.1)}
+  .listing.best{border-color:#F1C078;background:linear-gradient(#FFFDF7,#FFF)}
+  .seller-ava{width:42px;height:42px;border-radius:50%;flex:none;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .l-main{flex:1;min-width:0}
+  .l-title{font-weight:700;font-size:14.5px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .l-sub{font-size:12px;color:var(--muted);margin-top:3px;display:flex;gap:12px;flex-wrap:wrap}
+  .badge{font-size:10.5px;border-radius:4px;padding:1px 6px;font-weight:600}
+  .b-gold{background:#FCF3E0;color:var(--gold)}
+  .b-green{background:#E5F5EC;color:var(--green)}
+  .b-blue{background:#EAF1FE;color:var(--blue)}
+  .b-gray{background:#EFF1F6;color:var(--muted)}
+  .b-best{background:#B8860B;color:#fff}
+  .l-price{text-align:end;flex:none;width:160px}
+  .l-price b{font-size:19px;color:var(--red)}
+  .l-price small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .btn{border:none;border-radius:8px;font-weight:700;font-size:14px}
+  .btn-buy{background:var(--red);color:#fff;padding:9px 22px;flex:none}
+  .btn-buy:hover{background:var(--red-dk)}
+  .btn-line{background:#fff;border:1.5px solid var(--red);color:var(--red);padding:8px 20px;flex:none}
+  .empty{background:var(--card);border:1px dashed var(--line);border-radius:10px;padding:26px;text-align:center;color:var(--muted);font-size:13px}
+
+  .acct-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .acct-card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column}
+  .acct-card:hover{box-shadow:0 10px 26px rgba(28,35,64,.13);transform:translateY(-2px)}
+  .acct-card.sold{opacity:.5;cursor:default}
+  .acct-card.sold:hover{box-shadow:none;transform:none}
+  .a-img{aspect-ratio:16/9;background:linear-gradient(135deg,#1C2340,#2A3355);color:#8A92B0;display:flex;align-items:center;justify-content:center;font-size:12.5px;position:relative;cursor:zoom-in}
+  .a-img .plat-badge{position:absolute;inset-inline-start:0;top:10px;background:linear-gradient(90deg,var(--red),#F07A3A);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:0 11px 11px 0;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+  [dir=rtl] .a-img .plat-badge{border-radius:11px 0 0 11px}
+  .a-img .v-badge{position:absolute;inset-inline-end:8px;top:10px;font-size:10.5px;font-weight:700;border-radius:4px;padding:2px 7px}
+  .a-img .img-n{position:absolute;inset-inline-end:8px;bottom:8px;background:rgba(0,0,0,.45);color:#fff;font-size:10.5px;border-radius:4px;padding:1px 7px}
+  .a-img .zoom{position:absolute;inset-inline-start:8px;bottom:8px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:11.5px;display:flex;align-items:center;gap:4px}
+  .a-img .zoom:hover{background:rgba(0,0,0,.78)}
+  .a-body{padding:12px 14px 13px;display:flex;flex-direction:column;flex:1}
+  .a-title{font-weight:700;font-size:14px;line-height:1.4}
+  .a-attrs{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .a-attr{font-size:11px;background:#F1F3F8;color:#4A5170;border-radius:4px;padding:2px 8px}
+  .a-attr b{color:var(--ink)}
+  .a-price-row{display:flex;align-items:baseline;justify-content:space-between;margin-top:11px;gap:8px}
+  .a-price{font-size:20px;font-weight:800;color:var(--red)}
+  .a-price small{font-size:11px;color:var(--muted);font-weight:400}
+  .a-seller{border-top:1px dashed var(--line);margin-top:11px;padding-top:10px;display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+  .a-seller .shop-ava{width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none;font-weight:700}
+  .a-seller b{color:var(--ink);font-size:12px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .a-seller .rate{margin-inline-start:auto;text-align:end;white-space:nowrap}
+  .a-seller .rate em{font-style:normal;color:var(--gold);font-weight:700}
+
+  .lightbox{position:fixed;inset:0;background:rgba(12,16,30,.9);z-index:80;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+  .lightbox.show{display:flex}
+  .lb-close{position:absolute;top:16px;inset-inline-end:22px;background:none;border:none;color:#fff;font-size:28px}
+  .lb-stage{display:flex;align-items:center;gap:18px}
+  .lb-nav{width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.15);color:#fff;font-size:20px}
+  .lb-nav:hover{background:rgba(255,255,255,.32)}
+  .lb-img{width:min(760px,72vw);aspect-ratio:16/9;background:linear-gradient(135deg,#26304F,#3A4570);border-radius:10px;color:#B9C0DA;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .lb-count{color:#B9C0DA;font-size:12.5px}
+  .lb-thumbs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .lb-thumb{width:78px;height:48px;border-radius:6px;background:#26304F;border:2px solid transparent;color:#8A92B0;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-align:center;line-height:1.2;padding:2px}
+  .lb-thumb.on{border-color:#fff;color:#fff}
+
+  .fbar{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:14px;position:relative;z-index:20}
+  .fbar-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .fbar-row.more-row{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+  .fbar-row.more-row.open{display:flex}
+  .fdrop{position:relative}
+  .fdrop-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;font-size:12.5px;display:flex;align-items:center;gap:6px;color:var(--ink)}
+  .fdrop-btn .car{font-size:9px;color:var(--muted);transition:transform .15s}
+  .fdrop.open .fdrop-btn{border-color:var(--red)}
+  .fdrop.open .car{transform:rotate(180deg)}
+  .fdrop-btn.hasval{border-color:var(--red);color:var(--red);background:#FDEEEA;font-weight:600}
+  .fdrop-panel{display:none;position:absolute;top:calc(100% + 6px);inset-inline-start:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 30px rgba(28,35,64,.18);min-width:200px;z-index:40;padding:8px}
+  .fdrop.open .fdrop-panel{display:block}
+  .fopt{padding:7px 10px;border-radius:7px;font-size:12.5px;cursor:pointer;display:flex;align-items:center;gap:8px}
+  .fopt:hover{background:#F5F6FA}
+  .fopt.checked{color:var(--red);font-weight:600}
+  .fopt .cb{width:14px;height:14px;border:1.5px solid #C4C9D8;border-radius:4px;flex:none;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff}
+  .fopt.checked .cb{background:var(--red);border-color:var(--red)}
+  .fp-actions{display:flex;gap:8px;padding:8px 6px 2px;border-top:1px solid var(--line);margin-top:6px}
+  .fp-actions button{flex:1;padding:6px;border-radius:7px;font-size:12px;border:1px solid var(--line);background:#fff}
+  .fp-actions .ok{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
+  .price-in{width:72px;border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:12px;outline:none}
+  .sel-tags{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  .sel-tag{background:#FDEEEA;color:var(--red);font-size:11.5px;border-radius:12px;padding:3px 10px;display:flex;gap:6px;align-items:center}
+  .sel-tag i{font-style:normal;cursor:pointer;font-weight:700}
+  .clear-all{font-size:11.5px;color:var(--muted);cursor:pointer;text-decoration:underline}
+
+  .need-hero{background:linear-gradient(#FFFBF0,#fff);border:1.5px solid #F1C078;border-radius:12px;padding:16px 20px 18px;margin-bottom:14px}
+  .need-hero .nh-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .need-hero .nh-title::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--gold)}
+  .need-line{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .big-step{display:inline-flex;border:2px solid var(--gold);border-radius:10px;overflow:hidden;background:#fff}
+  .big-step button{width:46px;height:48px;background:#FCF3E0;border:none;font-size:22px;color:#7A4E08}
+  .big-step input{width:96px;text-align:center;border:none;outline:none;font-size:22px;font-weight:800;color:var(--ink)}
+  .need-unit{font-size:15px;font-weight:800}
+  .pack-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-inline-start:6px}
+  .pack{border:1.5px solid var(--line);border-radius:19px;padding:8px 18px;cursor:pointer;background:#fff;position:relative;font-size:14px;font-weight:800}
+  .pack:hover{border-color:var(--gold)}
+  .pack.on{border-color:var(--gold);background:#FFFBF0;color:#7A4E08}
+  .pack .hot{position:absolute;inset-inline-end:-8px;top:-9px;background:var(--gold);color:#fff;font-size:10px;font-weight:600;padding:1px 7px;border-radius:8px;white-space:nowrap}
+
+  .duo{display:grid;grid-template-columns:1fr 330px;gap:16px;align-items:start}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+  .panel h3{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .panel h3::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--red)}
+  .panel h3 .h-sub{font-weight:400;font-size:12px;color:var(--muted)}
+  .panel + .panel{margin-top:14px}
+  .kv{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 22px;font-size:13px}
+  .kv div{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:7px 0;gap:10px}
+  .kv span{color:var(--muted)}
+  .opt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .opt{border:1.5px solid var(--line);border-radius:10px;padding:16px 12px 12px;text-align:center;cursor:pointer;background:#fff;position:relative}
+  .opt small{color:var(--muted);font-size:11.5px}
+  .opt .offer-n{font-size:10.5px;color:var(--blue);margin-top:2px;display:block}
+  .opt .d-name{font-size:13px;font-weight:700}
+  .opt .d-price{font-size:20px;font-weight:800;color:var(--red);margin-top:4px;display:block}
+  .opt .d-price small{font-size:11px;font-weight:400;color:var(--muted)}
+  .opt .d-official{font-size:11px;color:#A6ACC2;text-decoration:line-through;display:block}
+  .opt .d-save{position:absolute;inset-inline-start:-1px;top:-1px;background:var(--red);color:#fff;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:9px 0 9px 0}
+  [dir=rtl] .opt .d-save{border-radius:0 9px 0 9px}
+  .opt.on{border-color:var(--red);background:#FFF6F4}
+  .opt.on::after{content:"✓";position:absolute;inset-inline-end:-1px;top:-1px;background:var(--red);color:#fff;font-size:10px;width:17px;height:17px;border-radius:0 9px 0 9px;display:flex;align-items:center;justify-content:center}
+  [dir=rtl] .opt.on::after{border-radius:9px 0 9px 0}
+  .radio-opt{border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;cursor:pointer;display:flex;gap:10px;align-items:flex-start;background:#fff}
+  .radio-opt.on{border-color:var(--red);background:#FFF6F4}
+  .radio-opt .rb{width:15px;height:15px;border:2px solid #C4C9D8;border-radius:50%;flex:none;margin-top:2px}
+  .radio-opt.on .rb{border-color:var(--red);background:radial-gradient(var(--red) 45%,#fff 50%)}
+  .radio-opt b{font-size:13.5px}
+  .radio-opt p{font-size:12px;color:var(--muted);margin-top:2px}
+  .radio-row{display:flex;flex-direction:column;gap:9px}
+  .stepper{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .stepper button{width:34px;height:34px;background:#F5F6FA;border:none;font-size:16px}
+  .stepper input{width:64px;text-align:center;border:none;outline:none;font-size:14px;font-weight:700}
+  .field{margin-bottom:13px}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+  .field input{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;outline:none}
+  .field input:focus{border-color:var(--blue)}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:5px}
+  .hint.err{color:var(--red)}
+  .side{position:sticky;top:16px}
+  .side .panel h3::before{background:var(--gold)}
+  .sum-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;color:var(--muted);gap:10px}
+  .sum-row b{color:var(--ink);text-align:end}
+  .sum-total{border-top:1px solid var(--line);margin-top:8px;padding-top:12px;display:flex;justify-content:space-between;align-items:baseline}
+  .sum-total .p{font-size:24px;color:var(--red);font-weight:800}
+  .btn-block{width:100%;padding:12px;margin-top:14px;background:var(--red);color:#fff}
+  .btn-block:hover{background:var(--red-dk)}
+  .btn-block:disabled{background:#D8DBE6;cursor:not-allowed}
+  .assure{margin-top:13px;font-size:11.5px;color:var(--muted);line-height:1.7}
+  .assure b{color:var(--green)}
+  .pay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .steps{display:flex;margin-bottom:18px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .steps div{flex:1;text-align:center;padding:11px;font-size:12.5px;color:var(--muted)}
+  .steps div.on{color:var(--red);font-weight:700;background:#FFF6F4}
+  .steps div b{display:inline-flex;width:18px;height:18px;border-radius:50%;background:#D8DBE6;color:#fff;font-size:11px;align-items:center;justify-content:center;margin-inline-end:6px}
+  .steps div.on b{background:var(--red)}
+  .mask{position:fixed;inset:0;background:rgba(20,26,46,.5);display:none;align-items:center;justify-content:center;z-index:60}
+  .mask.show{display:flex}
+  .modal{background:#fff;border-radius:14px;padding:30px 34px;width:380px;text-align:center}
+  .modal .ok{width:54px;height:54px;border-radius:50%;background:#E5F5EC;color:var(--green);font-size:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+  .modal h3{font-size:17px;margin-bottom:8px}
+  .modal p{font-size:12.5px;color:var(--muted);line-height:1.7}
+  .modal .btn-block{margin-top:18px}
+  .anno-toggle{position:fixed;inset-inline-end:18px;bottom:18px;z-index:50;background:var(--ink);color:#fff;border-radius:22px;padding:10px 18px;font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .anno{display:none;background:var(--note);border:1px dashed var(--note-bd);color:#7A5A00;font-size:11.5px;border-radius:7px;padding:6px 10px;margin:8px 0;line-height:1.6}
+  body.anno-on .anno{display:block}
+  .ltr{direction:ltr;unicode-bidi:embed}
+
+  @media (max-width:900px){
+    .duo{grid-template-columns:1fr}
+    .biz-grid,.acct-grid{grid-template-columns:1fr}
+    .trust{grid-template-columns:1fr 1fr}
+    .hero-stats,.cat-hero .hstats,.top-nav{display:none}
+    .opt-grid,.pay-grid{grid-template-columns:1fr 1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="logo ltr">IG<em>V</em>.com</div>
+    <nav class="top-nav" id="top-nav"></nav>
+    <div class="searchbox">🔍 <input id="search-in" placeholder=""></div>
+    <div class="top-user" id="top-user"></div>
+    <div class="lang-sw ltr">
+      <button id="lw-zh" onclick="setLang('zh')">中文</button>
+      <button id="lw-en" onclick="setLang('en')">EN</button>
+      <button id="lw-ar" onclick="setLang('ar')">عربي</button>
+    </div>
+  </div>
+  <div class="ludo-strip"><i></i><i></i><i></i><i></i></div>
+</div>
+
+<div class="crumbs" id="crumbs"></div>
+
+<div class="wrap">
+  <section class="view" id="view-brand"></section>
+  <section class="view" id="view-topup"></section>
+  <section class="view" id="view-topup-order"></section>
+  <section class="view" id="view-coins"></section>
+  <section class="view" id="view-coin-order"></section>
+  <section class="view" id="view-accounts"></section>
+  <section class="view" id="view-acct-detail"></section>
+  <section class="view" id="view-checkout"></section>
+</div>
+
+<div class="lightbox" id="lb" onclick="if(event.target===this)closeLB()">
+  <button class="lb-close" onclick="closeLB()">×</button>
+  <div class="lb-stage">
+    <button class="lb-nav" onclick="lbNav(-1)">‹</button>
+    <div class="lb-img" id="lb-img"></div>
+    <button class="lb-nav" onclick="lbNav(1)">›</button>
+  </div>
+  <div class="lb-count" id="lb-count"></div>
+  <div class="lb-thumbs" id="lb-thumbs"></div>
+</div>
+
+<div class="mask" id="mask">
+  <div class="modal">
+    <div class="ok">✓</div>
+    <h3 id="ok-title"></h3>
+    <p id="ok-msg"></p>
+    <button class="btn btn-block" id="ok-btn" onclick="closeOk()"></button>
+  </div>
+</div>
+
+<button class="anno-toggle" id="anno-btn" onclick="togAnno()"></button>
+
+<script>
+/* ============================================================
+   i18n 词典(zh / en / ar)
+============================================================ */
+const I18N={
+zh:{
+  cur:'¥',dir:'ltr',
+  nav:['游戏币','账号','代充','道具','陪练'],search:'搜索游戏 / 商品,如:Yalla Ludo 金币',user:'登录 / 注册 · 订单 · 客服',
+  crumbHome:'首页',crumbBrand:'Yalla Ludo 专区',crumbTopupCat:'代充',crumbTopup:'Yalla Ludo 钻石充值',crumbConfirm:'确认商品',
+  crumbCoinsCat:'游戏币',crumbCoins:'Yalla Ludo 金币',crumbAcctCat:'账号',crumbAccts:'Yalla Ludo 账号',crumbAcctDetail:'账号详情',crumbCheckout:'确认订单',
+  annoBtnShow:'📌 显示交互标注',annoBtnHide:'🙈 隐藏交互标注',annoPrefix:'交互标注 ',
+  brandTitle:'Yalla Ludo 交易专区',brandSub:'飞行棋 + 多米诺 · 语音社交 | 中东/北非热门手游 · 开发商 Yalla Group',
+  brandTags:['iOS / Android','全球服','UID 直充','24H 发货'],
+  stat30:'近30天成交',statRate:'好评率',statShip:'平均发货',statShipV:'5 分钟',
+  brandSec:'选择业务',brandSecSub:'三条业务线,也可从搜索/外链直达各品类页',
+  bizTopup:'钻石充值',bizTopupD:'标准面额商品,多卖家跟卖比价。UID 直充,无需登录账号。',
+  bizCoins:'金币交易',bizCoinsD:'标品现货,多卖家挂单跟卖。按 1B 计价,担保交易。',
+  bizAccts:'账号交易',bizAcctsD:'每个账号为卖家独立上架的唯一 SKU,一号一价,售出即下架。',
+  from:'低至',per100:'/100钻',per1B:'/1B',perAcct:'/个',
+  goTopup:'选面额比价 →',goCoins:'查看卖家报价 →',goAccts:'挑选账号 →',
+  trust:[['担保交易','收货确认后放款'],['闪电发货','超时自动赔付'],['验号服务','账号信息人工核验'],['7×24 客服','纠纷仲裁通道']],
+  annoBrand:'品牌页仅是聚合入口之一,不是必经路径;每个品类页自带完整页头与品类切换 Tab,可独立承接直达流量。',
+  eyebrow:'IGV · Yalla Ludo 专区',
+  tabTopup:'💎 钻石充值',tabCoins:'🪙 金币交易',tabAccts:'🎮 账号交易',toBrand:'进入 Yalla Ludo 品牌专区 ›',
+  tuTitle:'Yalla Ludo 钻石充值 💎',tuSave:'比官方商店最高省 28%',
+  tuDesc:'本页出售 Yalla Ludo 游戏内钻石(用于送礼 / 装扮 / VIP / 兑换金币),<b>价格全面低于游戏内官方商店</b>。多个认证卖家跟卖比价,UID 直充,无需提供账号密码。',
+  tuPills:['💰 全场低于官方价','UID 直充','5 分钟到账','超时自动退款'],
+  step1:'第一步:选择充值面额',step1Sub:'价格均低于官方商店,划线价为游戏内官方价',
+  pickedBtn:(n,c)=>`已选 <b>${n}</b> · 查看 <b>${c}</b> 家卖家报价,继续比价 ↓`,
+  annoDenom:'价格是面额卡的第一视觉:大号现价 + 官方划线价 + "省 X%"角标。选中面额后自动滚动到第二步,且卡片下方常驻"继续比价 ↓"引导按钮,双保险解决面额过多时第二步不可见的问题。',
+  step2:'第二步:选择卖家',
+  offerCount:(d,n,o)=>`「${d} 钻石」共 ${n} 家卖家在售,全部低于官方价 ${o}`,
+  sortPrice:'价格最低',sortSpeed:'发货最快',sortSales:'销量最高',sortRate:'信誉最好',
+  bestPrice:'低价优选',bonusBadge:b=>`额外赠 ${b} 💎`,
+  ratingL:'好评',salesL:'销量',etaL:e=>`承诺 ${e}内到账`,
+  official:'官方',saveAmt:v=>`省 ${v}`,buy:'购买',
+  annoOffers:'同一面额下多卖家报价(跟卖模型),默认价格升序,最低价标"低价优选";每行价格下方显示与官方价的差额。选卖家后直达下单页,标品无需中间详情页。',
+  denomOnSale:n=>`${n} 家卖家在售`,fromP:'起',
+  poGoods:'商品与卖家',poQty:'购买份数',poQtyHint:'每份 = 所选面额;单笔上限 99 份',
+  poAcct:'充值账号',uidLabel:'Yalla Ludo 玩家 UID(11 位数字,7 开头)',uidPh:'例如:71234567890',
+  uidHint:'在游戏内点击左上角头像可查看 UID,请复制粘贴避免手输错误',uidOk:'✓ UID 格式正确',uidErr:'UID 应为 11 位数字且以 7 开头,请检查',
+  annoUid:'UID 实时校验:11 位且 7 开头,不合规时红色提示并禁用"去结算"。直充无需密码是页面强调的安全卖点。',
+  poPreview:'订单预览',rGoods:'商品',rSeller:'卖家',rQty:'份数',rGet:'到账钻石',rTotal:'合计',
+  toCheckoutBtn:'去结算',aDirect:'UID 直充',aDirectD:'无需登录游戏账号',aEta:'到账时效',aEtaD:e=>`${e}内到账,超时自动退款`,
+  kGoods:'商品',kSeller:'卖家',kUnit:'单价',kBonus:'赠送',kBonusV:b=>`每份额外赠 ${b} 💎`,kNone:'无',kEta:'到账时效',kEtaV:e=>`${e}内`,kDeliver:'交付方式',kDirect:'UID 直充,无需密码',
+  diamonds:'钻石',perShare:'/ 份',
+  coTitle:'Yalla Ludo 金币交易 🪙',
+  coDesc:'本页出售 Yalla Ludo 游戏金币现货(对战房入场必备)。金币为标品,按 1B(10亿)计价,由多个认证卖家挂单跟卖;支持拉房对局交付或登号代充,担保交易,到账确认后才放款。',
+  coPills:['担保交易','1B 起售','30 分钟内交付'],
+  needTitle:'你需要多少金币?',needUnit:'B 金币',hotPack:'最多人选',
+  annoPack:'数量包为纯数量快捷 chip,与超大步进器同行;下方 offer 列表逐条按此数量算总价,故 chip 上不重复展示价格与场景说明,仅保留"最多人选"轻量引导。手动调数量自动取消选中。',
+  fDeliver:'交付方式',fAll:'全部',
+  dRoom:'拉房对局交付',dRoomD:'卖家创建自定义对局房间,你进房参与对局接收金币。无需提供账号密码,约 30 分钟内完成。',dRoomN:'进房对局,约 30 分钟',
+  dLogin:'登号代充',dLoginD:'临时提供账号给卖家登录充入金币,凭证由平台托管,完成后建议立即修改密码。约 10 分钟。',dLoginN:'需临时登号,约 10 分钟',
+  annoCoinList:'列表实时显示每个卖家"按需求量的总价",库存不足或起售量高于需求的卖家置灰沉底并标注原因,把比价成本降到最低。',
+  stockL:'库存',minSellL:m=>`${m}B 起售`,stockLow:'库存不足',belowMin:'低于起售量',
+  totalFor:n=>`买 ${n}B 总价`,unitP:'/1B',cantBuy:'不可购买',
+  coEmpty:'当前筛选下没有可满足需求的卖家,试试调整数量或交付方式',
+  coGoods:'商品与卖家',coGoodsV:'Yalla Ludo 金币现货(标品)',coQty:'购买数量',
+  coQtyHint:(m,s)=>`单位:1B / 份 · 该卖家 ${m}B 起售 · 库存 ${s}B`,
+  annoDeliver:'仅展示该卖家支持的交付方式;选中项联动右栏交付说明与结算页交付信息表单。拉房交付无需交账号,登号代充凭证平台托管、完成后提示改密。',
+  kMinStock:'起售 / 库存',kShip:'发货时效',kShipV:'付款后 30 分钟内',kSales:'累计销量',kSalesV:s=>`${s} 单`,
+  priceDetail:'价格明细',rDNote:'交付说明',
+  aGuarantee:'担保交易',aGuaranteeD:'金币到账确认后才向卖家放款',aTimeout:'超时赔付',aTimeoutD:'超过承诺时效可一键退款',
+  shareUnit:(q)=>`${q} 份(${q}B)`,
+  acTitle:'Yalla Ludo 账号交易 🎮',
+  acDesc:'本页出售 Yalla Ludo 成品账号。每个账号都是卖家独立上架的唯一商品,一号一价、售出即下架;平台提供验号服务与 7 天找回包赔,客服协助换绑交接。',
+  acPills:['平台验号','找回包赔 7 天','换绑协助'],
+  fPrice:'价格区间',fCoins:'金币量',fSellPt:'卖点',fVerifiedOnly:'仅看已验号',fMore:'更多筛选 ▾',fLess:'收起筛选 ▴',
+  sortDefault:'综合排序',sortPriceAsc:'价格 ↑',sortNew:'最新上架',
+  noLimit:'不限',pUnder:'100 以内',p1:'100 – 500',p2:'500 – 1000',pAbove:'1000 以上',pMin:'最低价',pMax:'最高价',ok:'确定',reset:'重置',
+  c10:'10B 以上',c30:'30B 以上',c50:'50B 以上',
+  sPlat:'平台优选',sSkin:'稀有皮肤(5款+)',sValue:'高性价比',
+  fVip:'VIP 等级',v3:'VIP3 以上',v5:'VIP5 以上',fRoyal:'Royal 等级',fTime:'上架时间',t24:'24 小时内',t7:'7 天内',fBind:'绑定情况',bMail:'可换绑邮箱',b3rd:'三方登录',
+  selPrefix:'已选:',clearAll:'清空全部',selCount:n=>`已选 ${n} 项`,tagPrice:'价格 ',tagCoins:'金币 ',
+  annoFilter:'筛选分层:高频外露(价格/金币量/卖点/验号/排序),低频折叠进"更多筛选"。控件按数据类型选型:价格 = 预设区间 + 自定义输入;单选下拉即选即生效;多选下拉勾选后"确定"才生效。生效条件以可删标签回显并支持清空。',
+  annoAcctCard:'账号为非标品,图片优先卡片陈列:封面截图 + 平台标记卖点角标(平台审核,非卖家自填)+ 验号状态 + 图片数;下半部为标题、属性 chips、价格、卖家信息栏(店铺名/好评率/评价数)。已售整卡置灰。',
+  acctEmpty:'没有符合当前筛选条件的账号,试试放宽条件或',
+  coverPh:'账号主页截图(封面图)',verified:'✔ 已验号',pendingV:'待验号',soldOut:'已售出',zoomBtn:'🔍 放大查看',
+  attrCoins:'金币',attrSkins:'皮肤',attrSkinsU:'款',fixedPrice:'一口价',uniqueSku:'唯一 SKU · 售出即下架',
+  reviewsOf:(r,n)=>`<em>${r}</em> 好评 · ${n} 条评价`,
+  adAttrs:'账号属性',adSeller:'上架卖家',adSellerV:(s,r,n)=>`${s}(好评 ${r} · ${n} 条评价)`,adPlat:'平台标记',
+  adCoins:'金币量',adSkins:'稀有皮肤',adSkinsV:n=>`${n} 款`,adVip:'VIP 等级',adRoyal:'Royal 等级',adBind:'绑定情况',adBindV:'可换绑邮箱 / 三方登录',
+  adVstat:'验号状态',adVdone:'平台已核验',adVwait:'下单后 24H 内核验',adNature:'商品性质',adNatureV:'唯一 SKU,售出即下架',
+  adShots:'账号截图',adShotsSub:'点击任意图片放大查看全部',
+  shotNames:['主页截图','仓库 / 皮肤','金币余额','VIP 页面','房间装扮','对局战绩'],shotPh:'(示意占位图)',
+  lbCount:(i,n)=>`第 ${i} 张 / 共 ${n} 张`,
+  annoLB:'列表卡与详情页共用灯箱:大图 + 循环切换 + 缩略图导航 + 计数;支持键盘 ←/→、Esc、点遮罩关闭。列表卡点击封面或放大镜直接开灯箱且不跳详情。',
+  adFlow:'交易流程',flow:[['① 下单托管','货款由平台托管'],['② 平台验号','核对属性与截图一致'],['③ 交接换绑','客服协助换绑邮箱/三方登录'],['④ 确认放款','买家确认后向卖家放款']],
+  adPrice:'价格',rAcctPrice:'账号售价',rVerify:'验号服务',included:'已包含',rInsure:'找回包赔',days7:'7 天',buyNow:'立即购买',
+  aVerify:'验号后交付',aVerifyD:'属性不符全额退款',aLock:'唯一 SKU',aLockD:'下单后账号锁定,他人不可购买',
+  annoLock:'唯一 SKU 并发保护:下单即锁定商品(30 分钟内支付,超时释放),避免一号多卖。',
+  ckSteps:['选择商品 / 卖家','确认订单并支付','交付 / 到账'],
+  ckOrder:'订单信息',ckDeliverInfo:'交付信息',ckPay:'支付方式',
+  pays:[['支付宝','推荐 · 即时到账'],['微信支付','扫码支付'],['国际卡 / PayPal','Visa · MasterCard']],
+  rAmount:'商品金额',rCoupon:'优惠券',couponPick:'选择优惠券 ›',couponUsed:v=>`-${v}(满减券)`,rPay:'应付',
+  agree:'我已阅读并同意《交易服务协议》与《担保交易规则》',agreeAlert:'请先勾选同意《交易服务协议》',
+  submitPay:'提交订单并支付',aEscrow:'资金托管',aEscrowD:'交付确认前货款由平台保管',
+  annoCk:'提交校验:协议勾选 + 交付信息完整。支付成功弹窗按业务类型给出下一步指引。',
+  bizTopupCk:'钻石充值(UID 直充)',bizCoinCk:'金币交易(担保)',bizAcctCk:'账号交易(担保 + 验号)',
+  kBiz:'业务',kGet:'到账',kUid:'充值 UID',kTime:'时效',kInsure:'包赔',kInsureV:'找回包赔 7 天',kVstat:'验号状态',kLock:'锁定',kLockV:'已为你锁定 30 分钟',
+  ckTopupHint:'直充业务无需额外交付信息,钻石将直接发往上方 UID,请再次核对无误。',
+  fNick:'游戏内昵称 + UID(卖家据此拉你进房)',fNickPh:'昵称 / 71234567890',fContact:'联系方式(WhatsApp / 微信,协调进房时间)',optional:'选填',
+  fLoginWay:'登录方式与账号(凭证由平台托管加密)',fLoginPh:'如:Google 登录 / xxx@gmail.com',fPwd:'临时密码 / 验证码接收方式',fPwdPh:'下单后客服引导提交,此处仅示意',
+  fMail:'接收换绑的邮箱',fContact2:'联系方式(客服协助交接)',fContactPh:'WhatsApp / 微信',
+  okTitle:'支付成功,订单已创建',okBtn:'查看我的订单',
+  okTopup:'卖家将在承诺时效内完成 UID 直充,可在游戏内钻石余额查看;超时未到账自动退款。',
+  okCoinRoom:'请保持在线:卖家将在承诺时效内创建对局房间并邀请你进房接收金币。到账确认后平台才会向卖家放款。',
+  okCoinLogin:'请保持在线:卖家将在承诺时效内完成登号充值,完成后请立即修改密码。到账确认后平台才会向卖家放款。',
+  okAcct:'客服将在核验完成后联系你进行账号交接与换绑;确认收货前货款由平台托管。',
+  gameShort:'Yalla Ludo',
+},
+en:{
+  cur:'$',dir:'ltr',
+  nav:['Game Coins','Accounts','Top Up','Items','Boosting'],search:'Search games / products, e.g. Yalla Ludo Gold',user:'Sign in · Orders · Support',
+  crumbHome:'Home',crumbBrand:'Yalla Ludo Zone',crumbTopupCat:'Top Up',crumbTopup:'Yalla Ludo Diamonds Top-Up',crumbConfirm:'Confirm Item',
+  crumbCoinsCat:'Game Coins',crumbCoins:'Yalla Ludo Gold',crumbAcctCat:'Accounts',crumbAccts:'Yalla Ludo Accounts',crumbAcctDetail:'Account Details',crumbCheckout:'Checkout',
+  annoBtnShow:'📌 Show UX notes',annoBtnHide:'🙈 Hide UX notes',annoPrefix:'UX NOTE ',
+  brandTitle:'Yalla Ludo Trading Zone',brandSub:'Ludo + Domino · Voice social | Top mobile game in MENA · by Yalla Group',
+  brandTags:['iOS / Android','Global server','UID direct top-up','24H delivery'],
+  stat30:'Orders (30d)',statRate:'Positive rate',statShip:'Avg. delivery',statShipV:'5 min',
+  brandSec:'Choose a service',brandSecSub:'Three business lines — category pages are also directly reachable via search or links',
+  bizTopup:'Diamonds Top-Up',bizTopupD:'Standard denominations, multiple sellers competing on price. UID direct top-up, no login needed.',
+  bizCoins:'Gold Trading',bizCoinsD:'Commodity stock listed by multiple sellers. Priced per 1B, escrow protected.',
+  bizAccts:'Account Trading',bizAcctsD:'Every account is a unique SKU listed by its seller. One price per account, delisted once sold.',
+  from:'From',per100:'/100 diamonds',per1B:'/1B',perAcct:'/account',
+  goTopup:'Pick amount & compare →',goCoins:'See seller offers →',goAccts:'Browse accounts →',
+  trust:[['Escrow trade','Funds released after confirmation'],['Instant delivery','Auto compensation if late'],['Account verification','Manually checked by IGV'],['24/7 Support','Dispute arbitration channel']],
+  annoBrand:'The brand page is just one entry point, not a mandatory path; every category page has its own full header and category tabs so it can land direct traffic on its own.',
+  eyebrow:'IGV · Yalla Ludo Zone',
+  tabTopup:'💎 Diamonds Top-Up',tabCoins:'🪙 Gold Trading',tabAccts:'🎮 Accounts',toBrand:'Go to Yalla Ludo brand zone ›',
+  tuTitle:'Yalla Ludo Diamonds Top-Up 💎',tuSave:'Up to 28% cheaper than the official store',
+  tuDesc:'This page sells in-game Yalla Ludo diamonds (for gifts / cosmetics / VIP / gold exchange), <b>all priced below the in-game official store</b>. Multiple verified sellers compete on price. UID direct top-up — no account password required.',
+  tuPills:['💰 All below official price','UID direct top-up','Delivered in 5 min','Auto refund if late'],
+  step1:'Step 1: Choose an amount',step1Sub:'All below official store price; strikethrough = official price',
+  pickedBtn:(n,c)=>`Selected <b>${n}</b> · view <b>${c}</b> seller offers, compare below ↓`,
+  annoDenom:'Price is the primary visual on each denomination card: big current price + official strikethrough + "Save X%" corner badge. Selecting a card auto-scrolls to Step 2, and a persistent "compare below ↓" button provides a second path — solving Step-2 discoverability when there are many denominations.',
+  step2:'Step 2: Choose a seller',
+  offerCount:(d,n,o)=>`${n} sellers offering "${d} diamonds", all below official price ${o}`,
+  sortPrice:'Lowest price',sortSpeed:'Fastest delivery',sortSales:'Best selling',sortRate:'Top rated',
+  bestPrice:'Best Price',bonusBadge:b=>`+${b} 💎 bonus`,
+  ratingL:'Rating',salesL:'Sales',etaL:e=>`Delivery within ${e}`,
+  official:'Official',saveAmt:v=>`Save ${v}`,buy:'Buy',
+  annoOffers:'Multiple sellers quote the same SKU (offer model), sorted by price by default; lowest price gets the "Best Price" badge and each row shows savings vs official. Choosing a seller goes straight to the order page — commodities need no intermediate detail page.',
+  denomOnSale:n=>`${n} sellers`,fromP:'from',
+  poGoods:'Item & seller',poQty:'Quantity',poQtyHint:'1 unit = selected amount; max 99 per order',
+  poAcct:'Top-up account',uidLabel:'Yalla Ludo player UID (11 digits, starts with 7)',uidPh:'e.g. 71234567890',
+  uidHint:'Tap your avatar in-game to find your UID. Paste it to avoid typos.',uidOk:'✓ Valid UID format',uidErr:'UID must be 11 digits starting with 7 — please check',
+  annoUid:'Live UID validation: 11 digits starting with 7; invalid input shows a red hint and disables Checkout. "No password needed" is the trust point this page emphasizes.',
+  poPreview:'Order preview',rGoods:'Item',rSeller:'Seller',rQty:'Qty',rGet:'Diamonds received',rTotal:'Total',
+  toCheckoutBtn:'Checkout',aDirect:'UID direct top-up',aDirectD:'No game login required',aEta:'Delivery',aEtaD:e=>`Within ${e}, auto refund if late`,
+  kGoods:'Item',kSeller:'Seller',kUnit:'Unit price',kBonus:'Bonus',kBonusV:b=>`+${b} 💎 per unit`,kNone:'None',kEta:'Delivery',kEtaV:e=>`Within ${e}`,kDeliver:'Method',kDirect:'UID direct, no password',
+  diamonds:'Diamonds',perShare:'/ unit',
+  coTitle:'Yalla Ludo Gold Trading 🪙',
+  coDesc:'This page sells Yalla Ludo gold coins in stock (required to enter match rooms). Gold is a commodity priced per 1B (billion), listed by multiple verified sellers; delivered via custom match room or account login, escrow protected — funds released only after you confirm receipt.',
+  coPills:['Escrow trade','Min. 1B','Delivered within 30 min'],
+  needTitle:'How much gold do you need?',needUnit:'B gold',hotPack:'Most popular',
+  annoPack:'Quantity packs are plain quick-pick chips beside the oversized stepper; the offer list below already shows the total for this quantity, so chips carry no prices or scenario copy — only a light "Most popular" badge. Manual changes deselect the chip.',
+  fDeliver:'Delivery method',fAll:'All',
+  dRoom:'Match room delivery',dRoomD:'The seller creates a custom match room; you join and receive gold through the match. No password needed, ~30 minutes.',dRoomN:'Join room, ~30 min',
+  dLogin:'Login top-up',dLoginD:'Temporarily share your account for the seller to load gold. Credentials held in escrow by IGV; change your password after completion. ~10 minutes.',dLoginN:'Temp login, ~10 min',
+  annoCoinList:'The list shows each seller\'s total for your quantity in real time; sellers with insufficient stock or a higher minimum are grayed out at the bottom with the reason — minimizing comparison cost.',
+  stockL:'Stock',minSellL:m=>`Min ${m}B`,stockLow:'Insufficient stock',belowMin:'Below minimum',
+  totalFor:n=>`Total for ${n}B`,unitP:'/1B',cantBuy:'Unavailable',
+  coEmpty:'No sellers match your current filters — try adjusting quantity or delivery method',
+  coGoods:'Item & seller',coGoodsV:'Yalla Ludo gold in stock (commodity)',coQty:'Quantity',
+  coQtyHint:(m,s)=>`Unit: 1B · This seller: min ${m}B · stock ${s}B`,
+  annoDeliver:'Only this seller\'s supported delivery methods are shown; the selection syncs the summary note and the checkout delivery form. Room delivery needs no credentials; login top-up credentials are escrowed with a password-change reminder.',
+  kMinStock:'Min / stock',kShip:'Delivery time',kShipV:'Within 30 min of payment',kSales:'Total sales',kSalesV:s=>`${s} orders`,
+  priceDetail:'Price details',rDNote:'Delivery',
+  aGuarantee:'Escrow trade',aGuaranteeD:'Funds released to seller only after you confirm receipt',aTimeout:'Late compensation',aTimeoutD:'One-tap refund if past promised time',
+  shareUnit:(q)=>`${q} units (${q}B)`,
+  acTitle:'Yalla Ludo Account Trading 🎮',
+  acDesc:'This page sells ready-made Yalla Ludo accounts. Each account is a unique item listed by its seller — one price each, delisted once sold. IGV provides verification, 7-day recovery insurance, and support-assisted rebinding.',
+  acPills:['IGV verified','7-day recovery insurance','Rebinding assistance'],
+  fPrice:'Price range',fCoins:'Gold amount',fSellPt:'Highlights',fVerifiedOnly:'Verified only',fMore:'More filters ▾',fLess:'Fewer filters ▴',
+  sortDefault:'Featured',sortPriceAsc:'Price ↑',sortNew:'Newest',
+  noLimit:'Any',pUnder:'Under 100',p1:'100 – 500',p2:'500 – 1000',pAbove:'Over 1000',pMin:'Min',pMax:'Max',ok:'Apply',reset:'Reset',
+  c10:'10B+',c30:'30B+',c50:'50B+',
+  sPlat:'IGV Featured',sSkin:'Rare skins (5+)',sValue:'Best value',
+  fVip:'VIP level',v3:'VIP3+',v5:'VIP5+',fRoyal:'Royal level',fTime:'Listed time',t24:'Last 24h',t7:'Last 7 days',fBind:'Binding',bMail:'Email rebindable',b3rd:'3rd-party login',
+  selPrefix:'Active:',clearAll:'Clear all',selCount:n=>`${n} selected`,tagPrice:'Price ',tagCoins:'Gold ',
+  annoFilter:'Filter layering: high-frequency filters exposed (price / gold / highlights / verified / sort), low-frequency ones collapsed under "More filters". Controls match data types: price = presets + custom min/max; single-select dropdowns apply instantly; multi-select applies on "Apply". Active filters echo as removable tags with clear-all.',
+  annoAcctCard:'Accounts are non-standard goods shown as image-first cards: cover screenshot + platform-marked highlight ribbon (reviewed by IGV, not seller-written) + verification badge + photo count; below: title, attribute chips, price, and seller bar (shop name / rating / review count). Sold cards are grayed out.',
+  acctEmpty:'No accounts match your filters — try relaxing them or',
+  coverPh:'Account home screenshot (cover)',verified:'✔ Verified',pendingV:'Pending',soldOut:'SOLD',zoomBtn:'🔍 Zoom',
+  attrCoins:'Gold',attrSkins:'Skins',attrSkinsU:'',fixedPrice:'Fixed price',uniqueSku:'Unique SKU · delisted once sold',
+  reviewsOf:(r,n)=>`<em>${r}</em> positive · ${n} reviews`,
+  adAttrs:'Account attributes',adSeller:'Listed by',adSellerV:(s,r,n)=>`${s} (${r} positive · ${n} reviews)`,adPlat:'IGV highlight',
+  adCoins:'Gold amount',adSkins:'Rare skins',adSkinsV:n=>`${n}`,adVip:'VIP level',adRoyal:'Royal level',adBind:'Binding',adBindV:'Email / 3rd-party rebindable',
+  adVstat:'Verification',adVdone:'Verified by IGV',adVwait:'Verified within 24h of order',adNature:'Item type',adNatureV:'Unique SKU, delisted once sold',
+  adShots:'Account screenshots',adShotsSub:'Click any image to zoom and browse all',
+  shotNames:['Home page','Inventory / skins','Gold balance','VIP page','Room decor','Match history'],shotPh:' (placeholder)',
+  lbCount:(i,n)=>`${i} of ${n}`,
+  annoLB:'List cards and the detail page share one lightbox: large image + looped prev/next + thumbnail nav + counter; keyboard ←/→, Esc, and backdrop-click to close. Clicking a card cover or the zoom button opens the lightbox without navigating away.',
+  adFlow:'How the trade works',flow:[['① Order & escrow','Payment held by IGV'],['② Verification','Attributes checked against screenshots'],['③ Handover & rebind','Support assists email / 3rd-party rebinding'],['④ Confirm & release','Funds released after buyer confirms']],
+  adPrice:'Price',rAcctPrice:'Account price',rVerify:'Verification',included:'Included',rInsure:'Recovery insurance',days7:'7 days',buyNow:'Buy now',
+  aVerify:'Verified before handover',aVerifyD:'Full refund if attributes mismatch',aLock:'Unique SKU',aLockD:'Locked for you at order time — no one else can buy',
+  annoLock:'Unique-SKU concurrency guard: ordering locks the item (pay within 30 minutes or it is released), preventing double-selling.',
+  ckSteps:['Choose item / seller','Confirm & pay','Delivery'],
+  ckOrder:'Order details',ckDeliverInfo:'Delivery info',ckPay:'Payment method',
+  pays:[['Credit card','Visa · MasterCard'],['PayPal','Instant'],['Local wallets','Mada · STC Pay · Fawry']],
+  rAmount:'Subtotal',rCoupon:'Coupon',couponPick:'Select coupon ›',couponUsed:v=>`-${v} (coupon)`,rPay:'Total due',
+  agree:'I have read and agree to the Trading Service Agreement and Escrow Rules',agreeAlert:'Please agree to the Trading Service Agreement first',
+  submitPay:'Place order & pay',aEscrow:'Escrow',aEscrowD:'Funds held by IGV until delivery is confirmed',
+  annoCk:'Pre-submit checks: agreement checked + delivery info complete. The success dialog gives next-step guidance per business type.',
+  bizTopupCk:'Diamonds top-up (UID direct)',bizCoinCk:'Gold trade (escrow)',bizAcctCk:'Account trade (escrow + verification)',
+  kBiz:'Service',kGet:'You receive',kUid:'Top-up UID',kTime:'Delivery',kInsure:'Insurance',kInsureV:'7-day recovery insurance',kVstat:'Verification',kLock:'Lock',kLockV:'Locked for you for 30 minutes',
+  ckTopupHint:'Direct top-up needs no extra delivery info. Diamonds go straight to the UID above — please double-check it.',
+  fNick:'In-game nickname + UID (seller invites you by these)',fNickPh:'Nickname / 71234567890',fContact:'Contact (WhatsApp, to schedule the room)',optional:'Optional',
+  fLoginWay:'Login method & account (credentials escrowed & encrypted)',fLoginPh:'e.g. Google login / xxx@gmail.com',fPwd:'Temp password / verification code channel',fPwdPh:'Submitted via support after ordering — placeholder here',
+  fMail:'Email to receive rebinding',fContact2:'Contact (support-assisted handover)',fContactPh:'WhatsApp',
+  okTitle:'Payment successful — order created',okBtn:'View my orders',
+  okTopup:'The seller will complete the UID top-up within the promised time; check your in-game diamond balance. Auto refund if late.',
+  okCoinRoom:'Please stay online: the seller will create a match room and invite you to receive the gold. Funds are released to the seller only after you confirm receipt.',
+  okCoinLogin:'Please stay online: the seller will complete the login top-up within the promised time. Change your password right after. Funds are released only after you confirm receipt.',
+  okAcct:'Support will contact you for handover and rebinding once verification completes; funds stay in escrow until you confirm.',
+  gameShort:'Yalla Ludo',
+},
+ar:{
+  cur:'$',dir:'rtl',
+  nav:['عملات الألعاب','الحسابات','الشحن','العناصر','التعزيز'],search:'ابحث عن لعبة / منتج، مثل: ذهب Yalla Ludo',user:'تسجيل الدخول · الطلبات · الدعم',
+  crumbHome:'الرئيسية',crumbBrand:'منطقة Yalla Ludo',crumbTopupCat:'الشحن',crumbTopup:'شحن ماس Yalla Ludo',crumbConfirm:'تأكيد المنتج',
+  crumbCoinsCat:'عملات الألعاب',crumbCoins:'ذهب Yalla Ludo',crumbAcctCat:'الحسابات',crumbAccts:'حسابات Yalla Ludo',crumbAcctDetail:'تفاصيل الحساب',crumbCheckout:'إتمام الطلب',
+  annoBtnShow:'📌 عرض ملاحظات التصميم',annoBtnHide:'🙈 إخفاء ملاحظات التصميم',annoPrefix:'ملاحظة تصميم ',
+  brandTitle:'منطقة تداول Yalla Ludo',brandSub:'لودو + دومينو · دردشة صوتية | لعبة شهيرة في الشرق الأوسط وشمال أفريقيا · من Yalla Group',
+  brandTags:['iOS / Android','خادم عالمي','شحن مباشر بالـ UID','تسليم خلال 24 ساعة'],
+  stat30:'طلبات (30 يوماً)',statRate:'تقييم إيجابي',statShip:'متوسط التسليم',statShipV:'5 دقائق',
+  brandSec:'اختر الخدمة',brandSecSub:'ثلاثة أقسام — ويمكن الوصول لكل قسم مباشرة عبر البحث أو الروابط',
+  bizTopup:'شحن الماس',bizTopupD:'فئات قياسية يتنافس عليها عدة بائعين بالسعر. شحن مباشر بالـ UID دون تسجيل دخول.',
+  bizCoins:'تداول الذهب',bizCoinsD:'سلعة موحدة يعرضها عدة بائعين. التسعير لكل 1B مع ضمان الوساطة.',
+  bizAccts:'تداول الحسابات',bizAcctsD:'كل حساب منتج فريد يعرضه بائعه بسعر واحد، ويُحذف فور بيعه.',
+  from:'ابتداءً من',per100:'/100 ماسة',per1B:'/1B',perAcct:'/حساب',
+  goTopup:'اختر الفئة وقارن ←',goCoins:'عروض البائعين ←',goAccts:'تصفح الحسابات ←',
+  trust:[['ضمان الوساطة','تحرير المبلغ بعد تأكيد الاستلام'],['تسليم فوري','تعويض تلقائي عند التأخير'],['التحقق من الحسابات','مراجعة يدوية من IGV'],['دعم 24/7','قناة تحكيم النزاعات']],
+  annoBrand:'صفحة العلامة مجرد مدخل واحد وليست مساراً إلزامياً؛ فلكل قسم صفحته المستقلة برأس كامل وتبويبات تنقل تستقبل الزيارات المباشرة.',
+  eyebrow:'IGV · منطقة Yalla Ludo',
+  tabTopup:'💎 شحن الماس',tabCoins:'🪙 تداول الذهب',tabAccts:'🎮 الحسابات',toBrand:'الانتقال إلى منطقة العلامة ‹',
+  tuTitle:'شحن ماس Yalla Ludo 💎',tuSave:'أرخص من المتجر الرسمي حتى 28%',
+  tuDesc:'تبيع هذه الصفحة ماس لعبة Yalla Ludo (للهدايا / التخصيص / VIP / تحويله لذهب)، <b>بأسعار أقل من المتجر الرسمي داخل اللعبة</b>. عدة بائعين موثّقين يتنافسون بالسعر، والشحن مباشر بالـ UID دون كلمة مرور.',
+  tuPills:['💰 كل الأسعار أقل من الرسمي','شحن مباشر بالـ UID','التسليم خلال 5 دقائق','استرداد تلقائي عند التأخير'],
+  step1:'الخطوة 1: اختر الفئة',step1Sub:'جميع الأسعار أقل من المتجر الرسمي؛ السعر المشطوب هو السعر الرسمي',
+  pickedBtn:(n,c)=>`اخترت <b>${n}</b> · اعرض عروض <b>${c}</b> بائعين وقارن بالأسفل ↓`,
+  annoDenom:'السعر هو العنصر البصري الأول في بطاقة الفئة: سعر حالي كبير + سعر رسمي مشطوب + شارة "وفّر X%". اختيار الفئة يمرّر الصفحة تلقائياً للخطوة الثانية، مع زر دائم "قارن بالأسفل ↓" — حلّان لمشكلة عدم رؤية الخطوة الثانية عند كثرة الفئات.',
+  step2:'الخطوة 2: اختر البائع',
+  offerCount:(d,n,o)=>`${n} بائعين يعرضون «${d} ماسة»، وجميعها أقل من السعر الرسمي ${o}`,
+  sortPrice:'الأقل سعراً',sortSpeed:'الأسرع تسليماً',sortSales:'الأكثر مبيعاً',sortRate:'الأعلى تقييماً',
+  bestPrice:'أفضل سعر',bonusBadge:b=>`+${b} 💎 هدية`,
+  ratingL:'تقييم',salesL:'مبيعات',etaL:e=>`تسليم خلال ${e}`,
+  official:'الرسمي',saveAmt:v=>`وفّر ${v}`,buy:'شراء',
+  annoOffers:'عدة بائعين يسعّرون نفس المنتج (نموذج العروض) مرتّبين افتراضياً بالسعر؛ الأقل سعراً يحمل شارة "أفضل سعر"، وكل صف يعرض الفرق عن السعر الرسمي. اختيار البائع ينقل مباشرة لصفحة الطلب — السلع الموحدة لا تحتاج صفحة تفاصيل وسيطة.',
+  denomOnSale:n=>`${n} بائعين`,fromP:'من',
+  poGoods:'المنتج والبائع',poQty:'الكمية',poQtyHint:'الوحدة = الفئة المختارة؛ الحد الأقصى 99 لكل طلب',
+  poAcct:'حساب الشحن',uidLabel:'معرّف اللاعب UID ‏(11 رقماً يبدأ بـ 7)',uidPh:'مثال: 71234567890',
+  uidHint:'اضغط على صورتك داخل اللعبة لمعرفة الـ UID، وانسخه لتجنب الأخطاء.',uidOk:'✓ صيغة UID صحيحة',uidErr:'يجب أن يتكون UID من 11 رقماً ويبدأ بـ 7 — يرجى التحقق',
+  annoUid:'تحقق فوري من الـ UID: ‏11 رقماً يبدأ بـ 7؛ الإدخال غير الصحيح يظهر تنبيهاً أحمر ويعطّل زر الدفع. "لا حاجة لكلمة المرور" هو عنصر الثقة الذي تؤكده الصفحة.',
+  poPreview:'ملخص الطلب',rGoods:'المنتج',rSeller:'البائع',rQty:'الكمية',rGet:'الماس المستلَم',rTotal:'الإجمالي',
+  toCheckoutBtn:'إتمام الطلب',aDirect:'شحن مباشر بالـ UID',aDirectD:'دون تسجيل دخول للعبة',aEta:'التسليم',aEtaD:e=>`خلال ${e}، واسترداد تلقائي عند التأخير`,
+  kGoods:'المنتج',kSeller:'البائع',kUnit:'سعر الوحدة',kBonus:'الهدية',kBonusV:b=>`+${b} 💎 لكل وحدة`,kNone:'لا يوجد',kEta:'التسليم',kEtaV:e=>`خلال ${e}`,kDeliver:'الطريقة',kDirect:'شحن مباشر بالـ UID دون كلمة مرور',
+  diamonds:'ماسة',perShare:'/ وحدة',
+  coTitle:'تداول ذهب Yalla Ludo 🪙',
+  coDesc:'تبيع هذه الصفحة ذهب Yalla Ludo الجاهز (مطلوب لدخول غرف المباريات). الذهب سلعة موحّدة تُسعَّر لكل 1B (مليار)، يعرضها عدة بائعين موثّقين؛ التسليم عبر غرفة مباراة خاصة أو تسجيل الدخول، مع ضمان الوساطة — لا يُحرَّر المبلغ إلا بعد تأكيدك الاستلام.',
+  coPills:['ضمان الوساطة','الحد الأدنى 1B','التسليم خلال 30 دقيقة'],
+  needTitle:'كم تحتاج من الذهب؟',needUnit:'B ذهب',hotPack:'الأكثر اختياراً',
+  annoPack:'حزم الكمية أزرار اختيار سريعة بجانب العدّاد الكبير؛ قائمة العروض بالأسفل تعرض الإجمالي لهذه الكمية أصلاً، لذا لا تحمل الأزرار أسعاراً أو شروحات — فقط شارة "الأكثر اختياراً". التعديل اليدوي يلغي التحديد.',
+  fDeliver:'طريقة التسليم',fAll:'الكل',
+  dRoom:'التسليم عبر غرفة مباراة',dRoomD:'ينشئ البائع غرفة مباراة خاصة تدخلها وتستلم الذهب عبر اللعب. دون كلمة مرور، خلال 30 دقيقة تقريباً.',dRoomN:'دخول الغرفة، ~30 دقيقة',
+  dLogin:'الشحن عبر تسجيل الدخول',dLoginD:'تشارك حسابك مؤقتاً ليشحن البائع الذهب. بيانات الدخول محفوظة لدى IGV، ويُنصح بتغيير كلمة المرور بعد الانتهاء. ~10 دقائق.',dLoginN:'دخول مؤقت، ~10 دقائق',
+  annoCoinList:'تعرض القائمة إجمالي كل بائع حسب كميتك لحظياً؛ البائعون ذوو المخزون غير الكافي أو الحد الأدنى الأعلى يظهرون رمادياً في الأسفل مع السبب — لتقليل كلفة المقارنة.',
+  stockL:'المخزون',minSellL:m=>`الحد الأدنى ${m}B`,stockLow:'مخزون غير كافٍ',belowMin:'أقل من الحد الأدنى',
+  totalFor:n=>`إجمالي ${n}B`,unitP:'/1B',cantBuy:'غير متاح',
+  coEmpty:'لا يوجد بائعون مطابقون للتصفية الحالية — جرّب تعديل الكمية أو طريقة التسليم',
+  coGoods:'المنتج والبائع',coGoodsV:'ذهب Yalla Ludo جاهز (سلعة موحّدة)',coQty:'الكمية',
+  coQtyHint:(m,s)=>`الوحدة: 1B · هذا البائع: الحد الأدنى ${m}B · المخزون ${s}B`,
+  annoDeliver:'تُعرض فقط طرق التسليم المدعومة من هذا البائع؛ ويتزامن الاختيار مع ملاحظة الملخص ونموذج التسليم في صفحة الدفع. التسليم عبر الغرفة لا يتطلب بيانات دخول؛ وبيانات الشحن عبر الدخول تُحفظ لدى المنصة مع تذكير بتغيير كلمة المرور.',
+  kMinStock:'الحد الأدنى / المخزون',kShip:'مدة التسليم',kShipV:'خلال 30 دقيقة من الدفع',kSales:'إجمالي المبيعات',kSalesV:s=>`${s} طلب`,
+  priceDetail:'تفاصيل السعر',rDNote:'التسليم',
+  aGuarantee:'ضمان الوساطة',aGuaranteeD:'يُحرَّر المبلغ للبائع بعد تأكيدك الاستلام فقط',aTimeout:'تعويض التأخير',aTimeoutD:'استرداد بضغطة واحدة عند تجاوز المدة',
+  shareUnit:(q)=>`${q} وحدة (${q}B)`,
+  acTitle:'تداول حسابات Yalla Ludo 🎮',
+  acDesc:'تبيع هذه الصفحة حسابات Yalla Ludo جاهزة. كل حساب منتج فريد يعرضه بائعه — سعر واحد لكل حساب ويُحذف فور بيعه. توفر IGV التحقق من الحساب وضمان استرجاع لمدة 7 أيام ومساعدة في نقل الارتباط.',
+  acPills:['تحقق IGV','ضمان استرجاع 7 أيام','مساعدة في نقل الارتباط'],
+  fPrice:'نطاق السعر',fCoins:'كمية الذهب',fSellPt:'المميزات',fVerifiedOnly:'الموثّقة فقط',fMore:'مرشحات أكثر ▾',fLess:'مرشحات أقل ▴',
+  sortDefault:'الأبرز',sortPriceAsc:'السعر ↑',sortNew:'الأحدث',
+  noLimit:'الكل',pUnder:'أقل من 100',p1:'100 – 500',p2:'500 – 1000',pAbove:'أكثر من 1000',pMin:'الأدنى',pMax:'الأعلى',ok:'تطبيق',reset:'إعادة تعيين',
+  c10:'+10B',c30:'+30B',c50:'+50B',
+  sPlat:'مختارات IGV',sSkin:'أشكال نادرة (5+)',sValue:'أفضل قيمة',
+  fVip:'مستوى VIP',v3:'+VIP3',v5:'+VIP5',fRoyal:'مستوى Royal',fTime:'وقت الإدراج',t24:'آخر 24 ساعة',t7:'آخر 7 أيام',fBind:'الارتباط',bMail:'بريد قابل للنقل',b3rd:'دخول بطرف ثالث',
+  selPrefix:'المفعّل:',clearAll:'مسح الكل',selCount:n=>`تم اختيار ${n}`,tagPrice:'السعر ',tagCoins:'الذهب ',
+  annoFilter:'تصنيف المرشحات: عالية التكرار ظاهرة (السعر / الذهب / المميزات / التحقق / الترتيب)، ومنخفضة التكرار مطوية تحت "مرشحات أكثر". عناصر التحكم حسب نوع البيانات: السعر = نطاقات جاهزة + إدخال مخصص؛ القوائم أحادية الاختيار تُطبَّق فوراً؛ متعددة الاختيار تُطبَّق بزر "تطبيق". الشروط الفعّالة تظهر كوسوم قابلة للحذف مع مسح الكل.',
+  annoAcctCard:'الحسابات سلع غير موحّدة تُعرض ببطاقات تتصدرها الصورة: لقطة الغلاف + شريط ميزة من المنصة (بمراجعة IGV وليس من البائع) + شارة التحقق + عدد الصور؛ وأسفلها العنوان وخصائص سريعة والسعر وشريط البائع (اسم المتجر / التقييم / عدد المراجعات). البطاقات المباعة تظهر رمادية.',
+  acctEmpty:'لا توجد حسابات مطابقة للتصفية — جرّب تخفيف الشروط أو',
+  coverPh:'لقطة الصفحة الرئيسية للحساب (الغلاف)',verified:'✔ موثّق',pendingV:'قيد التحقق',soldOut:'تم البيع',zoomBtn:'🔍 تكبير',
+  attrCoins:'ذهب',attrSkins:'أشكال',attrSkinsU:'',fixedPrice:'سعر ثابت',uniqueSku:'منتج فريد · يُحذف فور البيع',
+  reviewsOf:(r,n)=>`<em>${r}</em> إيجابي · ${n} مراجعة`,
+  adAttrs:'خصائص الحساب',adSeller:'البائع',adSellerV:(s,r,n)=>`${s} (${r} إيجابي · ${n} مراجعة)`,adPlat:'ميزة IGV',
+  adCoins:'كمية الذهب',adSkins:'الأشكال النادرة',adSkinsV:n=>`${n}`,adVip:'مستوى VIP',adRoyal:'مستوى Royal',adBind:'الارتباط',adBindV:'بريد / طرف ثالث قابل للنقل',
+  adVstat:'التحقق',adVdone:'موثّق من IGV',adVwait:'يُوثَّق خلال 24 ساعة من الطلب',adNature:'نوع المنتج',adNatureV:'منتج فريد، يُحذف فور البيع',
+  adShots:'لقطات الحساب',adShotsSub:'اضغط أي صورة للتكبير وتصفح الجميع',
+  shotNames:['الصفحة الرئيسية','المخزن / الأشكال','رصيد الذهب','صفحة VIP','ديكور الغرفة','سجل المباريات'],shotPh:' (صورة توضيحية)',
+  lbCount:(i,n)=>`${i} من ${n}`,
+  annoLB:'بطاقات القائمة وصفحة التفاصيل تشتركان في نافذة عرض واحدة: صورة كبيرة + تنقل دائري + مصغرات + عدّاد؛ مع دعم ←/→ وEsc والنقر على الخلفية للإغلاق. النقر على الغلاف أو زر التكبير يفتح العارض دون مغادرة الصفحة.',
+  adFlow:'خطوات الصفقة',flow:[['① الطلب والوساطة','تحتفظ IGV بالمبلغ'],['② التحقق','مطابقة الخصائص مع اللقطات'],['③ التسليم ونقل الارتباط','الدعم يساعد في نقل البريد / الطرف الثالث'],['④ التأكيد والتحرير','يُحرَّر المبلغ بعد تأكيد المشتري']],
+  adPrice:'السعر',rAcctPrice:'سعر الحساب',rVerify:'التحقق',included:'مشمول',rInsure:'ضمان الاسترجاع',days7:'7 أيام',buyNow:'اشترِ الآن',
+  aVerify:'تسليم بعد التحقق',aVerifyD:'استرداد كامل عند عدم مطابقة الخصائص',aLock:'منتج فريد',aLockD:'يُقفل لك عند الطلب — لا يمكن لغيرك شراؤه',
+  annoLock:'حماية تزامن المنتج الفريد: الطلب يقفل المنتج (ادفع خلال 30 دقيقة وإلا يُحرَّر)، لمنع البيع المزدوج.',
+  ckSteps:['اختيار المنتج / البائع','التأكيد والدفع','التسليم'],
+  ckOrder:'تفاصيل الطلب',ckDeliverInfo:'معلومات التسليم',ckPay:'طريقة الدفع',
+  pays:[['بطاقة ائتمانية','Visa · MasterCard'],['PayPal','فوري'],['محافظ محلية','مدى · STC Pay · فوري']],
+  rAmount:'المجموع الفرعي',rCoupon:'قسيمة',couponPick:'اختر قسيمة ›',couponUsed:v=>`-${v} (قسيمة)`,rPay:'الإجمالي المستحق',
+  agree:'قرأت وأوافق على اتفاقية خدمة التداول وقواعد الوساطة',agreeAlert:'يرجى الموافقة على اتفاقية خدمة التداول أولاً',
+  submitPay:'تأكيد الطلب والدفع',aEscrow:'الوساطة',aEscrowD:'تحتفظ IGV بالمبلغ حتى تأكيد التسليم',
+  annoCk:'تحقق قبل الإرسال: الموافقة على الاتفاقية + اكتمال معلومات التسليم. نافذة النجاح تعرض الخطوة التالية حسب نوع الخدمة.',
+  bizTopupCk:'شحن الماس (مباشر بالـ UID)',bizCoinCk:'تداول الذهب (وساطة)',bizAcctCk:'تداول حساب (وساطة + تحقق)',
+  kBiz:'الخدمة',kGet:'ستستلم',kUid:'‏UID الشحن',kTime:'التسليم',kInsure:'الضمان',kInsureV:'ضمان استرجاع 7 أيام',kVstat:'التحقق',kLock:'القفل',kLockV:'مقفول لك لمدة 30 دقيقة',
+  ckTopupHint:'الشحن المباشر لا يحتاج معلومات تسليم إضافية؛ سيصل الماس مباشرة إلى الـ UID أعلاه — يرجى التأكد منه مجدداً.',
+  fNick:'الاسم داخل اللعبة + UID (يدعوك البائع بهما)',fNickPh:'الاسم / 71234567890',fContact:'وسيلة التواصل (واتساب، لتنسيق موعد الغرفة)',optional:'اختياري',
+  fLoginWay:'طريقة الدخول والحساب (البيانات محفوظة ومشفّرة لدى المنصة)',fLoginPh:'مثال: دخول Google ‏/ xxx@gmail.com',fPwd:'كلمة مرور مؤقتة / قناة استلام الرمز',fPwdPh:'تُرسل عبر الدعم بعد الطلب — هذا الحقل توضيحي',
+  fMail:'البريد الإلكتروني لاستلام نقل الارتباط',fContact2:'وسيلة التواصل (تسليم بمساعدة الدعم)',fContactPh:'واتساب',
+  okTitle:'تم الدفع بنجاح — أُنشئ الطلب',okBtn:'عرض طلباتي',
+  okTopup:'سيكمل البائع الشحن المباشر خلال المدة المحددة؛ تحقق من رصيد الماس داخل اللعبة. استرداد تلقائي عند التأخير.',
+  okCoinRoom:'ابقَ متصلاً: سينشئ البائع غرفة مباراة ويدعوك لاستلام الذهب. لا يُحرَّر المبلغ للبائع إلا بعد تأكيدك الاستلام.',
+  okCoinLogin:'ابقَ متصلاً: سيكمل البائع الشحن عبر تسجيل الدخول خلال المدة المحددة. غيّر كلمة المرور فور الانتهاء. لا يُحرَّر المبلغ إلا بعد تأكيدك.',
+  okAcct:'سيتواصل معك الدعم للتسليم ونقل الارتباط بعد اكتمال التحقق؛ يبقى المبلغ لدى الوساطة حتى تأكيدك.',
+  gameShort:'Yalla Ludo',
+}};
+
+/* ============================================================
+   数据(名称按语言切换)
+============================================================ */
+const N=o=>o[lang]||o.en;
+const denoms=[
+  {id:1,d:100,official:8},{id:2,d:500,official:40},{id:3,d:1000,official:80},
+  {id:4,d:5000,official:400},{id:5,d:10000,official:800},{id:6,d:50000,official:4000},
+];
+const SELLERS={
+  eagle:{zh:'沙漠之鹰工作室',en:'Desert Eagle Studio',ar:'استوديو صقر الصحراء'},
+  fast:{zh:'极速直充小铺',en:'Flash Top-Up Shop',ar:'متجر الشحن السريع'},
+  habibi:{zh:'Habibi 充值行',en:'Habibi Top-Up House',ar:'دار حبيبي للشحن'},
+  habibiG:{zh:'Habibi 金币行',en:'Habibi Gold House',ar:'دار حبيبي للذهب'},
+  official:{zh:'YL 官方合作店',en:'YL Partner Store',ar:'متجر شريك YL'},
+  bulk:{zh:'YL 大额批发',en:'YL Bulk Wholesale',ar:'YL للبيع بالجملة'},
+  xiaoman:{zh:'小满代练',en:'Mano Boosting',ar:'مانو للتعزيز'},
+  oldp:{zh:'老玩家甩号',en:'Veteran Player Sale',ar:'بيع لاعب مخضرم'},
+  habibiA:{zh:'Habibi 账号铺',en:'Habibi Account Shop',ar:'متجر حبيبي للحسابات'},
+  indiv:{zh:'个人卖家 U8842',en:'Individual U8842',ar:'بائع فردي U8842'},
+  select:{zh:'账号严选',en:'Account Select',ar:'حسابات مختارة'},
+};
+const ETA={m1:{zh:'1 分钟',en:'1 min',ar:'دقيقة واحدة'},m3:{zh:'3 分钟',en:'3 min',ar:'3 دقائق'},m5:{zh:'5 分钟',en:'5 min',ar:'5 دقائق'},m10:{zh:'10 分钟',en:'10 min',ar:'10 دقائق'},m30:{zh:'30 分钟',en:'30 min',ar:'30 دقيقة'}};
+const topupOffers={
+  1:[{s:'fast',init:'F',c:'#2E6FE4',rate:'99.7%',sales:3120,p:6.2,eta:'m5',bonus:0},
+     {s:'eagle',init:'D',c:'#DB9414',rate:'99.6%',sales:2381,p:6.5,eta:'m3',bonus:0},
+     {s:'habibi',init:'H',c:'#279B63',rate:'99.1%',sales:1764,p:6.8,eta:'m10',bonus:5}],
+  2:[{s:'fast',init:'F',c:'#2E6FE4',rate:'99.7%',sales:3120,p:31,eta:'m5',bonus:0},
+     {s:'habibi',init:'H',c:'#279B63',rate:'99.1%',sales:1764,p:32.5,eta:'m10',bonus:20}],
+  3:[{s:'eagle',init:'D',c:'#DB9414',rate:'99.6%',sales:2381,p:61,eta:'m3',bonus:30},
+     {s:'fast',init:'F',c:'#2E6FE4',rate:'99.7%',sales:3120,p:63,eta:'m5',bonus:0},
+     {s:'official',init:'Y',c:'#8A5BD6',rate:'99.9%',sales:5230,p:65,eta:'m1',bonus:50},
+     {s:'xiaoman',init:'M',c:'#E4462B',rate:'97.9%',sales:412,p:66,eta:'m30',bonus:0}],
+  4:[{s:'official',init:'Y',c:'#8A5BD6',rate:'99.9%',sales:5230,p:302,eta:'m1',bonus:250},
+     {s:'eagle',init:'D',c:'#DB9414',rate:'99.6%',sales:2381,p:308,eta:'m3',bonus:250}],
+  5:[{s:'official',init:'Y',c:'#8A5BD6',rate:'99.9%',sales:5230,p:588,eta:'m1',bonus:800},
+     {s:'fast',init:'F',c:'#2E6FE4',rate:'99.7%',sales:3120,p:598,eta:'m5',bonus:600}],
+  6:[{s:'official',init:'Y',c:'#8A5BD6',rate:'99.9%',sales:5230,p:2858,eta:'m1',bonus:6000}],
+};
+const coinListings=[
+  {id:1,s:'eagle',init:'D',color:'#DB9414',rate:'99.6%',sales:2381,price:3.2,stock:120,min:1,delivery:['room','login']},
+  {id:2,s:'habibiG',init:'H',color:'#279B63',rate:'99.1%',sales:1764,price:3.4,stock:80,min:1,delivery:['room']},
+  {id:3,s:'bulk',init:'Y',color:'#2E6FE4',rate:'98.7%',sales:960,price:3.0,stock:500,min:10,delivery:['room','login']},
+  {id:4,s:'xiaoman',init:'M',color:'#8A5BD6',rate:'97.9%',sales:412,price:3.6,stock:3,min:1,delivery:['login']},
+];
+const ACCT_TITLES={
+  1:{zh:'88B 金币大户 · 12 款稀有皮肤 · VIP6 满装扮',en:'88B Gold Whale · 12 Rare Skins · Full VIP6 Cosmetics',ar:'حوت ذهب 88B · ‏12 شكلاً نادراً · VIP6 كامل التخصيص'},
+  2:{zh:'32B 金币 · 龙骰限定皮肤 · VIP3',en:'32B Gold · Dragon Dice Limited Skin · VIP3',ar:'ذهب 32B · شكل نرد التنين المحدود · VIP3'},
+  3:{zh:'12B 金币起步号 · 自用一手 · 无皮肤',en:'12B Starter · First-Hand Personal · No Skins',ar:'حساب مبتدئ 12B · استخدام شخصي · بلا أشكال'},
+  4:{zh:'56B 金币 · 高 Royal 等级 · VIP5',en:'56B Gold · High Royal Level · VIP5',ar:'ذهب 56B · مستوى Royal مرتفع · VIP5'},
+};
+const PLAT_TAGS={sel:{zh:'🏆 平台优选',en:'🏆 IGV Featured',ar:'🏆 مختارات IGV'},skin:{zh:'🔥 限定皮肤',en:'🔥 Limited Skin',ar:'🔥 شكل محدود'},val:{zh:'💰 高性价比',en:'💰 Best Value',ar:'💰 أفضل قيمة'}};
+const acctListings=[
+  {id:1,s:'oldp',rate:'99.2%',reviews:326,coins:'88B',skins:12,vip:'VIP6',royal:'Lv.5',price:1280,verified:true,sold:false,tag:'sel',imgs:6},
+  {id:2,s:'habibiA',rate:'98.7%',reviews:1204,coins:'32B',skins:5,vip:'VIP3',royal:'Lv.3',price:468,verified:true,sold:false,tag:'skin',imgs:5},
+  {id:3,s:'indiv',rate:'97.5%',reviews:18,coins:'12B',skins:0,vip:'VIP1',royal:'Lv.1',price:88,verified:false,sold:false,tag:'val',imgs:3},
+  {id:4,s:'select',rate:'99.6%',reviews:892,coins:'56B',skins:8,vip:'VIP5',royal:'Lv.6',price:899,verified:true,sold:true,tag:null,imgs:4},
+];
+const coinPacks=[{q:2},{q:5,hot:true},{q:10},{q:20},{q:50},{q:100}];
+
+/* ============================================================
+   状态
+============================================================ */
+let lang='zh', L=I18N.zh, currentView='topup';
+let curDenom=denoms[2], curTuOffer=null, tuSort='price';
+let curCoin=null, curDelivery='room', coinFilter='all', coinSort='price';
+let curAcct=null, order=null, orderType=null;
+const af={pMin:null,pMax:null,pKey:null,coinsMin:0,vipMin:0,sell:[],sellDraft:[],verified:false,sort:'default',more:false};
+
+const money=v=>L.cur+(+v).toFixed(2).replace(/\.00$/,'');
+const anno=key=>`<div class="anno">${L[key]}</div>`;
+const dDefs=()=>({room:{name:L.dRoom,desc:L.dRoomD,note:L.dRoomN},login:{name:L.dLogin,desc:L.dLoginD,note:L.dLoginN}});
+
+/* ============================================================
+   静态视图模板(按语言重建)
+============================================================ */
+function heroTabs(active,color){
+  return `<div class="cat-tabs">
+    <button class="cat-tab t-blue ${active==='topup'?'on':''}" onclick="go('topup')">${L.tabTopup}</button>
+    <button class="cat-tab t-gold ${active==='coins'?'on':''}" onclick="go('coins')">${L.tabCoins}</button>
+    <button class="cat-tab t-green ${active==='accounts'?'on':''}" onclick="go('accounts')">${L.tabAccts}</button>
+    <span class="to-brand" onclick="go('brand')">${L.toBrand}</span>
+  </div>`;
+}
+function buildStatic(){
+  document.getElementById('top-nav').innerHTML=L.nav.map(n=>`<span>${n}</span>`).join('');
+  document.getElementById('search-in').placeholder=L.search;
+  document.getElementById('top-user').textContent=L.user;
+  document.getElementById('anno-btn').textContent=document.body.classList.contains('anno-on')?L.annoBtnHide:L.annoBtnShow;
+  document.getElementById('ok-title').textContent=L.okTitle;
+  document.getElementById('ok-btn').textContent=L.okBtn;
+  document.querySelectorAll('.lang-sw button').forEach(b=>b.classList.remove('on'));
+  document.getElementById('lw-'+lang).classList.add('on');
+
+  /* 品牌页 */
+  document.getElementById('view-brand').innerHTML=`
+  <div class="hero"><div class="hero-in">
+    <div class="game-cover"><span>${L.gameShort}</span></div>
+    <div>
+      <h1>${L.brandTitle}</h1>
+      <div class="sub">${L.brandSub}</div>
+      <div class="tags">${L.brandTags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+    <div class="hero-stats">
+      <div><b class="num">12,847</b><span>${L.stat30}</span></div>
+      <div><b class="num">99.2%</b><span>${L.statRate}</span></div>
+      <div><b>${L.statShipV}</b><span>${L.statShip}</span></div>
+    </div>
+  </div></div>
+  <div class="sec-title"><h2>${L.brandSec}</h2><small>${L.brandSecSub}</small></div>
+  <div class="biz-grid">
+    <div class="biz-card c-blue" onclick="go('topup')">
+      <div class="biz-ico">💎</div><h3>${L.bizTopup}</h3><p>${L.bizTopupD}</p>
+      <div class="biz-meta"><span class="from">${L.from} <b class="num">${money(6.2)}</b> ${L.per100}</span><span class="go">${L.goTopup}</span></div>
+    </div>
+    <div class="biz-card c-gold" onclick="go('coins')">
+      <div class="biz-ico">🪙</div><h3>${L.bizCoins}</h3><p>${L.bizCoinsD}</p>
+      <div class="biz-meta"><span class="from">${L.from} <b class="num">${money(3.0)}</b> ${L.per1B}</span><span class="go">${L.goCoins}</span></div>
+    </div>
+    <div class="biz-card c-green" onclick="go('accounts')">
+      <div class="biz-ico">🎮</div><h3>${L.bizAccts}</h3><p>${L.bizAcctsD}</p>
+      <div class="biz-meta"><span class="from">${L.from} <b class="num">${money(88)}</b> ${L.perAcct}</span><span class="go">${L.goAccts}</span></div>
+    </div>
+  </div>
+  ${anno('annoBrand')}
+  <div class="trust">${L.trust.map(t=>`<div><span class="dot4"></span><div><b>${t[0]}</b>${t[1]}</div></div>`).join('')}</div>`;
+
+  /* 钻石充值页 */
+  document.getElementById('view-topup').innerHTML=`
+  <div class="cat-hero h-blue">
+    <div class="mini-cover"><span>${L.gameShort}</span></div>
+    <div class="t">
+      <div class="eyebrow">${L.eyebrow}</div>
+      <h1>${L.tuTitle} <span class="save-tag">${L.tuSave}</span></h1>
+      <div class="desc">${L.tuDesc}</div>
+      <div class="pill-row">${L.tuPills.map(p=>`<span class="pill">${p}</span>`).join('')}</div>
+    </div>
+    <div class="hstats"><div><b class="num">6,204</b><span>${L.stat30}</span></div><div><b class="num">99.4%</b><span>${L.statRate}</span></div></div>
+  </div>
+  ${heroTabs('topup')}
+  <div class="panel">
+    <h3>${L.step1} <span class="h-sub">${L.step1Sub}</span></h3>
+    <div class="opt-grid" id="tu-denoms"></div>
+    <div style="text-align:center;margin-top:12px">
+      <button class="btn" style="background:#FFF6F4;color:var(--red);border:1.5px dashed var(--red);padding:8px 18px;font-size:12.5px" onclick="scrollToOffers()" id="tu-picked"></button>
+    </div>
+    ${anno('annoDenom')}
+  </div>
+  <div class="panel" style="margin-top:14px" id="tu-step2">
+    <h3>${L.step2} <span class="h-sub" id="tu-offer-count"></span></h3>
+    <div class="list-head" style="border:none;padding:0 0 4px;margin-bottom:8px;background:none">
+      <div class="sortbar" style="margin-inline-start:0">
+        <button class="chip ${tuSort==='price'?'on':''}" onclick="chipOn(this);sortTuOffers('price')">${L.sortPrice}</button>
+        <button class="chip ${tuSort==='speed'?'on':''}" onclick="chipOn(this);sortTuOffers('speed')">${L.sortSpeed}</button>
+        <button class="chip ${tuSort==='sales'?'on':''}" onclick="chipOn(this);sortTuOffers('sales')">${L.sortSales}</button>
+      </div>
+    </div>
+    <div id="tu-offers"></div>
+    ${anno('annoOffers')}
+  </div>`;
+
+  /* 钻石下单页 */
+  document.getElementById('view-topup-order').innerHTML=`
+  <div class="duo">
+    <div>
+      <div class="panel"><h3>${L.poGoods}</h3><div class="kv" id="to-kv"></div></div>
+      <div class="panel"><h3>${L.poQty}</h3>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div class="stepper"><button onclick="tuQty(-1)">−</button><input id="tu-qty" class="num ltr" value="1" readonly><button onclick="tuQty(1)">＋</button></div>
+          <span class="hint">${L.poQtyHint}</span>
+        </div>
+      </div>
+      <div class="panel"><h3>${L.poAcct}</h3>
+        <div class="field">
+          <label>${L.uidLabel}</label>
+          <input id="tu-uid" class="ltr" dir="ltr" placeholder="${L.uidPh}" maxlength="11" oninput="uidCheck()">
+          <div class="hint" id="tu-uid-hint">${L.uidHint}</div>
+        </div>
+        ${anno('annoUid')}
+      </div>
+    </div>
+    <aside class="side"><div class="panel">
+      <h3>${L.poPreview}</h3>
+      <div class="sum-row"><span>${L.rGoods}</span><b id="to-name"></b></div>
+      <div class="sum-row"><span>${L.rSeller}</span><b id="to-seller"></b></div>
+      <div class="sum-row"><span>${L.rQty}</span><b class="num" id="to-qty"></b></div>
+      <div class="sum-row"><span>${L.rGet}</span><b class="num" id="to-get"></b></div>
+      <div class="sum-total"><span>${L.rTotal}</span><span class="p num" id="to-total"></span></div>
+      <button class="btn btn-block" id="to-buy" onclick="toCheckout('topup')" disabled>${L.toCheckoutBtn}</button>
+      <div class="assure"><b>✔ ${L.aDirect}</b> ${L.aDirectD}<br><b>✔ ${L.aEta}</b> <span id="to-eta"></span></div>
+    </div></aside>
+  </div>`;
+
+  /* 金币页 */
+  document.getElementById('view-coins').innerHTML=`
+  <div class="cat-hero h-gold">
+    <div class="mini-cover"><span>${L.gameShort}</span></div>
+    <div class="t">
+      <div class="eyebrow">${L.eyebrow}</div>
+      <h1>${L.coTitle}</h1>
+      <div class="desc">${L.coDesc}</div>
+      <div class="pill-row">${L.coPills.map(p=>`<span class="pill">${p}</span>`).join('')}</div>
+    </div>
+    <div class="hstats"><div><b class="num">4,911</b><span>${L.stat30}</span></div><div><b class="num">99.0%</b><span>${L.statRate}</span></div></div>
+  </div>
+  ${heroTabs('coins')}
+  <div class="need-hero">
+    <div class="nh-title">${L.needTitle}</div>
+    <div class="need-line">
+      <div class="big-step"><button onclick="coinNeed(-1)">−</button><input id="coin-need" class="num ltr" value="5" readonly><button onclick="coinNeed(1)">＋</button></div>
+      <span class="need-unit">${L.needUnit}</span>
+      <div class="pack-row" id="pack-grid"></div>
+    </div>
+    ${anno('annoPack')}
+  </div>
+  <div class="list-head">
+    <span class="f-label">${L.fDeliver}</span>
+    <button class="chip ${coinFilter==='all'?'on':''}" onclick="chipOn(this);filterCoins('all')">${L.fAll}</button>
+    <button class="chip ${coinFilter==='room'?'on':''}" onclick="chipOn(this);filterCoins('room')">${L.dRoom}</button>
+    <button class="chip ${coinFilter==='login'?'on':''}" onclick="chipOn(this);filterCoins('login')">${L.dLogin}</button>
+    <div class="sortbar">
+      <button class="chip ${coinSort==='price'?'on':''}" onclick="chipOn(this);sortCoins('price')">${L.sortPrice}</button>
+      <button class="chip ${coinSort==='sales'?'on':''}" onclick="chipOn(this);sortCoins('sales')">${L.sortSales}</button>
+      <button class="chip ${coinSort==='rate'?'on':''}" onclick="chipOn(this);sortCoins('rate')">${L.sortRate}</button>
+    </div>
+  </div>
+  ${anno('annoCoinList')}
+  <div id="coin-list"></div>`;
+
+  /* 金币下单页 */
+  document.getElementById('view-coin-order').innerHTML=`
+  <div class="duo">
+    <div>
+      <div class="panel"><h3>${L.coGoods}</h3><div class="kv" id="cd-kv"></div></div>
+      <div class="panel"><h3>${L.coQty}</h3>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div class="stepper"><button onclick="cdQty(-1)">−</button><input id="cd-qty" class="num ltr" value="1" readonly><button onclick="cdQty(1)">＋</button></div>
+          <span class="hint" id="cd-qty-hint"></span>
+        </div>
+      </div>
+      <div class="panel"><h3>${L.fDeliver}</h3>
+        <div class="radio-row" id="cd-delivery"></div>
+        ${anno('annoDeliver')}
+      </div>
+    </div>
+    <aside class="side"><div class="panel">
+      <h3>${L.priceDetail}</h3>
+      <div class="sum-row"><span>${L.rSeller}</span><b id="cd-seller"></b></div>
+      <div class="sum-row"><span>${L.kUnit}</span><b class="num" id="cd-unit"></b></div>
+      <div class="sum-row"><span>${L.rQty}</span><b class="num" id="cd-qty2"></b></div>
+      <div class="sum-row"><span>${L.rDNote}</span><b id="cd-dnote" style="font-size:12px;max-width:170px"></b></div>
+      <div class="sum-total"><span>${L.rTotal}</span><span class="p num" id="cd-total"></span></div>
+      <button class="btn btn-block" onclick="toCheckout('coin')">${L.toCheckoutBtn}</button>
+      <div class="assure"><b>✔ ${L.aGuarantee}</b> ${L.aGuaranteeD}<br><b>✔ ${L.aTimeout}</b> ${L.aTimeoutD}</div>
+    </div></aside>
+  </div>`;
+
+  /* 账号页 */
+  document.getElementById('view-accounts').innerHTML=`
+  <div class="cat-hero h-green">
+    <div class="mini-cover"><span>${L.gameShort}</span></div>
+    <div class="t">
+      <div class="eyebrow">${L.eyebrow}</div>
+      <h1>${L.acTitle}</h1>
+      <div class="desc">${L.acDesc}</div>
+      <div class="pill-row">${L.acPills.map(p=>`<span class="pill">${p}</span>`).join('')}</div>
+    </div>
+    <div class="hstats"><div><b class="num">1,732</b><span>${L.stat30}</span></div><div><b class="num">98.8%</b><span>${L.statRate}</span></div></div>
+  </div>
+  ${heroTabs('accounts')}
+  <div class="fbar">
+    <div class="fbar-row">
+      <div class="fdrop" id="fd-price">
+        <button class="fdrop-btn" onclick="toggleDrop('fd-price')">${L.fPrice} <span id="fd-price-v"></span><span class="car">▼</span></button>
+        <div class="fdrop-panel" style="min-width:240px">
+          <div class="fopt" onclick="setPrice(null,null,null)">${L.noLimit}</div>
+          <div class="fopt" onclick="setPrice(0,100,'pUnder')">${L.pUnder}</div>
+          <div class="fopt" onclick="setPrice(100,500,'p1')">${L.p1}</div>
+          <div class="fopt" onclick="setPrice(500,1000,'p2')">${L.p2}</div>
+          <div class="fopt" onclick="setPrice(1000,null,'pAbove')">${L.pAbove}</div>
+          <div style="display:flex;align-items:center;gap:6px;padding:8px 6px 2px;border-top:1px solid var(--line);margin-top:6px">
+            <input class="price-in num ltr" id="p-min" placeholder="${L.pMin}">–<input class="price-in num ltr" id="p-max" placeholder="${L.pMax}">
+            <button style="border:none;background:var(--red);color:#fff;border-radius:7px;padding:6px 12px;font-size:12px;font-weight:700" onclick="setPriceCustom()">${L.ok}</button>
+          </div>
+        </div>
+      </div>
+      <div class="fdrop" id="fd-coins">
+        <button class="fdrop-btn" onclick="toggleDrop('fd-coins')">${L.fCoins} <span id="fd-coins-v"></span><span class="car">▼</span></button>
+        <div class="fdrop-panel">
+          <div class="fopt" onclick="setCoins(0)">${L.noLimit}</div>
+          <div class="fopt" onclick="setCoins(10)">${L.c10}</div>
+          <div class="fopt" onclick="setCoins(30)">${L.c30}</div>
+          <div class="fopt" onclick="setCoins(50)">${L.c50}</div>
+        </div>
+      </div>
+      <div class="fdrop" id="fd-sell">
+        <button class="fdrop-btn" onclick="toggleDrop('fd-sell')">${L.fSellPt} <span id="fd-sell-v"></span><span class="car">▼</span></button>
+        <div class="fdrop-panel">
+          <div class="fopt ${af.sellDraft.includes('sel')?'checked':''}" data-v="sel" onclick="togMulti(this)"><span class="cb">✓</span>${L.sPlat}</div>
+          <div class="fopt ${af.sellDraft.includes('skin')?'checked':''}" data-v="skin" onclick="togMulti(this)"><span class="cb">✓</span>${L.sSkin}</div>
+          <div class="fopt ${af.sellDraft.includes('val')?'checked':''}" data-v="val" onclick="togMulti(this)"><span class="cb">✓</span>${L.sValue}</div>
+          <div class="fp-actions"><button onclick="resetMulti()">${L.reset}</button><button class="ok" onclick="applyMulti()">${L.ok}</button></div>
+        </div>
+      </div>
+      <button class="chip ${af.verified?'on':''}" id="ch-verified" onclick="togVerified(this)">${L.fVerifiedOnly}</button>
+      <button class="chip" id="more-btn" onclick="togMore(this)">${af.more?L.fLess:L.fMore}</button>
+      <div class="sortbar">
+        <button class="chip ${af.sort==='default'?'on':''}" onclick="chipOn(this);setSort('default')">${L.sortDefault}</button>
+        <button class="chip ${af.sort==='price'?'on':''}" onclick="chipOn(this);setSort('price')">${L.sortPriceAsc}</button>
+        <button class="chip ${af.sort==='new'?'on':''}" onclick="chipOn(this);setSort('new')">${L.sortNew}</button>
+      </div>
+    </div>
+    <div class="fbar-row more-row ${af.more?'open':''}" id="more-row">
+      <div class="fdrop" id="fd-vip">
+        <button class="fdrop-btn" onclick="toggleDrop('fd-vip')">${L.fVip} <span id="fd-vip-v"></span><span class="car">▼</span></button>
+        <div class="fdrop-panel">
+          <div class="fopt" onclick="setVip(0)">${L.noLimit}</div>
+          <div class="fopt" onclick="setVip(3)">${L.v3}</div>
+          <div class="fopt" onclick="setVip(5)">${L.v5}</div>
+        </div>
+      </div>
+      <div class="fdrop" id="fd-royal"><button class="fdrop-btn" onclick="toggleDrop('fd-royal')">${L.fRoyal} <span class="car">▼</span></button>
+        <div class="fdrop-panel"><div class="fopt checked">${L.noLimit}</div><div class="fopt">Lv.3+</div><div class="fopt">Lv.5+</div></div></div>
+      <div class="fdrop" id="fd-time"><button class="fdrop-btn" onclick="toggleDrop('fd-time')">${L.fTime} <span class="car">▼</span></button>
+        <div class="fdrop-panel"><div class="fopt checked">${L.noLimit}</div><div class="fopt">${L.t24}</div><div class="fopt">${L.t7}</div></div></div>
+      <div class="fdrop" id="fd-bind"><button class="fdrop-btn" onclick="toggleDrop('fd-bind')">${L.fBind} <span class="car">▼</span></button>
+        <div class="fdrop-panel"><div class="fopt checked">${L.noLimit}</div><div class="fopt">${L.bMail}</div><div class="fopt">${L.b3rd}</div></div></div>
+    </div>
+    <div class="sel-tags" id="sel-tags" style="display:none"></div>
+  </div>
+  ${anno('annoFilter')}
+  ${anno('annoAcctCard')}
+  <div id="acct-list"></div>`;
+
+  /* 账号详情页 */
+  document.getElementById('view-acct-detail').innerHTML=`
+  <div class="duo">
+    <div>
+      <div class="panel"><h3>${L.adAttrs}</h3><div class="kv" id="ad-kv"></div></div>
+      <div class="panel"><h3>${L.adShots} <span class="h-sub">${L.adShotsSub}</span></h3>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          ${[0,1,2].map(i=>`<div onclick="openLB(curAcct.id,${i})" style="cursor:zoom-in;aspect-ratio:4/3;background:#EFF1F6;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#A6ACC2;position:relative">${L.shotNames[i]}<span style="position:absolute;inset-inline-end:6px;bottom:6px;font-size:14px">🔍</span></div>`).join('')}
+        </div>
+        ${anno('annoLB')}
+      </div>
+      <div class="panel"><h3>${L.adFlow}</h3>
+        <div class="kv">${L.flow.map(f=>`<div><span>${f[0]}</span>${f[1]}</div>`).join('')}</div>
+      </div>
+    </div>
+    <aside class="side"><div class="panel">
+      <h3>${L.adPrice}</h3>
+      <div class="sum-row"><span>${L.adSeller}</span><b id="ad-seller"></b></div>
+      <div class="sum-row"><span>${L.rAcctPrice}</span><b class="num" id="ad-price"></b></div>
+      <div class="sum-row"><span>${L.rVerify}</span><b>${L.included}</b></div>
+      <div class="sum-row"><span>${L.rInsure}</span><b>${L.days7}</b></div>
+      <div class="sum-total"><span>${L.rTotal}</span><span class="p num" id="ad-total"></span></div>
+      <button class="btn btn-block" onclick="toCheckout('acct')">${L.buyNow}</button>
+      <div class="assure"><b>✔ ${L.aVerify}</b> ${L.aVerifyD}<br><b>✔ ${L.aLock}</b> ${L.aLockD}</div>
+    </div>${anno('annoLock')}</aside>
+  </div>`;
+
+  /* 结算页 */
+  document.getElementById('view-checkout').innerHTML=`
+  <div class="steps">${L.ckSteps.map((s,i)=>`<div class="${i===1?'on':''}"><b>${i+1}</b>${s}</div>`).join('')}</div>
+  <div class="duo">
+    <div>
+      <div class="panel"><h3>${L.ckOrder}</h3><div class="kv" id="ck-kv"></div></div>
+      <div class="panel"><h3>${L.ckDeliverInfo}</h3><div id="ck-fields"></div></div>
+      <div class="panel"><h3>${L.ckPay}</h3>
+        <div class="pay-grid">${L.pays.map((p,i)=>`<div class="radio-opt ${i===0?'on':''}" onclick="payOn(this)"><span class="rb"></span><div><b>${p[0]}</b><p>${p[1]}</p></div></div>`).join('')}</div>
+      </div>
+    </div>
+    <aside class="side"><div class="panel">
+      <h3>${L.priceDetail}</h3>
+      <div class="sum-row"><span>${L.rAmount}</span><b class="num" id="ck-amount"></b></div>
+      <div class="sum-row"><span>${L.rCoupon}</span><b><a href="javascript:void(0)" onclick="coupon()" id="ck-coupon" style="color:var(--blue);text-decoration:none">${L.couponPick}</a></b></div>
+      <div class="sum-total"><span>${L.rPay}</span><span class="p num" id="ck-total"></span></div>
+      <label style="display:flex;gap:7px;font-size:11.5px;color:var(--muted);margin-top:12px;align-items:flex-start">
+        <input type="checkbox" id="ck-agree" checked style="margin-top:2px">${L.agree}
+      </label>
+      <button class="btn btn-block" onclick="paySubmit()">${L.submitPay}</button>
+      <div class="assure"><b>✔ ${L.aEscrow}</b> ${L.aEscrowD}</div>
+    </div>${anno('annoCk')}</aside>
+  </div>`;
+}
+
+/* ============================================================
+   路由 / 通用
+============================================================ */
+function crumbsFor(v){
+  const C=L;
+  const map={
+    brand:[[C.crumbHome],[C.crumbBrand]],
+    topup:[[C.crumbHome],[C.crumbTopupCat],[C.crumbTopup]],
+    'topup-order':[[C.crumbHome],[C.crumbTopupCat],[C.crumbTopup,'topup'],[C.crumbConfirm]],
+    coins:[[C.crumbHome],[C.crumbCoinsCat],[C.crumbCoins]],
+    'coin-order':[[C.crumbHome],[C.crumbCoinsCat],[C.crumbCoins,'coins'],[C.crumbConfirm]],
+    accounts:[[C.crumbHome],[C.crumbAcctCat],[C.crumbAccts]],
+    'acct-detail':[[C.crumbHome],[C.crumbAcctCat],[C.crumbAccts,'accounts'],[C.crumbAcctDetail]],
+    checkout:[[C.crumbHome],[C.crumbBrand,'brand'],[C.crumbCheckout]],
+  };
+  return map[v]||[];
+}
+function go(v){
+  currentView=v;
+  document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  const c=crumbsFor(v);
+  document.getElementById('crumbs').innerHTML=c.map((x,i)=>{
+    if(i===c.length-1)return '<b>'+x[0]+'</b>';
+    return x[1]?`<a onclick="go('${x[1]}')">${x[0]}</a>`:'<a>'+x[0]+'</a>';
+  }).join('　/　');
+  window.scrollTo({top:0});
+}
+function chipOn(el){
+  let sib=el.previousElementSibling, group=[el];
+  while(sib&&sib.classList.contains('chip')){group.push(sib);sib=sib.previousElementSibling}
+  sib=el.nextElementSibling;
+  while(sib&&sib.classList.contains('chip')){group.push(sib);sib=sib.nextElementSibling}
+  group.forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+}
+function payOn(el){[...el.parentElement.children].forEach(x=>x.classList.remove('on'));el.classList.add('on')}
+function togAnno(){
+  document.body.classList.toggle('anno-on');
+  document.getElementById('anno-btn').textContent=document.body.classList.contains('anno-on')?L.annoBtnHide:L.annoBtnShow;
+}
+
+/* ============================================================
+   语言切换
+============================================================ */
+function setLang(l){
+  lang=l;L=I18N[l];
+  document.documentElement.lang=l==='zh'?'zh-CN':l;
+  document.documentElement.dir=L.dir;
+  const keep={need:document.getElementById('coin-need')?.value||'5',uid:document.getElementById('tu-uid')?.value||''};
+  buildStatic();
+  document.getElementById('coin-need').value=keep.need;
+  document.getElementById('tu-uid').value=keep.uid;
+  document.querySelectorAll('.anno').forEach(a=>{if(!a.dataset.p){a.dataset.p=1;a.innerHTML='<b>'+L.annoPrefix+'</b>'+a.innerHTML}});
+  renderDenoms();renderPacks();renderCoins();applyAf();
+  if(curTuOffer)fillTuOrder();
+  if(curCoin)fillCoinOrder();
+  if(curAcct)fillAcctDetail();
+  if(order)rebuildCheckout();
+  go(currentView);
+  uidCheck(true);
+}
+
+/* ============================================================
+   钻石
+============================================================ */
+function renderDenoms(){
+  document.getElementById('tu-denoms').innerHTML=denoms.map(d=>{
+    const offers=topupOffers[d.id]||[];
+    const min=Math.min(...offers.map(o=>o.p));
+    const save=Math.round((1-min/d.official)*100);
+    return `<div class="opt ${d===curDenom?'on':''}" onclick="pickDenom(${d.id},this)">
+      <span class="d-save">${L.saveAmt(save+'%')}</span>
+      <span class="d-name num">${d.d.toLocaleString()} 💎</span>
+      <span class="d-price num">${money(min)}<small> ${L.fromP}</small></span>
+      <span class="d-official num">${L.official} ${money(d.official)}</span>
+      <span class="offer-n">${L.denomOnSale(offers.length)}</span>
+    </div>`}).join('');
+  renderTuOffers();
+}
+function pickDenom(id,el){
+  curDenom=denoms.find(x=>x.id===id);
+  [...el.parentElement.children].forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  renderTuOffers();scrollToOffers();
+}
+function scrollToOffers(){document.getElementById('tu-step2').scrollIntoView({behavior:'smooth',block:'start'})}
+function sortTuOffers(k){tuSort=k;renderTuOffers()}
+function renderTuOffers(){
+  let offers=[...(topupOffers[curDenom.id]||[])];
+  if(tuSort==='price')offers.sort((a,b)=>a.p-b.p);
+  if(tuSort==='speed')offers.sort((a,b)=>parseInt(N(ETA[a.eta]))-parseInt(N(ETA[b.eta])));
+  if(tuSort==='sales')offers.sort((a,b)=>b.sales-a.sales);
+  const minP=Math.min(...offers.map(o=>o.p));
+  document.getElementById('tu-offer-count').textContent=L.offerCount(curDenom.d.toLocaleString(),offers.length,money(curDenom.official));
+  document.getElementById('tu-picked').innerHTML=L.pickedBtn(curDenom.d.toLocaleString()+' 💎',offers.length);
+  document.getElementById('tu-offers').innerHTML=offers.map(o=>`
+    <div class="listing ${o.p===minP?'best':''}">
+      <div class="seller-ava" style="background:${o.c}">${o.init}</div>
+      <div class="l-main">
+        <div class="l-title">${N(SELLERS[o.s])} ${o.p===minP?`<span class="badge b-best">${L.bestPrice}</span>`:''} ${o.bonus?`<span class="badge b-blue">${L.bonusBadge(o.bonus)}</span>`:''}</div>
+        <div class="l-sub"><span>${L.ratingL} ${o.rate}</span><span>${L.salesL} <span class="num">${o.sales}</span></span><span>${L.etaL(N(ETA[o.eta]))}</span></div>
+      </div>
+      <div class="l-price"><b>${money(o.p)}</b><small>${L.official} <s>${money(curDenom.official)}</s> · ${L.saveAmt(money(curDenom.official-o.p))}</small></div>
+      <button class="btn btn-buy" onclick="pickTuOffer('${o.s}')">${L.buy}</button>
+    </div>`).join('');
+}
+function pickTuOffer(sk){
+  curTuOffer=(topupOffers[curDenom.id]||[]).find(o=>o.s===sk);
+  document.getElementById('tu-qty').value=1;
+  fillTuOrder();go('topup-order');
+}
+function fillTuOrder(){
+  document.getElementById('to-kv').innerHTML=`
+    <div><span>${L.kGoods}</span>${L.gameShort} ${curDenom.d.toLocaleString()} ${L.diamonds}</div>
+    <div><span>${L.kSeller}</span>${N(SELLERS[curTuOffer.s])}(${L.ratingL} ${curTuOffer.rate})</div>
+    <div><span>${L.kUnit}</span>${money(curTuOffer.p)} ${L.perShare}</div>
+    <div><span>${L.kBonus}</span>${curTuOffer.bonus?L.kBonusV(curTuOffer.bonus):L.kNone}</div>
+    <div><span>${L.kEta}</span>${L.kEtaV(N(ETA[curTuOffer.eta]))}</div>
+    <div><span>${L.kDeliver}</span>${L.kDirect}</div>`;
+  toCalc();
+}
+function tuQty(d){
+  const i=document.getElementById('tu-qty');
+  i.value=Math.max(1,Math.min(99,parseInt(i.value)+d));
+  toCalc();
+}
+function uidOK(){return /^7\d{10}$/.test(document.getElementById('tu-uid').value)}
+function uidCheck(silent){
+  const h=document.getElementById('tu-uid-hint'),v=document.getElementById('tu-uid').value;
+  if(!v){h.textContent=L.uidHint;h.className='hint';h.style.color=''}
+  else if(uidOK()){h.textContent=L.uidOk;h.className='hint';h.style.color='var(--green)'}
+  else{h.textContent=L.uidErr;h.className='hint err';h.style.color=''}
+  if(curTuOffer)toCalc();
+}
+function toCalc(){
+  if(!curTuOffer)return;
+  const q=parseInt(document.getElementById('tu-qty').value);
+  document.getElementById('to-name').textContent=curDenom.d.toLocaleString()+' '+L.diamonds;
+  document.getElementById('to-seller').textContent=N(SELLERS[curTuOffer.s]);
+  document.getElementById('to-qty').textContent=q;
+  document.getElementById('to-get').textContent=((curDenom.d+curTuOffer.bonus)*q).toLocaleString()+' 💎';
+  document.getElementById('to-total').textContent=money(curTuOffer.p*q);
+  document.getElementById('to-eta').textContent=L.aEtaD(N(ETA[curTuOffer.eta]));
+  document.getElementById('to-buy').disabled=!uidOK();
+}
+
+/* ============================================================
+   金币
+============================================================ */
+function renderPacks(){
+  const need=parseInt(document.getElementById('coin-need').value);
+  document.getElementById('pack-grid').innerHTML=coinPacks.map((p,i)=>`
+    <div class="pack num ${p.q===need?'on':''}" onclick="pickPack(${i})">
+      ${p.hot?`<span class="hot">${L.hotPack}</span>`:''}${p.q}B
+    </div>`).join('');
+}
+function pickPack(i){document.getElementById('coin-need').value=coinPacks[i].q;renderPacks();renderCoins()}
+function coinNeed(d){
+  const i=document.getElementById('coin-need');
+  i.value=Math.max(1,Math.min(999,parseInt(i.value)+d));
+  renderPacks();renderCoins();
+}
+function filterCoins(f){coinFilter=f;renderCoins()}
+function sortCoins(k){coinSort=k;renderCoins()}
+function renderCoins(){
+  const dd=dDefs();
+  const need=parseInt(document.getElementById('coin-need').value);
+  let ls=[...coinListings];
+  if(coinFilter!=='all')ls=ls.filter(l=>l.delivery.includes(coinFilter));
+  const ok=ls.filter(l=>l.stock>=need&&l.min<=need);
+  const no=ls.filter(l=>!(l.stock>=need&&l.min<=need));
+  if(coinSort==='price')ok.sort((a,b)=>a.price-b.price);
+  if(coinSort==='sales')ok.sort((a,b)=>b.sales-a.sales);
+  if(coinSort==='rate')ok.sort((a,b)=>parseFloat(b.rate)-parseFloat(a.rate));
+  const minP=ok.length?Math.min(...ok.map(o=>o.price)):0;
+  const row=(l,dis)=>`
+    <div class="listing ${dis?'':'clickable'} ${(!dis&&l.price===minP)?'best':''}" style="${dis?'opacity:.5':''}" ${dis?'':`onclick="openCoin(${l.id})"`}>
+      <div class="seller-ava" style="background:${l.color}">${l.init}</div>
+      <div class="l-main">
+        <div class="l-title">${N(SELLERS[l.s])} ${(!dis&&l.price===minP)?`<span class="badge b-best">${L.bestPrice}</span>`:''}</div>
+        <div class="l-sub">
+          <span>${L.ratingL} ${l.rate}</span><span>${L.salesL} <span class="num">${l.sales}</span></span>
+          <span>${L.stockL} <span class="num">${l.stock}</span>B</span><span>${L.minSellL(l.min)}</span>
+          <span>${l.delivery.map(d=>dd[d].name).join(' / ')}</span>
+          ${dis?`<span style="color:var(--red)">${l.stock<need?L.stockLow:L.belowMin}</span>`:''}
+        </div>
+      </div>
+      <div class="l-price"><b>${money(l.price*need)}</b><small>${L.totalFor(need)} · ${money(l.price)}${L.unitP}</small></div>
+      ${dis?`<button class="btn btn-line" disabled style="opacity:.5">${L.cantBuy}</button>`:`<button class="btn btn-buy" onclick="event.stopPropagation();openCoin(${l.id})">${L.buy}</button>`}
+    </div>`;
+  document.getElementById('coin-list').innerHTML=
+    (ok.length?ok.map(l=>row(l,false)).join(''):`<div class="empty">${L.coEmpty}</div>`)
+    +no.map(l=>row(l,true)).join('');
+}
+function openCoin(id){
+  curCoin=coinListings.find(x=>x.id===id);
+  curDelivery=curCoin.delivery[0];
+  const need=parseInt(document.getElementById('coin-need').value);
+  document.getElementById('cd-qty').value=Math.max(curCoin.min,Math.min(curCoin.stock,need));
+  fillCoinOrder();go('coin-order');
+}
+function fillCoinOrder(){
+  const dd=dDefs();
+  document.getElementById('cd-kv').innerHTML=`
+    <div><span>${L.kGoods}</span>${L.coGoodsV}</div>
+    <div><span>${L.kSeller}</span>${N(SELLERS[curCoin.s])}(${L.ratingL} ${curCoin.rate})</div>
+    <div><span>${L.kUnit}</span>${money(curCoin.price)} ${L.unitP}</div>
+    <div><span>${L.kMinStock}</span>${curCoin.min}B / ${curCoin.stock}B</div>
+    <div><span>${L.kShip}</span>${L.kShipV}</div>
+    <div><span>${L.kSales}</span>${L.kSalesV(curCoin.sales)}</div>`;
+  document.getElementById('cd-qty-hint').textContent=L.coQtyHint(curCoin.min,curCoin.stock);
+  document.getElementById('cd-seller').textContent=N(SELLERS[curCoin.s]);
+  document.getElementById('cd-delivery').innerHTML=curCoin.delivery.map(d=>`
+    <div class="radio-opt ${d===curDelivery?'on':''}" onclick="pickDelivery('${d}',this)">
+      <span class="rb"></span><div><b>${dd[d].name}</b><p>${dd[d].desc}</p></div>
+    </div>`).join('');
+  cdCalc();
+}
+function pickDelivery(d,el){curDelivery=d;payOn(el);cdCalc()}
+function cdQty(d){
+  const i=document.getElementById('cd-qty');
+  i.value=Math.max(curCoin.min,Math.min(curCoin.stock,parseInt(i.value)+d));
+  cdCalc();
+}
+function cdCalc(){
+  const dd=dDefs();
+  const q=parseInt(document.getElementById('cd-qty').value);
+  document.getElementById('cd-unit').textContent=money(curCoin.price)+' '+L.unitP;
+  document.getElementById('cd-qty2').textContent=L.shareUnit(q);
+  document.getElementById('cd-dnote').textContent=dd[curDelivery].note;
+  document.getElementById('cd-total').textContent=money(q*curCoin.price);
+}
+
+/* ============================================================
+   账号:筛选
+============================================================ */
+function toggleDrop(id){
+  const el=document.getElementById(id),open=el.classList.contains('open');
+  document.querySelectorAll('.fdrop').forEach(x=>x.classList.remove('open'));
+  if(!open)el.classList.add('open');
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.fdrop'))document.querySelectorAll('.fdrop').forEach(x=>x.classList.remove('open'));
+});
+function closeDrops(){document.querySelectorAll('.fdrop').forEach(x=>x.classList.remove('open'))}
+function priceLabel(){
+  if(af.pKey)return L[af.pKey];
+  if(af.pMin!==null||af.pMax!==null)return money(af.pMin??0)+' – '+(af.pMax!==null?money(af.pMax):L.noLimit);
+  return '';
+}
+function coinsLabel(){return af.coinsMin?L['c'+af.coinsMin]:''}
+function vipLabel(){return af.vipMin?L['v'+af.vipMin]:''}
+function setPrice(min,max,key){af.pMin=min;af.pMax=max;af.pKey=key;closeDrops();applyAf()}
+function setPriceCustom(){
+  const mn=parseFloat(document.getElementById('p-min').value)||null;
+  const mx=parseFloat(document.getElementById('p-max').value)||null;
+  if(mn===null&&mx===null)return;
+  af.pMin=mn;af.pMax=mx;af.pKey=null;closeDrops();applyAf();
+}
+function setCoins(min){af.coinsMin=min;closeDrops();applyAf()}
+function setVip(min){af.vipMin=min;closeDrops();applyAf()}
+function togMulti(el){
+  el.classList.toggle('checked');
+  const v=el.dataset.v;
+  af.sellDraft=af.sellDraft.includes(v)?af.sellDraft.filter(x=>x!==v):[...af.sellDraft,v];
+}
+function resetMulti(){af.sellDraft=[];document.querySelectorAll('#fd-sell .fopt').forEach(x=>x.classList.remove('checked'))}
+function applyMulti(){af.sell=[...af.sellDraft];closeDrops();applyAf()}
+function togVerified(el){af.verified=!af.verified;el.classList.toggle('on',af.verified);applyAf()}
+function setSort(s){af.sort=s;applyAf()}
+function togMore(el){
+  af.more=!af.more;
+  document.getElementById('more-row').classList.toggle('open',af.more);
+  el.textContent=af.more?L.fLess:L.fMore;
+}
+const SELL_LABEL={sel:'sPlat',skin:'sSkin',val:'sValue'};
+function applyAf(){
+  const pl=priceLabel(),cl=coinsLabel(),vl=vipLabel();
+  document.getElementById('fd-price-v').textContent=pl?':'+pl:'';
+  document.querySelector('#fd-price .fdrop-btn').classList.toggle('hasval',!!pl);
+  document.getElementById('fd-coins-v').textContent=cl?':'+cl:'';
+  document.querySelector('#fd-coins .fdrop-btn').classList.toggle('hasval',!!cl);
+  document.getElementById('fd-vip-v').textContent=vl?':'+vl:'';
+  document.querySelector('#fd-vip .fdrop-btn').classList.toggle('hasval',!!vl);
+  document.getElementById('fd-sell-v').textContent=af.sell.length?':'+L.selCount(af.sell.length):'';
+  document.querySelector('#fd-sell .fdrop-btn').classList.toggle('hasval',af.sell.length>0);
+  const tags=[];
+  if(pl)tags.push([L.tagPrice+pl,()=>setPrice(null,null,null)]);
+  if(cl)tags.push([L.tagCoins+cl,()=>setCoins(0)]);
+  if(vl)tags.push([vl,()=>setVip(0)]);
+  af.sell.forEach(s=>tags.push([L[SELL_LABEL[s]],()=>{
+    af.sell=af.sell.filter(x=>x!==s);af.sellDraft=[...af.sell];
+    document.querySelectorAll('#fd-sell .fopt').forEach(x=>{if(x.dataset.v===s)x.classList.remove('checked')});applyAf();
+  }]));
+  if(af.verified)tags.push([L.fVerifiedOnly,()=>togVerified(document.getElementById('ch-verified'))]);
+  const wrap=document.getElementById('sel-tags');
+  window._tagFns=tags.map(t=>t[1]);
+  if(tags.length){
+    wrap.style.display='flex';
+    wrap.innerHTML=`<span class="f-label">${L.selPrefix}</span>`
+      +tags.map((t,i)=>`<span class="sel-tag">${t[0]}<i onclick="window._tagFns[${i}]()">×</i></span>`).join('')
+      +`<span class="clear-all" onclick="clearAf()">${L.clearAll}</span>`;
+  }else{wrap.style.display='none';wrap.innerHTML=''}
+  renderAccts();
+}
+function clearAf(){
+  af.pMin=af.pMax=null;af.pKey=null;af.coinsMin=0;af.vipMin=0;
+  af.sell=[];af.sellDraft=[];af.verified=false;
+  document.getElementById('ch-verified').classList.remove('on');
+  document.querySelectorAll('#fd-sell .fopt').forEach(x=>x.classList.remove('checked'));
+  applyAf();
+}
+function afMatch(l){
+  if(af.pMin!==null&&l.price<af.pMin)return false;
+  if(af.pMax!==null&&l.price>af.pMax)return false;
+  if(af.coinsMin&&parseInt(l.coins)<af.coinsMin)return false;
+  if(af.vipMin&&parseInt(l.vip.replace('VIP',''))<af.vipMin)return false;
+  if(af.verified&&!l.verified)return false;
+  if(af.sell.length){
+    const hit=af.sell.some(s=>(s==='skin'&&l.skins>=5)||(s==='sel'&&l.tag==='sel')||(s==='val'&&l.tag==='val'));
+    if(!hit)return false;
+  }
+  return true;
+}
+
+/* ============================================================
+   账号:列表 / 详情 / 灯箱
+============================================================ */
+function renderAccts(){
+  let ls=acctListings.filter(afMatch);
+  if(af.sort==='price')ls=[...ls].sort((a,b)=>a.price-b.price);
+  if(af.sort==='new')ls=[...ls].sort((a,b)=>b.id-a.id);
+  if(!ls.length){
+    document.getElementById('acct-list').innerHTML=`<div class="empty">${L.acctEmpty}<span class="clear-all" onclick="clearAf()" style="margin-inline-start:4px">${L.clearAll}</span></div>`;
+    return;
+  }
+  document.getElementById('acct-list').innerHTML='<div class="acct-grid">'+ls.map(l=>`
+    <div class="acct-card ${l.sold?'sold':''}" ${l.sold?'':`onclick="openAcct(${l.id})"`}>
+      <div class="a-img" ${l.sold?'':`onclick="event.stopPropagation();openLB(${l.id},0)"`}>
+        ${L.coverPh}
+        ${l.tag&&!l.sold?`<span class="plat-badge">${N(PLAT_TAGS[l.tag])}</span>`:''}
+        ${l.sold?`<span class="plat-badge" style="background:#8A92B0">${L.soldOut}</span>`:''}
+        <span class="v-badge ${l.verified?'b-green':'b-gray'}">${l.verified?L.verified:L.pendingV}</span>
+        ${l.sold?'':`<button class="zoom" onclick="event.stopPropagation();openLB(${l.id},0)">${L.zoomBtn}</button>`}
+        <span class="img-n">📷 ${l.imgs}</span>
+      </div>
+      <div class="a-body">
+        <div class="a-title">${N(ACCT_TITLES[l.id])}</div>
+        <div class="a-attrs">
+          <span class="a-attr">${L.attrCoins} <b class="num">${l.coins}</b></span>
+          <span class="a-attr">${L.attrSkins} <b class="num">${l.skins}</b> ${L.attrSkinsU}</span>
+          <span class="a-attr"><b>${l.vip}</b></span>
+          <span class="a-attr">Royal <b>${l.royal}</b></span>
+        </div>
+        <div class="a-price-row">
+          <span class="a-price num">${money(l.price)}<small> ${L.fixedPrice}</small></span>
+          <small style="color:var(--muted);font-size:11px">${L.uniqueSku}</small>
+        </div>
+        <div class="a-seller">
+          <span class="shop-ava">${N(SELLERS[l.s]).charAt(0)}</span>
+          <b>${N(SELLERS[l.s])}</b>
+          <span class="rate">${L.reviewsOf(l.rate,l.reviews)}</span>
+        </div>
+      </div>
+    </div>`).join('')+'</div>';
+}
+function openAcct(id){curAcct=acctListings.find(x=>x.id===id);fillAcctDetail();go('acct-detail')}
+function fillAcctDetail(){
+  document.getElementById('ad-kv').innerHTML=`
+    <div><span>${L.adSeller}</span>${L.adSellerV(N(SELLERS[curAcct.s]),curAcct.rate,curAcct.reviews)}</div>
+    <div><span>${L.adPlat}</span>${curAcct.tag?N(PLAT_TAGS[curAcct.tag]):'—'}</div>
+    <div><span>${L.adCoins}</span>${curAcct.coins}</div>
+    <div><span>${L.adSkins}</span>${L.adSkinsV(curAcct.skins)}</div>
+    <div><span>${L.adVip}</span>${curAcct.vip}</div>
+    <div><span>${L.adRoyal}</span>${curAcct.royal}</div>
+    <div><span>${L.adBind}</span>${L.adBindV}</div>
+    <div><span>${L.adVstat}</span>${curAcct.verified?L.adVdone:L.adVwait}</div>
+    <div><span>${L.adNature}</span>${L.adNatureV}</div>`;
+  document.getElementById('ad-seller').textContent=N(SELLERS[curAcct.s]);
+  document.getElementById('ad-price').textContent=money(curAcct.price);
+  document.getElementById('ad-total').textContent=money(curAcct.price);
+}
+let lbImgs=[],lbIdx=0;
+function openLB(id,idx){
+  const a=acctListings.find(x=>x.id===id);
+  lbImgs=L.shotNames.slice(0,a.imgs);
+  lbIdx=Math.min(idx||0,lbImgs.length-1);
+  renderLB();document.getElementById('lb').classList.add('show');
+}
+function renderLB(){
+  document.getElementById('lb-img').textContent=lbImgs[lbIdx]+L.shotPh;
+  document.getElementById('lb-count').textContent=L.lbCount(lbIdx+1,lbImgs.length);
+  document.getElementById('lb-thumbs').innerHTML=lbImgs.map((t,i)=>
+    `<div class="lb-thumb ${i===lbIdx?'on':''}" onclick="lbIdx=${i};renderLB()">${t}</div>`).join('');
+}
+function lbNav(d){lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length;renderLB()}
+function closeLB(){document.getElementById('lb').classList.remove('show')}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lb').classList.contains('show'))return;
+  if(e.key==='ArrowLeft')lbNav(-1);
+  if(e.key==='ArrowRight')lbNav(1);
+  if(e.key==='Escape')closeLB();
+});
+
+/* ============================================================
+   结算
+============================================================ */
+function ckContent(type){
+  const dd=dDefs();
+  let kv='',fields='',amount=0,okMsg='';
+  if(type==='topup'){
+    const q=parseInt(document.getElementById('tu-qty').value);
+    amount=curTuOffer.p*q;
+    kv=`<div><span>${L.kBiz}</span>${L.bizTopupCk}</div>
+        <div><span>${L.kSeller}</span>${N(SELLERS[curTuOffer.s])}</div>
+        <div><span>${L.kGoods}</span>${curDenom.d.toLocaleString()} ${L.diamonds} × ${q}</div>
+        <div><span>${L.kGet}</span>${((curDenom.d+curTuOffer.bonus)*q).toLocaleString()} 💎</div>
+        <div><span>${L.kUid}</span><span class="ltr">${document.getElementById('tu-uid').value}</span></div>
+        <div><span>${L.kTime}</span>${L.kEtaV(N(ETA[curTuOffer.eta]))}</div>`;
+    fields=`<div class="hint">${L.ckTopupHint}</div>`;
+    okMsg=L.okTopup;
+  }
+  if(type==='coin'){
+    const q=parseInt(document.getElementById('cd-qty').value);
+    amount=q*curCoin.price;
+    kv=`<div><span>${L.kBiz}</span>${L.bizCoinCk}</div>
+        <div><span>${L.kSeller}</span>${N(SELLERS[curCoin.s])}</div>
+        <div><span>${L.kGoods}</span>${L.gameShort} ${q}B</div>
+        <div><span>${L.kDeliver}</span>${dd[curDelivery].name}</div>
+        <div><span>${L.kTime}</span>${dd[curDelivery].note}</div>
+        <div><span>${L.kUnit}</span>${money(curCoin.price)} ${L.unitP}</div>`;
+    fields=curDelivery==='room'
+      ?`<div class="field"><label>${L.fNick}</label><input placeholder="${L.fNickPh}"></div>
+        <div class="field"><label>${L.fContact}</label><input placeholder="${L.optional}"></div>`
+      :`<div class="field"><label>${L.fLoginWay}</label><input placeholder="${L.fLoginPh}"></div>
+        <div class="field"><label>${L.fPwd}</label><input placeholder="${L.fPwdPh}"></div>`;
+    okMsg=curDelivery==='room'?L.okCoinRoom:L.okCoinLogin;
+  }
+  if(type==='acct'){
+    amount=curAcct.price;
+    kv=`<div><span>${L.kBiz}</span>${L.bizAcctCk}</div>
+        <div><span>${L.kSeller}</span>${N(SELLERS[curAcct.s])}</div>
+        <div><span>${L.kGoods}</span>${N(ACCT_TITLES[curAcct.id])}</div>
+        <div><span>${L.kVstat}</span>${curAcct.verified?L.adVdone:L.adVwait}</div>
+        <div><span>${L.kInsure}</span>${L.kInsureV}</div>
+        <div><span>${L.kLock}</span>${L.kLockV}</div>`;
+    fields=`<div class="field"><label>${L.fMail}</label><input placeholder="you@example.com"></div>
+            <div class="field"><label>${L.fContact2}</label><input placeholder="${L.fContactPh}"></div>`;
+    okMsg=L.okAcct;
+  }
+  return {kv,fields,amount,okMsg};
+}
+function toCheckout(type){
+  orderType=type;
+  const c=ckContent(type);
+  order={amount:c.amount,okMsg:c.okMsg,coupon:false};
+  document.getElementById('ck-kv').innerHTML=c.kv;
+  document.getElementById('ck-fields').innerHTML=c.fields;
+  document.getElementById('ck-amount').textContent=money(c.amount);
+  document.getElementById('ck-coupon').textContent=L.couponPick;
+  document.getElementById('ck-total').textContent=money(c.amount);
+  go('checkout');
+}
+function rebuildCheckout(){
+  const c=ckContent(orderType);
+  order.okMsg=c.okMsg;
+  document.getElementById('ck-kv').innerHTML=c.kv;
+  document.getElementById('ck-fields').innerHTML=c.fields;
+  document.getElementById('ck-amount').textContent=money(order.amount);
+  if(order.coupon){
+    const off=Math.min(5,order.amount*0.05);
+    document.getElementById('ck-coupon').textContent=L.couponUsed(money(off));
+    document.getElementById('ck-total').textContent=money(order.amount-off);
+  }else{
+    document.getElementById('ck-coupon').textContent=L.couponPick;
+    document.getElementById('ck-total').textContent=money(order.amount);
+  }
+}
+function coupon(){
+  order.coupon=true;
+  const off=Math.min(5,order.amount*0.05);
+  document.getElementById('ck-coupon').textContent=L.couponUsed(money(off));
+  document.getElementById('ck-total').textContent=money(order.amount-off);
+}
+function paySubmit(){
+  if(!document.getElementById('ck-agree').checked){alert(L.agreeAlert);return}
+  document.getElementById('ok-msg').textContent=order.okMsg;
+  document.getElementById('mask').classList.add('show');
+}
+function closeOk(){document.getElementById('mask').classList.remove('show');go('brand')}
+
+/* init */
+setLang('zh');
+go('topup');
+</script>
+</body>
+</html>
