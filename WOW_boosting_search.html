@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WOW 正式服代练竞品调研总结</title>
+<style>
+  :root{--ink:#1f2733;--soft:#5b6572;--dim:#8a93a0;--acc:#2d4a7a;--acc-l:#eaf0f8;
+    --line:#e3e7ee;--bg:#f7f8fa;--card:#fff;--warn:#b3401f;--ok:#2f7a43;}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}[id]{scroll-margin-top:58px}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.7 -apple-system,"Segoe UI","Noto Sans SC",system-ui,sans-serif}
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px 70px}
+  a{color:var(--acc);text-decoration:none}
+  h1{font-size:26px;margin:30px 0 4px;letter-spacing:-.01em}
+  h2{font-size:19px;margin:38px 0 6px;padding-bottom:7px;border-bottom:2px solid var(--acc);display:inline-block}
+  h3{font-size:15.5px;margin:0}
+  .sub{color:var(--soft);font-size:13.5px}
+  .meta{color:var(--dim);font-size:12.5px;margin:10px 0 4px}
+  .lead{background:var(--acc-l);border-left:3px solid var(--acc);padding:12px 16px;border-radius:0 4px 4px 0;margin:16px 0}
+  /* sticky mini nav */
+  nav{position:sticky;top:0;z-index:9;background:rgba(247,248,250,.94);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);margin:0 -22px 4px;padding:8px 22px;display:flex;gap:4px;overflow-x:auto}
+  nav a{font-size:12.5px;color:var(--soft);white-space:nowrap;padding:5px 9px;border-radius:4px}
+  nav a:hover{background:var(--acc-l);color:var(--acc)}
+  /* category blocks */
+  .cat{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--acc);
+    border-radius:0 5px 5px 0;padding:14px 18px;margin:11px 0}
+  .cat .top{display:flex;gap:10px;align-items:baseline}
+  .cat .no{color:var(--acc);font-weight:700;font-size:15px;min-width:20px}
+  .cat .en{color:var(--dim);font-size:12px;font-weight:400}
+  .cat p{margin:7px 0 0;font-size:13.5px}
+  .cat .m{color:var(--soft)}
+  .cat .sku{color:var(--dim);font-size:12.5px;margin-top:5px}
+  .cat b{color:var(--acc)}
+  .tag{display:inline-block;font-size:11px;background:#eef2c9;color:#5a5a1f;border-radius:3px;padding:1px 6px;margin-left:6px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;background:var(--card);border:1px solid var(--line)}
+  th{background:#eef1f6;text-align:left;padding:9px 11px;font-size:12px;color:var(--acc);border-bottom:1px solid var(--line)}
+  td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--ink)}
+  .y{color:var(--ok)}.n{color:var(--warn)}
+  ul.k{margin:8px 0;padding-left:20px}ul.k li{margin:4px 0;font-size:13.5px}
+  .note{font-size:12px;color:var(--soft);border:1px solid var(--line);border-left:2px solid var(--dim);
+    background:var(--card);border-radius:0 4px 4px 0;padding:12px 15px;margin-top:22px}
+  footer{color:var(--dim);font-size:11.5px;text-align:center;margin-top:30px;padding-top:16px;border-top:1px solid var(--line)}
+  @media(max-width:560px){.wrap{padding:0 16px 50px}nav{margin:0 -16px 4px;padding:8px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="#q1">① 代练做什么(9 大品类)</a>
+    <a href="#axes">② 横切维度</a>
+    <a href="#compare">③ 三家区别</a>
+    <a href="#gloss">④ 术语对照</a>
+  </nav>
+
+  <h1>WOW 正式服代练 · 竞品调研总结</h1>
+  <div class="sub">智慧谷 · Eldorado · Overgear</div>
+  <div class="meta">调研快照 2026-08-04 ｜ 版本基准:《午夜 Midnight》(12.0),满级 90,现处 Patch 12.0.7 第一赛季、正切向第二赛季(12.1)</div>
+
+  <div class="lead">
+    <b>一句话:</b> WOW 正式服代练 = 帮玩家跳过重复肝的部分,覆盖 <b>升级 / 团本 / 大秘境 / PVP / 深潜 / 装备 / 成就 / 收藏 / 杂项</b> 共 9 大品类。
+    三家卖的内容高度重合,区别在组织与定价方式。<b>比 D4 系统更多、代练面更宽</b>(多出深潜、法师塔、住房、专业、收藏等整条线)。
+  </div>
+
+  <!-- ===================== 核心问题 ===================== -->
+  <h2 id="q1">① 代练主要做什么、代练哪些?</h2>
+  <p class="sub">这是本报告重点。下面 9 类是三家收敛出的 WOW 代练完整骨架,每类含:做什么 / 对应机制 / 典型 SKU 与起价(价格为竞品展示起价,非成交价)。</p>
+
+  <div class="cat">
+    <div class="top"><span class="no">1</span><h3>升级 <span class="en">Leveling</span></h3></div>
+    <p>练角色到满级 <b>90</b>,以及配套的声望 Renown、剧情战役 Campaign、专业 Professions、各类货币、盟约/种族解锁、天空骑术 Skyriding。</p>
+    <p class="m">机制:满级(90)才进终局;声望/专业/货币是终局配套的"账号进度"。</p>
+    <p class="sku">SKU 例:Power Leveling $42.67(满级送 M+10)、Hourly Driving $5.19、World Quests Farm、Renown、Allied Races Unlock;智慧谷"站桩 1-80-90"¥1 起(引流爆款)。</p>
+  </div>
+
+  <div class="cat">
+    <div class="top"><span class="no">2</span><h3>团本 <span class="en">Raids</span></h3></div>
+    <p>按难度(普通/英雄/史诗)代刷团本、单 Boss 击杀、进度成就(AotC 英雄通关 / Cutting Edge 灭世),或打包全清。</p>
+    <p class="m">机制:当前 S2 团本 Venomous Abyss(8 Boss,末 Boss Ula'tek,344 装等)、Tidebound Grotto;S1 团本仍卖(为成就/坐骑/幻化)。</p>
+    <p class="sku">SKU 例:全团本打包 $25.37、单 Boss $6.91、Cutting Edge $83、Gearing(团本装)$25.37;交付可选 Self-play / Piloted / Remote。</p>
+  </div>
+
+  <div class="cat">
+    <div class="top"><span class="no">3</span><h3>大秘境 <span class="en">Mythic+ Dungeons</span></h3></div>
+    <p>冲钥石层数与评级、刷装备、每周大保险库 Great Vault、拿赛季坐骑/成就。评级里程碑:Master 2000 / Hero 2500 / Legend 3000 / Myth 3400+。</p>
+    <p class="m">机制:每把钥石按层数给装备与评级,周常大保险库给毕业级奖励。</p>
+    <p class="sku">SKU 例:M+ Keys $8、+10 $8.64、Keystone Master $21.9、Hero $29.98、Legend $36.9、Myth $53.97、Specific Dungeon Loot。</p>
+  </div>
+
+  <div class="cat">
+    <div class="top"><span class="no">4</span><h3>PVP 评级 <span class="en">Rated PvP</span></h3></div>
+    <p>竞技场(2v2/3v3/Solo Shuffle)、评级战场 Blitz/RBG,冲分到 2400;角斗士 Gladiator 及各种头衔、精英套 Elite Set、凶蛮坐骑 Vicious;含教学 Coaching / VOD 复盘。</p>
+    <p class="m">机制:评级越高奖励越好,2400+ 出角斗士头衔+坐骑;荣誉/征服是 PVP 装备货币。</p>
+    <p class="sku">SKU 例:Gladiator Title $422、Elite Set $64、Solo Shuffle $21.9、Arena 2v2 $34.6、Hero of Horde/Alliance $2191;智慧谷做成 <b>1800/1950/2100/2400 四档幻化打包</b>。</p>
+  </div>
+
+  <div class="cat">
+    <div class="top"><span class="no">5</span><h3>深潜 <span class="en">Delves</span><span class="tag">WOW 特有 · D4 无</span></h3></div>
+    <p>单人/小队终局玩法,冲层数(Tier)、Nullaeus 击杀、拿专属坐骑/头衔/成就。</p>
+    <p class="m">机制:TWW 新增、Midnight 延续的短时(10–15 分钟)终局活动,门槛低、奖励涵盖装备与收藏。</p>
+    <p class="sku">SKU 例:Delves $1.83、Delve Tiers Unlock、Nullaeus Challenge $6.91、Delver's Journey;Eldorado 做成参数配置器(Tier + 次数)。</p>
+  </div>
+
+  <div class="cat">
+    <div class="top"><span class="no">6</span><h3>装备打造 <span class="en">Gearing</span></h3></div>
+    <p>按目标装等/毕业 BiS 打造(PvE/PvP/M+ 通用或指定部位)、Voidforge 虚空核心升级、Dawncrest 碎晶刷取。</p>
+    <p class="m">机制:装等是进本门槛;Voidforge/Voidcore 是 Midnight 的装备再强化系统。</p>
+    <p class="sku">SKU 例:Gearing $25.37、BiS Gear $318、Dawncrests、Voidforge Unlock;智慧谷"傲天打造/极品毕业装"。</p>
+  </div>
+
+  <div class="cat">
+    <div class="top"><span class="no">7</span><h3>成就 / 头衔 <span class="en">Achievements &amp; Titles</span></h3></div>
+    <p>团本荣耀(Glory of the X Raider)、博学者 Loremaster、各类头衔与壮举 FoS、节日活动成就。</p>
+    <p class="m">机制:多为坐骑/头衔/幻化的解锁条件,部分限时(赛季/节日)。</p>
+    <p class="sku">SKU 例:Loremaster $69、Glory of the Midnight Raider、Legend Title、节日成就(酿造节/仲夏等);Overgear 这块最全(整页几十项)。</p>
+  </div>
+
+  <div class="cat">
+    <div class="top"><span class="no">8</span><h3>收藏 / 坐骑 / 幻化 <span class="en">Collectibles</span></h3></div>
+    <p>坐骑(团本/TCG/黑市 BMAH)、幻化套装(T3/职业套)、宠物、玩具。</p>
+    <p class="m">机制:纯外观收藏,含极稀有市场货(TCG、黑市)。</p>
+    <p class="sku">SKU 例:黑市/TCG/团本坐骑分区,Spectral Tiger $4806、T3 Transmog $39.8、Void Tier 2 Transmog;智慧谷"赛季坐骑/邪气鞍座/时尚试炼"。</p>
+  </div>
+
+  <div class="cat">
+    <div class="top"><span class="no">9</span><h3>角色综合 / 杂项 <span class="en">Character Boost &amp; Misc</span></h3></div>
+    <p>法师塔 Mage Tower、玩家住房 Player Housing、专业、Timewalking、传家宝、Prey 猎物系统、Rent a Booster、按小时陪打、Coaching 等一站式杂项。</p>
+    <p class="m">机制:Overgear 用一个 Character Boost 大类聚合几十个零散服务,做"什么都能代"。</p>
+    <p class="sku">SKU 例:Mage Tower $6.91、Rent a Booster $25.37、Hourly Driving $5.19、Coaching、Player Housing。</p>
+  </div>
+
+  <p class="sub" style="margin-top:14px"><b>WOW 特有、D4 没有的品类:</b> 深潜 Delves、法师塔 Mage Tower、玩家住房、专业/声望、Timewalking、盟约种族、天空骑术、大保险库、完整 PVP 评级体系(角斗士/精英套)。这也是 WOW 代练面比 D4 更宽的原因。</p>
+
+  <!-- ===================== 横切维度 ===================== -->
+  <h2 id="axes">② 横切维度(简)</h2>
+  <ul class="k">
+    <li><b>交付方式:</b> Self-play(陪打组队,不交号)/ Piloted(上号代打)/ Remote(远程,Overgear +5%)。WOW 下单必带 <b>服务器 / 阵营 / 职业</b>(影响可否接单与排期)。</li>
+    <li><b>配置/加价:</b> 难度、赛制(2v2/3v3/Solo Shuffle/Blitz)、Region(EU/US)、拾取方式(团队/个人 loot)、加急。</li>
+    <li><b>定价+信任:</b> 固定明码(智慧谷/Overgear)vs 竞价撮合(Eldorado);Overgear 另有 Trustpilot 4.9/150万单、WoW Expert 60秒顾问、$5 礼金、1% 返现、100% 退款;Eldorado 为 escrow 担保。</li>
+  </ul>
+
+  <!-- ===================== 三家区别 ===================== -->
+  <h2 id="compare">③ 三家分别有什么 · 区别(简)</h2>
+  <table>
+    <thead><tr><th>维度</th><th>智慧谷(国内自营)</th><th>Eldorado(撮合)</th><th>Overgear(自营)</th></tr></thead>
+    <tbody>
+      <tr><td><b>定价</b></td><td>固定,¥1/¥10 锚点</td><td>竞价出 offer,省 40%</td><td>固定明码,$0.01 起做钩子</td></tr>
+      <tr><td><b>SKU 组织</b></td><td>碎 SKU 堆量</td><td>8 个参数配置器</td><td>超深品类树(每类几十卡)</td></tr>
+      <tr><td><b>高价钩子</b></td><td>PVP 1800–2400 幻化档、傲天打造</td><td>无打包档(靠 Custom)</td><td>成品档最全:Tier/职业/成就/坐骑</td></tr>
+      <tr><td><b>陪玩/教学</b></td><td>4 档按小时(含娱乐陪玩)</td><td>Duo + Custom 撮合</td><td>Coaching/Rent/Hourly/VOD 全产品化</td></tr>
+      <tr><td><b>深潜 Delves</b></td><td class="n">未见</td><td class="y">✔ 配置器</td><td class="y">✔ 整条线</td></tr>
+      <tr><td><b>交付</b></td><td>跟车/托管/远程</td><td>Solo/Duo + Remote</td><td>Self-play/Piloted/Remote</td></tr>
+    </tbody>
+  </table>
+  <ul class="k">
+    <li><b>覆盖最全最深的是 Overgear</b>——把成就、收藏、装备、深潜、角色杂项都做成整条明码 SKU 线。</li>
+    <li><b>Eldorado 参数化最干净</b>——8 个"填空式"配置器覆盖主流需求,长尾走 Custom。</li>
+    <li><b>智慧谷靠两个高价钩子</b>——PVP 评级 1800–2400 幻化打包 + "傲天打造"毕业装,升级款(¥1)负责引流。</li>
+    <li>陪玩/教学:西方仍只做工具性(Coaching/按小时代打/陪打),<b>智慧谷独有社交娱乐陪玩</b>;PVP 评级三家都更倾向 self-play(合规+账号安全)。</li>
+  </ul>
+
+  <!-- ===================== 术语 ===================== -->
+  <h2 id="gloss">④ 术语对照(简)</h2>
+  <table>
+    <thead><tr><th>店铺/页面话术</th><th>真实机制(Midnight 12.0.7)</th></tr></thead>
+    <tbody>
+      <tr><td>至暗之夜 / Midnight</td><td>《午夜》资料片(12.0),满级 90</td></tr>
+      <tr><td>12.07 / 万奥宝典解锁</td><td>Patch 12.0.7「Revelations」/ Omnium Folio 账号追赶系统</td></tr>
+      <tr><td>Venomous Abyss / Tidebound Grotto</td><td>第二赛季团本(末 Boss Ula'tek,344 装等)</td></tr>
+      <tr><td>Voidspire / Dreamrift / March on Quel'Danas</td><td>第一赛季团本</td></tr>
+      <tr><td>深潜 Delves / Nullaeus</td><td>单人小队终局玩法 / 其 Boss</td></tr>
+      <tr><td>Voidforge / 虚空核心</td><td>装备再强化系统</td></tr>
+      <tr><td>Keystone Master/Hero/Legend/Myth</td><td>大秘境评级里程碑(2000/2500/3000/3400)</td></tr>
+      <tr><td>角斗士龙 / 至臻精锐套</td><td>Gladiator 头衔坐骑(2400+)/ PVP 精英套</td></tr>
+      <tr><td>Skyriding / Great Vault / Dawncrest</td><td>天空骑术 / 每周大保险库 / 装备升级碎晶</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>说明:</b> 价格为竞品页面展示的起价/单项价,非最终成交价。智慧谷部分详情图数字受图片清晰度限制,以品类结构为准;"120 装等"为其自定义档标而非真实装等。WOW 正式服现处 <b>S1→S2 切换期(2026-08)</b>,部分 S1 奖励限时下架(Overgear 顶部"Last Chance / expiring S1")。机制术语已对照 Midnight 12.0.7 公开资料核实。
+  </div>
+
+  <footer>IGV 内部竞品调研 · WOW 正式服代练 · 仅供参考</footer>
+
+</div>
+</body>
+</html>
