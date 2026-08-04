@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diablo 4 代练竞品调研总结 · 智慧谷 / Eldorado / Overgear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f2e8; --paper-2:#efe8d9; --card:#fffdf7; --card-2:#fbf6ec;
+    --ink:#2c2621; --ink-soft:#5f564c; --ink-dim:#8b8175;
+    --ember:#b3311f; --ember-2:#c33f2a;
+    --bronze:#8a6a2c; --bronze-2:#a37e34;
+    --gold-line:#c8a24d;
+    --jade:#3f8f4e;
+    --line:rgba(138,106,44,.26); --line-2:rgba(138,106,44,.5);
+    --shadow:0 1px 2px rgba(120,90,40,.06), 0 10px 26px rgba(120,90,40,.06);
+    --sans:'Noto Sans SC',system-ui,sans-serif;
+    --serif:'Noto Serif SC',serif;
+    --cinzel:'Cinzel',serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  [id]{scroll-margin-top:26px}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-weight:300; line-height:1.75; font-size:15.5px;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(1000px 520px at 92% -6%, rgba(179,49,31,.05), transparent 60%),
+      radial-gradient(820px 620px at -8% 10%, rgba(138,106,44,.055), transparent 55%);
+    background-attachment:fixed;
+  }
+  a{color:var(--ember); text-decoration:none}
+  ::selection{background:rgba(179,49,31,.18); color:var(--ink)}
+
+  /* ---------- shell layout ---------- */
+  .shell{max-width:1200px; margin:0 auto; padding:0 26px;
+    display:grid; grid-template-columns:214px minmax(0,1fr); gap:46px; align-items:start}
+  .content{max-width:900px; padding-bottom:20px}
+
+  /* ---------- table of contents ---------- */
+  .toc{position:sticky; top:0; max-height:100vh; overflow:auto; padding:38px 0 20px}
+  .toc-inner{display:flex; flex-direction:column; gap:2px; border-left:1px solid var(--line); padding-left:2px}
+  .toc .tg{
+    font-family:var(--cinzel); font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+    font-size:10.5px; color:var(--bronze); margin:20px 0 6px 14px;
+  }
+  .toc .tg:first-child{margin-top:0}
+  .toc a.tl{
+    display:block; padding:6px 12px 6px 14px; margin-left:-1px;
+    border-left:2px solid transparent; color:var(--ink-soft);
+    font-size:13.5px; font-weight:400; line-height:1.4; transition:all .18s ease;
+  }
+  .toc a.tl:hover{color:var(--ember); background:rgba(179,49,31,.05)}
+  .toc a.tl.active{
+    color:var(--ember); border-left-color:var(--ember);
+    background:rgba(179,49,31,.06); font-weight:500;
+  }
+  .toc-title{
+    font-family:var(--cinzel); font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+    font-size:11px; color:var(--ink-dim); margin:0 0 18px 14px;
+  }
+
+  /* ---------- eyebrow / labels ---------- */
+  .eyebrow{font-family:var(--cinzel); font-weight:600; letter-spacing:.28em; text-transform:uppercase; font-size:11.5px; color:var(--bronze)}
+  .rune{font-family:var(--cinzel); font-weight:700; color:var(--bronze); line-height:1}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:52px 0 40px}
+  .hero .kicker{margin-bottom:20px}
+  .hero h1{font-family:var(--serif); font-weight:700; color:var(--ink);
+    font-size:clamp(29px,5vw,50px); line-height:1.14; margin:0 0 8px; letter-spacing:-.01em}
+  .hero h1 .em{color:var(--ember)}
+  .hero .sub{font-family:var(--cinzel); letter-spacing:.16em; font-weight:500; color:var(--ink-soft);
+    font-size:14px; text-transform:uppercase; margin-bottom:28px}
+  .thesis{border-left:2px solid var(--ember); padding:6px 0 6px 22px; max-width:760px;
+    font-size:17px; color:var(--ink); font-weight:400}
+  .thesis b{color:var(--bronze); font-weight:500}
+  .meta-strip{display:flex; flex-wrap:wrap; gap:10px 26px; margin-top:32px; padding-top:22px;
+    border-top:1px solid var(--line); font-size:12.5px; color:var(--ink-soft);
+    font-family:var(--cinzel); letter-spacing:.08em}
+  .meta-strip span b{color:var(--bronze); font-weight:600}
+
+  .oneliners{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:36px}
+  .ol{background:var(--card); border:1px solid var(--line); border-top:2px solid var(--gold-line);
+    border-radius:4px; padding:20px; box-shadow:var(--shadow)}
+  .ol .name{font-family:var(--cinzel); font-weight:700; font-size:18px; color:var(--bronze); letter-spacing:.04em}
+  .ol .tag{font-size:11.5px; color:var(--ember); font-family:var(--cinzel); letter-spacing:.12em; text-transform:uppercase; margin:2px 0 10px}
+  .ol p{margin:0; font-size:13.5px; color:var(--ink-soft); line-height:1.65}
+
+  /* ---------- sections ---------- */
+  section{padding:52px 0 8px}
+  .sec-head{margin-bottom:32px}
+  .sec-head .eyebrow{display:block; margin-bottom:12px}
+  .sec-head h2{font-family:var(--serif); font-weight:700; color:var(--ink);
+    font-size:clamp(23px,3.6vw,33px); margin:0; line-height:1.2}
+  .sec-head .lead{color:var(--ink-soft); max-width:720px; margin:12px 0 0; font-size:15px}
+
+  /* ---------- codex tablets ---------- */
+  .codex{display:flex; flex-direction:column; gap:14px}
+  .tablet{display:grid; grid-template-columns:64px 1fr;
+    background:var(--card); border:1px solid var(--line); border-left:3px solid var(--ember);
+    border-radius:4px; overflow:hidden; box-shadow:var(--shadow)}
+  .tablet .idx{display:flex; align-items:flex-start; justify-content:center; padding-top:22px;
+    background:rgba(179,49,31,.045); border-right:1px solid var(--line)}
+  .tablet .idx .rune{font-size:26px; color:var(--ember)}
+  .tablet .body{padding:20px 24px 22px}
+  .tablet h3{font-family:var(--serif); font-weight:700; font-size:19px; color:var(--ink);
+    margin:0 0 3px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .tablet h3 .en{font-family:var(--cinzel); font-weight:600; font-size:12.5px; letter-spacing:.14em; color:var(--bronze); text-transform:uppercase}
+  .tablet .sells{margin:8px 0 0; font-size:14px; color:var(--ink); font-weight:400}
+  .tablet .sells b{color:var(--ember); font-weight:500}
+  .tablet .mech{margin:10px 0 0; font-size:13px; color:var(--ink-soft); padding-left:14px; border-left:1px solid var(--line-2)}
+  .tablet .mech b{color:var(--bronze); font-weight:500}
+  .chips{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
+  .chip{font-size:12px; color:var(--ink); background:rgba(138,106,44,.08); border:1px solid var(--line);
+    border-radius:3px; padding:4px 10px}
+  .chip b{color:var(--bronze); font-weight:600}
+  .chip.warn{border-color:rgba(179,49,31,.45); background:rgba(179,49,31,.07); color:#93301f}
+  .chip.warn b{color:#93301f}
+
+  /* ---------- dimensions ---------- */
+  .dims{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:22px}
+  .dim{background:var(--card-2); border:1px solid var(--line); border-radius:4px; padding:20px; box-shadow:var(--shadow)}
+  .dim .d-k{font-family:var(--cinzel); color:var(--bronze); font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:600}
+  .dim h4{font-family:var(--serif); font-weight:700; font-size:16px; margin:8px 0; color:var(--ink)}
+  .dim p{margin:0; font-size:13px; color:var(--ink-soft); line-height:1.6}
+  .dim p b{color:var(--bronze); font-weight:500}
+
+  /* ---------- profiles ---------- */
+  .profiles{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+  .prof{background:var(--card); border:1px solid var(--line); border-top:3px solid var(--gold-line);
+    border-radius:4px; display:flex; flex-direction:column; box-shadow:var(--shadow)}
+  .prof .p-top{padding:22px 20px 18px; border-bottom:1px solid var(--line)}
+  .prof .p-name{font-family:var(--cinzel); font-weight:700; font-size:22px; color:var(--bronze); letter-spacing:.03em}
+  .prof .p-type{font-size:11.5px; color:var(--ember); font-family:var(--cinzel); letter-spacing:.12em; text-transform:uppercase; margin-top:4px}
+  .prof dl{margin:0; padding:16px 20px 20px}
+  .prof dt{font-family:var(--cinzel); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-dim); margin-top:14px; font-weight:600}
+  .prof dt:first-child{margin-top:0}
+  .prof dd{margin:3px 0 0; font-size:13px; color:var(--ink); line-height:1.55}
+  .prof dd b{color:var(--bronze); font-weight:500}
+  .prof .p-hi{margin-top:auto; padding:14px 20px; background:rgba(179,49,31,.055);
+    border-top:1px solid var(--line); font-size:12.5px; color:#6b4a2e}
+  .prof .p-hi b{color:var(--ember); font-weight:600}
+
+  /* ---------- tables ---------- */
+  .tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:4px; margin-top:6px; box-shadow:var(--shadow); background:var(--card)}
+  table{width:100%; border-collapse:collapse; min-width:620px; font-size:13px}
+  thead th{background:var(--paper-2); color:var(--bronze); font-family:var(--cinzel); font-weight:600;
+    letter-spacing:.08em; font-size:11.5px; text-transform:uppercase; padding:13px 15px; text-align:left;
+    border-bottom:1px solid var(--line-2)}
+  tbody td{padding:12px 15px; border-bottom:1px solid var(--line); color:var(--ink); vertical-align:top; line-height:1.5}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even){background:rgba(138,106,44,.045)}
+  td .rowk{font-family:var(--serif); font-weight:700; color:var(--bronze); font-size:13.5px}
+  .cell-yes{color:var(--jade); font-weight:500}
+  .cell-part{color:var(--bronze-2); font-weight:600}
+  .cell-no{color:var(--ember); font-weight:500}
+  .cell-note{display:block; color:var(--ink-dim); font-size:11.5px; margin-top:2px; font-weight:300}
+  .matrix th:not(:first-child), .matrix td:not(:first-child){text-align:center}
+  .matrix td:first-child{min-width:150px}
+
+  /* ---------- differences ---------- */
+  .diffs{counter-reset:d; display:flex; flex-direction:column; gap:12px; margin-top:6px}
+  .diff{display:grid; grid-template-columns:44px 1fr; align-items:stretch; background:var(--card);
+    border:1px solid var(--line); border-radius:4px; overflow:hidden; box-shadow:var(--shadow)}
+  .diff .n{counter-increment:d; display:flex; align-items:center; justify-content:center;
+    background:rgba(179,49,31,.06); border-right:1px solid var(--line);
+    font-family:var(--cinzel); font-weight:700; color:var(--ember); font-size:17px}
+  .diff .n::before{content:counter(d)}
+  .diff .t{padding:15px 20px; font-size:14px; color:var(--ink)}
+  .diff .t b{color:var(--bronze); font-weight:500}
+
+  .gloss thead th:first-child{width:34%}
+
+  .note{margin-top:30px; background:var(--card); border:1px solid var(--line); border-left:2px solid var(--ink-dim);
+    border-radius:4px; padding:18px 22px; font-size:12.5px; color:var(--ink-soft); line-height:1.7; box-shadow:var(--shadow)}
+  .note b{color:var(--bronze); font-weight:500}
+  footer{margin-top:54px; padding:28px 0 60px; border-top:1px solid var(--line); text-align:center;
+    color:var(--ink-dim); font-size:12px; font-family:var(--cinzel); letter-spacing:.14em; text-transform:uppercase}
+
+  .rise{opacity:0; transform:translateY(14px); animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1; transform:none}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.12s}.d3{animation-delay:.19s}.d4{animation-delay:.26s}
+
+  :focus-visible{outline:2px solid var(--bronze-2); outline-offset:3px}
+  @media (prefers-reduced-motion:reduce){.rise{animation:none; opacity:1; transform:none} html{scroll-behavior:auto}}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:960px){
+    .shell{grid-template-columns:1fr; gap:0}
+    [id]{scroll-margin-top:70px}
+    .toc{position:sticky; top:0; z-index:20; max-height:none; padding:0;
+      background:var(--paper); border-bottom:1px solid var(--line);
+      margin:0 -26px; padding:0 4px}
+    .toc-title{display:none}
+    .toc-inner{flex-direction:row; overflow-x:auto; border-left:none; gap:2px; padding:8px 22px}
+    .toc .tg{display:none}
+    .toc a.tl{white-space:nowrap; border-left:none; border-bottom:2px solid transparent; padding:8px 12px; margin:0; border-radius:0}
+    .toc a.tl.active{border-left-color:transparent; border-bottom-color:var(--ember); background:transparent}
+    header.hero{padding-top:36px}
+    .oneliners,.dims,.profiles{grid-template-columns:1fr}
+  }
+  @media (max-width:520px){
+    .tablet{grid-template-columns:48px 1fr}
+    .tablet .idx .rune{font-size:20px}
+    .tablet .body{padding:18px 16px}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ===================== TOC ===================== -->
+  <aside class="toc">
+    <div class="toc-title">目录 · Contents</div>
+    <nav class="toc-inner" aria-label="目录">
+      <a href="#top" class="tl">速览</a>
+      <div class="tg">01 · 代练什么</div>
+      <a href="#part1" class="tl">8 品类骨架</a>
+      <a href="#axes" class="tl">3 横切维度</a>
+      <div class="tg">02 · 三家区别</div>
+      <a href="#part2" class="tl">竞品画像</a>
+      <a href="#matrix" class="tl">覆盖矩阵</a>
+      <a href="#modes" class="tl">模式对比</a>
+      <a href="#diffs" class="tl">核心差异</a>
+      <div class="tg">附录</div>
+      <a href="#glossary" class="tl">术语对照</a>
+    </nav>
+  </aside>
+
+  <!-- ===================== CONTENT ===================== -->
+  <main class="content">
+
+    <!-- ---------- HERO / 速览 ---------- -->
+    <header class="hero" id="top" data-spy>
+      <div class="kicker eyebrow rise d1">Competitive Research · Diablo 4 Boosting</div>
+      <h1 class="rise d2">Diablo 4 代练<span class="em">竞品调研总结</span></h1>
+      <div class="sub rise d2">智慧谷 &nbsp;·&nbsp; Eldorado &nbsp;·&nbsp; Overgear</div>
+
+      <div class="thesis rise d3">
+        D4 代练 = <b>8 大品类内容</b> × <b>3 个横切维度</b>(交付方式 / 配置加价 / 定价与信任)。
+        三家在“<b>卖什么</b>”上高度重合;真正的区别在“<b>怎么组织、怎么交付、怎么卖</b>”。
+      </div>
+
+      <div class="oneliners">
+        <div class="ol rise d2">
+          <div class="name">智慧谷</div>
+          <div class="tag">国内 · 淘宝自营</div>
+          <p>固定价目录,几十个碎 SKU 堆量,服务颗粒最细(BD 阶梯 + 4 档按小时陪玩)。已售 4 万+。</p>
+        </div>
+        <div class="ol rise d3">
+          <div class="name">Eldorado</div>
+          <div class="tag">海外 · 撮合市场</div>
+          <p>竞价出 offer(最高省 40%),6 个参数配置器,货服严格分离,平台 escrow 担保。</p>
+        </div>
+        <div class="ol rise d4">
+          <div class="name">Overgear</div>
+          <div class="tag">海外 · 自营 in-house</div>
+          <p>明码标价($1 起做钩子),深品类树 + 成品号 Tier 阶梯,重 SEO 落地页,陪玩全产品化。</p>
+        </div>
+      </div>
+
+      <div class="meta-strip">
+        <span>调研快照 · <b>2026-08-04</b></span>
+        <span>赛季基准 · <b>S14 苏醒赛季</b>(2026-06-30 上线)</span>
+        <span>竞品 · <b>3 家</b>(1 国内 + 2 海外)</span>
+      </div>
+    </header>
+
+
+    <!-- ---------- PART 1 ---------- -->
+    <section id="part1" data-spy>
+      <div class="sec-head">
+        <span class="eyebrow">Part 01</span>
+        <h2>Diablo 4 代练主要代练什么?</h2>
+        <p class="lead">不管哪家、不管什么定价模式,D4 代练卖的内容都收敛到下面 8 大品类,再乘以 3 个贯穿所有品类的横切维度。价格为竞品页面展示的起价/单项价,非最终成交价。</p>
+      </div>
+
+      <div class="codex">
+
+        <div class="tablet">
+          <div class="idx"><span class="rune">I</span></div>
+          <div class="body">
+            <h3>升级类 <span class="en">Leveling</span></h3>
+            <p class="sells">卖:角色等级 1→70、巅峰 Paragon 1→250/300、雕文 Glyph 升级。</p>
+            <p class="mech"><b>机制:</b>满级即进终局(70)→ 巅峰盘加点 → Pit 刷雕文提伤。是所有终局内容的地基。</p>
+            <div class="chips">
+              <span class="chip">Power Leveling <b>$14.99 起</b> / 30 分钟到 70</span>
+              <span class="chip">Paragon <b>$34.99</b></span>
+              <span class="chip">Glyph <b>$6</b></span>
+              <span class="chip">智慧谷升级套餐 <b>180–680 元</b></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tablet">
+          <div class="idx"><span class="rune">II</span></div>
+          <div class="body">
+            <h3>剧情 / 解锁类 <span class="en">Campaign &amp; Unlock</span></h3>
+            <p class="sells">卖:主线、资料片剧情(Vessel / Lord of Hatred)、难度解锁(Torment)、莉莉丝雕像、声望 Renown。</p>
+            <p class="mech"><b>机制:</b>本质是“解锁赛季内容的前置门槛”——不打通剧情/难度,后面终局玩法进不去。</p>
+            <div class="chips">
+              <span class="chip">Campaign <b>$50</b></span>
+              <span class="chip">Difficulty Unlock <b>$1 起</b></span>
+              <span class="chip">Renown <b>$9.99</b></span>
+              <span class="chip">莉莉丝雕像按 <b>6 大区域</b>多选</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tablet">
+          <div class="idx"><span class="rune">III</span></div>
+          <div class="body">
+            <h3>副本代刷 <span class="en">Dungeons</span></h3>
+            <p class="sells">卖:Pit 冲层、噩梦地窟、地狱狂潮 Infernal Hordes、库拉斯特 Kurast、战争计划 War Plans、赛季限时活动(Mythic Prankster / 捣蛋鬼军械库)。</p>
+            <p class="mech"><b>机制:</b>刷经验、材料、雕文、大师级素材的主要途径,常打“AFK 挂机”卖点。</p>
+            <div class="chips">
+              <span class="chip">Pit <b>$1</b></span>
+              <span class="chip">Infernal Hordes <b>$3</b></span>
+              <span class="chip">War Plans <b>$5</b></span>
+              <span class="chip">智慧谷深渊 <b>2–3 元/次</b></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tablet">
+          <div class="idx"><span class="rune">IV</span></div>
+          <div class="body">
+            <h3>BOSS 代打 <span class="en">Bosses</span></h3>
+            <p class="sells">卖:巢穴 / Uber Boss 逐个击杀(Mephisto、Belial、Duriel、Andariel、Corrupted Reaper、Butcher、Grigoire、Varshan、Lord Zir、Echo of Lilith…)+ Boss 门票/钥匙。</p>
+            <p class="mech"><b>卖点是掉落:</b>神话装、坐骑、专属战利品。逐个 Boss 拆成独立 SKU,标出各自可得的稀有奖励。</p>
+            <div class="chips">
+              <span class="chip">单 Boss <b>$1–4</b></span>
+              <span class="chip">Boss Tickets <b>$2.6</b></span>
+              <span class="chip">智慧谷墨菲斯托 <b>5 元/次</b></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tablet">
+          <div class="idx"><span class="rune">V</span></div>
+          <div class="body">
+            <h3>装备 / 材料获取 <span class="en">Gear &amp; Materials</span></h3>
+            <p class="sells">卖:野生神话装 farming、大词条 Greater Affixes、大师级 Masterworking 材料、符石 Runewords、Set Charms、职业 Uniques 套装。</p>
+            <p class="mech"><b>机制:</b>可“随机出货”按件卖,也可“指定属性”高价定制;职业套装把一套 build 需要的神话装打包。</p>
+            <div class="chips">
+              <span class="chip">随机神话装 <b>10 元/件</b> · 指定 <b>980 元/次</b>(智慧谷)</span>
+              <span class="chip">职业 Uniques Bundle <b>$24–42</b>(Overgear)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tablet">
+          <div class="idx"><span class="rune">VI</span></div>
+          <div class="body">
+            <h3>成品号 / 整装套装 <span class="en">Geared Bundles</span></h3>
+            <p class="sells">卖:按 Torment 难度分档的“即战力角色”——把巅峰 + 装等 + 大词条打包成一档档整装成品。</p>
+            <p class="mech"><b>机制:</b>最高客单品类。以“能打到第几档 Torment / 多少装等 / 几条大词条”作为交付标准。</p>
+            <div class="chips">
+              <span class="chip">Starter <b>$89.99</b></span>
+              <span class="chip">Ancestral <b>$149.99</b></span>
+              <span class="chip">Mythic <b>$299.99</b></span>
+              <span class="chip">Torment <b>$699.99</b>(Overgear)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tablet">
+          <div class="idx"><span class="rune">VII</span></div>
+          <div class="body">
+            <h3>BD 搭配 / 成品化 <span class="en">Build Service</span></h3>
+            <p class="sells">卖:按职业出成品 Build(配装 + 天赋 + 巅峰 + 雕文 + 洗练 + 大师级一条龙)+ 修车 Build Check(查漏补缺)。</p>
+            <p class="mech"><b>核心话术:</b>“玩家只需给一个新角色,交付直接能玩的成品号。”把抽象配装翻译成“几分钟通几层 ≈ 什么难度”的确定结果。</p>
+            <div class="chips">
+              <span class="chip">职业 Build <b>$89.99</b> · Build Check <b>$20</b>(Overgear)</span>
+              <span class="chip">BD 阶梯 <b>120–1280 元</b> · 修车 <b>100 元/次</b>(智慧谷)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tablet">
+          <div class="idx"><span class="rune">VIII</span></div>
+          <div class="body">
+            <h3>陪玩 / 教学 / 托管 <span class="en">Companion &amp; Coaching</span></h3>
+            <p class="sells">卖:教学 Coaching、按小时租代练(Rent a Booster / Hourly driving)、陪打组队(Duo / Selfplay)、娱乐陪玩(<b>仅国内</b>)。</p>
+            <p class="mech"><b>关键区别:</b>西方全是<b>工具性</b>(教学 / 按小时代练 / 陪打),几乎没有社交娱乐陪玩;且“按小时”那档默认是 <b>piloted 上号代打</b>,不是陪你玩。</p>
+            <div class="chips">
+              <span class="chip">Coaching / Rent / Hourly <b>$20 起</b>(Overgear)</span>
+              <span class="chip">人工 40 · 娱乐 40 · 技术教学 60 · 高端指导 60 <b>元/h</b>(智慧谷)</span>
+              <span class="chip warn">西方无社交娱乐陪玩</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3 横切维度 -->
+      <div class="sec-head" id="axes" data-spy style="margin-top:44px; margin-bottom:16px">
+        <span class="eyebrow">Cross-Cutting Axes</span>
+        <h2 style="font-size:22px">3 个贯穿所有品类的横切维度</h2>
+        <p class="lead">同一个品类,换一组这三个变量,就是一个新 SKU。这是理解 D4 代练“配置逻辑”的骨架。</p>
+      </div>
+      <div class="dims">
+        <div class="dim">
+          <div class="d-k">Axis A</div>
+          <h4>交付方式</h4>
+          <p><b>Self-play</b>(陪打组队,不交账号)/ <b>Piloted</b>(上号代打,可 VPN;Overgear 上号反而 -30% 更便宜)/ <b>远程</b>(Parsec 类)。这是账号安全的核心开关。</p>
+        </div>
+        <div class="dim">
+          <div class="d-k">Axis B</div>
+          <h4>配置 / 加价项</h4>
+          <p>难度档(Torment)· Express 加急 <b>+30%</b> · 直播 Stream · 赛季/永久 × 软核/硬核 · 平台(PC/主机)· Campaign 补完 <b>+$50</b>。</p>
+        </div>
+        <div class="dim">
+          <div class="d-k">Axis C</div>
+          <h4>定价 + 信任机制</h4>
+          <p><b>固定明码</b>(智慧谷 / Overgear)vs <b>竞价撮合</b>(Eldorado);外加 escrow 担保 / 聚合好评分 / 退款保障 / 顾问式咨询(Diablo Expert)。</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ---------- PART 2 ---------- -->
+    <section>
+      <div class="sec-head" id="part2" data-spy>
+        <span class="eyebrow">Part 02</span>
+        <h2>三家分别有什么 · 有什么区别?</h2>
+        <p class="lead">先看三张竞品画像,再用“品类覆盖矩阵 + 模式对比表”把区别一眼摊开,最后提炼核心差异。</p>
+      </div>
+
+      <div class="profiles">
+        <div class="prof">
+          <div class="p-top">
+            <div class="p-name">智慧谷</div>
+            <div class="p-type">国内 · 淘宝自营</div>
+          </div>
+          <dl>
+            <dt>定价</dt><dd>固定价目录,<b>¥100 锚点</b> + 大量 1–5 元/次碎 SKU,靠“多拍可优惠”堆量。</dd>
+            <dt>SKU 组织</dt><dd>几十个碎 SKU,颗粒最细。</dd>
+            <dt>品类覆盖</dt><dd>全 8 类;<b>BD 阶梯 + 4 档按小时陪玩</b>最深。</dd>
+            <dt>交付</dt><dd>跟车(selfplay)/ 托管(piloted)/ 远程。</dd>
+            <dt>信任</dt><dd>卖家自述:24h 客服 / 自营不外发 / 账号隐私 / 支持直播。</dd>
+          </dl>
+          <div class="p-hi"><b>特色 —</b> 服务颗粒最细;三家中唯一有社交娱乐陪玩。已售 4 万+、超千回头客。</div>
+        </div>
+
+        <div class="prof">
+          <div class="p-top">
+            <div class="p-name">Eldorado</div>
+            <div class="p-type">海外 · 撮合市场</div>
+          </div>
+          <dl>
+            <dt>定价</dt><dd>竞价出 offer,<b>“最高省 40%”</b>;数百 booster 竞价压价。</dd>
+            <dt>SKU 组织</dt><dd><b>6 个参数配置器</b>(Power Leveling / Altars / Mythic Prankster / Paragon / Boss Kills / Custom Request)。</dd>
+            <dt>品类覆盖</dt><dd>核心品类全;成品号 / BD / 陪玩靠 Custom Request 兜底。<b>货服严格分离</b>(Gold / Accounts / Items / Boosting 四 tab)。</dd>
+            <dt>交付</dt><dd>Solo(piloted)/ Duo(selfplay)+ Stream / Solo queue / Offline 三开关。</dd>
+            <dt>信任</dt><dd>平台基建:TradeShield escrow + 98% 好评 / 33 万单。</dd>
+          </dl>
+          <div class="p-hi"><b>特色 —</b> 配置最干净;平台不自营,卖家即“coaches”,陪玩/教学走竞价撮合。</div>
+        </div>
+
+        <div class="prof">
+          <div class="p-top">
+            <div class="p-name">Overgear</div>
+            <div class="p-type">海外 · 自营 in-house</div>
+          </div>
+          <dl>
+            <dt>定价</dt><dd>固定明码,<b>$1 起做钩子</b>;$5 新人礼 + 1% 返现。</dd>
+            <dt>SKU 组织</dt><dd><b>深品类树</b>(Gold / Leveling / Bundles / Bosses / Dungeons / Items / Materials / Builds / Character Boosting)+ 成品号 Tier 阶梯。</dd>
+            <dt>品类覆盖</dt><dd>8 类最全;<b>成品号阶梯最完整</b>;陪玩全产品化(Coaching / Rent / Hourly)。</dd>
+            <dt>交付</dt><dd>Self-play / Piloted(<b>-30% 更便宜</b>)+ VPN。</dd>
+            <dt>信任</dt><dd>Trustpilot 4.9 / 150 万单 + 100% 退款 + “Diablo Expert 60 秒”顾问。</dd>
+          </dl>
+          <div class="p-hi"><b>特色 —</b> SEO 落地页最重、成品号阶梯最完整。<b>漏洞:</b>常青 FAQ 有过时赛季文案(仍写 S11 / 血之赛季)。</div>
+        </div>
+      </div>
+
+      <!-- 覆盖矩阵 -->
+      <div class="sec-head" id="matrix" data-spy style="margin-top:44px; margin-bottom:14px">
+        <span class="eyebrow">Coverage Matrix</span>
+        <h2 style="font-size:22px">8 品类 × 3 家 覆盖度矩阵</h2>
+      </div>
+      <div class="tbl-scroll">
+        <table class="matrix">
+          <thead><tr><th>品类</th><th>智慧谷</th><th>Eldorado</th><th>Overgear</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rowk">I 升级</span></td><td class="cell-yes">✔ 完整</td><td class="cell-yes">✔ 完整</td><td class="cell-yes">✔ 完整</td></tr>
+            <tr><td><span class="rowk">II 剧情/解锁</span></td><td class="cell-yes">✔ 完整</td><td class="cell-part">△ <span class="cell-note">走 Custom</span></td><td class="cell-yes">✔ 完整</td></tr>
+            <tr><td><span class="rowk">III 副本代刷</span></td><td class="cell-yes">✔ 完整</td><td class="cell-part">△ <span class="cell-note">仅 Mythic Prankster,余走 Custom</span></td><td class="cell-yes">✔ 完整</td></tr>
+            <tr><td><span class="rowk">IV BOSS 代打</span></td><td class="cell-yes">✔ 完整</td><td class="cell-yes">✔ 完整</td><td class="cell-yes">✔ 完整</td></tr>
+            <tr><td><span class="rowk">V 装备/材料</span></td><td class="cell-yes">✔ 完整</td><td class="cell-part">△ <span class="cell-note">Items 独立线</span></td><td class="cell-yes">✔ <span class="cell-note">+ Materials 线</span></td></tr>
+            <tr><td><span class="rowk">VI 成品号</span></td><td class="cell-part">△ <span class="cell-note">BD 阶梯近似</span></td><td class="cell-no">✘ <span class="cell-note">走 Custom</span></td><td class="cell-yes">✔ <span class="cell-note">Torment Tier 阶梯</span></td></tr>
+            <tr><td><span class="rowk">VII BD 搭配</span></td><td class="cell-yes">✔ <span class="cell-note">阶梯化</span></td><td class="cell-no">✘ <span class="cell-note">走 Custom</span></td><td class="cell-yes">✔ <span class="cell-note">职业 Build</span></td></tr>
+            <tr><td><span class="rowk">VIII 陪玩/教学</span></td><td class="cell-yes">✔ <span class="cell-note">4 档,含娱乐陪玩</span></td><td class="cell-part">△ <span class="cell-note">Duo + Custom 撮合</span></td><td class="cell-yes">✔ <span class="cell-note">Coaching/Rent/Hourly</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 模式对比 -->
+      <div class="sec-head" id="modes" data-spy style="margin-top:40px; margin-bottom:14px">
+        <span class="eyebrow">Model Comparison</span>
+        <h2 style="font-size:22px">模式对比表</h2>
+      </div>
+      <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>维度</th><th>智慧谷</th><th>Eldorado</th><th>Overgear</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rowk">商业模式</span></td><td>淘宝自营</td><td>撮合 marketplace</td><td>自营 in-house</td></tr>
+            <tr><td><span class="rowk">定价</span></td><td>固定,¥100 锚点</td><td>竞价出 offer,省 40%</td><td>固定明码,$1 起钩子</td></tr>
+            <tr><td><span class="rowk">SKU 组织</span></td><td>几十个碎 SKU 堆量</td><td>6 个参数配置器</td><td>深品类树 + 套装阶梯</td></tr>
+            <tr><td><span class="rowk">成品号</span></td><td>BD 阶梯近似</td><td>无(走 Custom)</td><td>✔ Torment Tier 阶梯($90–700)</td></tr>
+            <tr><td><span class="rowk">陪玩/教学</span></td><td>4 档按小时(含娱乐)</td><td>Duo + Custom 撮合</td><td>Coaching/Rent/Hourly($20 起)</td></tr>
+            <tr><td><span class="rowk">货服关系</span></td><td>全混一个链接</td><td>严格分离(四 tab)</td><td>半分离</td></tr>
+            <tr><td><span class="rowk">交付模式</span></td><td>跟车/托管/远程</td><td>Solo/Duo + 3 开关</td><td>Self-play/Piloted(-30%)+VPN</td></tr>
+            <tr><td><span class="rowk">信任机制</span></td><td>卖家自述</td><td>escrow + 聚合好评</td><td>Trustpilot + 退款 + 顾问</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 核心差异 -->
+      <div class="sec-head" id="diffs" data-spy style="margin-top:40px; margin-bottom:14px">
+        <span class="eyebrow">Key Differences</span>
+        <h2 style="font-size:22px">六条核心差异</h2>
+      </div>
+      <div class="diffs">
+        <div class="diff"><div class="n"></div><div class="t"><b>定价机制根本不同:</b>智慧谷 / Overgear 固定明码 vs Eldorado 竞价撮合。这是三家最底层的分歧。</div></div>
+        <div class="diff"><div class="n"></div><div class="t"><b>SKU 组织三种流派:</b>智慧谷碎 SKU 堆量 / Eldorado 参数配置器 / Overgear 深 taxonomy + 套装阶梯。</div></div>
+        <div class="diff"><div class="n"></div><div class="t"><b>成品号只有 Overgear 做透:</b>把“整装即战力角色”做成清晰 Torment Tier 阶梯($90–700);智慧谷用 BD 阶梯近似;Eldorado 只能走 Custom。</div></div>
+        <div class="diff"><div class="n"></div><div class="t"><b>陪玩三家都有、但性质不同:</b>西方全是工具性(教学 / 按小时代练 / 陪打),<b>无社交娱乐陪玩</b>;智慧谷独有娱乐陪玩。产品化上:Overgear 明码卡片 / Eldorado 靠 Duo+Custom 撮合 / 智慧谷 4 档目录。</div></div>
+        <div class="diff"><div class="n"></div><div class="t"><b>信任模型三条路:</b>智慧谷卖家自述 / Eldorado 平台 escrow + 聚合好评 / Overgear 品牌背书(Trustpilot + 退款 + 顾问)。</div></div>
+        <div class="diff"><div class="n"></div><div class="t"><b>货服关系:</b>Eldorado 严格分离(金币/账号/道具/代练四 tab),Overgear 半分离,智慧谷全混一个链接。</div></div>
+      </div>
+    </section>
+
+
+    <!-- ---------- 附录 ---------- -->
+    <section id="glossary" data-spy>
+      <div class="sec-head">
+        <span class="eyebrow">Appendix</span>
+        <h2>术语对照表 · 店铺话术 ↔ S14 真实机制</h2>
+        <p class="lead">店铺话术和游戏机制经常对不上,这张表用于避免误读。已对照 S14 官方/攻略核实。</p>
+      </div>
+      <div class="tbl-scroll">
+        <table class="gloss">
+          <thead><tr><th>店铺话术</th><th>S14 真实机制</th></tr></thead>
+          <tbody>
+            <tr><td><span class="rowk">混沌界域 / 红门 · 蓝门</span></td><td>Pandemonium Ruptures —— 赛季核心开放世界事件(红/蓝传送门)</td></tr>
+            <tr><td><span class="rowk">精良巢穴钥匙</span></td><td>Superior Lair Keys(原 Betrayer's Husks 改名),开巢穴 Boss 用</td></tr>
+            <tr><td><span class="rowk">墨菲斯托 / 彼列</span></td><td>Mephisto / Belial —— 巢穴 Lair Boss</td></tr>
+            <tr><td><span class="rowk">堕落收割者</span></td><td>Corrupted Reaper —— S14 新巢穴 Boss</td></tr>
+            <tr><td><span class="rowk">战争计划 1–7</span></td><td>War Plan —— Escalation Sigil 的分支路径树</td></tr>
+            <tr><td><span class="rowk">顶石地下城 1–9</span></td><td>Pit(of Artificers)—— 钥石地窟冲层,产大师级素材/雕文</td></tr>
+            <tr><td><span class="rowk">野生神话装备</span></td><td>掉落型 Mythic Unique(区别于合成),对应 Mythic 3.0 改版</td></tr>
+            <tr><td><span class="rowk">守护先锋皮肤</span></td><td>Overwatch 联动皮肤(Eye of Overwatch 货币兑换,共 8 款)</td></tr>
+            <tr><td><span class="rowk">捣蛋鬼军械库 / Mythic Prankster</span></td><td>赛季限时活动,产军械库奖励箱</td></tr>
+            <tr><td><span class="rowk">巅峰 / 大师级 / 大词条 / 符石</span></td><td>Paragon / Masterworking / Greater Affixes / Runewords</td></tr>
+            <tr><td><span class="rowk">痛苦难度</span></td><td>Torment(T1–T12+),终局难度档</td></tr>
+            <tr><td><span class="rowk">库拉斯特 / 地狱狂潮 / 噩梦地窟</span></td><td>Kurast Undercity / Infernal Hordes / Nightmare Dungeons</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <b>数据说明 —</b> 价格为竞品页面展示的“起价 / 单项价”,非最终成交价。智慧谷部分详情图数字受图片清晰度限制,<b>以品类结构为准</b>。机制术语已对照 S14 攻略/官方核实;陪玩交付方式中,Overgear 的 Rent a Booster / Hourly driving 具体 self-play/piloted 开关未逐页确认,依卡片文案与品类行业惯例判断为“按小时代打,以 piloted 为主”。调研为 <b>2026-08-04</b> 快照,竞品在售内容可能随赛季更新变动。
+      </div>
+    </section>
+
+    <footer>IGV 内部竞品调研 · Diablo 4 代练 · 仅供参考</footer>
+
+  </main>
+</div>
+
+<script>
+  (function(){
+    var links = Array.prototype.slice.call(document.querySelectorAll('.toc a.tl'));
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+    var targets = Array.prototype.slice.call(document.querySelectorAll('[data-spy]'));
+    if(!('IntersectionObserver' in window) || !targets.length) return;
+
+    function setActive(id){
+      links.forEach(function(a){ a.classList.remove('active'); });
+      if(map[id]) map[id].classList.add('active');
+    }
+
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ e.target._vis = e.isIntersecting; });
+      for(var i=0;i<targets.length;i++){
+        if(targets[i]._vis){ setActive(targets[i].id); return; }
+      }
+    }, { rootMargin:'-8% 0px -72% 0px', threshold:0 });
+
+    targets.forEach(function(t){ io.observe(t); });
+
+    // click: reflect immediately
+    links.forEach(function(a){
+      a.addEventListener('click', function(){ setActive(a.getAttribute('href').slice(1)); });
+    });
+  })();
+</script>
+
+</body>
+</html>
