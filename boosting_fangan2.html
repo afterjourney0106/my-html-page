@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iGV Boosting · Scheme 2 (Curated fixed-price catalog)</title>
+<style>
+  :root{
+    --orange:#f1652a;--orange-d:#d9531c;--orange-soft:#fdeee7;
+    --blue:#2f6fe0;--blue-soft:#eaf1fc;
+    --ink:#20242e;--soft:#5f6673;--dim:#949aa6;--line:#e9eaee;--bg:#f4f5f7;--card:#fff;
+    --green:#16a34a;--cream:#fdf1ea;--safe:#12855a;--risk:#c0442a;--amber:#b0740f;
+    --sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+  .hide{display:none!important}
+
+  /* header */
+  header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+  .htop{display:flex;align-items:center;gap:18px;height:58px}
+  .logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:19px}
+  .logo .mk{width:26px;height:26px;background:var(--orange);border-radius:7px;position:relative}
+  .logo .mk::after{content:"iG";position:absolute;inset:0;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .logo small{font-weight:600;font-size:11px;color:var(--dim)}
+  .hsearch{flex:1;max-width:360px;background:#f2f3f5;border:1px solid var(--line);border-radius:8px;padding:9px 13px;color:var(--dim);font-size:13px}
+  .hright{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:13.5px}
+  .hright .seller{font-weight:600;border-bottom:2px solid var(--ink);padding-bottom:1px}
+  .horders{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:7px 11px}
+  .cartbtn{position:relative;border:1px solid var(--line);border-radius:8px;padding:7px 11px}
+  .cartbtn .badge2{position:absolute;top:-7px;right:-7px;background:var(--orange);color:#fff;font-size:10px;font-weight:700;border-radius:10px;min-width:17px;height:17px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+  /* lang dropdown */
+  .langwrap{position:relative}
+  #langTrigger{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:7px 11px;background:#fff;font-size:13.5px;color:var(--ink)}
+  #langTrigger:hover{border-color:var(--orange);color:var(--orange-d)}
+  .langpop{position:absolute;top:calc(100% + 8px);right:0;width:360px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.16);padding:16px 18px;z-index:40}
+  .langcols{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;max-height:340px;overflow:auto}
+  .popcol-h{font-weight:700;font-size:13px;color:var(--ink);padding:4px 4px 8px}
+  .popitem{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:7px;cursor:pointer;font-size:13.5px;color:var(--soft)}
+  .popitem:hover{background:#f5f6f8}.popitem.on{color:var(--orange-d);font-weight:600}
+  .popitem .fl{width:18px;text-align:center}.popitem .ck{margin-left:auto;color:var(--orange);font-weight:700;visibility:hidden}.popitem.on .ck{visibility:visible}
+  .confirmbtn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:9px;padding:11px;font-size:14px;font-weight:700;margin-top:14px}
+  .confirmbtn:hover{background:var(--orange-d)}
+
+  /* positioning bar */
+  .posbar{background:linear-gradient(120deg,#fdeee7,#eaf1fc);border-bottom:1px solid var(--line)}
+  .posbar .in{display:flex;align-items:center;gap:16px;padding:11px 0;font-size:13px;color:var(--soft);flex-wrap:wrap}
+  .posbar b{color:var(--orange-d)}
+  .switch{margin-left:auto;background:#fff;border:1px solid var(--orange);color:var(--orange-d);border-radius:20px;padding:6px 14px;font-size:12.5px;font-weight:600;cursor:pointer}
+
+  h1{font-size:24px;margin:16px 0 2px}
+  .crumb{color:var(--dim);font-size:12.5px;margin:16px 0 0}.crumb b{color:var(--soft)}
+  .h1sub{color:var(--soft);font-size:13.5px;margin-bottom:16px}
+
+  /* catalog layout */
+  .clayout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:20px;align-items:start;padding-bottom:50px}
+  .tree{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;position:sticky;top:74px}
+  .tree .th{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);padding:10px 12px 6px}
+  .tnode{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13.5px;color:var(--soft)}
+  .tnode:hover{background:#f5f6f8}
+  .tnode.on{background:var(--orange-soft);color:var(--orange-d);font-weight:600}
+  .tnode .em{font-size:15px}
+
+  .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .pcard{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .pcard .pimg{height:96px;background:linear-gradient(135deg,#241528,#3a1b20);display:flex;align-items:center;justify-content:center;font-size:30px;position:relative}
+  .pcard .tag{position:absolute;top:8px;left:8px;background:var(--orange);color:#fff;font-size:10px;font-weight:700;border-radius:5px;padding:2px 7px}
+  .pcard .save{position:absolute;top:8px;right:8px;background:#e4f3ec;color:var(--safe);font-size:10px;font-weight:700;border-radius:5px;padding:2px 7px}
+  .pcard .pbody{padding:13px 15px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .pcard .pt{font-weight:700;font-size:14.5px;line-height:1.3}
+  .pcard ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+  .pcard li{font-size:12px;color:var(--soft);padding-left:16px;position:relative}
+  .pcard li::before{content:"◆";position:absolute;left:0;color:var(--orange);font-size:8px;top:3px}
+  .pcard .sold{font-size:11px;color:var(--dim);display:flex;align-items:center;gap:5px}
+  .pcard .sold .vf{color:var(--orange-d);font-weight:600}
+  .pcard .pf{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto;padding-top:4px}
+  .pcard .pp{font-size:12px;color:var(--dim)}.pcard .pp b{font-size:20px;color:var(--ink);font-weight:800}
+  .pcard .pbtns{display:flex;gap:6px}
+  .pcard .pbuy{background:#fff;border:1px solid var(--orange);color:var(--orange-d);border-radius:7px;padding:7px 11px;font-size:12px;font-weight:600}
+  .pcard .padd{background:var(--orange);color:#fff;border:none;border-radius:7px;padding:7px 11px;font-size:12px;font-weight:600}
+  .pcard .padd:hover{background:var(--orange-d)}
+
+  .expert{background:linear-gradient(120deg,#20242e,#33261a);color:#fff;border-radius:12px;padding:16px 20px;margin-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .expert .et{font-weight:700}.expert .es{font-size:12.5px;color:#cfd3db}
+  .expert .eb{margin-left:auto;background:#ffcf87;color:#3a2a12;border:none;border-radius:8px;padding:9px 16px;font-weight:700;font-size:13px}
+
+  /* cart drawer */
+  .drawer-mask{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .drawer-mask.show{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:410px;max-width:92vw;background:#fff;transform:translateX(100%);transition:.28s;z-index:51;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.15)}
+  .drawer.show{transform:none}
+  .drawer-h{display:flex;justify-content:space-between;align-items:center;padding:17px 20px;border-bottom:1px solid var(--line)}
+  .drawer-h b{font-size:16px}.drawer-h .x{font-size:19px;color:var(--soft);cursor:pointer}
+  .drawer-body{flex:1;overflow:auto;padding:8px 20px}
+  .ci{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+  .ci .cimg{width:50px;height:50px;border-radius:8px;background:linear-gradient(135deg,#241528,#3a1b20);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .ci .cn{font-weight:600;font-size:13px;line-height:1.3}.ci .cs{font-size:11.5px;color:var(--dim);margin-top:2px}
+  .ci .cp{font-weight:800;margin-left:auto}.ci .del{color:var(--dim);cursor:pointer;margin-left:8px}
+  .drawer-foot{border-top:1px solid var(--line);padding:14px 20px}
+  .dfrow{display:flex;justify-content:space-between;padding:5px 0;font-size:13.5px;color:var(--soft)}.dfrow b{color:var(--ink)}
+  .dfrow.sub{font-size:16px;padding-top:8px}.dfrow.sub b{font-size:18px}
+  .dpromo{display:flex;justify-content:space-between;padding:9px 0;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);margin:6px 0;color:var(--soft);cursor:pointer;font-size:13.5px}
+  .dbonus{background:#e4f3ec;border-left:3px solid var(--green);color:#0f5f42;font-size:12px;padding:8px 11px;border-radius:6px;margin:8px 0}
+  .dcheckout{width:100%;background:var(--orange);color:#fff;border:none;border-radius:9px;padding:13px;font-size:15px;font-weight:700;margin-top:8px}.dcheckout:hover{background:var(--orange-d)}
+
+  /* checkout */
+  #screen-checkout{background:var(--cream);min-height:100vh;display:none}
+  #screen-checkout.show{display:block}
+  #screen-catalog.hide2{display:none}
+  .cohead{display:flex;align-items:center;gap:14px;padding:18px 0}
+  .cohead .div{width:1px;height:24px;background:#e6cdbf}.cohead h2{font-size:19px;margin:0}
+  .cosec{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--orange-d);font-weight:700;font-size:15px}
+  .backlink{color:var(--orange-d);font-size:13px;font-weight:600;cursor:pointer;margin:2px 0 6px;display:inline-block}
+  .cogrid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start;padding-bottom:60px}
+  .cocard{background:#fff;border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(120,80,50,.05)}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+  .info-row .k{display:flex;align-items:center;gap:9px;color:var(--soft);font-size:13.5px}.info-row .v{font-weight:600}.info-row .v .pen{color:var(--orange);margin-left:6px;cursor:pointer}
+  .dash{border:0;border-top:1px dashed #f0c3aa;margin:6px 0}
+  .deliv-seg{display:flex;gap:8px;margin-top:6px}
+  .dseg{border:1px solid var(--line);background:#f7f8fa;border-radius:8px;padding:8px 12px;font-size:12.5px;color:var(--soft);cursor:pointer;flex:1;text-align:center}
+  .dseg.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-d);font-weight:600}
+  .secnote{background:#e4f3ec;border:1px solid #cfe9db;border-radius:9px;padding:10px 12px;font-size:12px;color:#0f5f42;margin-top:12px;display:flex;gap:8px}.secnote b{color:var(--safe)}
+  .co-list{display:flex;flex-direction:column;gap:12px}
+  .co-item{display:flex;gap:14px;align-items:center}
+  .co-thumb{width:52px;height:52px;border-radius:8px;background:linear-gradient(135deg,#241528,#3a1b20);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:21px}
+  .co-item .ti{font-weight:600;font-size:13.5px}
+  .co-item .cb{font-size:11.5px;color:var(--dim);margin-top:2px}
+  .co-item .cprice{font-weight:800;margin-left:auto}
+  h4.coh{font-size:16px;margin:0 0 12px}
+  .pay{display:flex;justify-content:space-between;align-items:center;padding:13px 4px;border-bottom:1px solid #f2e6dd}.pay:last-child{border-bottom:none}
+  .pay .pm{display:flex;align-items:center;gap:11px;font-weight:600;font-size:14px}
+  .pmi{width:40px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff}
+  .pmi.wc{background:#09bb07}.pmi.vi{background:#1a1f71}.pmi.ap{background:#000}.pmi.gp{background:#4285f4}
+  .pay .pp{display:flex;align-items:center;gap:11px}.radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line)}.radio.on{border-color:var(--orange);background:radial-gradient(circle,var(--orange) 45%,#fff 48%)}
+  .showmore{display:block;margin:12px auto 0;background:#fff;border:1px solid var(--orange);color:var(--orange-d);border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600}
+  .co-sum .sr{display:flex;justify-content:space-between;padding:7px 0;font-size:14px;color:var(--soft)}.co-sum .sr b{color:var(--ink)}
+  .promo2{display:flex;justify-content:space-between;padding:11px 0;border-top:1px dashed #f0c3aa;cursor:pointer;font-size:13.5px}.promo2 .plus{color:var(--orange);font-size:18px}
+  .co-sum .tot{border-top:1px dashed #f0c3aa;margin-top:6px;padding-top:12px;font-size:15px;color:var(--ink);font-weight:600}.co-sum .tot .tv{color:var(--orange-d);font-weight:800;font-size:20px}
+  .co-checkout{width:100%;background:var(--orange);color:#fff;border:none;border-radius:9px;padding:14px;font-size:16px;font-weight:700;margin-top:14px;display:flex;gap:8px;align-items:center;justify-content:center}.co-checkout:hover{background:var(--orange-d)}
+  .terms{font-size:12px;color:var(--soft);text-align:center;margin:12px 0}.terms a{color:var(--orange-d);text-decoration:underline}
+  .cobadges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}.cobadge{font-size:10px;color:var(--soft);border:1px solid var(--line);border-radius:5px;padding:4px 8px;background:#fafafa}
+
+  .protonote{background:#fff;border:1px dashed var(--orange);border-radius:12px;padding:13px 17px;margin:20px 0 44px;font-size:12px;color:var(--soft)}.protonote b{color:var(--orange-d)}
+  .pcard{cursor:pointer}
+  .cfg{color:var(--orange-d);font-weight:600;font-size:12.5px}
+  /* product detail */
+  #screen-detail{display:none;padding-bottom:50px}
+  .dback{color:var(--orange-d);font-size:13px;font-weight:600;cursor:pointer;margin:16px 0 8px;display:inline-block}
+  .dlayout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:20px;align-items:start;padding-bottom:20px}
+  .dmain .dimg{height:210px;border-radius:14px;background:linear-gradient(135deg,#241528,#3a1b20);display:flex;align-items:center;justify-content:center;font-size:60px;margin-bottom:14px;position:relative}
+  .dmain h1{font-size:23px;margin:4px 0 4px}
+  .dmain .dsell{font-size:12.5px;color:var(--dim);margin-bottom:12px}.dmain .dsell b{color:var(--orange-d)}
+  .dsec{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+  .dsec h4{margin:0 0 10px;font-size:15px}
+  .dwins{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px}
+  .dwins li{font-size:13px;color:var(--soft);padding-left:20px;position:relative}
+  .dwins li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:700}
+  .dhow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .dstep{font-size:12px;color:var(--soft)}.dstep b{display:block;color:var(--ink);font-size:12.5px;margin-bottom:2px}
+  .dconf{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;position:sticky;top:74px}
+  .dconf .ch{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--soft);margin-bottom:14px}
+  .ogroup{margin-bottom:14px}
+  .olabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:var(--soft);margin-bottom:6px}
+  .osegs{display:flex;gap:7px;flex-wrap:wrap}
+  .oseg,.ddseg{border:1px solid var(--line);background:#f7f8fa;border-radius:8px;padding:7px 12px;font-size:12.5px;color:var(--soft);cursor:pointer}
+  .oseg.on,.ddseg.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-d);font-weight:600}
+  .qty{display:inline-flex;align-items:center;gap:16px;border:1px solid var(--line);border-radius:8px;padding:5px 14px}
+  .qtybtn{border:none;background:none;font-size:18px;color:var(--orange-d);cursor:pointer;width:18px}
+  .qtyval{font-weight:700;min-width:24px;text-align:center}
+  .dsafe{font-size:11.5px;color:#0f5f42;background:#e4f3ec;border:1px solid #cfe9db;border-radius:8px;padding:8px 10px;margin-top:4px}
+  .dprice{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 4px;border-top:1px dashed var(--line);padding-top:12px}
+  .dprice span{color:var(--soft);font-size:13px}.dprice b{font-size:24px;font-weight:800}
+  .dadd{width:100%;background:var(--orange);color:#fff;border:none;border-radius:9px;padding:12px;font-size:15px;font-weight:700;margin-top:8px}
+  .dadd:hover{background:var(--orange-d)}
+  .dbuy{width:100%;background:#fff;color:var(--orange-d);border:1px solid var(--orange);border-radius:9px;padding:11px;font-size:14px;font-weight:600;margin-top:8px}
+  .dbadges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .dbadges span{font-size:10px;color:var(--soft);border:1px solid var(--line);border-radius:5px;padding:3px 7px}
+  @media(max-width:860px){.dlayout{grid-template-columns:1fr}.dconf{position:static}}
+  .toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);background:#20242e;color:#fff;padding:13px 22px;border-radius:10px;font-size:14px;opacity:0;transition:.3s;z-index:60;box-shadow:0 8px 30px rgba(0,0,0,.3)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:860px){.clayout,.cogrid{grid-template-columns:1fr}.pgrid{grid-template-columns:1fr 1fr}.tree{position:static}}
+  @media(max-width:560px){.pgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap htop">
+    <div class="logo"><span class="mk"></span><span>V<small>.com</small></span></div>
+    <div class="hsearch" data-zh-ph="搜索游戏 / 服务…">Search in iGV</div>
+    <div class="hright">
+      <span class="seller" data-zh="卖家中心">Seller ▾</span>
+      <span class="horders">📋 <span data-zh="我的订单">My Orders</span></span>
+      <div class="langwrap">
+        <button id="langTrigger"><span class="flag">🇬🇧</span> <span id="langlabel">English</span> / <span id="curlabel">USD</span> ▾</button>
+        <div class="langpop hide" id="langpop">
+          <div class="langcols">
+            <div>
+              <div class="popcol-h" data-zh="语言">Language</div>
+              <div class="popitem on" data-l="en"><span class="fl">🇬🇧</span>English<span class="ck">✓</span></div>
+              <div class="popitem" data-l="zh"><span class="fl">🇨🇳</span>中文<span class="ck">✓</span></div>
+              <div class="popitem" data-l="fr"><span class="fl">🇫🇷</span>Français<span class="ck">✓</span></div>
+              <div class="popitem" data-l="de"><span class="fl">🇩🇪</span>Deutsch<span class="ck">✓</span></div>
+              <div class="popitem" data-l="it"><span class="fl">🇮🇹</span>Italiano<span class="ck">✓</span></div>
+              <div class="popitem" data-l="es"><span class="fl">🇪🇸</span>Español<span class="ck">✓</span></div>
+              <div class="popitem" data-l="pt"><span class="fl">🇵🇹</span>Português<span class="ck">✓</span></div>
+              <div class="popitem" data-l="ru"><span class="fl">🇷🇺</span>Русский<span class="ck">✓</span></div>
+              <div class="popitem" data-l="ja"><span class="fl">🇯🇵</span>日本語<span class="ck">✓</span></div>
+              <div class="popitem" data-l="ar"><span class="fl">🇸🇦</span>عربي<span class="ck">✓</span></div>
+            </div>
+            <div>
+              <div class="popcol-h" data-zh="货币">Currency</div>
+              <div class="popitem on" data-cur="USD">USD<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="EUR">EUR<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="GBP">GBP<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="BRL">BRL<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="CHF">CHF<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="CAD">CAD<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="AUD">AUD<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="KRW">KRW<span class="ck">✓</span></div>
+            </div>
+          </div>
+          <button class="confirmbtn" id="langConfirm" data-zh="确认">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== CATALOG ===== -->
+<div id="screen-catalog">
+<div class="posbar"><div class="wrap in">
+  <span>🏅 <b data-zh="官方精选">iGV Curated</b> <span data-zh="· 明码标价 · 质量可控 · 交付有保障">· Fixed prices · Vetted quality · Guaranteed delivery</span></span>
+  <span data-zh="⭐ Trustpilot 4.5 · 100% 退款保障">⭐ Trustpilot 4.5 · 100% money-back</span>
+  <button class="switch" id="switchMode" data-zh="或看 C2C 市场竞价 →">Prefer C2C bidding? →</button>
+</div></div>
+
+<div class="wrap">
+  <div class="crumb"><b>Home</b> › <b>Diablo 4</b> › <span data-zh="代练 · 官方精选">Boosting · Curated</span></div>
+  <h1 data-zh="暗黑破坏神 4 代练 · 官方精选目录">Diablo 4 Boosting · Curated Catalog</h1>
+  <div class="h1sub" data-zh="明码标价、精选卖家、加入购物车即可结算。当前赛季 S14。">Fixed prices, vetted sellers, add to cart and check out. Season 14.</div>
+
+  <div class="clayout">
+    <div class="tree" id="tree">
+      <div class="th" data-zh="品类">Categories</div>
+      <div class="tnode on" data-cat="featured"><span class="em">🔥</span><span data-zh="精选套餐">Featured</span></div>
+      <div class="tnode" data-cat="lvl"><span class="em">⚔️</span><span data-zh="升级">Leveling</span></div>
+      <div class="tnode" data-cat="boss"><span class="em">💀</span><span data-zh="Boss 代打">Boss Kills</span></div>
+      <div class="tnode" data-cat="dun"><span class="em">🌀</span><span data-zh="副本">Dungeons</span></div>
+      <div class="tnode" data-cat="gear"><span class="em">💎</span><span data-zh="装备 / 成品号">Gear / Chars</span></div>
+      <div class="tnode" data-cat="build"><span class="em">📘</span><span data-zh="BD · 教学">Build · Coaching</span></div>
+    </div>
+
+    <div>
+      <div class="pgrid" id="pgrid"></div>
+      <div class="expert">
+        <div><div class="et" data-zh="不确定买哪个?60 秒问专家">Not sure which to pick? Ask an expert in 60s</div><div class="es" data-zh="告诉我们目标,给你最快路线、确切价格和开始时间。">Tell us your goal — fastest route, exact price, start time.</div></div>
+        <button class="eb" id="expertBtn" data-zh="咨询 D4 专家">Chat with a D4 expert</button>
+      </div>
+      <div class="protonote"><b data-zh="原型说明 —">Prototype note —</b> <span data-zh="方案二:官方精选 / 明码目录(近似 Overgear)。与方案一(C2C 竞价撮合)的区别:①明码标价,无竞价等待;②官方/精选卖家,质量可控;③分类树 + 加购物车 → 结算。点商品「加购物车」或「直接买」体验到支付前的流程。">Scheme 2: curated fixed-price catalog (Overgear-like). Vs Scheme 1 (C2C bidding): fixed prices, no waiting for offers, vetted sellers. Add to cart or Buy now to reach checkout (pre-payment).</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== PRODUCT DETAIL ===== -->
+<div id="screen-detail"><div class="wrap"><div class="dback" id="detailBack">‹ <span data-zh="返回目录">Back to catalog</span></div><div id="detailBody"></div></div></div>
+
+<!-- ===== CHECKOUT ===== -->
+<div id="screen-checkout">
+<div class="wrap">
+  <div class="cohead"><div class="logo"><span class="mk"></span><span>V<small>.com</small></span></div><div class="div"></div><h2 data-zh="订单信息">Order Information</h2><div class="cosec">🛡 <span data-zh="安全结算">Secure Checkout</span></div></div>
+  <div class="backlink" id="backlink">‹ <span data-zh="返回目录">Back to catalog</span></div>
+  <div class="cogrid" style="margin-top:6px">
+    <div>
+      <div class="cocard">
+        <div class="info-row"><span class="k" data-zh="联系邮箱">✉ Contact email</span><span class="v">player@email.com <span class="pen">✏</span></span></div>
+        <hr class="dash">
+        <div class="info-row" style="align-items:flex-start"><span class="k" data-zh="交付方式">🚚 Delivery method</span></div>
+        <div class="deliv-seg" id="delivSeg">
+          <div class="dseg on" data-mode="selfplay" data-zh="自己上号 / 陪打">Self-play / carry</div>
+          <div class="dseg" data-mode="piloted" data-zh="上号代打">Piloted</div>
+        </div>
+        <div class="secnote">🔒 <span><b data-zh="账号安全:">Account safety: </b><span id="co-secnote-t" data-zh="你自己上号,和 booster 组队,无需交出登录信息。">You stay logged in and play with the booster — no login shared.</span></span></div>
+      </div>
+      <div class="cocard">
+        <h4 class="coh" data-zh="订单商品">Your order</h4>
+        <div class="co-list" id="coList"></div>
+      </div>
+      <div class="cocard">
+        <h4 class="coh" data-zh="支付方式">Payment method</h4>
+        <div class="pay"><span class="pm"><span class="pmi wc">WeChat</span> WeChat Pay</span><span class="pp"><b id="pp1">$0</b><span class="radio on"></span></span></div>
+        <div class="pay"><span class="pm"><span class="pmi vi">VISA</span> Visa / Mastercard</span><span class="pp"><b id="pp2">$0</b><span class="radio"></span></span></div>
+        <div class="pay"><span class="pm"><span class="pmi ap">Pay</span> Apple Pay</span><span class="pp"><b id="pp3">$0</b><span class="radio"></span></span></div>
+        <div class="pay"><span class="pm"><span class="pmi gp">G</span> Google Pay</span><span class="pp"><b id="pp4">$0</b><span class="radio"></span></span></div>
+        <button class="showmore" data-zh="更多支付方式 ▾">Show more ▾</button>
+      </div>
+    </div>
+    <div>
+      <div class="cocard co-sum">
+        <div class="sr"><span data-zh="商品小计">Price</span><b id="s-price">$0.00</b></div>
+        <div class="promo2" id="promoToggle"><span data-zh="使用优惠码 / 积分">Apply promo code / points</span><span class="plus">＋</span></div>
+        <div class="sr"><span data-zh="支付手续费">Payment fee</span><b id="s-fee">+ $0.00</b></div>
+        <div class="sr" style="color:var(--green)"><span data-zh="IGV 积分返赠">iGV points back</span><b id="s-cash">+0 pts</b></div>
+        <div class="sr tot"><span data-zh="合计">Total</span><span class="tv" id="s-total">$0.00</span></div>
+        <button class="co-checkout" id="doCheckout">🛡 <span data-zh="安全结算">Secure checkout</span></button>
+        <div class="terms"><span data-zh="下单即表示你同意我们的">By placing this order you agree to our </span><a data-zh="服务条款">Terms &amp; Conditions</a>.</div>
+        <div class="cobadges"><span class="cobadge">PCI DSS L1</span><span class="cobadge">Trustpilot 4.5</span><span class="cobadge">Norton Guarantee</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /* i18n */
+  var lang='en',curLangName='English',curFlag='🇬🇧',curCurrency='USD',pendLang='en',pendCur='USD';
+  var LN={en:'English',zh:'中文',fr:'Français',de:'Deutsch',it:'Italiano',es:'Español',pt:'Português',ru:'Русский',ja:'日本語',ar:'عربي'};
+  var LF={en:'🇬🇧',zh:'🇨🇳',fr:'🇫🇷',de:'🇩🇪',it:'🇮🇹',es:'🇪🇸',pt:'🇵🇹',ru:'🇷🇺',ja:'🇯🇵',ar:'🇸🇦'};
+  function applyLang(l){
+    lang=l;
+    document.querySelectorAll('[data-zh]').forEach(function(el){if(el._en===undefined)el._en=el.innerHTML;el.innerHTML=(l==='zh')?el.getAttribute('data-zh'):el._en;});
+    document.querySelectorAll('[data-zh-ph]').forEach(function(el){if(el._enph===undefined)el._enph=(el.tagName==='INPUT')?el.getAttribute('placeholder'):el.textContent;var v=(l==='zh')?el.getAttribute('data-zh-ph'):el._enph;if(el.tagName==='INPUT')el.setAttribute('placeholder',v);else el.textContent=v;});
+    document.getElementById('langlabel').textContent=curLangName;
+    document.querySelector('#langTrigger .flag').textContent=curFlag;
+    document.documentElement.lang=(l==='zh')?'zh-CN':'en';
+  }
+  var langpop=document.getElementById('langpop'),langTrigger=document.getElementById('langTrigger');
+  langTrigger.addEventListener('click',function(e){e.stopPropagation();langpop.classList.toggle('hide');});
+  langpop.addEventListener('click',function(e){e.stopPropagation();});
+  document.addEventListener('click',function(){langpop.classList.add('hide');});
+  langpop.querySelectorAll('.popitem[data-l]').forEach(function(it){it.addEventListener('click',function(){langpop.querySelectorAll('.popitem[data-l]').forEach(function(x){x.classList.remove('on')});it.classList.add('on');pendLang=it.getAttribute('data-l');});});
+  langpop.querySelectorAll('.popitem[data-cur]').forEach(function(it){it.addEventListener('click',function(){langpop.querySelectorAll('.popitem[data-cur]').forEach(function(x){x.classList.remove('on')});it.classList.add('on');pendCur=it.getAttribute('data-cur');});});
+  document.getElementById('langConfirm').addEventListener('click',function(){
+    curLangName=LN[pendLang];curFlag=LF[pendLang];curCurrency=pendCur;
+    document.getElementById('curlabel').textContent=curCurrency;
+    applyLang(pendLang==='zh'?'zh':'en');
+    renderProducts(curCat);
+    if(document.getElementById('screen-detail').style.display==='block'&&curDetailIdx!=null)openDetail(curDetailIdx);
+    if(document.getElementById('screen-checkout').style.display==='block')renderCheckout();
+    langpop.classList.add('hide');
+    if(pendLang!=='en'&&pendLang!=='zh')toast('Prototype content: English & 中文 only');
+  });
+
+  function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},2500);}
+
+  /* catalog data (fixed prices) */
+  function P(en,zh,bullets_en,bullets_zh,seller,price,tag_en,tag_zh,save,cat,gear){return {t:{en:en,zh:zh},b:{en:bullets_en,zh:bullets_zh},seller:seller,price:price,tag:tag_en?{en:tag_en,zh:tag_zh}:null,save:save,cat:cat,gear:!!gear};}
+  var CAT=[
+    P('Torment Tier Bundle','痛苦档成品套装',['T3 ready in 24h','Paragon 200 + gear','Escrow protected'],['24小时 T3 就绪','巅峰 200 + 装备','担保交付'],'iGV Official','299.00','BEST','推荐',null,'featured',true),
+    P('Leveling Bundle (Lvl + Paragon)','升级套装(等级+巅峰)',['1→70 + Paragon','Save 20%','Drops kept'],['1→70 + 巅峰','省 20%','掉落归你'],'iGV Official','31.02',null,null,'Save 20%','featured'),
+    P('Mephisto + Belial Bundle','墨菲斯托 + 彼列 套餐',['Both bosses','Mythic chance','Save 30%'],['两个 Boss','神话几率','省 30%'],'ApexBoost','8.40',null,null,'Save 30%','featured'),
+    P('Power Leveling 1→70','升级 1→70',['30 min to 70','All drops kept','Skip the grind'],['30 分钟到 70','掉落全归你','跳过开荒'],'iGV Official','14.99','HOT','热',null,'lvl'),
+    P('Paragon 1→300','巅峰 1→300',['Full board unlock','Endgame ready','Manual'],['解锁全盘','终局就绪','纯手工'],'ApexBoost','34.99',null,null,null,'lvl'),
+    P('Glyph Leveling','雕文升级',['Reach glyph 100','Bypass Pit grind','Fast'],['雕文满级','免刷 Pit','快速'],'NightRaven','6.00',null,null,null,'lvl'),
+    P('Uber Boss Kill (choose boss)','Uber Boss 代打(选 Boss)',['Mythic & mounts','Any Torment','Per kill'],['神话与坐骑','任意难度','按次'],'iGV Official','4.00',null,null,null,'boss'),
+    P('Boss Tickets / Keys','Boss 门票 / 钥匙',['Any boss keys','15-min delivery','Stock'],['各种钥匙','15 分钟交付','现货'],'Best_For_U','2.60',null,null,null,'boss'),
+    P('Pit Push (choose tier)','Pit 冲层(选层)',['Master mats','Flawless clear','Per run'],['大师级材料','稳定通关','按次'],'SanctuaryPro','1.00',null,null,null,'dun'),
+    P('Nightmare / Helltide Farm','噩梦 / 地狱狂潮 farm',['XP & mats','AFK friendly','Per run'],['经验与材料','可挂机','按次'],'ValorCarry','3.00',null,null,null,'dun'),
+    P('Random Mythic ×5','随机神话装 ×5',['Trade delivery','No login','Escrow'],['交易化交付','不交号','担保'],'ApexBoost','34.00','TRADE','交易',null,'gear',true),
+    P('Ready Character (T3 ready)','成品号(T3 就绪)',['Geared, endgame','≈ account trade','Rebind safe'],['整装终局','≈账号交易','改绑保障'],'iGV Official','89.99',null,null,null,'gear',true),
+    P('Full Build (per class)','成品 Build(按职业)',['Gear+skills+paragon','Playable char','One-stop'],['配装+天赋+巅峰','直接能玩','一条龙'],'iGV Official','89.99',null,null,null,'build'),
+    P('Build Check (fix your char)','修车(查漏补缺)',['Audit & fix','Precise upgrade','Fast'],['查漏补缺','精准提升','快速'],'ApexBoost','20.00',null,null,null,'build'),
+    P('1:1 Coaching','1v1 教学',['Learn your class','Voice + live','Pro player'],['学会职业','连麦直播','高手带'],'NightRaven','20.00',null,null,null,'build')
+  ];
+  var curCat='featured', CART=[];
+
+  function renderProducts(cat){
+    curCat=cat;var L=lang;
+    var list=CAT.filter(function(p){return cat==='featured'?(p.cat==='featured'):(p.cat===cat);});
+    document.getElementById('pgrid').innerHTML=list.map(function(p){var idx=CAT.indexOf(p);
+      var tag=p.tag?'<span class="tag">'+(L==='zh'?p.tag.zh:p.tag.en)+'</span>':'';
+      var save=p.save?'<span class="save">'+p.save+'</span>':'';
+      return '<div class="pcard" data-i="'+idx+'"><div class="pimg">'+(p.gear?'💎':'⚔️')+tag+save+'</div><div class="pbody">'+
+        '<div class="pt">'+(L==='zh'?p.t.zh:p.t.en)+'</div>'+
+        '<ul>'+(L==='zh'?p.b.zh:p.b.en).map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>'+
+        '<div class="sold"><span class="vf">✓ '+(p.seller==='iGV Official'?(L==='zh'?'官方自营':'iGV Official'):p.seller)+'</span></div>'+
+        '<div class="pf"><span class="pp">'+(L==='zh'?'低至 ':'From ')+'<b>$'+p.price+'</b></span><span class="cfg">'+(L==='zh'?'配置 →':'Configure →')+'</span></div>'+
+        '</div></div>';
+    }).join('');
+  }
+  document.getElementById('tree').addEventListener('click',function(e){var n=e.target.closest('.tnode');if(!n)return;document.querySelectorAll('.tnode').forEach(function(x){x.classList.remove('on')});n.classList.add('on');renderProducts(n.getAttribute('data-cat'));});
+  document.getElementById('pgrid').addEventListener('click',function(e){var card=e.target.closest('.pcard');if(card)openDetail(+card.dataset.i);});
+
+  /* ---- product detail: configure -> dynamic price (Overgear-style) ---- */
+  var OPTS={
+    featured:[
+      {id:'tier',label:{en:'Difficulty tier',zh:'难度档'},choices:[{en:'Torment 1 ready',zh:'痛苦1 就绪',delta:0},{en:'Torment 3 ready',zh:'痛苦3 就绪',delta:60},{en:'Torment 4 geared',zh:'痛苦4 毕业',delta:160}]},
+      {id:'class',label:{en:'Class',zh:'职业'},choices:[{en:'Barbarian',zh:'野蛮人',delta:0},{en:'Sorcerer',zh:'法师',delta:0},{en:'Necromancer',zh:'死灵',delta:0}]}
+    ],
+    lvl:[
+      {id:'range',label:{en:'Level range',zh:'等级范围'},choices:[{en:'1 → 70',zh:'1 → 70',delta:0},{en:'50 → 70',zh:'50 → 70',delta:-5},{en:'1→70 + Paragon 100',zh:'1→70 + 巅峰100',delta:15},{en:'1→70 + Paragon 200',zh:'1→70 + 巅峰200',delta:30}]},
+      {id:'class',label:{en:'Class',zh:'职业'},choices:[{en:'Barbarian',zh:'野蛮人',delta:0},{en:'Sorcerer',zh:'法师',delta:0},{en:'Necromancer',zh:'死灵',delta:0},{en:'Rogue',zh:'游侠',delta:0},{en:'Druid',zh:'德鲁伊',delta:0},{en:'Spiritborn',zh:'闇拳',delta:0}]},
+      {id:'realm',label:{en:'Realm / mode',zh:'赛季 / 模式'},choices:[{en:'Seasonal',zh:'赛季',delta:0},{en:'Eternal',zh:'永久',delta:0},{en:'Hardcore',zh:'硬核',delta:4}]},
+      {id:'speed',label:{en:'Speed',zh:'速度'},choices:[{en:'Standard',zh:'标准',delta:0},{en:'Express',zh:'加急',delta:7}]}
+    ],
+    boss:[
+      {id:'boss',label:{en:'Boss',zh:'Boss'},choices:[{en:'Mephisto',zh:'墨菲斯托',delta:0},{en:'Belial',zh:'彼列',delta:0},{en:'Duriel',zh:'杜瑞尔',delta:1},{en:'Andariel',zh:'安达利尔',delta:0}]},
+      {id:'diff',label:{en:'Difficulty',zh:'难度'},choices:[{en:'Torment 2',zh:'痛苦2',delta:0},{en:'Torment 4',zh:'痛苦4',delta:2},{en:'Torment 8',zh:'痛苦8',delta:6}]},
+      {qty:true,id:'kills',label:{en:'Kills',zh:'击杀次数'},min:1,max:50,def:10}
+    ],
+    dun:[
+      {id:'tier',label:{en:'Target tier',zh:'目标层数'},choices:[{en:'Pit 60',zh:'Pit 60',delta:0},{en:'Pit 80',zh:'Pit 80',delta:2},{en:'Pit 100',zh:'Pit 100',delta:6}]},
+      {qty:true,id:'runs',label:{en:'Runs',zh:'次数'},min:1,max:50,def:10}
+    ],
+    gear:[
+      {id:'type',label:{en:'Type',zh:'类型'},choices:[{en:'Random mythic',zh:'随机神话',delta:0},{en:'Specific mythic',zh:'指定神话',delta:25},{en:'Master mats',zh:'大师材料',delta:-10}]},
+      {qty:true,id:'qty',label:{en:'Quantity',zh:'数量'},min:1,max:20,def:1}
+    ],
+    build:[
+      {id:'class',label:{en:'Class',zh:'职业'},choices:[{en:'Barbarian',zh:'野蛮人',delta:0},{en:'Sorcerer',zh:'法师',delta:0},{en:'Necromancer',zh:'死灵',delta:0}]},
+      {id:'target',label:{en:'Target',zh:'目标难度'},choices:[{en:'Clear T2',zh:'通关痛苦2',delta:0},{en:'Clear T4',zh:'通关痛苦4',delta:10}]}
+    ]
+  };
+  var DSAFE={selfplay:{en:'You keep control — no login shared.',zh:'你自己上号,不交号。'},piloted:{en:'Booster logs in — ID-verified, escrow, recordable.',zh:'上号代打——实名、担保、可留证。'},trade:{en:'Delivered like a trade — no login to your account.',zh:'交易化交付,不接触你的账号登录。'}};
+  var curDetailIdx=null, sel={}, dmode='selfplay';
+  function calcPrice(p){
+    var base=parseFloat(p.price),gs=OPTS[p.cat]||[],deltas=0,qty=1,hasQty=false;
+    gs.forEach(function(g){ if(g.qty){hasQty=true;qty=sel[g.id]||g.def||1;} else {deltas+=g.choices[sel[g.id]||0].delta;} });
+    var price=(hasQty?base*qty:base)+deltas;
+    if(dmode==='piloted')price*=0.85;
+    return Math.max(price,0.5);
+  }
+  function optLabel(p,L){
+    var parts=[];
+    (OPTS[p.cat]||[]).forEach(function(g){ if(g.qty){parts.push('×'+(sel[g.id]||g.def||1));} else {var c=g.choices[sel[g.id]||0];parts.push(L==='zh'?c.zh:c.en);} });
+    var mn={selfplay:{en:'Self-play',zh:'自己上号'},piloted:{en:'Piloted',zh:'上号代打'},trade:{en:'Trade delivery',zh:'交易化交付'}}[dmode];
+    parts.push(L==='zh'?mn.zh:mn.en);
+    return parts.join(' · ');
+  }
+  function openDetail(idx){
+    curDetailIdx=idx;var p=CAT[idx],L=lang,gs=OPTS[p.cat]||[];
+    sel={}; gs.forEach(function(g){ sel[g.id]= g.qty?(g.def||1):0; });
+    dmode = p.gear?'trade':'selfplay';
+    var wins=(L==='zh'?p.b.zh:p.b.en).concat(L==='zh'?['掉落全归你','IGV 担保交付','含 45 天售后']:['All drops kept','iGV escrow delivery','45-day support']);
+    var groupsHtml=gs.map(function(g){
+      if(g.qty){ return '<div class="ogroup"><div class="olabel">'+(L==='zh'?g.label.zh:g.label.en)+'</div><div class="qty"><button class="qtybtn" data-q="'+g.id+'" data-d="-1">−</button><span class="qtyval" id="q-'+g.id+'">'+sel[g.id]+'</span><button class="qtybtn" data-q="'+g.id+'" data-d="1">+</button></div></div>'; }
+      return '<div class="ogroup"><div class="olabel">'+(L==='zh'?g.label.zh:g.label.en)+'</div><div class="osegs">'+g.choices.map(function(c,i){return '<span class="oseg'+(i===0?' on':'')+'" data-g="'+g.id+'" data-i="'+i+'">'+(L==='zh'?c.zh:c.en)+'</span>';}).join('')+'</div></div>';
+    }).join('');
+    var delivChoices = p.gear ? [['trade',{en:'Trade delivery',zh:'交易化交付'}],['piloted',{en:'Piloted −15%',zh:'上号代打 −15%'}]] : [['selfplay',{en:'Self-play / carry',zh:'自己上号 / 陪打'}],['piloted',{en:'Piloted −15%',zh:'上号代打 −15%'}]];
+    var delivHtml=delivChoices.map(function(d){return '<span class="ddseg'+(d[0]===dmode?' on':'')+'" data-m="'+d[0]+'">'+(L==='zh'?d[1].zh:d[1].en)+'</span>';}).join('');
+    document.getElementById('detailBody').innerHTML=
+      '<div class="dlayout"><div class="dmain">'+
+        '<div class="dimg">'+(p.gear?'💎':'⚔️')+'</div>'+
+        '<h1>'+(L==='zh'?p.t.zh:p.t.en)+'</h1>'+
+        '<div class="dsell">'+(L==='zh'?'卖家:':'Sold by ')+'<b>'+(p.seller==='iGV Official'?(L==='zh'?'官方自营':'iGV Official'):p.seller)+'</b> · ✓ '+(L==='zh'?'已认证 · Trustpilot 4.5':'Verified · Trustpilot 4.5')+'</div>'+
+        '<div class="dsec"><h4>'+(L==='zh'?'你将获得':'What you get')+'</h4><ul class="dwins">'+wins.map(function(w){return '<li>'+w+'</li>';}).join('')+'</ul></div>'+
+        '<div class="dsec"><h4>'+(L==='zh'?'怎么进行':'How it works')+'</h4><div class="dhow">'+
+          '<div class="dstep"><b>'+(L==='zh'?'1 下单':'1 Order')+'</b>'+(L==='zh'?'配置并付款,资金托管。':'Configure &amp; pay, funds held.')+'</div>'+
+          '<div class="dstep"><b>'+(L==='zh'?'2 交付':'2 Delivery')+'</b>'+(L==='zh'?'精选卖家按时完成。':'Vetted seller completes on time.')+'</div>'+
+          '<div class="dstep"><b>'+(L==='zh'?'3 放款':'3 Release')+'</b>'+(L==='zh'?'你确认后平台放款。':'Funds released on confirm.')+'</div>'+
+        '</div></div>'+
+      '</div>'+
+      '<div class="dconf"><div class="ch">'+(L==='zh'?'配置订单':'Customize order')+'</div>'+
+        groupsHtml+
+        '<div class="ogroup"><div class="olabel">'+(L==='zh'?'交付方式':'Delivery method')+'</div><div class="osegs">'+delivHtml+'</div><div class="dsafe" id="dSafe">'+(L==='zh'?DSAFE[dmode].zh:DSAFE[dmode].en)+'</div></div>'+
+        '<div class="dprice"><span>'+(L==='zh'?'合计':'Total')+'</span><b id="detailPrice">$'+calcPrice(p).toFixed(2)+'</b></div>'+
+        '<button class="dadd" id="detailBuy">🛡 '+(L==='zh'?'立即购买并结算':'Buy now &amp; checkout')+'</button>'+
+        '<div class="dbadges"><span>🛡 '+(L==='zh'?'IGV 担保':'iGV escrow')+'</span><span>PCI DSS L1</span><span>Trustpilot 4.5</span></div>'+
+      '</div></div>';
+    showScreen('detail');
+  }
+  function recalc(){document.getElementById('detailPrice').textContent='$'+calcPrice(CAT[curDetailIdx]).toFixed(2);}
+  document.getElementById('detailBody').addEventListener('click',function(e){
+    var seg=e.target.closest('.oseg'),q=e.target.closest('.qtybtn'),dv=e.target.closest('.ddseg'),buy=e.target.closest('#detailBuy');
+    if(seg){var g=seg.getAttribute('data-g');this.querySelectorAll('.oseg[data-g="'+g+'"]').forEach(function(x){x.classList.remove('on')});seg.classList.add('on');sel[g]=+seg.getAttribute('data-i');recalc();}
+    else if(q){var gid=q.getAttribute('data-q'),gd=(OPTS[CAT[curDetailIdx].cat]||[]).filter(function(x){return x.id===gid;})[0];var v=(sel[gid]||gd.def||1)+ +q.getAttribute('data-d');v=Math.max(gd.min||1,Math.min(gd.max||99,v));sel[gid]=v;document.getElementById('q-'+gid).textContent=v;recalc();}
+    else if(dv){dmode=dv.getAttribute('data-m');this.querySelectorAll('.ddseg').forEach(function(x){x.classList.remove('on')});dv.classList.add('on');document.getElementById('dSafe').textContent=(lang==='zh'?DSAFE[dmode].zh:DSAFE[dmode].en);recalc();}
+    else if(buy){buyConfigured();}
+  });
+  document.getElementById('detailBack').addEventListener('click',function(){showScreen('catalog');});
+  function buyConfigured(){
+    var p=CAT[curDetailIdx],price=calcPrice(p).toFixed(2);
+    CART=[{p:p,price:price,opt:{en:optLabel(p,'en'),zh:optLabel(p,'zh')},mode:dmode}];
+    gotoCheckout();
+  }
+  function showScreen(name){
+    document.getElementById('screen-catalog').style.display=(name==='catalog')?'block':'none';
+    document.getElementById('screen-detail').style.display=(name==='detail')?'block':'none';
+    document.getElementById('screen-checkout').style.display=(name==='checkout')?'block':'none';
+    window.scrollTo(0,0);
+  }
+
+  function cartSubtotal(){return CART.reduce(function(a,b){return a+parseFloat(b.price)},0);}
+
+  /* checkout */
+  function renderCheckout(){
+    var L=lang,sub=cartSubtotal(),fee=+(sub*0.041).toFixed(2),tot=(sub+fee).toFixed(2),card=(sub*1.06).toFixed(2);
+    document.getElementById('coList').innerHTML=CART.map(function(it){
+      var op=it.opt&&(L==='zh'?it.opt.zh:it.opt.en);
+      return '<div class="co-item"><div class="co-thumb">'+(it.p.gear?'💎':'⚔️')+'</div><div><div class="ti">'+(L==='zh'?it.p.t.zh:it.p.t.en)+'</div><div class="cb">'+(op?op+' · ':'')+(L==='zh'?'卖家:':'Sold by ')+(it.p.seller==='iGV Official'?(L==='zh'?'官方自营':'iGV Official'):it.p.seller)+'</div></div><span class="cprice">$'+it.price+'</span></div>';
+    }).join('');
+    document.getElementById('s-price').textContent='$'+sub.toFixed(2);
+    document.getElementById('s-fee').textContent='+ $'+fee.toFixed(2);
+    document.getElementById('s-cash').textContent='+'+Math.round(sub)+' pts';
+    document.getElementById('s-total').textContent='$'+tot;
+    document.getElementById('pp1').textContent='$'+tot;
+    ['pp2','pp3','pp4'].forEach(function(id){document.getElementById(id).textContent='$'+card;});
+    // delivery: show trade note if any gear item
+    var hasGear=CART.some(function(it){return it.p.gear;});
+    var seg=document.getElementById('delivSeg');
+    if(hasGear){ seg.querySelector('[data-mode="selfplay"]').classList.remove('on'); }
+  }
+  function gotoCheckout(){renderCheckout();showScreen('checkout');}
+  document.getElementById('backlink').addEventListener('click',function(){showScreen('catalog');});
+  var SEC={selfplay:{en:'You stay logged in and play with the booster — no login shared.',zh:'你自己上号,和 booster 组队,无需交出登录信息。'},piloted:{en:'Booster logs in after payment — ID-verified, escrow-held and recordable.',zh:'付款后 booster 上号完成——强实名、资金担保、可留证。'}};
+  document.getElementById('delivSeg').addEventListener('click',function(e){var d=e.target.closest('.dseg');if(!d)return;this.querySelectorAll('.dseg').forEach(function(x){x.classList.remove('on')});d.classList.add('on');var m=d.getAttribute('data-mode');var t=document.getElementById('co-secnote-t');t._en=SEC[m].en;t.setAttribute('data-zh',SEC[m].zh);t.textContent=(lang==='zh')?SEC[m].zh:SEC[m].en;});
+  document.querySelectorAll('#screen-checkout .pay').forEach(function(p){p.addEventListener('click',function(){document.querySelectorAll('#screen-checkout .radio').forEach(function(r){r.classList.remove('on')});p.querySelector('.radio').classList.add('on');});});
+  document.getElementById('promoToggle').addEventListener('click',function(){toast(lang==='zh'?'优惠码 / 积分(原型示意)':'Promo / points (prototype)');});
+  document.getElementById('doCheckout').addEventListener('click',function(){toast(lang==='zh'?'→ 正在跳转到安全支付页…(原型到此为止)':'→ Redirecting to secure payment… (prototype ends here)');});
+
+  document.getElementById('switchMode').addEventListener('click',function(){toast(lang==='zh'?'→ 切到方案一:C2C 竞价撮合(混合双层入口示意)':'→ Switch to Scheme 1: C2C bidding (hybrid entry demo)');});
+  document.getElementById('expertBtn').addEventListener('click',function(){toast(lang==='zh'?'→ 打开专家咨询(原型示意)':'→ Opens expert chat (prototype)');});
+
+  renderProducts('featured');
+</script>
+</body>
+</html>
