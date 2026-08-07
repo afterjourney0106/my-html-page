@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diablo 4 · 玩法 → 需求痛点 → 代练类目 → 市场验证</title>
+<style>
+  :root{--ink:#1f2733;--soft:#5b6572;--dim:#8a93a0;--acc:#8a3320;--acc-l:#f6ece8;
+    --line:#e3e7ee;--bg:#f7f8fa;--card:#fff;--warn:#b3401f;--ok:#2f7a43;--mid:#a8791f;}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}[id]{scroll-margin-top:56px}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.72 -apple-system,"Segoe UI","Noto Sans SC",system-ui,sans-serif}
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px 70px}
+  a{color:var(--acc);text-decoration:none}
+  h1{font-size:25px;margin:28px 0 4px}
+  h2{font-size:19px;margin:34px 0 8px;padding-bottom:7px;border-bottom:2px solid var(--acc);display:inline-block}
+  h3{font-size:15px;margin:16px 0 4px;color:var(--acc)}
+  .sub{color:var(--soft);font-size:13.5px}
+  .meta{color:var(--dim);font-size:12.5px;margin:10px 0}
+  .lead{background:var(--acc-l);border-left:3px solid var(--acc);padding:12px 16px;border-radius:0 4px 4px 0;margin:16px 0}
+  .lead b{color:var(--acc)}
+  nav{position:sticky;top:0;z-index:9;background:rgba(247,248,250,.94);backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);margin:0 -22px 4px;padding:8px 22px;display:flex;gap:4px;overflow-x:auto}
+  nav a{font-size:12.5px;color:var(--soft);white-space:nowrap;padding:5px 9px;border-radius:4px}
+  nav a:hover{background:var(--acc-l);color:var(--acc)}
+  p{margin:8px 0}
+  .loop{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px 18px;margin:14px 0;
+    font-size:14px;text-align:center;color:var(--acc);font-weight:600;line-height:2}
+  .loop .g{color:var(--dim);font-weight:400}
+  ul.k{margin:8px 0;padding-left:20px}ul.k li{margin:5px 0;font-size:14px}
+  ul.k li b{color:var(--acc)}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:10px 0;background:var(--card);border:1px solid var(--line)}
+  th{background:#f3ece9;text-align:left;padding:9px 11px;font-size:12px;color:var(--acc);border-bottom:1px solid var(--line)}
+  td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--ink)}
+  .c{text-align:center}
+  .ev{font-size:10px;font-weight:700;border-radius:3px;padding:1px 6px;color:#fff}
+  .ev.s{background:var(--ok)}.ev.m{background:var(--mid)}.ev.w{background:var(--dim)}
+  .y{color:var(--ok);font-weight:600}.p{color:var(--mid);font-weight:600}.n{color:var(--warn);font-weight:600}
+  .bucket{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--acc);
+    border-radius:0 5px 5px 0;padding:13px 18px;margin:10px 0}
+  .bucket .bt{font-weight:700;color:var(--acc);font-size:14.5px}
+  .bucket p{margin:6px 0 0;font-size:13.5px;color:var(--soft)}
+  .bucket p b{color:var(--ink)}
+  .note{font-size:12px;color:var(--soft);border:1px solid var(--line);border-left:2px solid var(--dim);
+    background:var(--card);border-radius:0 4px 4px 0;padding:12px 15px;margin-top:22px}
+  .note b{color:var(--acc)}
+  footer{color:var(--dim);font-size:11.5px;text-align:center;margin-top:30px;padding-top:16px;border-top:1px solid var(--line)}
+  @media(max-width:560px){.wrap{padding:0 16px 50px}nav{margin:0 -16px 4px;padding:8px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="#g">① 游戏玩法</a>
+    <a href="#need">② 需求 + 痛点</a>
+    <a href="#cat">③ 哪些是代练类目</a>
+    <a href="#market">④ 市场验证(是否在售)</a>
+  </nav>
+
+  <h1 id="top">Diablo 4 · 玩法 → 需求痛点 → 代练类目 → 市场验证</h1>
+  <div class="meta">调研快照 2026-08-04 ｜ 版本基准 S14 苏醒赛季 ｜ 面向市场 EU/NA</div>
+  <div class="lead"><b>逻辑链:</b> 先讲清游戏怎么玩 → 玩法每个卡点产生什么需求和痛点 → 这些需求里哪些属于"代练类目" → 再用三家竞品和市场供给验证"这些需求是不是真的都能代练、且已经在卖"。</div>
+
+  <!-- ===================== ① 游戏玩法 ===================== -->
+  <h2 id="g">① 游戏玩法(通俗介绍)</h2>
+  <p><b>一句话:</b> Diablo 4 是一款"刷装备变强"的动作角色扮演游戏(俗称"刷子游戏"/ARPG)。你选一个职业,不停打怪、捡装备、把角色越练越强,再去挑战更高难度、拿更好的装备,如此循环;而且每个赛季(约 3 个月)会推倒重来一次。</p>
+
+  <div class="loop">
+    练级到满级 <span class="g">→</span> 配一套 Build <span class="g">→</span> 刷装备 / 材料 <span class="g">→</span> 角色变强 <span class="g">→</span> 冲更高难度 <span class="g">→</span> 刷到更好的装备<br>
+    <span class="g" style="font-size:12px">… 循环往复;赛季一到,角色清零、从头再来一遍 …</span>
+  </div>
+
+  <p class="sub">把玩法拆成几块(给没玩过的人):</p>
+  <ul class="k">
+    <li><b>选职业建角色:</b> 野蛮人、法师、死灵、游侠、德鲁伊、闇拳等,风格各不同。</li>
+    <li><b>打怪升级:</b> 从 1 级练到满级 70(入门门槛);满级后还有"巅峰 Paragon"等级(相当于二段成长,最高约 300)。</li>
+    <li><b>装备是核心:</b> 这类游戏"装备决定强度",顶级装备(尤其"神话装")能让角色质变——但它靠极低爆率随机掉落。</li>
+    <li><b>配 Build(流派):</b> 把技能 + 天赋 + 巅峰盘 + 装备 + 雕文搭成一套打法。配得好角色很强,配错寸步难行;系统对新手偏复杂。</li>
+    <li><b>终局循环:</b> 满级后反复刷 Pit(钥石地窟,层数越高越难)、Boss、噩梦地窟等,目的是拿更好装备和升级材料,把角色推到能打更高难度。</li>
+    <li><b>难度阶梯 Torment:</b> 难度分档,越高奖励越好、也越难。</li>
+    <li><b>赛季制:</b> 每赛季重置角色、出新机制和新奖励,老玩家反复回归、从头再练——这是"需求周期性重演"的根源。</li>
+  </ul>
+
+  <!-- ===================== ② 需求 + 痛点 ===================== -->
+  <h2 id="need">② 玩家主要需求 + 痛点</h2>
+  <p class="sub">上面循环里每个环节都会"卡人",于是产生需求。痛点证据:<span class="ev s">强</span> 多来源印证 · <span class="ev m">中</span> 部分印证 · <span class="ev w">弱</span> 推断。</p>
+  <table>
+    <thead><tr><th>玩家需求</th><th>玩家想要什么</th><th>背后痛点</th><th class="c">证据</th></tr></thead>
+    <tbody>
+      <tr><td><b>1 快速满级/巅峰</b></td><td>尽快过掉练级、进入终局</td><td>升级太肝、巅峰越往后越慢、赛季还要从头再来</td><td class="c"><span class="ev s">强</span></td></tr>
+      <tr><td><b>2 拿到目标装备</b></td><td>想要的神话装/符文/毕业装</td><td>爆率极低(部分约 1:7000)、合成要 6 个特定符文,纯 RNG 折磨</td><td class="c"><span class="ev s">强</span></td></tr>
+      <tr><td><b>3 配好 Build</b></td><td>一套能用的流派</td><td>巅峰盘/配装系统复杂,游戏不教,新手不会配</td><td class="c"><span class="ev s">强</span></td></tr>
+      <tr><td><b>4 通关高难</b></td><td>过 Pit 高层、杀 Uber Boss</td><td>打不过、单人卡关("需要一个 +1 才玩得动")</td><td class="c"><span class="ev m">中-强</span></td></tr>
+      <tr><td><b>5 打通前置/组队</b></td><td>解锁难度、有人一起打</td><td>剧情/难度是终局前置;纯 solo 打不了需组队的内容</td><td class="c"><span class="ev m">中</span></td></tr>
+      <tr><td><b>6 直接拿成品角色</b></td><td>跳过全程,直接玩终局</td><td>多小号玩家不想再从头肝一遍</td><td class="c"><span class="ev m">中</span></td></tr>
+      <tr><td><b>7 收集外观</b></td><td>坐骑/皮肤/幻化外观</td><td>稀有掉落、限时活动错过就没</td><td class="c"><span class="ev w">中-弱</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- ===================== ③ 哪些是代练类目 ===================== -->
+  <h2 id="cat">③ 这些需求里,哪些是"代练类目"?</h2>
+  <p class="sub">把需求按"怎么交付"分三桶。关键结论:大多数需求能落到代练,但<b>装备/材料/成品号横跨"代练"和"道具/账号交易"两个类目</b>,不是纯代练——这对 IGV 尤其要分清。</p>
+
+  <div class="bucket">
+    <div class="bt">A · 纯代练服务(帮你打)</div>
+    <p><b>需求 1 升级 · 4 通关高难 · 5 剧情解锁/组队</b>,以及刷本冲层、Boss 代打、陪打/教学。<br>这些是标准"代练类目"——玩家买的是"帮我打/帮我过"的服务。</p>
+  </div>
+  <div class="bucket">
+    <div class="bt">B · 货品交易(帮你拿到东西)—— 代练 × 交易的交叉地带</div>
+    <p><b>需求 2 装备/材料 · 6 成品角色</b>。这类既能"代刷后交付"(服务形态),也能"直接买成品"(道具/账号交易形态):神话装/材料 ≈ <b>道具交易</b>,成品号 ≈ <b>账号交易</b>。<br>对 IGV 特别重要——这正好压在你们已有的道具/账号交易能力上。</p>
+  </div>
+  <div class="bucket">
+    <div class="bt">C · 知识服务(帮你学会)</div>
+    <p><b>需求 3 配 Build</b> → BD 咨询 / 修车 / Coaching 教学。卖的是"怎么打"而不是"帮你打",是代练的延伸类目。</p>
+  </div>
+  <p class="sub" style="font-size:12.5px"><b>需求 7 收集外观</b>属于收藏类,可代刷(活动/掉落代肝),也可作道具售卖,归入 B/A 之间的补充类目。</p>
+
+  <!-- ===================== ④ 市场验证 ===================== -->
+  <h2 id="market">④ 竞品/供货商验证:这些需求是否都可代练、且已在售?</h2>
+  <p class="sub">用三家竞品(智慧谷·淘宝 / Eldorado·撮合 / Overgear·自营)+ 更广的代练供给市场逐条核对。<span class="y">✔ 有独立在售</span> · <span class="p">△ 部分/走 Custom 兜底</span> · <span class="n">✘ 未见</span>。</p>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr><th>需求 / 类目</th><th class="c">类型</th><th class="c">智慧谷</th><th class="c">Eldorado</th><th class="c">Overgear</th><th>市场结论</th></tr></thead>
+    <tbody>
+      <tr><td><b>1 升级(满级/巅峰)</b></td><td class="c">A</td><td class="c y">✔</td><td class="c y">✔</td><td class="c y">✔</td><td>全市场标配、最热门,已充分在售</td></tr>
+      <tr><td><b>4 通关高难(Pit/Boss)</b></td><td class="c">A</td><td class="c y">✔</td><td class="c y">✔</td><td class="c y">✔</td><td>Boss 逐个、Pit 冲层都成独立 SKU</td></tr>
+      <tr><td><b>5 剧情/解锁·组队</b></td><td class="c">A</td><td class="c y">✔</td><td class="c p">△</td><td class="c y">✔</td><td>剧情/难度解锁在售;组队陪打普遍有</td></tr>
+      <tr><td><b>2 装备/材料</b></td><td class="c">B</td><td class="c y">✔</td><td class="c p">△</td><td class="c y">✔</td><td>可"代刷"也可"直接买"(道具交易);随机档/指定档都有卖</td></tr>
+      <tr><td><b>6 成品角色</b></td><td class="c">B</td><td class="c p">△</td><td class="c p">△</td><td class="c y">✔</td><td>Overgear 做成 Torment 分档成品;≈账号交易</td></tr>
+      <tr><td><b>3 配 Build</b></td><td class="c">C</td><td class="c y">✔</td><td class="c p">△</td><td class="c y">✔</td><td>成品 Build + 修车 + Coaching 都在售</td></tr>
+      <tr><td><b>7 收集外观</b></td><td class="c">B/A</td><td class="c y">✔</td><td class="c p">△</td><td class="c y">✔</td><td>皮肤包/坐骑代肝在售;部分作道具卖</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="lead" style="margin-top:16px"><b>验证结论:</b> 从玩法推导出的 7 类需求,<b>几乎全部已被至少一家(通常三家)竞品在售</b>——说明这些需求在技术上都能代练、且市场供给已成熟。差别只在<b>产品化方式</b>(固定 SKU / 竞价撮合 / Custom 兜底)。真正需要区分的不是"能不能代练",而是<b>哪些是纯代练服务(A/C),哪些其实压在道具/账号交易上(B)</b>——后者正是 IGV 现有能力的延长线。</p></div>
+
+  <div class="note"><b>说明:</b> 需求痛点已分层取证(玩家吐槽 Reddit/Steam/暴雪论坛 + 竞品卖点文案 + 需求信号),证据等级逐条标注;部分吐槽来自更早赛季但结构性痛点在 S14 仍成立。竞品在售情况基于三家页面前序调研 + 更广代练站抽样,精确销量/份额无法公开获取,标定性判断。本报告为业务判断参考,非精确市场测算。</div>
+
+  <footer>IGV 内部业务判断 · Diablo 4 · 仅供参考</footer>
+
+</div>
+</body>
+</html>
