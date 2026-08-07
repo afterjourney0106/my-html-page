@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGV 代练业务 · 三方案详细说明</title>
+<style>
+  :root{--ink:#1f2733;--soft:#545d6a;--dim:#8a93a0;--orange:#d9531c;--orange-l:#fdeee7;
+    --blue:#2f6fe0;--blue-l:#eaf1fc;--green:#2f7a43;--green-l:#e7f2ea;--warn:#b3401f;
+    --line:#e4e8ee;--bg:#f7f8fa;--card:#fff;}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}[id]{scroll-margin-top:56px}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.72 -apple-system,"Segoe UI","Noto Sans SC",system-ui,sans-serif}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px 70px}
+  h1{font-size:26px;margin:26px 0 4px}
+  h2{font-size:20px;margin:0 0 4px}
+  h3{font-size:15px;margin:18px 0 5px;color:var(--orange)}
+  .h2wrap{margin:38px 0 10px;padding:14px 18px;border-radius:10px;color:#fff}
+  .h2wrap.one{background:linear-gradient(100deg,#2f6fe0,#5b8ee8)}
+  .h2wrap.two{background:linear-gradient(100deg,#d9531c,#ee7c46)}
+  .h2wrap.three{background:linear-gradient(100deg,#2f7a43,#5aa06c)}
+  .h2wrap .tag{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+  .h2wrap .one-liner{font-size:13px;margin-top:4px;opacity:.95}
+  .sub{color:var(--soft);font-size:13.5px}
+  .meta{color:var(--dim);font-size:12.5px;margin:10px 0}
+  h2.plain{font-size:19px;margin:34px 0 8px;padding-bottom:7px;border-bottom:2px solid var(--orange);display:inline-block;color:var(--ink)}
+  nav{position:sticky;top:0;z-index:9;background:rgba(247,248,250,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);margin:0 -24px 6px;padding:9px 24px;display:flex;gap:6px;flex-wrap:wrap}
+  nav a{font-size:12.5px;color:var(--soft);padding:5px 10px;border-radius:6px;white-space:nowrap}
+  nav a:hover{background:var(--orange-l);color:var(--orange)}
+  p{margin:7px 0}
+  .lead{background:var(--orange-l);border-left:3px solid var(--orange);padding:12px 16px;border-radius:0 4px 4px 0;margin:16px 0}
+  .lead b{color:var(--orange)}
+  ul.k{margin:6px 0;padding-left:20px}ul.k li{margin:5px 0;font-size:13.7px}
+  ul.k li b{color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0 4px;background:var(--card);border:1px solid var(--line)}
+  th{background:#f3ece9;text-align:left;padding:8px 11px;font-size:12px;color:var(--orange);border-bottom:1px solid var(--line)}
+  td{padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td:first-child{font-weight:600;white-space:nowrap;color:var(--ink)}
+  .flow{counter-reset:s;margin:8px 0;padding:0;list-style:none}
+  .flow li{position:relative;padding:6px 0 6px 34px;font-size:13.7px;border-left:2px solid var(--line);margin-left:11px}
+  .flow li::before{counter-increment:s;content:counter(s);position:absolute;left:-13px;top:6px;width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .flow li:last-child{border-left-color:transparent}
+  .pc{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0}
+  .box{border:1px solid var(--line);border-radius:8px;padding:11px 14px;background:var(--card)}
+  .box.pros{background:var(--green-l);border-color:#cfe6d6}.box.cons{background:#fbeee9;border-color:#f0d5c8}
+  .box .pt{font-size:12px;font-weight:700;margin-bottom:4px}
+  .box.pros .pt{color:var(--green)}.box.cons .pt{color:var(--warn)}
+  .box ul{margin:0;padding-left:17px}.box li{font-size:12.7px;margin:3px 0;color:var(--soft)}
+  .reuse{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .chip{font-size:11px;font-weight:700;border-radius:5px;padding:1px 7px}
+  .chip.b{background:var(--blue-l);color:var(--blue)}.chip.o{background:var(--orange-l);color:var(--orange)}.chip.g{background:var(--green-l);color:var(--green)}
+  .note{font-size:12px;color:var(--soft);border:1px solid var(--line);border-left:2px solid var(--dim);background:var(--card);border-radius:0 4px 4px 0;padding:12px 15px;margin-top:14px}
+  .note b{color:var(--orange)}
+  .path{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:10px 0;font-size:14px;text-align:center;line-height:2.2}
+  .path b{color:var(--orange)}.path .g{color:var(--dim)}
+  footer{color:var(--dim);font-size:11.5px;text-align:center;margin-top:34px;padding-top:16px;border-top:1px solid var(--line)}
+  @media(max-width:680px){.pc,.reuse{grid-template-columns:1fr}nav{margin:0 -24px 6px}}
+  @media print{body{background:#fff}nav{display:none}.wrap{max-width:none}h2,.h2wrap{break-after:avoid}.box,table,.flow{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="#base">通用底层</a>
+    <a href="#s1">方案一 · C2C 撮合</a>
+    <a href="#s2">方案二 · 官方精选</a>
+    <a href="#s3">方案三 · 自由发单接单大厅</a>
+    <a href="#path">落地节奏</a>
+  </nav>
+
+  <h1>IGV 代练业务 · 三方案详细说明</h1>
+  <div class="sub">C2C 撮合市场 / 官方精选目录 / 混合双层 —— 逐套拆解:供给、定价、流程、交付、平台职责、落地所需</div>
+  <div class="meta">面向市场 EU/NA ｜ 以 Diablo 4 为原型验证 ｜ 配套三套买家端可点击原型(中英双语,均到支付前)</div>
+
+  <div class="lead"><b>怎么读:</b> 三套方案的骨架相同(见"通用底层"),差异只在<b>供给与定价</b>。下面对每套方案,从卖家怎么来、价格怎么定、买家怎么走、平台做什么、IGV 要复用/新增什么、以及上线要准备什么,逐一说清。</div>
+
+  <!-- ============ 通用底层 ============ -->
+  <h2 class="plain" id="base">通用底层(三套共享)</h2>
+  <p class="sub">这几点是三套方案共同的地基,后面各方案不再重复,只说差异。</p>
+  <ul class="k">
+    <li><b>担保交易(escrow):</b> 买家付款后资金由平台托管,确认交付后才放款;发生争议时冻结、可退款。这是所有代练交易的信任基础。</li>
+    <li><b>账号安全分级(交付方式)——IGV 的核心差异化:</b>
+      <ul class="k" style="margin-top:4px">
+        <li><b>自己上号 / 陪打(self-play):</b> 买家全程控号,和 booster 组队完成,不交出登录信息。风险最低,服务类默认。</li>
+        <li><b>交易化交付(trade):</b> 装备/材料/成品号以"道具/账号交易"形式交付,平台担保,不接触买家主账号登录。用于货品类。</li>
+        <li><b>上号代打(piloted):</b> booster 登录买家账号完成;需强实名 KYC、资金担保、可要求直播/录屏留证。风险最高,作受控选项。</li>
+      </ul>
+      优先前两者,契合欧美对"交号/共享密码"的敏感与合规——这是相对纯 piloted 代练站的最大区隔。</li>
+    <li><b>货服打通:</b> 成品号 ≈ 账号交易、装备材料 ≈ 道具交易;代练与 IGV 现有交易生态互通,买家可在"找人代练"与"直接买现货"之间切换。</li>
+    <li><b>多语种 + SEO:</b> 沿用 14 语种能力,标品品类做多语言落地页,抢 EU/NA 搜索流量。</li>
+    <li><b>信誉 / 纠纷 / 分账:</b> 评价与完成率、争议仲裁、卖家分账与提现,由平台统一提供(可复用现有交易基建)。</li>
+  </ul>
+
+  <!-- ============ 方案一 ============ -->
+  <div class="h2wrap one"><div class="tag">方案一</div><h2 id="s1">C2C 撮合市场(卖家竞价)</h2><div class="one-liner">把 IGV 的 C2C 交易能力延伸到"服务":买家发需求 → 第三方 booster 竞价接单 → 平台担保撮合。对标 Eldorado。</div></div>
+
+  <h3>供给侧:卖家怎么来、怎么接单</h3>
+  <ul class="k">
+    <li><b>入驻与 KYC:</b> booster 注册成为卖家,完成实名认证(提供 piloted 交付的要求更严),声明可服务的品类、语言、平台(PC/主机)。</li>
+    <li><b>不维护固定价:</b> 卖家<b>不需要</b>预先建 SKU/填价目;看到匹配的买家请求后逐单报价。</li>
+    <li><b>接单方式:</b> 卖家在后台看到"请求实时流",对匹配请求出价(价格 + 时效 + 交付方式 + 留言),并可与买家实时聊天。</li>
+  </ul>
+
+  <h3>定价机制:纯竞价</h3>
+  <p>买家下单前<b>不显示价格</b>,只显示"卖家竞价、约 5 分钟出报价"。买家发出请求 → 系统通知匹配卖家 → 卖家逐个报价 → 买家在报价列表按<b>评分 / 时效 / 交付方式 / 价格</b>挑选(可先聊再定)→ 接受报价即锁价。价格由竞争产生,通常更低;卖家按上下文灵活定价。代价是下单前无价格锚——用竞争与出价速度对冲。</p>
+
+  <h3>买家端到端流程</h3>
+  <ol class="flow">
+    <li>进入品类 → 参数配置器填需求(等级段/职业/Boss/次数/难度…)或用 <b>Custom Request</b> 自由描述;选交付方式。</li>
+    <li>点"获取报价" → 撮合等待态(卖家准备报价,实时计数:已通知 / 已查看 / 已报价)。</li>
+    <li>报价陆续到达 → 报价列表(RECOMMENDED / Trusted / Fastest,评分、评价数、时效、价格,Chat / Accept),可多方比价、聊天。</li>
+    <li>接受报价 → 结算页(订单信息、交付方式与账号安全提示、支付方式、费用汇总)→ 付款。</li>
+    <li><span class="sub">(付款后,原型之外)卖家交付 → 买家确认 → 平台放款;有争议走纠纷仲裁。</span></li>
+  </ol>
+
+  <h3>交付与账号安全</h3>
+  <p>服务类默认<b>自己上号/陪打</b>;装备/成品号走<b>交易化交付</b>;<b>上号代打</b>作受控选项(强 KYC + 担保 + 留证)。交付方式随品类自动变化。</p>
+
+  <h3>平台职责</h3>
+  <p>请求分发与撮合、资金担保托管、评价与信誉、纠纷仲裁、分账与提现、反欺诈风控。</p>
+
+  <h3>IGV 复用 / 新增</h3>
+  <div class="reuse">
+    <div class="box"><div class="pt" style="color:var(--green)">✓ 可复用</div><ul><li>担保交易、纠纷、评价体系</li><li>账号/道具交易履约与货服打通</li><li>14 语种 SEO、买家账户与支付</li></ul></div>
+    <div class="box"><div class="pt" style="color:var(--orange)">＋ 需新增</div><ul><li>请求—竞价撮合引擎(分发/出价/报价列表)</li><li>卖家接单后台 + 实时聊天</li><li>服务类订单状态机(接单→进行→交付→确认)</li><li>booster KYC 与交付方式合规</li></ul></div>
+  </div>
+
+  <h3>关键设计点</h3>
+  <ul class="k">
+    <li><b>双边冷启动:</b> 先聚拢一批 booster 供给(可从现有卖家 / 合作代练团队导入),再放量买家需求;首批可用"官方兜底"接单避免空窗。</li>
+    <li><b>账号安全治理:</b> piloted 强 KYC + 担保 + 留证;产品上鼓励 self-play / trade。</li>
+    <li><b>质量参差:</b> 靠完成率、争议率、评分驱动的信誉体系与排序(RECOMMENDED)约束。</li>
+  </ul>
+
+  <h3>利弊</h3>
+  <div class="pc">
+    <div class="box pros"><div class="pt">优势</div><ul><li>最贴合 IGV C2C 基因,复用交易/担保基建</li><li>轻资产、起量快、长尾广</li><li>竞价价格低、货服打通天然</li></ul></div>
+    <div class="box cons"><div class="pt">劣势</div><ul><li>双边冷启动</li><li>履约质量 / 账号安全依赖第三方</li><li>标品化弱、体验参差;piloted 合规需治理</li></ul></div>
+  </div>
+
+  <h3>适合品类</h3>
+  <p>升级 / 刷本 / Boss(标品高频)优先;装备材料并入道具交易;<b>Custom 自定义需求只能走这条</b>(非标无法预先定价)。</p>
+
+  <h3>上线所需(简版)</h3>
+  <ul class="k">
+    <li><b>工程:</b> 撮合引擎、卖家后台、实时聊天、订单状态机、结算分账。</li>
+    <li><b>运营:</b> booster 招募与 KYC、信誉/排序规则、纠纷 SOP、首批供给冷启动。</li>
+  </ul>
+
+  <!-- ============ 方案二 ============ -->
+  <div class="h2wrap two"><div class="tag">方案二</div><h2 id="s2">官方精选目录(明码标价)</h2><div class="one-liner">平台自营或精选少量代练团队,统一 SOP,商品化为固定价 SKU;买家浏览目录 → 详情页配置 → 直接下单。对标 Overgear。</div></div>
+
+  <h3>供给侧:卖家怎么来、怎么上架</h3>
+  <ul class="k">
+    <li><b>精选 / 自营:</b> 平台签约或自建少量代练团队,需通过资质审核,约定 SLA(时效 / 质量 / 售后)。</li>
+    <li><b>上架 = 填费率卡:</b> 为每个服务建"商品",填<b>基础价 + 可配置属性的加价规则</b>。例:升级 = 基础价 + 等级段/巅峰/硬核/加急的价格增量;Boss = 每次单价 × 次数 + 难度增量。这套费率卡是"明码标价"能成立的基础。</li>
+    <li><b>质量可控:</b> 统一 SOP、质检、售后保障(如 45 天)。</li>
+  </ul>
+
+  <h3>定价机制:明码标价 + 详情页配置算价</h3>
+  <p>目录卡显示"低至 $X"(起价);商品<b>详情页有配置面板</b>,买家选属性(等级段/职业/难度/数量/交付方式…)→ 按费率卡<b>实时算出确切价</b>。所见即所得,决策快、客服压力小。</p>
+
+  <h3>买家端到端流程</h3>
+  <ol class="flow">
+    <li>目录页:左侧分类树 + 商品卡(起价 + 卖点 + Sold by)。</li>
+    <li>点商品 → <b>详情页</b>:卖点(你将获得)、How it works、右侧配置面板(选属性 → 动态算价)+ 交付方式。</li>
+    <li>配置完 → "立即购买并结算" → 结算页(订单项含所选配置摘要、交付方式、支付、费用汇总)→ 付款。</li>
+    <li><span class="sub">(付款后)按 SOP 交付 → 买家确认 → 平台放款。</span></li>
+  </ol>
+  <p class="sub">注:已按你的要求去掉"加入购物车",详情页配置后直接进结算。</p>
+
+  <h3>交付与账号安全</h3>
+  <p>同三档:服务类 <b>自己上号 / 上号代打</b>(piloted 可给折扣);装备/成品号 <b>交易化交付</b>。详情页可选,并显示对应账号安全提示。</p>
+
+  <h3>平台职责</h3>
+  <p>选品与 SKU/费率维护、质检、SLA 管理、售后、担保托管、结算。</p>
+
+  <h3>IGV 复用 / 新增</h3>
+  <div class="reuse">
+    <div class="box"><div class="pt" style="color:var(--green)">✓ 可复用</div><ul><li>担保、支付、结算</li><li>账号/道具交易履约、货服打通</li><li>SEO(每个 SKU = 可索引落地页,天然友好)</li></ul></div>
+    <div class="box"><div class="pt" style="color:var(--orange)">＋ 需新增</div><ul><li>商品 / SKU + 费率卡管理后台</li><li>配置器 → 算价引擎</li><li>精选卖家签约与质检流程、SLA/售后系统</li><li>自营 / 精选运营团队</li></ul></div>
+  </div>
+
+  <h3>关键设计点</h3>
+  <ul class="k">
+    <li><b>重资产:</b> 需自建或深度签约代练运营、排班、质检;起量慢。</li>
+    <li><b>SKU 维护:</b> D4 每 ~3 个月赛季更新,需同步刷新 SKU / 文案 / 价格。</li>
+    <li><b>与市场的张力:</b> 若同时有方案一,官方自营会与第三方卖家竞争,需用"官方 = 质量/信任层"做定位区隔。</li>
+  </ul>
+
+  <h3>利弊</h3>
+  <div class="pc">
+    <div class="box pros"><div class="pt">优势</div><ul><li>质量/时效/账号安全可控,品牌信任强</li><li>明码标价 + 详情配置,决策快</li><li>高价值需求(成品号/BD)易做成高客单标品;SEO 友好</li></ul></div>
+    <div class="box cons"><div class="pt">劣势</div><ul><li>重资产、起量慢、扩品类慢</li><li>SKU/费率维护与赛季运维成本高</li><li>与平台"撮合"定位有张力</li></ul></div>
+  </div>
+
+  <h3>适合品类</h3>
+  <p>高价值 / 高信任需求(成品号毕业、BD、指定神话装);或作为市场里的"官方精选"信任层。</p>
+
+  <h3>上线所需(简版)</h3>
+  <ul class="k">
+    <li><b>工程:</b> SKU + 费率卡后台、配置算价引擎、商品详情页、SLA/售后、SEO 落地页。</li>
+    <li><b>运营:</b> 选品、签约/自建代练团队、SOP + 质检、赛季 SKU 刷新、售后客服。</li>
+  </ul>
+
+  <!-- ============ 方案三 ============ -->
+  <div class="h2wrap three"><div class="tag">方案三</div><h2 id="s3">自由发单 + 接单大厅(买家定价 · 卖家抢单)</h2><div class="one-liner">买家自己定价格 + 保证金要求发单,预存后进入接单大厅,由卖家主动抢单。与方案一"卖家竞价"正好相反——买家掌握定价权,卖家掌握接单主动权。对标代练通(个人向,砍掉贩子功能)。</div></div>
+
+  <h3>与方案一的区别(先说清)</h3>
+  <p>两套都是 C2C 市场,但定价机制相反:<b>方案一</b>是"买家发需求 → 卖家<b>竞价压价</b> → 买家从报价里挑";<b>方案三</b>是"买家<b>自己定价 + 保证金</b>发单 → 进大厅 → 卖家<b>主动抢单</b>"。方案三适合心里有预算的个人买家(不用等竞价),并用保证金给账号安全和时效上双保险。</p>
+
+  <h3>供给侧:卖家怎么接单</h3>
+  <ul class="k">
+    <li><b>接单大厅:</b> 卖家浏览一个订单池,按游戏 / 价格 / 难度筛选,挑自己能做的<b>主动抢单</b>。价格太低就没人接——由供需自然出清。</li>
+    <li><b>缴保证金接单:</b> 接单时卖家缴纳买家设定的<b>安全保证金 + 效率保证金</b>作押金;砸号 / 超时会扣。用押金替代部分信誉约束,尤其保护账号安全。</li>
+    <li><b>频道分层(个人向):</b> 优选订单(平台认证实力打手可接)/ 公共频道(所有卖家)/ 陪练专区。<b>砍掉</b>代练通里面向工作室/贩子的内部频道、打手组。</li>
+    <li><b>双击接单:</b> 卖家在大厅双击任意订单行,弹出接单窗口(订单详情 + 说明 + 要求 + 联系方式),可<b>跟发订单 / 与发单者议价 / 接手</b>。</li>
+  </ul>
+
+  <h3>定价机制:买家自主定价 + 保证金</h3>
+  <p>价格不由竞价产生,而是<b>买家发单时自己填</b>(订单价格 + 时限);同时买家设定要求接单卖家缴纳的<b>安全保证金 / 效率保证金</b>。所见即所定,买家掌握定价权;是否有人接由卖家在大厅自行判断。</p>
+
+  <h3>买家端到端流程</h3>
+  <ol class="flow">
+    <li>发单页:填游戏/区服、订单任务、<b>交付方式</b>(陪练不交号 / 代练上号)、<b>订单价格(自己定)</b>、时限、<b>安全 + 效率保证金</b>、订单说明与要求、发布频道、质量门槛(拒绝完单小于 N)。</li>
+    <li><b>预存代练费(冻结)并发布</b> → 直接进结算页(订单信息、交付方式与账号安全提示、支付方式、费用汇总)→ 付款。</li>
+    <li><span class="sub">(付款后,原型之外)订单进入接单大厅 → 卖家缴保证金抢单 → 进度查看 → 买家验收 → 平台放款;砸号/超时扣卖家押金。</span></li>
+  </ol>
+  <p class="sub">注:买家侧"预存代练费"这一步直接接入 IGV 现有结算页(原型停在支付前)。</p>
+
+  <h3>交付与账号安全</h3>
+  <p>发单页直接内建两档:<b>陪练 / 不交号</b>(self-play,风险最低,默认)与 <b>代练 / 上号</b>(piloted,需强实名 + 缴押金 + 可留证)。代练模式下,账号信息在<b>担保成交后通过安全通道</b>提供,不在发单表单里明文填写——契合 IGV"优先不交号"的账号安全定位。</p>
+
+  <h3>平台职责</h3>
+  <p>订单池撮合与频道分发、预存资金托管、<b>保证金托管与扣罚规则</b>、进度/验收、评价信誉、纠纷仲裁、分账结算。</p>
+
+  <h3>IGV 复用 / 新增</h3>
+  <div class="reuse">
+    <div class="box"><div class="pt" style="color:var(--green)">✓ 可复用</div><ul><li>担保托管、支付、结算分账</li><li>账号/道具交易履约、货服打通</li><li>评价/纠纷、14 语种 SEO、买家账户</li></ul></div>
+    <div class="box"><div class="pt" style="color:var(--orange)">＋ 需新增</div><ul><li>买家发单页(自定价 + 保证金)</li><li>接单大厅(订单池、筛选、频道)+ 双击接单窗口</li><li>保证金托管与扣罚引擎</li><li>抢单并发控制、订单状态机</li></ul></div>
+  </div>
+
+  <h3>关键设计点</h3>
+  <ul class="k">
+    <li><b>定价合理性:</b> 买家定价过低会没人接、留在大厅;可给"参考价区间 / 建议价"引导,避免大量僵尸单。</li>
+    <li><b>保证金规则:</b> 明确安全/效率押金的扣罚条件与仲裁标准,是这套模式信任的核心。</li>
+    <li><b>抢单公平与并发:</b> 同一单可能多人想接,需处理并发抢单、避免"接了不做";可用信誉门槛(拒绝低完单卖家)约束。</li>
+    <li><b>个人向裁剪:</b> 去掉代练通面向工作室/贩子的批量管理、加价导出、内部频道/打手组、桌面客户端,保持消费级体验。</li>
+  </ul>
+
+  <h3>利弊</h3>
+  <div class="pc">
+    <div class="box pros"><div class="pt">优势</div><ul><li>买家掌握定价权,适合有预算的个人,不用等竞价</li><li>保证金给账号安全 + 时效双保险,契合 IGV 定位</li><li>卖家抢单体验轻、供给响应快;与方案一形成"竞价 vs 发单"双模式,辨识度高</li></ul></div>
+    <div class="box cons"><div class="pt">劣势</div><ul><li>买家定价不合理会产生僵尸单、匹配效率低</li><li>保证金/扣罚规则与仲裁较重,需完善</li><li>抢单并发与"接了不做"需治理</li></ul></div>
+  </div>
+
+  <h3>适合品类</h3>
+  <p>几乎全品类都可(买家能描述清楚 + 给出价格即可);尤其适合<b>心里有明确预算</b>的个人需求(升级、Boss、刷本、成品号等)。陪练类天然走"不交号",契合安全定位。</p>
+
+  <h3>上线所需(简版)</h3>
+  <ul class="k">
+    <li><b>工程:</b> 发单页、接单大厅 + 接单窗口、保证金托管/扣罚引擎、抢单并发控制、订单状态机、结算。</li>
+    <li><b>运营:</b> 保证金与扣罚 SOP、纠纷仲裁标准、参考价引导、卖家信誉门槛、频道运营。</li>
+  </ul>
+
+  <!-- ============ 落地节奏 ============ -->
+  <h2 class="plain" id="path">落地节奏建议</h2>
+  <div class="path"><b>方案一起步</b><span class="g">(轻·快·契合基因)</span> <span class="g">→</span> <b>叠加方案二"官方精选"层</b><span class="g">(控质量·提客单)</span> <span class="g">→</span> <b>演进方案三</b><span class="g">(混合双层·买家分层)</span></div>
+  <p class="sub">先用方案一低风险快启动、抢量抢流量;跑通供给与履约后,针对高价值/高信任需求上线方案二的"官方精选";两层成熟后合并为方案三的统一入口。</p>
+
+  <div class="note"><b>说明:</b> 本文档为业务方案详细说明,配套三套可点击买家端原型(均到支付前)。原型价格为占位,真实上线需绑定卖家费率卡/竞价与内部成交数据;方案选择与节奏建议结合 IGV 内部供给、履约能力与合规评估。</div>
+
+  <footer>IGV 内部业务方案 · 代练 &amp; 陪玩 · 三方案详细说明 · 仅供参考</footer>
+
+</div>
+</body>
+</html>
