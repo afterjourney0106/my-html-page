@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iGV Boosting · Scheme 3 (Post order + Order hall)</title>
+<style>
+  :root{
+    --orange:#f1652a;--orange-d:#d9531c;--orange-soft:#fdeee7;
+    --blue:#2f6fe0;--blue-soft:#eaf1fc;
+    --ink:#20242e;--soft:#5f6673;--dim:#949aa6;--line:#e9eaee;--bg:#f4f5f7;--card:#fff;
+    --green:#16a34a;--cream:#fdf1ea;--safe:#12855a;--risk:#c0442a;--amber:#b0740f;
+    --sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+  .hide{display:none!important}
+
+  header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+  .htop{display:flex;align-items:center;gap:18px;height:58px}
+  .logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:19px}
+  .logo .mk{width:26px;height:26px;background:var(--orange);border-radius:7px;position:relative}
+  .logo .mk::after{content:"iG";position:absolute;inset:0;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .logo small{font-weight:600;font-size:11px;color:var(--dim)}
+  .hsearch{flex:1;max-width:320px;background:#f2f3f5;border:1px solid var(--line);border-radius:8px;padding:9px 13px;color:var(--dim);font-size:13px}
+  .hright{margin-left:auto;display:flex;align-items:center;gap:12px;font-size:13.5px}
+  .hright .seller{font-weight:600;border-bottom:2px solid var(--ink);padding-bottom:1px}
+  .horders{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:7px 11px}
+  .langwrap{position:relative}
+  #langTrigger{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:7px 11px;background:#fff;font-size:13.5px;color:var(--ink)}
+  #langTrigger:hover{border-color:var(--orange);color:var(--orange-d)}
+  .langpop{position:absolute;top:calc(100% + 8px);right:0;width:340px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 40px rgba(0,0,0,.16);padding:16px 18px;z-index:40}
+  .langcols{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;max-height:320px;overflow:auto}
+  .popcol-h{font-weight:700;font-size:13px;padding:4px 4px 8px}
+  .popitem{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:7px;cursor:pointer;font-size:13.5px;color:var(--soft)}
+  .popitem:hover{background:#f5f6f8}.popitem.on{color:var(--orange-d);font-weight:600}
+  .popitem .fl{width:18px;text-align:center}.popitem .ck{margin-left:auto;color:var(--orange);font-weight:700;visibility:hidden}.popitem.on .ck{visibility:visible}
+  .confirmbtn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:9px;padding:11px;font-size:14px;font-weight:700;margin-top:14px}
+
+  /* mode switch */
+  .modebar{background:#fff;border-bottom:1px solid var(--line)}
+  .modebar .in{display:flex;gap:8px;padding:10px 0}
+  .modetab{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 16px;font-size:13.5px;color:var(--soft);font-weight:600}
+  .modetab.on{background:var(--orange);border-color:var(--orange);color:#fff}
+  .modebar .note{margin-left:auto;align-self:center;font-size:12px;color:var(--dim)}
+
+  .crumb{color:var(--dim);font-size:12.5px;margin:16px 0 2px}.crumb b{color:var(--soft)}
+  h1{font-size:23px;margin:4px 0 2px}
+  .h1sub{color:var(--soft);font-size:13.5px;margin-bottom:14px}
+
+  /* post form */
+  .postgrid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start;padding-bottom:50px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+  .panel h3{font-size:15px;margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .field{margin-bottom:14px}.field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:11.5px;color:var(--soft);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.02em}
+  .field label .q{color:var(--dim);cursor:help}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .inp,select,textarea{width:100%;background:#f7f8fa;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;color:var(--ink);font-family:inherit}
+  .inp:focus,select:focus,textarea:focus{outline:2px solid var(--orange);outline-offset:1px;border-color:var(--orange)}
+  textarea{resize:vertical}
+  .pricebox{position:relative}.pricebox .cur{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--dim);font-weight:600}
+  .pricebox .inp{padding-left:24px;font-weight:700}
+  .segs{display:flex;gap:8px;flex-wrap:wrap}
+  .seg{border:1px solid var(--line);background:#f7f8fa;border-radius:8px;padding:8px 14px;font-size:13px;color:var(--soft);cursor:pointer}
+  .seg.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-d);font-weight:600}
+  .deliv2{display:flex;gap:10px}
+  .dbtn{flex:1;border:1px solid var(--line);background:#f7f8fa;border-radius:10px;padding:12px;cursor:pointer;text-align:center}
+  .dbtn.on{background:var(--orange-soft);border-color:var(--orange)}
+  .dbtn .dn{font-weight:700;font-size:13.5px}.dbtn.on .dn{color:var(--orange-d)}
+  .dbtn .dd{font-size:11px;color:var(--dim);margin-top:2px}
+  .dbtn .badge{font-size:10px;font-weight:700;border-radius:4px;padding:1px 6px;margin-top:5px;display:inline-block}
+  .b-safe{background:#e4f3ec;color:var(--safe)}.b-risk{background:#fbe7e2;color:var(--risk)}
+  .safehint{background:#e4f3ec;border:1px solid #cfe9db;border-radius:8px;padding:9px 12px;font-size:12px;color:#0f5f42;margin-top:8px}
+  .safehint.risk{background:#fbe7e2;border-color:#f0cdc3;color:#8a2c17}
+  .chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--soft);margin-top:8px}
+
+  /* summary side */
+  .sum{position:sticky;top:74px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .sum h3{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--soft);margin:0 0 12px}
+  .srow{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;color:var(--soft)}.srow b{color:var(--ink)}
+  .srow.big{font-size:15px;border-top:1px dashed var(--line);margin-top:6px;padding-top:12px}.srow.big b{font-size:20px;color:var(--orange-d);font-weight:800}
+  .escrow{display:flex;gap:8px;background:#e4f3ec;border:1px solid #cfe9db;border-radius:9px;padding:10px 12px;font-size:12px;color:#0f5f42;margin:10px 0}
+  .escrow b{color:var(--safe)}
+  .post-cta{width:100%;background:var(--orange);color:#fff;border:none;border-radius:9px;padding:13px;font-size:15px;font-weight:700;margin-top:4px}
+  .post-cta:hover{background:var(--orange-d)}
+  .depnote{font-size:11px;color:var(--dim);margin-top:9px;text-align:center}
+
+  /* order hall */
+  .hallbar{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:6px 0 12px}
+  .chtab{padding:9px 15px;font-size:13.5px;color:var(--soft);cursor:pointer;border-bottom:2px solid transparent}
+  .chtab.on{color:var(--orange-d);font-weight:600;border-bottom-color:var(--orange)}
+  .chtab .n{color:var(--dim);font-size:12px}
+  .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .filters select,.filters .fsearch{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 11px;font-size:13px;color:var(--soft)}
+  .fsegs{display:flex;gap:6px}
+  .fseg{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 12px;font-size:12.5px;color:var(--soft);cursor:pointer}
+  .fseg.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-d);font-weight:600}
+  .hallhint{font-size:12px;color:var(--dim);margin-left:auto}
+  .halltable{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .halltable th{background:#f3f4f6;text-align:left;padding:10px 12px;font-size:11.5px;color:var(--soft);font-weight:700;white-space:nowrap}
+  .halltable td{padding:11px 12px;border-top:1px solid var(--line);vertical-align:middle}
+  .halltable tbody tr{cursor:pointer}
+  .halltable tbody tr:hover{background:var(--orange-soft)}
+  .halltable .oid{color:var(--dim);font-size:12px}
+  .halltable .task{font-weight:600;color:var(--ink)}
+  .halltable .price{font-weight:800;color:var(--orange-d)}
+  .halltable .dep{color:var(--soft)}
+  .halltable .poster{color:var(--soft);font-size:12px}
+  .ch-badge{font-size:10px;font-weight:700;border-radius:4px;padding:1px 6px;margin-left:6px}
+  .ch-badge.pei{background:var(--blue-soft);color:var(--blue)}
+  .ch-badge.opt{background:var(--orange-soft);color:var(--orange-d)}
+
+  /* checkout (reuse) */
+  #screen-checkout{background:var(--cream);min-height:100vh;display:none}
+  .cohead{display:flex;align-items:center;gap:14px;padding:18px 0}
+  .cohead .div{width:1px;height:24px;background:#e6cdbf}.cohead h2{font-size:19px;margin:0}
+  .cosec{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--orange-d);font-weight:700;font-size:15px}
+  .backlink{color:var(--orange-d);font-size:13px;font-weight:600;cursor:pointer;margin:2px 0 6px;display:inline-block}
+  .cogrid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start;padding-bottom:60px}
+  .cocard{background:#fff;border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(120,80,50,.05)}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
+  .info-row .k{color:var(--soft);font-size:13.5px}.info-row .v{font-weight:600}
+  .dash{border:0;border-top:1px dashed #f0c3aa;margin:6px 0}
+  .co-item{display:flex;gap:14px;align-items:center}
+  .co-thumb{width:52px;height:52px;border-radius:8px;background:linear-gradient(135deg,#241528,#3a1b20);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:21px}
+  .co-item .ti{font-weight:600;font-size:13.5px}.co-item .cb{font-size:11.5px;color:var(--dim);margin-top:2px}.co-item .cprice{font-weight:800;margin-left:auto}
+  .secnote{background:#e4f3ec;border:1px solid #cfe9db;border-radius:9px;padding:10px 12px;font-size:12px;color:#0f5f42;margin-top:12px;display:flex;gap:8px}.secnote b{color:var(--safe)}
+  h4.coh{font-size:16px;margin:0 0 12px}
+  .pay{display:flex;justify-content:space-between;align-items:center;padding:13px 4px;border-bottom:1px solid #f2e6dd}.pay:last-child{border-bottom:none}
+  .pay .pm{display:flex;align-items:center;gap:11px;font-weight:600;font-size:14px}
+  .pmi{width:40px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff}
+  .pmi.wc{background:#09bb07}.pmi.vi{background:#1a1f71}.pmi.ap{background:#000}.pmi.gp{background:#4285f4}
+  .pay .pp{display:flex;align-items:center;gap:11px}.radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line)}.radio.on{border-color:var(--orange);background:radial-gradient(circle,var(--orange) 45%,#fff 48%)}
+  .co-sum .sr{display:flex;justify-content:space-between;padding:7px 0;font-size:14px;color:var(--soft)}.co-sum .sr b{color:var(--ink)}
+  .co-sum .tot{border-top:1px dashed #f0c3aa;margin-top:6px;padding-top:12px;font-size:15px;color:var(--ink);font-weight:600}.co-sum .tot .tv{color:var(--orange-d);font-weight:800;font-size:20px}
+  .co-checkout{width:100%;background:var(--orange);color:#fff;border:none;border-radius:9px;padding:14px;font-size:16px;font-weight:700;margin-top:14px;display:flex;gap:8px;align-items:center;justify-content:center}
+  .cobadges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px}.cobadge{font-size:10px;color:var(--soft);border:1px solid var(--line);border-radius:5px;padding:4px 8px;background:#fafafa}
+
+  /* accept modal */
+  .mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-start;justify-content:center;z-index:50;padding:34px 16px;overflow:auto}
+  .mask.show{display:flex}
+  .modal{background:#fff;border-radius:14px;width:560px;max-width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .mhead{display:flex;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid var(--line)}
+  .mhead .mt{font-weight:700;font-size:14px}.mhead .mid{color:var(--dim);font-size:12px}
+  .mhead .x{margin-left:auto;font-size:19px;color:var(--soft);cursor:pointer}
+  .mtabs{display:flex;gap:2px;padding:0 20px;border-bottom:1px solid var(--line)}
+  .mtab{padding:9px 12px;font-size:12.5px;color:var(--soft);cursor:pointer;border-bottom:2px solid transparent}
+  .mtab.on{color:var(--orange-d);font-weight:600;border-bottom-color:var(--orange)}
+  .mbody{padding:16px 20px;max-height:56vh;overflow:auto}
+  .mwarn{color:var(--risk);font-size:12.5px;font-weight:600;margin:0 0 12px}
+  .mrow{display:flex;padding:7px 0;font-size:13px;border-bottom:1px solid #f4f5f7}
+  .mrow .mk2{width:96px;color:var(--soft);flex:0 0 auto}
+  .mrow .mv{font-weight:600;flex:1}
+  .mrow .mv.price{color:var(--orange-d);font-weight:800;font-size:15px}
+  .mrow .mv.dep{font-weight:600}
+  .mrow.block{flex-direction:column;gap:5px}.mrow.block .mv{font-weight:400;color:var(--soft);font-size:12.5px;line-height:1.6}
+  .mfoot{display:flex;gap:10px;align-items:center;padding:14px 20px;border-top:1px solid var(--line)}
+  .mbtn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 14px;font-size:13px;color:var(--soft);font-weight:600}
+  .mbtn:hover{border-color:var(--orange);color:var(--orange-d)}
+  .maccept{margin-left:auto;background:var(--orange);color:#fff;border:none;border-radius:9px;padding:11px 30px;font-size:15px;font-weight:700}
+  .maccept:hover{background:var(--orange-d)}
+
+  .protonote{background:#fff;border:1px dashed var(--orange);border-radius:12px;padding:13px 17px;margin:16px 0 44px;font-size:12px;color:var(--soft)}.protonote b{color:var(--orange-d)}
+  .toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);background:#20242e;color:#fff;padding:13px 22px;border-radius:10px;font-size:14px;opacity:0;transition:.3s;z-index:60;box-shadow:0 8px 30px rgba(0,0,0,.3)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media(max-width:860px){.postgrid,.cogrid{grid-template-columns:1fr}.sum{position:static}.halltable{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap htop">
+    <div class="logo"><span class="mk"></span><span>V<small>.com</small></span></div>
+    <div class="hsearch" data-zh-ph="搜索游戏 / 服务…">Search in iGV</div>
+    <div class="hright">
+      <span class="seller" data-zh="卖家中心">Seller ▾</span>
+      <span class="horders">📋 <span data-zh="我的订单">My Orders</span></span>
+      <div class="langwrap">
+        <button id="langTrigger"><span class="flag">🇬🇧</span> <span id="langlabel">English</span> / <span id="curlabel">USD</span> ▾</button>
+        <div class="langpop hide" id="langpop">
+          <div class="langcols">
+            <div>
+              <div class="popcol-h" data-zh="语言">Language</div>
+              <div class="popitem on" data-l="en"><span class="fl">🇬🇧</span>English<span class="ck">✓</span></div>
+              <div class="popitem" data-l="zh"><span class="fl">🇨🇳</span>中文<span class="ck">✓</span></div>
+              <div class="popitem" data-l="fr"><span class="fl">🇫🇷</span>Français<span class="ck">✓</span></div>
+              <div class="popitem" data-l="de"><span class="fl">🇩🇪</span>Deutsch<span class="ck">✓</span></div>
+              <div class="popitem" data-l="es"><span class="fl">🇪🇸</span>Español<span class="ck">✓</span></div>
+              <div class="popitem" data-l="ja"><span class="fl">🇯🇵</span>日本語<span class="ck">✓</span></div>
+            </div>
+            <div>
+              <div class="popcol-h" data-zh="货币">Currency</div>
+              <div class="popitem on" data-cur="USD">USD<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="EUR">EUR<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="GBP">GBP<span class="ck">✓</span></div>
+              <div class="popitem" data-cur="CNY">CNY<span class="ck">✓</span></div>
+            </div>
+          </div>
+          <button class="confirmbtn" id="langConfirm" data-zh="确认">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modebar"><div class="wrap in">
+    <button class="modetab on" data-m="post" data-zh="① 我要发单(买家)">① Post an order (Buyer)</button>
+    <button class="modetab" data-m="hall" data-zh="② 接单大厅(卖家)">② Order hall (Seller)</button>
+    <span class="note" data-zh="买家自己定价 + 保证金发单 → 卖家在大厅主动抢单">Buyer sets price + deposit → sellers grab orders in the hall</span>
+  </div></div>
+</header>
+
+<!-- ===== BUYER: POST ORDER ===== -->
+<div id="screen-post">
+<div class="wrap">
+  <div class="crumb"><b>Home</b> › <b>Diablo 4</b> › <span data-zh="发布代练订单">Post a boosting order</span></div>
+  <h1 data-zh="发布订单">Post an order</h1>
+  <div class="h1sub" data-zh="你来定价格和保证金要求,预存后进入接单大厅,由卖家主动接单。">Set your own price and deposit terms; after prepay it enters the hall for sellers to grab.</div>
+
+  <div class="postgrid">
+    <div>
+      <div class="panel">
+        <h3 data-zh="订单信息">Order details</h3>
+        <div class="row2">
+          <div class="field"><label data-zh="游戏">Game</label><select><option>Diablo 4</option><option>World of Warcraft</option><option>League of Legends</option></select></div>
+          <div class="field"><label data-zh="区服 / 模式">Region / mode</label><select><option data-zh="赛季 · 软核">Seasonal · Softcore</option><option data-zh="赛季 · 硬核">Seasonal · Hardcore</option><option data-zh="永久 · 软核">Eternal · Softcore</option></select></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label data-zh="品类">Category</label><select id="catSel">
+            <option value="lvl" data-zh="升级">Leveling</option><option value="boss" data-zh="Boss 代打">Boss Kills</option><option value="dun" data-zh="刷本冲层">Dungeons</option><option value="gear" data-zh="装备 / 材料">Gear / Mats</option><option value="char" data-zh="成品号">Ready Char</option><option value="build" data-zh="BD · 教学">Build · Coaching</option><option value="custom" data-zh="自定义">Custom</option></select></div>
+          <div class="field"><label data-zh="订单任务">Task</label><input class="inp" id="taskInp" value="Power Leveling 1 → 70" data-zh-val="升级 1 → 70"></div>
+        </div>
+        <div class="field"><label data-zh="交付方式(账号安全)">Delivery method (account safety)</label>
+          <div class="deliv2" id="deliv2">
+            <div class="dbtn on" data-m="selfplay"><div class="dn" data-zh="陪练 / 不交号">Coach / no login</div><div class="dd" data-zh="你自己上号,和 booster 组队">You keep control, play together</div><span class="badge b-safe" data-zh="最安全">Safest</span></div>
+            <div class="dbtn" data-m="piloted"><div class="dn" data-zh="代练 / 上号">Piloted / login</div><div class="dd" data-zh="booster 登录你的号完成">Booster logs into your account</div><span class="badge b-risk" data-zh="需实名+押金+留证">KYC + deposit</span></div>
+          </div>
+          <div class="safehint" id="safeHint" data-zh="✓ 陪练模式全程不交出账号,风险最低。">✓ Coach mode never shares your account — lowest risk.</div>
+        </div>
+        <div class="field"><label data-zh="订单说明">Order notes</label><textarea rows="2" data-zh-ph="补充说明,例如指定 BD、时间偏好等">Extra notes, e.g. preferred build, timing…</textarea></div>
+        <div class="field"><label data-zh="订单要求">Requirements to the booster</label><textarea rows="2" data-zh-ph="例如:请勿动用点券/物品,不要联系我的好友,禁止外挂,有问题联系我。">e.g. don't touch my currency/items, don't message my friends, no cheats, contact me if issues.</textarea></div>
+      </div>
+
+      <div class="panel">
+        <h3 data-zh="价格与保证金(你来定)">Price &amp; deposit (you set)</h3>
+        <div class="row2">
+          <div class="field"><label data-zh="订单价格(代练费)">Order price</label><div class="pricebox"><span class="cur">$</span><input class="inp" id="priceInp" value="28.00"></div></div>
+          <div class="field"><label data-zh="订单时限">Time limit</label><div class="row2"><input class="inp" value="2" title="days"><input class="inp" value="0" title="hours"></div></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label data-zh="安全保证金 (?)">Safety deposit <span class="q" title="Seller pays this on accepting; deducted if account is misused/damaged.">(?)</span></label><div class="pricebox"><span class="cur">$</span><input class="inp" value="20.00"></div></div>
+          <div class="field"><label data-zh="效率保证金 (?)">Speed deposit <span class="q" title="Seller pays this on accepting; deducted if the deadline is missed.">(?)</span></label><div class="pricebox"><span class="cur">$</span><input class="inp" value="10.00"></div></div>
+        </div>
+        <div class="safehint" data-zh="ℹ 保证金是「接单卖家」缴纳的押金——砸号/超时会扣;不是你支付的费用。">ℹ Deposits are paid by the <b>seller who accepts</b> — deducted on account misuse / lateness. You don't pay them.</div>
+      </div>
+
+      <div class="panel">
+        <h3 data-zh="发布设置">Publish settings</h3>
+        <div class="field"><label data-zh="发布频道">Publish to channels</label>
+          <div class="segs">
+            <span class="seg on" data-zh="优选订单">Featured</span><span class="seg on" data-zh="公共频道">Public</span><span class="seg" data-zh="陪练专区">Coaching zone</span>
+          </div>
+          <div class="chk"><input type="checkbox" checked> <span data-zh="优选订单:仅平台认证实力打手可接,质量更高">Featured: only vetted top boosters can accept — higher quality</span></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label data-zh="自动下架">Auto-unlist after</label><select><option data-zh="30 天">30 days</option><option data-zh="15 天">15 days</option><option data-zh="7 天">7 days</option></select></div>
+          <div class="field"><label data-zh="拒绝完单数小于">Reject sellers with completed orders under</label><input class="inp" value="50"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- summary -->
+    <div>
+      <div class="sum">
+        <h3 data-zh="发单预览">Order preview</h3>
+        <div class="srow"><span data-zh="任务">Task</span><b id="pv-task">Power Leveling 1→70</b></div>
+        <div class="srow"><span data-zh="交付方式">Delivery</span><b id="pv-deliv">Coach / no login</b></div>
+        <div class="srow"><span data-zh="时限">Time limit</span><b>2d</b></div>
+        <div class="srow"><span data-zh="你的定价">Your price</span><b id="pv-price">$28.00</b></div>
+        <div class="srow"><span data-zh="卖家需缴保证金">Seller deposit</span><b>$30.00</b></div>
+        <div class="escrow">🛡 <span><b data-zh="预存托管">Prepay held in escrow</b><span data-zh="——你先预存代练费,卖家完成、你验收后才放款。">— your fee is frozen; released only after you accept the delivery.</span></span></div>
+        <div class="srow big"><span data-zh="现在预存">Prepay now</span><b id="pv-total">$28.00</b></div>
+        <button class="post-cta" id="postBtn">🛡 <span data-zh="预存代练费并发布">Prepay &amp; publish</span></button>
+        <div class="depnote" data-zh="发布后进入接单大厅,卖家主动接单">After publishing, it enters the hall for sellers to grab</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="protonote"><b data-zh="原型说明 —">Prototype note —</b> <span data-zh="方案三(新):买家自由发单——你自己定价格 + 保证金要求,预存后进入接单大厅由卖家主动抢单(与方案一「卖家竞价」相反)。「陪练/不交号」与「代练/上号」对应 IGV 账号安全分级。切到「② 接单大厅」看卖家视角,双击任意订单行弹出接单窗口。">Scheme 3 (new): buyer-posted orders — you set the price and deposit terms, prepay, and sellers grab it in the hall (opposite of Scheme 1's seller-bidding). "Coach / Piloted" maps to iGV account-safety tiers. Switch to "② Order hall" for the seller view; double-click any row to open the accept dialog.</span></div>
+</div>
+</div>
+
+<!-- ===== SELLER: ORDER HALL ===== -->
+<div id="screen-hall" class="hide">
+<div class="wrap">
+  <div class="crumb"><b>Diablo 4</b> › <span data-zh="接单大厅(卖家视角)">Order hall (seller view)</span></div>
+  <div class="hallbar">
+    <div class="chtab on" data-ch="featured" data-zh="优选订单">Featured <span class="n">(7)</span></div>
+    <div class="chtab" data-ch="public" data-zh="公共频道">Public <span class="n">(9831)</span></div>
+    <div class="chtab" data-ch="coach" data-zh="陪练专区">Coaching <span class="n">(329)</span></div>
+  </div>
+  <div class="filters">
+    <select><option>Diablo 4</option><option data-zh="所有游戏">All games</option></select>
+    <div class="fsegs"><span class="fseg on" data-zh="不限">Any price</span><span class="fseg">$1–100</span><span class="fseg">$101–300</span><span class="fseg">$300+</span></div>
+    <select><option data-zh="任意难度">Any tier</option><option>Torment</option></select>
+    <span class="fsearch" data-zh="搜索订单号 / 任务 / 发布者">Search order # / task / poster</span>
+    <span class="hallhint" data-zh="💡 双击任意一行查看并接单">💡 Double-click any row to view &amp; accept</span>
+  </div>
+  <table class="halltable" id="hallTable">
+    <thead><tr>
+      <th data-zh="序号">#</th><th data-zh="订单号">Order #</th><th data-zh="区服">Region</th><th data-zh="任务">Task</th>
+      <th data-zh="价格">Price</th><th data-zh="保证金">Deposit</th><th data-zh="时限(h)">Limit</th><th data-zh="验收(h)">Verify</th><th data-zh="发布者">Poster</th>
+    </tr></thead>
+    <tbody id="hallBody"></tbody>
+  </table>
+  <div class="protonote"><b data-zh="原型说明 —">Prototype note —</b> <span data-zh="接单大厅:卖家浏览订单池、按价格/难度筛选,双击任意一行弹出「接单窗口」(常规接手 / 接单流程 / 分享,可跟发、议价、接手)。这是本方案的核心特点——卖家有接单主动权。">Order hall: sellers browse the pool, filter, and double-click a row to open the accept dialog (accept / process / share; follow-post, negotiate, accept). This is the scheme's signature — sellers hold the initiative.</span></div>
+</div>
+</div>
+
+<!-- ===== CHECKOUT (buyer prepay) ===== -->
+<div id="screen-checkout">
+<div class="wrap">
+  <div class="cohead"><div class="logo"><span class="mk"></span><span>V<small>.com</small></span></div><div class="div"></div><h2 data-zh="预存代练费">Prepay Order</h2><div class="cosec">🛡 <span data-zh="安全结算">Secure Checkout</span></div></div>
+  <div class="backlink" id="backlink">‹ <span data-zh="返回发单">Back to order</span></div>
+  <div class="cogrid" style="margin-top:6px">
+    <div>
+      <div class="cocard">
+        <div class="info-row"><span class="k" data-zh="联系邮箱">✉ Contact email</span><span class="v">player@email.com</span></div>
+        <hr class="dash">
+        <div class="info-row"><span class="k" data-zh="交付方式">🚚 Delivery method</span><span class="v" id="co-deliv">Coach / no login</span></div>
+        <div class="secnote">🔒 <span><b data-zh="账号安全:">Account safety: </b><span id="co-secnote-t" data-zh="陪练模式全程不交出账号。">Coach mode never shares your account.</span></span></div>
+      </div>
+      <div class="cocard">
+        <h4 class="coh" data-zh="你的订单">Your order</h4>
+        <div class="co-item"><div class="co-thumb">⚔️</div><div><div class="ti" id="co-task">Diablo 4 — Power Leveling 1→70</div><div class="cb" data-zh="发布到:优选 + 公共 · 时限 2 天">Posted to: Featured + Public · 2-day limit</div></div><span class="cprice" id="co-price">$28.00</span></div>
+      </div>
+      <div class="cocard">
+        <h4 class="coh" data-zh="支付方式">Payment method</h4>
+        <div class="pay"><span class="pm"><span class="pmi wc">WeChat</span> WeChat Pay</span><span class="pp"><b id="pp1">$0</b><span class="radio on"></span></span></div>
+        <div class="pay"><span class="pm"><span class="pmi vi">VISA</span> Visa / Mastercard</span><span class="pp"><b id="pp2">$0</b><span class="radio"></span></span></div>
+        <div class="pay"><span class="pm"><span class="pmi ap">Pay</span> Apple Pay</span><span class="pp"><b id="pp3">$0</b><span class="radio"></span></span></div>
+      </div>
+    </div>
+    <div>
+      <div class="cocard co-sum">
+        <div class="sr"><span data-zh="代练费(托管)">Order fee (held)</span><b id="s-price">$28.00</b></div>
+        <div class="sr"><span data-zh="支付手续费">Payment fee</span><b id="s-fee">+ $1.15</b></div>
+        <div class="sr" style="color:var(--soft)"><span data-zh="卖家保证金(卖家缴)">Seller deposit</span><b style="color:var(--dim)">$30.00</b></div>
+        <div class="sr tot"><span data-zh="现在支付">Pay now</span><span class="tv" id="s-total">$29.15</span></div>
+        <button class="co-checkout" id="doCheckout">🛡 <span data-zh="预存并发布">Prepay &amp; publish</span></button>
+        <div class="cobadges"><span class="cobadge">PCI DSS L1</span><span class="cobadge">Trustpilot 4.5</span><span class="cobadge">Norton</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== ACCEPT MODAL ===== -->
+<div class="mask" id="mask">
+  <div class="modal">
+    <div class="mhead"><span class="mt" data-zh="订单">Order</span><span class="mid" id="m-id">—</span><span class="x" id="mClose">✕</span></div>
+    <div class="mtabs"><span class="mtab on" data-zh="常规(接手)">Accept</span><span class="mtab" data-zh="接单流程">Process</span><span class="mtab" data-zh="分享订单信息">Share</span></div>
+    <div class="mbody">
+      <p class="mwarn" data-zh="请考虑周全后再接单,切不可随意撤销订单。">Consider carefully before accepting — do not cancel arbitrarily.</p>
+      <div class="mrow"><span class="mk2" data-zh="发布时间">Posted</span><span class="mv" id="m-time">2026-08-07 08:29</span></div>
+      <div class="mrow"><span class="mk2" data-zh="游戏区服">Game/Region</span><span class="mv" id="m-region">Diablo 4 · Seasonal</span></div>
+      <div class="mrow"><span class="mk2" data-zh="订单任务">Task</span><span class="mv" id="m-task">—</span></div>
+      <div class="mrow"><span class="mk2" data-zh="订单价格">Price</span><span class="mv price" id="m-price">—</span></div>
+      <div class="mrow"><span class="mk2" data-zh="保证金">Deposit</span><span class="mv dep" id="m-dep">—</span></div>
+      <div class="mrow"><span class="mk2" data-zh="订单时限">Time limit</span><span class="mv" id="m-limit">—</span></div>
+      <div class="mrow block"><span class="mk2" data-zh="订单说明">Notes</span><span class="mv" data-zh="分账号:职业和天赋全 / 阵营:全 / 种族性别:全。">Account: all classes &amp; talents / faction: all / race &amp; gender: all.</span></div>
+      <div class="mrow block"><span class="mk2" data-zh="订单要求">Requirements</span><span class="mv" data-zh="未经同意请勿动用点券/物品,不要联系或回复好友,禁止外挂,禁止打广告/挂机/辱骂,有问题请联系我。">Don't touch currency/items without consent, don't contact my friends, no cheats, no ads/AFK/abuse, contact me if issues.</span></div>
+      <div class="mrow"><span class="mk2" data-zh="联系人">Contact</span><span class="mv">player@email.com · QQ 1090507323</span></div>
+    </div>
+    <div class="mfoot">
+      <button class="mbtn" id="mFollow" data-zh="跟发订单">Follow-post</button>
+      <button class="mbtn" id="mNego" data-zh="与发单者议价">Negotiate</button>
+      <button class="maccept" id="mAccept" data-zh="接手">Accept order</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /* i18n */
+  var lang='en',curLangName='English',curFlag='🇬🇧',curCurrency='USD',pendLang='en',pendCur='USD';
+  var LN={en:'English',zh:'中文',fr:'Français',de:'Deutsch',es:'Español',ja:'日本語'};
+  var LF={en:'🇬🇧',zh:'🇨🇳',fr:'🇫🇷',de:'🇩🇪',es:'🇪🇸',ja:'🇯🇵'};
+  function applyLang(l){
+    lang=l;
+    document.querySelectorAll('[data-zh]').forEach(function(el){if(el._en===undefined)el._en=el.innerHTML;el.innerHTML=(l==='zh')?el.getAttribute('data-zh'):el._en;});
+    document.querySelectorAll('[data-zh-ph]').forEach(function(el){if(el._enph===undefined)el._enph=el.getAttribute('placeholder');el.setAttribute('placeholder',(l==='zh')?el.getAttribute('data-zh-ph'):el._enph);});
+    document.querySelectorAll('[data-zh-val]').forEach(function(el){if(el._enval===undefined)el._enval=el.value;el.value=(l==='zh')?el.getAttribute('data-zh-val'):el._enval;});
+    document.getElementById('langlabel').textContent=curLangName;
+    document.querySelector('#langTrigger .flag').textContent=curFlag;
+    document.documentElement.lang=(l==='zh')?'zh-CN':'en';
+  }
+  var langpop=document.getElementById('langpop'),langTrigger=document.getElementById('langTrigger');
+  langTrigger.addEventListener('click',function(e){e.stopPropagation();langpop.classList.toggle('hide');});
+  langpop.addEventListener('click',function(e){e.stopPropagation();});
+  document.addEventListener('click',function(){langpop.classList.add('hide');});
+  langpop.querySelectorAll('.popitem[data-l]').forEach(function(it){it.addEventListener('click',function(){langpop.querySelectorAll('.popitem[data-l]').forEach(function(x){x.classList.remove('on')});it.classList.add('on');pendLang=it.getAttribute('data-l');});});
+  langpop.querySelectorAll('.popitem[data-cur]').forEach(function(it){it.addEventListener('click',function(){langpop.querySelectorAll('.popitem[data-cur]').forEach(function(x){x.classList.remove('on')});it.classList.add('on');pendCur=it.getAttribute('data-cur');});});
+  document.getElementById('langConfirm').addEventListener('click',function(){
+    curLangName=LN[pendLang];curFlag=LF[pendLang];curCurrency=pendCur;
+    document.getElementById('curlabel').textContent=curCurrency;
+    applyLang(pendLang==='zh'?'zh':'en');renderHall();syncPreview();
+    langpop.classList.add('hide');
+    if(pendLang!=='en'&&pendLang!=='zh')toast('Prototype content: English & 中文 only');
+  });
+  function toast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(function(){el.classList.remove('show')},2500);}
+
+  /* mode switch */
+  function showScreen(name){
+    document.getElementById('screen-post').style.display=(name==='post')?'block':'none';
+    document.getElementById('screen-hall').classList.toggle('hide',name!=='hall');
+    document.getElementById('screen-checkout').style.display=(name==='checkout')?'block':'none';
+    window.scrollTo(0,0);
+  }
+  document.querySelectorAll('.modetab').forEach(function(t){t.addEventListener('click',function(){
+    document.querySelectorAll('.modetab').forEach(function(x){x.classList.remove('on')});t.classList.add('on');
+    showScreen(t.getAttribute('data-m'));
+  });});
+
+  /* delivery toggle + preview sync */
+  var dmode='selfplay';
+  var DTXT={selfplay:{name:{en:'Coach / no login',zh:'陪练 / 不交号'},hint:{en:'✓ Coach mode never shares your account — lowest risk.',zh:'✓ 陪练模式全程不交出账号,风险最低。'},sec:{en:'Coach mode never shares your account.',zh:'陪练模式全程不交出账号。'}},
+    piloted:{name:{en:'Piloted / login',zh:'代练 / 上号'},hint:{en:'⚠ Booster logs in after payment — ID-verified, deposit held, recordable. Account info is shared via a secure channel after escrow, never typed here.',zh:'⚠ 付款后 booster 上号——强实名、缴押金、可留证。账号信息在担保成交后通过安全通道提供,不在此明文填写。'},sec:{en:'Booster logs in after payment — ID-verified, deposit held, recordable.',zh:'付款后 booster 上号——强实名、缴押金、可留证。'}}};
+  document.getElementById('deliv2').addEventListener('click',function(e){
+    var b=e.target.closest('.dbtn');if(!b)return;
+    this.querySelectorAll('.dbtn').forEach(function(x){x.classList.remove('on')});b.classList.add('on');
+    dmode=b.getAttribute('data-m');
+    var h=document.getElementById('safeHint');h.innerHTML=DTXT[dmode].hint[lang];h.classList.toggle('risk',dmode==='piloted');
+    syncPreview();
+  });
+  function syncPreview(){
+    var task=document.getElementById('taskInp').value, price=document.getElementById('priceInp').value;
+    document.getElementById('pv-task').textContent=task;
+    document.getElementById('pv-deliv').textContent=DTXT[dmode].name[lang];
+    document.getElementById('pv-price').textContent='$'+price;
+    document.getElementById('pv-total').textContent='$'+price;
+  }
+  document.getElementById('taskInp').addEventListener('input',syncPreview);
+  document.getElementById('priceInp').addEventListener('input',syncPreview);
+  document.querySelectorAll('#screen-post .segs .seg').forEach(function(s){s.addEventListener('click',function(){s.classList.toggle('on');});});
+
+  /* post -> checkout */
+  document.getElementById('postBtn').addEventListener('click',function(){
+    var price=parseFloat(document.getElementById('priceInp').value)||0, fee=+(price*0.041).toFixed(2), tot=(price+fee).toFixed(2);
+    document.getElementById('co-task').textContent=(lang==='zh'?'暗黑破坏神 4 — ':'Diablo 4 — ')+document.getElementById('taskInp').value;
+    document.getElementById('co-price').textContent='$'+price.toFixed(2);
+    document.getElementById('s-price').textContent='$'+price.toFixed(2);
+    document.getElementById('s-fee').textContent='+ $'+fee.toFixed(2);
+    document.getElementById('s-total').textContent='$'+tot;
+    document.getElementById('pp1').textContent='$'+tot;
+    document.getElementById('pp2').textContent='$'+(price*1.06).toFixed(2);
+    document.getElementById('pp3').textContent='$'+(price*1.06).toFixed(2);
+    var d=document.getElementById('co-deliv');d._en=DTXT[dmode].name.en;d.setAttribute('data-zh',DTXT[dmode].name.zh);d.textContent=DTXT[dmode].name[lang];
+    var st=document.getElementById('co-secnote-t');st._en=DTXT[dmode].sec.en;st.setAttribute('data-zh',DTXT[dmode].sec.zh);st.textContent=DTXT[dmode].sec[lang];
+    showScreen('checkout');
+  });
+  document.getElementById('backlink').addEventListener('click',function(){showScreen('post');document.querySelector('.modetab[data-m="post"]').click();});
+  document.querySelectorAll('#screen-checkout .pay').forEach(function(p){p.addEventListener('click',function(){document.querySelectorAll('#screen-checkout .radio').forEach(function(r){r.classList.remove('on')});p.querySelector('.radio').classList.add('on');});});
+  document.getElementById('doCheckout').addEventListener('click',function(){toast(lang==='zh'?'→ 正在跳转到安全支付页…(原型到此为止)':'→ Redirecting to secure payment… (prototype ends here)');});
+
+  /* order hall */
+  var ORDERS=[
+    {id:'15018327966486781568',region:{en:'Seasonal',zh:'赛季'},task:{en:'Power Leveling 1→70',zh:'升级 1→70'},price:'28.00',dep:'30',limit:48,verify:2,poster:{en:'Newbie_USR…0309',zh:'新手USR…0309'},pei:false},
+    {id:'15018326551006357098',region:{en:'HC · Seasonal',zh:'硬核赛季'},task:{en:'Uber Boss ×5 (Mephisto)',zh:'Uber Boss ×5(墨菲斯托)'},price:'50.00',dep:'100',limit:120,verify:21,poster:{en:'GearHunter',zh:'装备猎人'},pei:false},
+    {id:'15018328470583256483',region:{en:'Seasonal',zh:'赛季'},task:{en:'Pit 100 push ×10',zh:'Pit 100 冲层 ×10'},price:'40.00',dep:'100',limit:72,verify:0,poster:{en:'Newbie_USR…1118',zh:'新手USR…1118'},pei:false},
+    {id:'15018329737741729952',region:{en:'Seasonal',zh:'赛季'},task:{en:'Torment 4 gear set + 3400 paragon',zh:'痛苦4 装备 + 巅峰 3400'},price:'80.00',dep:'200',limit:48,verify:10,poster:{en:'SoloBuyer',zh:'单子多'},pei:false},
+    {id:'15018260531172490273',region:{en:'Seasonal',zh:'赛季'},task:{en:'Random mythics farm',zh:'随机神话装 farm'},price:'35.00',dep:'150',limit:36,verify:17,poster:{en:'FastDeal',zh:'结算超快哟'},pei:false},
+    {id:'15018310623674140637',region:{en:'HC · Seasonal',zh:'硬核赛季'},task:{en:'Full build — Necromancer (Clear T4)',zh:'成品 Build — 死灵(通关T4)'},price:'120.00',dep:'400',limit:72,verify:0,poster:{en:'MythicPro',zh:'魔幻斯卡'},pei:true},
+    {id:'15018197363985254524',region:{en:'Seasonal',zh:'赛季'},task:{en:'Coaching — Rogue, 1:1 ×3h',zh:'教学 — 游侠 1v1 ×3h'},price:'26.00',dep:'0',limit:6,verify:0,poster:{en:'WarGod',zh:'战神晋级赛'},pei:false},
+    {id:'15018329382245194049',region:{en:'Seasonal',zh:'赛季'},task:{en:'Mount farm — 290 Sorcerer',zh:'坐骑 farm — 290 法师'},price:'90.00',dep:'200',limit:38,verify:32,poster:{en:'WOW_Bao',zh:'WOW宝哥'},pei:false}
+  ];
+  var curCh='featured';
+  function renderHall(){
+    var L=lang;
+    document.getElementById('hallBody').innerHTML=ORDERS.map(function(o,i){
+      return '<tr data-i="'+i+'"><td>'+(i+1)+'</td><td class="oid">'+o.id.slice(0,12)+'…</td><td>'+(L==='zh'?o.region.zh:o.region.en)+'</td>'+
+        '<td class="task">'+(L==='zh'?o.task.zh:o.task.en)+(o.pei?'<span class="ch-badge pei">'+(L==='zh'?'陪练':'coach')+'</span>':'')+'</td>'+
+        '<td class="price">$'+o.price+'</td><td class="dep">$'+o.dep+'</td><td>'+o.limit+'</td><td>'+o.verify+'</td>'+
+        '<td class="poster">'+(L==='zh'?o.poster.zh:o.poster.en)+'</td></tr>';
+    }).join('');
+  }
+  document.querySelectorAll('.chtab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.chtab').forEach(function(x){x.classList.remove('on')});t.classList.add('on');curCh=t.getAttribute('data-ch');renderHall();});});
+  document.querySelectorAll('.fseg').forEach(function(s){s.addEventListener('click',function(){document.querySelectorAll('.fseg').forEach(function(x){x.classList.remove('on')});s.classList.add('on');});});
+
+  /* double-click row -> accept modal */
+  document.getElementById('hallTable').addEventListener('dblclick',function(e){var tr=e.target.closest('tr[data-i]');if(tr)openAccept(ORDERS[+tr.dataset.i]);});
+  function openAccept(o){
+    var L=lang;
+    document.getElementById('m-id').textContent=o.id;
+    document.getElementById('m-region').textContent='Diablo 4 · '+(L==='zh'?o.region.zh:o.region.en);
+    document.getElementById('m-task').textContent=(L==='zh'?o.task.zh:o.task.en);
+    document.getElementById('m-price').textContent='$'+o.price;
+    document.getElementById('m-dep').textContent=(L==='zh'?'安全 $':'Safety $')+o.dep+' · '+(L==='zh'?'效率 $':'Speed $')+Math.round(o.dep/2);
+    document.getElementById('m-limit').textContent=o.limit+(L==='zh'?' 小时':' hours');
+    document.getElementById('mask').classList.add('show');
+  }
+  document.getElementById('mClose').addEventListener('click',function(){document.getElementById('mask').classList.remove('show');});
+  document.getElementById('mask').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+  document.querySelectorAll('.mtab').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.mtab').forEach(function(x){x.classList.remove('on')});t.classList.add('on');});});
+  document.getElementById('mFollow').addEventListener('click',function(){toast(lang==='zh'?'跟发同类订单(原型示意)':'Follow-post a similar order (prototype)');});
+  document.getElementById('mNego').addEventListener('click',function(){toast(lang==='zh'?'与发单者议价(原型示意)':'Negotiate with poster (prototype)');});
+  document.getElementById('mAccept').addEventListener('click',function(){document.getElementById('mask').classList.remove('show');toast(lang==='zh'?'✓ 接单成功,已缴保证金(原型示意)':'✓ Order accepted, deposit held (prototype)');});
+
+  renderHall();syncPreview();
+</script>
+</body>
+</html>
