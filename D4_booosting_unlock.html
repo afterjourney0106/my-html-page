@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGV 代练 · 定价模板 · 剧情解锁 / 组队</title>
+<style>
+  :root{--ink:#20242e;--soft:#5b6572;--dim:#8a93a0;--orange:#d9531c;--orange-l:#fdeee7;
+    --blue:#2f6fe0;--blue-l:#eaf1fc;--green:#2f7a43;--green-l:#e7f2ea;--purple:#6b46c1;--purple-l:#efeafc;
+    --line:#e4e8ee;--bg:#f7f8fa;--card:#fff;--sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",system-ui,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 var(--sans)}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px 70px}
+  h1{font-size:25px;margin:26px 0 3px}
+  .sub{color:var(--soft);font-size:13.5px}.meta{color:var(--dim);font-size:12.5px;margin:9px 0 4px}
+  h2{font-size:18px;margin:34px 0 4px;padding-bottom:7px;border-bottom:2px solid var(--orange);display:inline-block}
+  p{margin:7px 0}
+  code{background:#f0f1f4;border-radius:4px;padding:1px 6px;font-size:13px;color:var(--purple)}
+  .lead{background:var(--orange-l);border-left:3px solid var(--orange);padding:12px 16px;border-radius:0 4px 4px 0;margin:14px 0}.lead b{color:var(--orange)}
+  .btype{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 9px;background:var(--green-l);color:var(--green);vertical-align:middle}
+  .role{display:inline-block;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px}
+  .role.calc{background:var(--orange-l);color:var(--orange)}.role.match{background:var(--blue-l);color:var(--blue)}
+  .role.deliv{background:var(--green-l);color:var(--green)}.role.note{background:#eee;color:#666}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;background:var(--card);border:1px solid var(--line)}
+  th{background:#f3ece9;text-align:left;padding:9px 11px;font-size:12px;color:var(--orange);border-bottom:1px solid var(--line)}
+  td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:none}
+  td:first-child{font-weight:600;color:var(--ink)}.mono{font-variant-numeric:tabular-nums}
+  .tagdef{font-size:10.5px;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:0 6px;margin-left:6px}
+  .calc{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start;margin:10px 0}
+  .cbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .grp{margin-bottom:15px}.grp:last-child{margin-bottom:0}
+  .gl{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:var(--soft);margin-bottom:7px}
+  .gl .mini{font-weight:400;text-transform:none;letter-spacing:0;color:var(--dim);font-size:10.5px;margin-left:6px}
+  .segs{display:flex;gap:7px;flex-wrap:wrap}
+  .seg{border:1px solid var(--line);background:#f7f8fa;border-radius:8px;padding:7px 12px;font-size:12.5px;color:var(--soft);cursor:pointer}
+  .seg.on{background:var(--orange-l);border-color:var(--orange);color:var(--orange);font-weight:600}
+  .seg .d{font-size:10.5px;color:var(--dim);margin-left:4px}.seg.on .d{color:var(--orange)}
+  .mseg{position:relative;padding-left:26px}
+  .mseg::before{content:"";position:absolute;left:9px;top:50%;transform:translateY(-50%);width:13px;height:13px;border:1.5px solid var(--dim);border-radius:3px}
+  .mseg.on::before{background:var(--orange);border-color:var(--orange)}
+  .mseg.on::after{content:"✓";position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#fff;font-size:9px;font-weight:800}
+  .pricecard{position:sticky;top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .pl{font-size:11.5px;font-weight:700;text-transform:uppercase;color:var(--soft)}
+  .bigprice{font-size:34px;font-weight:800;color:var(--orange);margin:2px 0 4px}
+  .brk{font-size:12px;color:var(--soft);background:#f7f8fa;border-radius:8px;padding:10px 12px;margin:8px 0;line-height:1.85}.brk .m{color:var(--ink);font-weight:600}
+  .rangebox{border-top:1px dashed var(--line);margin-top:12px;padding-top:12px}
+  .rl{font-size:11.5px;font-weight:700;color:var(--purple);text-transform:uppercase;margin-bottom:6px}
+  .sellers{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0}
+  .schip{font-size:11px;background:var(--purple-l);color:var(--purple);border-radius:5px;padding:2px 8px;font-weight:600}.schip.mid{background:var(--purple);color:#fff}
+  .rrow{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;color:var(--soft)}.rrow b{color:var(--ink)}
+  .feed{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px 0}
+  .fcard{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--card)}
+  .fcard .ft{font-weight:700;font-size:13.5px;margin-bottom:5px}
+  .fcard.one{border-top:3px solid var(--blue)}.fcard.two{border-top:3px solid var(--orange)}.fcard.three{border-top:3px solid var(--green)}
+  .fcard .fd{font-size:12.5px;color:var(--soft)}
+  .note{font-size:12px;color:var(--soft);border:1px solid var(--line);border-left:2px solid var(--dim);background:var(--card);border-radius:0 4px 4px 0;padding:12px 15px;margin-top:16px}.note b{color:var(--orange)}
+  footer{color:var(--dim);font-size:11.5px;text-align:center;margin-top:30px;padding-top:16px;border-top:1px solid var(--line)}
+  @media(max-width:760px){.calc{grid-template-columns:1fr}.pricecard{position:static}.feed{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>IGV 代练 · 定价模板 · 剧情解锁 / 组队</h1>
+  <div class="sub">套用「升级」母版格式。base 形态:<b>固定值 + 多选加购</b>(与前面单选型不同——加购可多选累加)。</div>
+  <div class="meta">游戏:Diablo 4 ｜ base 形态:<span class="btype">固定值 + 多选加购</span> ｜ 通用公式:<code>最终价 = ( base + Σ已选加购 ) × 系数</code></div>
+
+  <div class="lead"><b>这份是剧情解锁 / 组队 SKU。</b> 剧情/解锁类是一组<b>离散的"完成/解锁"交付</b>:选一个<b>主体服务</b>作 base,再<b>多选</b>要一起解锁的内容(祭坛、地图、传送点…),各自固定加价、累加。组队方式对应账号安全档(陪同不交号 / 上号代打)。</div>
+
+  <h2>① 商品结构:属性与角色</h2>
+  <table>
+    <thead><tr><th>属性</th><th>角色</th><th>枚举 / 取值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>主体服务</td><td><span class="role calc">计价 · base(单选)</span></td><td>主线剧情通关 / 战役跳过</td><td>选一个作 base</td></tr>
+      <tr><td>解锁加购</td><td><span class="role calc">计价 · 增量(多选)</span></td><td>全莉莉丝祭坛 / 全地图点亮 / 全传送点 / 死亡之潮·低语解锁</td><td>可多选,各自固定加价累加</td></tr>
+      <tr><td>组队方式</td><td><span class="role deliv">交付 / 风险</span></td><td>组队陪同(不交号)/ 上号代打</td><td>决定账号安全档;默认不影响价</td></tr>
+      <tr><td>区服 / 模式</td><td><span class="role calc">计价 · 系数</span></td><td>软核 / 硬核</td><td>硬核略贵 → 系数</td></tr>
+      <tr><td>自定义描述</td><td><span class="role note">描述</span></td><td>自由文本(每单必带)</td><td>特殊解锁需求,不计价</td></tr>
+    </tbody>
+  </table>
+
+  <h2>② 费率卡:固定 base + 多选加购 + 系数</h2>
+  <table>
+    <thead><tr><th>项</th><th>取值</th><th>类型</th></tr></thead>
+    <tbody>
+      <tr><td>base:主体服务(单选)</td><td class="mono">主线剧情通关 $12 · 战役跳过 $10</td><td>卖家填</td></tr>
+      <tr><td>解锁加购(多选累加)</td><td class="mono">全莉莉丝祭坛 +$8 · 全地图点亮 +$6 · 全传送点 +$4 · 死亡之潮·低语解锁 +$3</td><td>卖家填</td></tr>
+      <tr><td>区服系数</td><td class="mono">软核 ×1.0 · 硬核 ×1.15</td><td>平台默认<span class="tagdef">可覆盖</span></td></tr>
+      <tr><td>组队/交付</td><td class="mono">陪同 ×1.0 · 代打 ×1.0(默认不影响价)</td><td>平台默认<span class="tagdef">可开差价</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>③ 定价公式</h2>
+  <p><code>最终价 = ( 主体base + Σ 已选解锁加购 ) × 区服系数 × 组队系数</code></p>
+
+  <h2>④ 实时算价(点选属性)</h2>
+  <div class="calc">
+    <div class="cbox">
+      <div class="grp"><div class="gl">主体服务(= base · 单选)</div><div class="segs" data-g="base">
+        <span class="seg on" data-b="12">主线剧情通关 <span class="d">$12</span></span><span class="seg" data-b="10">战役跳过 <span class="d">$10</span></span></div></div>
+      <div class="grp"><div class="gl">解锁加购 <span class="mini">可多选 · 累加</span></div><div class="segs" id="addons">
+        <span class="seg mseg" data-a="8">全莉莉丝祭坛 <span class="d">+$8</span></span><span class="seg mseg" data-a="6">全地图点亮 <span class="d">+$6</span></span><span class="seg mseg" data-a="4">全传送点 <span class="d">+$4</span></span><span class="seg mseg" data-a="3">死亡之潮·低语 <span class="d">+$3</span></span></div></div>
+      <div class="grp"><div class="gl">组队方式(账号安全 · 默认不影响价)</div><div class="segs" data-g="deliv">
+        <span class="seg on" data-m="1.0">组队陪同 · 不交号 <span class="d">×1.0</span></span><span class="seg" data-m="1.0">上号代打 <span class="d">×1.0</span></span></div></div>
+      <div class="grp" style="margin-bottom:0"><div class="gl">区服 / 模式(计价系数)</div><div class="segs" data-g="region">
+        <span class="seg on" data-m="1.0">软核 <span class="d">×1.0</span></span><span class="seg" data-m="1.15">硬核 <span class="d">×1.15</span></span></div></div>
+    </div>
+    <div class="pricecard">
+      <div class="pl">最终价(平台基准卡)</div>
+      <div class="bigprice" id="price">$0</div>
+      <div class="brk" id="brk"></div>
+      <div class="rangebox">
+        <div class="rl">平台建议价(5 家在架卖家)</div>
+        <div class="sellers" id="sellers"></div>
+        <div class="rrow"><span>建议区间 P25–P75</span><b id="range">—</b></div>
+        <div class="rrow"><span>中位数(方案一兜底价)</span><b id="median">—</b></div>
+      </div>
+    </div>
+  </div>
+  <p class="sub">多选加购是这类"解锁型"需求的关键结构:买家勾几项就加几项,base 之后累加,再乘系数。</p>
+
+  <h2>⑤ 建议价服务:一个输出,喂三方案</h2>
+  <div class="feed">
+    <div class="fcard one"><div class="ft">方案一 · 卖家竞价</div><div class="fd">买家「预算参考」用<b>区间</b>;IGV 兜底价 = <b>中位数</b>。</div></div>
+    <div class="fcard two"><div class="ft">方案二 · 卖家挂牌</div><div class="fd">新卖家填卡给<b>推荐值</b>;买家跟卖用<b>区间</b>做锚。</div></div>
+    <div class="fcard three"><div class="ft">方案三 · 买家定价</div><div class="fd">提示「通常 <b>$X–Y</b>」,防止定太低。</div></div>
+  </div>
+
+  <div class="note"><b>说明:</b> 数值为占位。"组队"在这里作交付方式(陪同不交号 / 上号代打),契合 IGV 优先不交号;若组队是"陪打特定活动 N 次"则归 Boss/副本那类按次模板。</div>
+  <footer>IGV 内部 · 代练定价模板 · 剧情解锁 / 组队 · 仅供讨论</footer>
+</div>
+
+<script>
+  var st={base:12,addons:{},deliv:1.0,region:1.0};
+  var ADDNAMES={8:'全莉莉丝祭坛',6:'全地图点亮',4:'全传送点',3:'死亡之潮·低语'};
+  function fmt(n){return '$'+n.toFixed(2);}
+  function calc(){
+    var addSum=0,addList=[];
+    Object.keys(st.addons).forEach(function(k){if(st.addons[k]){addSum+=+k;addList.push(ADDNAMES[k]+' +$'+k);}});
+    var mult=st.deliv*st.region;
+    var price=(st.base+addSum)*mult;
+    document.getElementById('price').textContent=fmt(price);
+    document.getElementById('brk').innerHTML='( base <span class="m">'+fmt(st.base)+'</span>'+(addSum?' + 加购 <span class="m">+'+addSum+'</span>':'')+' )<br>'+
+      (addList.length?'加购:'+addList.join('、')+'<br>':'')+
+      '× 组队 <span class="m">'+st.deliv+'</span> × 区服 <span class="m">'+st.region+'</span> = <span class="m">'+fmt(price)+'</span>';
+    var mm=[0.9,0.96,1.0,1.06,1.14].map(function(m){return price*m;}).sort(function(a,b){return a-b;});
+    document.getElementById('sellers').innerHTML=mm.map(function(v,i){return '<span class="schip'+(i===2?' mid':'')+'">'+fmt(v)+'</span>';}).join('');
+    document.getElementById('range').textContent=fmt(mm[1])+' – '+fmt(mm[3]);
+    document.getElementById('median').textContent=fmt(mm[2]);
+  }
+  // single-select groups
+  document.querySelectorAll('.segs[data-g]').forEach(function(g){
+    g.addEventListener('click',function(e){var s=e.target.closest('.seg');if(!s)return;
+      g.querySelectorAll('.seg').forEach(function(x){x.classList.remove('on')});s.classList.add('on');
+      var k=g.getAttribute('data-g');
+      if(s.hasAttribute('data-b'))st.base=parseFloat(s.getAttribute('data-b'));else st[k]=parseFloat(s.getAttribute('data-m'));calc();});
+  });
+  // multi-select add-ons
+  document.getElementById('addons').addEventListener('click',function(e){var s=e.target.closest('.mseg');if(!s)return;
+    s.classList.toggle('on');var a=s.getAttribute('data-a');st.addons[a]=s.classList.contains('on');calc();});
+  calc();
+</script>
+</body>
+</html>
