@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGV 代练 · 定价模板 · 升级 Power Leveling</title>
+<style>
+  :root{--ink:#20242e;--soft:#5b6572;--dim:#8a93a0;--orange:#d9531c;--orange-l:#fdeee7;
+    --blue:#2f6fe0;--blue-l:#eaf1fc;--green:#2f7a43;--green-l:#e7f2ea;--purple:#6b46c1;--purple-l:#efeafc;
+    --line:#e4e8ee;--bg:#f7f8fa;--card:#fff;--sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",system-ui,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 var(--sans)}
+  .wrap{max-width:960px;margin:0 auto;padding:0 24px 70px}
+  h1{font-size:25px;margin:26px 0 3px}
+  .sub{color:var(--soft);font-size:13.5px}.meta{color:var(--dim);font-size:12.5px;margin:9px 0 4px}
+  h2{font-size:18px;margin:34px 0 4px;padding-bottom:7px;border-bottom:2px solid var(--orange);display:inline-block}
+  h3{font-size:14px;margin:16px 0 6px;color:var(--orange)}
+  p{margin:7px 0}
+  code{background:#f0f1f4;border-radius:4px;padding:1px 6px;font-size:13px;color:var(--purple)}
+  .lead{background:var(--orange-l);border-left:3px solid var(--orange);padding:12px 16px;border-radius:0 4px 4px 0;margin:14px 0}
+  .lead b{color:var(--orange)}
+  .btype{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 9px;background:var(--orange-l);color:var(--orange);vertical-align:middle}
+  .role{display:inline-block;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px}
+  .role.calc{background:var(--orange-l);color:var(--orange)}.role.match{background:var(--blue-l);color:var(--blue)}
+  .role.deliv{background:var(--green-l);color:var(--green)}.role.note{background:#eee;color:#666}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;background:var(--card);border:1px solid var(--line)}
+  th{background:#f3ece9;text-align:left;padding:9px 11px;font-size:12px;color:var(--orange);border-bottom:1px solid var(--line)}
+  td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:none}
+  td:first-child{font-weight:600;color:var(--ink)}
+  .mono{font-variant-numeric:tabular-nums}
+  .tagdef{font-size:10.5px;color:var(--dim);border:1px solid var(--line);border-radius:4px;padding:0 6px;margin-left:6px}
+
+  .calc{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start;margin:10px 0}
+  .cbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .grp{margin-bottom:15px}.grp:last-child{margin-bottom:0}
+  .gl{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:var(--soft);margin-bottom:7px}
+  .segs{display:flex;gap:7px;flex-wrap:wrap}
+  .seg{border:1px solid var(--line);background:#f7f8fa;border-radius:8px;padding:7px 12px;font-size:12.5px;color:var(--soft);cursor:pointer}
+  .seg.on{background:var(--orange-l);border-color:var(--orange);color:var(--orange);font-weight:600}
+  .seg .d{font-size:10.5px;color:var(--dim);margin-left:4px}.seg.on .d{color:var(--orange)}
+  .rangeui{position:relative;height:26px;margin:6px 2px 0}
+  .rangeui .track{position:absolute;top:11px;left:0;right:0;height:5px;background:#e4e8ee;border-radius:3px}
+  .rangeui .fill{position:absolute;top:0;height:5px;background:var(--orange);border-radius:3px}
+  .rangeui input[type=range]{position:absolute;top:3px;left:0;width:100%;margin:0;background:none;-webkit-appearance:none;pointer-events:none;height:20px}
+  .rangeui input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:19px;height:19px;border-radius:50%;background:#fff;border:3px solid var(--orange);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .rangeui input[type=range]::-moz-range-thumb{pointer-events:auto;width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid var(--orange);cursor:pointer}
+  .rvals{display:flex;justify-content:space-between;font-size:12.5px;color:var(--soft);margin-top:8px}.rvals b{color:var(--orange);font-size:15px}
+  .pricecard{position:sticky;top:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .pl{font-size:11.5px;font-weight:700;text-transform:uppercase;color:var(--soft)}
+  .bigprice{font-size:34px;font-weight:800;color:var(--orange);margin:2px 0 4px}
+  .brk{font-size:12px;color:var(--soft);background:#f7f8fa;border-radius:8px;padding:10px 12px;margin:8px 0;line-height:1.9}
+  .brk .m{color:var(--ink);font-weight:600}
+  .baseline{font-size:11.5px;color:var(--purple);background:var(--purple-l);border-radius:7px;padding:7px 10px;margin:8px 0 2px;line-height:1.7}
+  .rangebox{border-top:1px dashed var(--line);margin-top:12px;padding-top:12px}
+  .rl{font-size:11.5px;font-weight:700;color:var(--purple);text-transform:uppercase;margin-bottom:6px}
+  .sellers{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0}
+  .schip{font-size:11px;background:var(--purple-l);color:var(--purple);border-radius:5px;padding:2px 8px;font-weight:600}
+  .schip.mid{background:var(--purple);color:#fff}
+  .rrow{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;color:var(--soft)}.rrow b{color:var(--ink)}
+  .feed{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:10px 0}
+  .fcard{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--card)}
+  .fcard .ft{font-weight:700;font-size:13.5px;margin-bottom:5px}
+  .fcard.one{border-top:3px solid var(--blue)}.fcard.two{border-top:3px solid var(--orange)}.fcard.three{border-top:3px solid var(--green)}
+  .fcard .fd{font-size:12.5px;color:var(--soft)}
+  .note{font-size:12px;color:var(--soft);border:1px solid var(--line);border-left:2px solid var(--dim);background:var(--card);border-radius:0 4px 4px 0;padding:12px 15px;margin-top:16px}
+  .note b{color:var(--orange)}
+  footer{color:var(--dim);font-size:11.5px;text-align:center;margin-top:30px;padding-top:16px;border-top:1px solid var(--line)}
+  @media(max-width:760px){.calc{grid-template-columns:1fr}.pricecard{position:static}.feed{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>IGV 代练 · 定价模板 · 升级 Power Leveling</h1>
+  <div class="sub">母版模板:商品结构 → 费率卡 → 定价公式 → 实时算价 → 建议价区间 → 喂三方案。其余品类各出单独文件、套用此格式。</div>
+  <div class="meta">游戏:Diablo 4 ｜ base 形态:<span class="btype">分段线性</span> ｜ 通用公式:<code>最终价 = ( base + Σ增量Δ ) × 系数</code></div>
+
+  <div class="lead"><b>这份是升级 SKU。</b> 关键点在 base:等级是线性数值型,base 不是死数,而是<b>按等级分段累加</b>算出来的——<b>尾段单价更高</b>,任意起止都能算。巅峰在这里作<b>加购增量</b>(它在「巅峰 SKU」里才是 base 主体)。</div>
+
+  <!-- 1 -->
+  <h2>① 商品结构:属性与角色</h2>
+  <table>
+    <thead><tr><th>属性</th><th>角色</th><th>枚举 / 取值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>等级区间</td><td><span class="role calc">计价 · base</span></td><td>起点 → 终点(分段线性)</td><td>base 由分段累加算出,不是固定数</td></tr>
+      <tr><td>目标巅峰 Paragon</td><td><span class="role calc">计价 · 增量</span></td><td>不含 / +100 / +200 / +300</td><td>加购项;越高增量越大</td></tr>
+      <tr><td>职业 Class</td><td><span class="role calc">计价 · 增量</span></td><td>野蛮/法师/死灵/游侠/德鲁伊/闇拳</td><td>多数 0,个别较难练职业小幅加价</td></tr>
+      <tr><td>区服 / 模式</td><td><span class="role calc">计价 · 系数</span></td><td>软核标准 / 硬核 / 硬核+高强度</td><td>难服更贵 → 归难度档给系数</td></tr>
+      <tr><td>交付方式</td><td><span class="role deliv">交付 / 风险</span></td><td>陪打(不交号)/ 代打(上号)</td><td>决定账号安全档;默认不影响价,卖家可开差价</td></tr>
+      <tr><td>加急</td><td><span class="role calc">计价 · 系数</span></td><td>标准 / 加急</td><td>可选,提速加价</td></tr>
+      <tr><td>平台 / 时段</td><td><span class="role match">匹配</span></td><td>PC / 主机;时段偏好</td><td>只用于匹配与筛选,不计价</td></tr>
+      <tr><td>自定义描述</td><td><span class="role note">描述</span></td><td>自由文本(每单必带)</td><td>结构化兜不住的细节,供卖家理解,不计价</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 2 -->
+  <h2>② 费率卡:分段线性 base + 增量 + 系数</h2>
+  <p class="sub">卖家只需填<b>分段单价</b>和几个 delta,系数用平台默认即可开卖(可覆盖)。</p>
+  <table>
+    <thead><tr><th>项</th><th>取值</th><th>类型</th></tr></thead>
+    <tbody>
+      <tr><td>base:分段单价</td><td class="mono">1–50 级 ×$0.20 · 50–65 级 ×$0.45 · 65–70 级 ×$0.90(尾段更贵)</td><td>卖家填</td></tr>
+      <tr><td>base 算法</td><td class="mono">base = Σ 各段(落在起止内的级数 × 段单价)</td><td>—</td></tr>
+      <tr><td>巅峰增量 Δ</td><td class="mono">不含 0 · +100 +12 · +200 +26 · +300 +48</td><td>卖家填</td></tr>
+      <tr><td>职业增量 Δ</td><td class="mono">野蛮/法师/死灵/游侠 0 · 德鲁伊 +2 · 闇拳 +3</td><td>卖家填</td></tr>
+      <tr><td>区服系数</td><td class="mono">软核标准 ×1.0 · 硬核 ×1.3 · 硬核+高强度 ×1.45</td><td>平台默认<span class="tagdef">可覆盖</span></td></tr>
+      <tr><td>交付系数</td><td class="mono">陪打 ×1.0 · 代打 ×1.0</td><td>平台默认<span class="tagdef">可开差价</span></td></tr>
+      <tr><td>加急系数</td><td class="mono">标准 ×1.0 · 加急 ×1.5</td><td>平台默认<span class="tagdef">可覆盖</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- 3 -->
+  <h2>③ 定价公式</h2>
+  <p><code>最终价 = ( 分段线性base(起点→终点) + 巅峰Δ + 职业Δ ) × 区服系数 × 交付系数 × 加急系数</code></p>
+  <p class="sub">巅峰若单独售卖(巅峰 SKU),它就用同样的分段线性当 base;此处它是加购增量。</p>
+
+  <!-- 4 -->
+  <h2>④ 实时算价(点选属性)</h2>
+  <div class="calc">
+    <div class="cbox">
+      <div class="grp"><div class="gl">等级区间(拖动滑块 · 0–70)</div>
+        <div class="rangeui" id="lvlrange">
+          <div class="track"><div class="fill" id="rfill"></div></div>
+          <input type="range" id="rstart" min="0" max="70" step="1" value="0">
+          <input type="range" id="rend" min="0" max="70" step="1" value="70">
+        </div>
+        <div class="rvals"><span>起点 <b id="vstart">0</b></span><span>终点 <b id="vend">70</b></span></div>
+      </div>
+      <div class="grp"><div class="gl">目标巅峰 Paragon(加购增量)</div><div class="segs" data-g="para">
+        <span class="seg on" data-d="0">不含 <span class="d">0</span></span><span class="seg" data-d="12">+100 <span class="d">+12</span></span><span class="seg" data-d="26">+200 <span class="d">+26</span></span><span class="seg" data-d="48">+300 <span class="d">+48</span></span></div></div>
+      <div class="grp"><div class="gl">职业 Class</div><div class="segs" data-g="cls">
+        <span class="seg on" data-d="0">法师 <span class="d">0</span></span><span class="seg" data-d="0">野蛮人 <span class="d">0</span></span><span class="seg" data-d="0">死灵 <span class="d">0</span></span><span class="seg" data-d="0">游侠 <span class="d">0</span></span><span class="seg" data-d="2">德鲁伊 <span class="d">+2</span></span><span class="seg" data-d="3">闇拳 <span class="d">+3</span></span></div></div>
+      <div class="grp"><div class="gl">区服 / 模式(计价系数)</div><div class="segs" data-g="region">
+        <span class="seg on" data-m="1.0">软核标准 <span class="d">×1.0</span></span><span class="seg" data-m="1.3">硬核 <span class="d">×1.3</span></span><span class="seg" data-m="1.45">硬核+高强度 <span class="d">×1.45</span></span></div></div>
+      <div class="grp"><div class="gl">交付方式(账号安全 · 默认不影响价)</div><div class="segs" data-g="deliv">
+        <span class="seg on" data-m="1.0">陪打 · 不交号 <span class="d">×1.0</span></span><span class="seg" data-m="1.0">代打 · 上号 <span class="d">×1.0</span></span></div></div>
+      <div class="grp" style="margin-bottom:0"><div class="gl">加急(计价系数)</div><div class="segs" data-g="rush">
+        <span class="seg on" data-m="1.0">标准 <span class="d">×1.0</span></span><span class="seg" data-m="1.5">加急 <span class="d">×1.5</span></span></div></div>
+    </div>
+    <div class="pricecard">
+      <div class="pl">最终价(平台基准卡)</div>
+      <div class="bigprice" id="price">$0</div>
+      <div class="baseline" id="baseline"></div>
+      <div class="brk" id="brk"></div>
+      <div class="rangebox">
+        <div class="rl">平台建议价(5 家在架卖家)</div>
+        <div class="sellers" id="sellers"></div>
+        <div class="rrow"><span>建议区间 P25–P75</span><b id="range">—</b></div>
+        <div class="rrow"><span>中位数(方案一兜底价)</span><b id="median">—</b></div>
+      </div>
+    </div>
+  </div>
+  <p class="sub">改起点/终点,上面「分段」那行会显示 base 怎么由各段累加而来;尾段(65–70)单价最高,所以补最后几级最贵。</p>
+
+  <!-- 5 -->
+  <h2>⑤ 建议价服务:一个输出,喂三方案</h2>
+  <p class="sub">对每个「SKU + 属性组合」输出<b>区间 + 中位</b>;数据来源:① 在架卖家费率卡 → ② 历史成交价 → ③ 平台基准卡(冷启动兜底)。</p>
+  <div class="feed">
+    <div class="fcard one"><div class="ft">方案一 · 卖家竞价</div><div class="fd">买家「预算参考」用<b>区间</b>引导;IGV 兜底价 = <b>中位数</b>(X 分钟无人接则按中位兜底)。</div></div>
+    <div class="fcard two"><div class="ft">方案二 · 卖家挂牌</div><div class="fd">新卖家填费率卡时给<b>推荐值</b>降门槛;买家跟卖列表用<b>区间</b>做价格锚。</div></div>
+    <div class="fcard three"><div class="ft">方案三 · 买家定价</div><div class="fd">买家自己填价时提示「该任务通常 <b>$X–Y</b>」,防止定太低变僵尸单。</div></div>
+  </div>
+
+  <div class="note"><b>说明:</b> 数值为示例占位,真实由品类运营与卖家标定。其余品类各出单独文件、套用本格式:Boss/副本/装备 = 按次固定(单价×数量);成品号 = 档位固定;陪玩/教学 = 时长线性;Custom = 无可计价属性 → 无费率卡,只走方案一竞价 / 方案三买家定价。</div>
+  <footer>IGV 内部 · 代练定价模板 · 升级 Power Leveling · 仅供讨论</footer>
+</div>
+
+<script>
+  var SEGMENTS=[{from:0,to:50,unit:0.20},{from:50,to:65,unit:0.45},{from:65,to:70,unit:0.90}];
+  var st={start:0,end:70,para:0,cls:0,region:1.0,deliv:1.0,rush:1.0};
+  function fmt(n){return '$'+n.toFixed(2);}
+  function segParts(a,b){return SEGMENTS.map(function(g){var lo=Math.max(a,g.from),hi=Math.min(b,g.to);return {lv:Math.max(0,hi-lo),unit:g.unit,from:g.from,to:g.to};}).filter(function(p){return p.lv>0;});}
+  var rs=document.getElementById('rstart'),re=document.getElementById('rend'),rfill=document.getElementById('rfill');
+  function syncSlider(e){
+    var a=+rs.value,b=+re.value;
+    if(a>b){ if(e&&e.target===rs){rs.value=b;a=b;} else {re.value=a;b=a;} }
+    st.start=a;st.end=b;
+    document.getElementById('vstart').textContent=a;
+    document.getElementById('vend').textContent=b;
+    rfill.style.left=(a/70*100)+'%';
+    rfill.style.width=((b-a)/70*100)+'%';
+    calc();
+  }
+  rs.addEventListener('input',syncSlider); re.addEventListener('input',syncSlider);
+
+  function calc(){
+    var parts=segParts(st.start,st.end);
+    var baseVal=parts.reduce(function(s,p){return s+p.lv*p.unit;},0);
+    var delta=st.para+st.cls;
+    var mult=st.region*st.deliv*st.rush;
+    var price=(baseVal+delta)*mult;
+    document.getElementById('price').textContent=fmt(price);
+    document.getElementById('baseline').innerHTML='base 分段累加('+st.start+'→'+st.end+'):<br>'+
+      (parts.length?parts.map(function(p){return p.from+'–'+p.to+'段 '+p.lv+'级 ×$'+p.unit+' = $'+(p.lv*p.unit).toFixed(2);}).join(' ＋ '):'—')+
+      ' = <b>$'+baseVal.toFixed(2)+'</b>';
+    function sd(x){return (x>=0?'+':'−')+Math.abs(x);}
+    document.getElementById('brk').innerHTML='( base <span class="m">'+fmt(baseVal)+'</span> 巅峰 <span class="m">'+sd(st.para)+'</span> 职业 <span class="m">'+sd(st.cls)+'</span> )<br>× 区服 <span class="m">'+st.region+'</span> × 交付 <span class="m">'+st.deliv+'</span> × 加急 <span class="m">'+st.rush+'</span><br>= <span class="m">'+fmt(price)+'</span>';
+    var mm=[0.88,0.95,1.0,1.08,1.18].map(function(m){return price*m;}).sort(function(a,b){return a-b;});
+    document.getElementById('sellers').innerHTML=mm.map(function(v,i){return '<span class="schip'+(i===2?' mid':'')+'">'+fmt(v)+'</span>';}).join('');
+    document.getElementById('range').textContent=fmt(mm[1])+' – '+fmt(mm[3]);
+    document.getElementById('median').textContent=fmt(mm[2]);
+  }
+  document.querySelectorAll('.segs').forEach(function(g){
+    g.addEventListener('click',function(e){
+      var s=e.target.closest('.seg');if(!s)return;
+      g.querySelectorAll('.seg').forEach(function(x){x.classList.remove('on')});s.classList.add('on');
+      if(s.hasAttribute('data-d'))st[g.getAttribute('data-g')]=parseFloat(s.getAttribute('data-d'));
+      else st[g.getAttribute('data-g')]=parseFloat(s.getAttribute('data-m'));
+      calc();
+    });
+  });
+  syncSlider();
+</script>
+</body>
+</html>
