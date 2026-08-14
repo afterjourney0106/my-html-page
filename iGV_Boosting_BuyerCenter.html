@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iGV · My Boosting Requests</title>
+<style>
+  :root{--ink:#20242e;--soft:#5f6673;--dim:#9198a4;--orange:#f1652a;--orange-d:#d9531c;--orange-soft:#fdeee7;
+    --blue:#2f6fe0;--blue-l:#eaf1fc;--green:#12855a;--green-l:#e5f3ec;--red:#d64545;--red-l:#fdecec;
+    --line:#e9eaee;--bg:#f4f5f7;--card:#fff;--sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",system-ui,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.6 var(--sans)}
+  a{color:inherit;text-decoration:none}
+  /* header */
+  .top{background:#fff;border-bottom:1px solid var(--line);height:64px;display:flex;align-items:center;padding:0 28px;gap:20px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:20px}
+  .logo .hex{width:30px;height:30px;background:var(--orange);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;transform:rotate(45deg)}
+  .logo .hex span{transform:rotate(-45deg)}
+  .logo small{display:block;font-size:8.5px;letter-spacing:.12em;color:var(--dim);font-weight:600}
+  .top .sp{flex:1}
+  .lang{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:7px 12px;font-size:13px;color:var(--soft);cursor:pointer}
+  .lang b{color:var(--ink)}
+  /* layout */
+  .wrap{max-width:1240px;margin:20px auto;padding:0 24px;display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start}
+  /* sidebar */
+  .side{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;position:sticky;top:20px}
+  .navgrp{padding:8px 6px 4px}
+  .navgrp .gt{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--dim);padding:6px 10px}
+  .navitem{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:14px;color:var(--soft);cursor:pointer;margin:1px 0}
+  .navitem:hover{background:var(--bg)}
+  .navitem.on{background:var(--orange-soft);color:var(--orange-d);font-weight:700}
+  .navitem .dot{width:6px;height:6px;border-radius:50%;background:var(--orange);margin-left:auto}
+  .navgrp.boost{border:1px solid var(--orange-soft);background:#fffaf7;border-radius:11px;margin-top:6px}
+  .navgrp.boost .gt{color:var(--orange-d)}
+  /* main */
+  .main{min-width:0}
+  .pagehead{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .pagehead h1{font-size:22px;margin:0}
+  .pagehead .badge-new{font-size:10.5px;font-weight:700;background:var(--orange-soft);color:var(--orange-d);border-radius:6px;padding:2px 8px}
+  .pagehead .sp{flex:1}
+  .createbtn{background:var(--orange);color:#fff;border:none;border-radius:9px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer}
+  .createbtn:hover{background:var(--orange-d)}
+  .subnote{color:var(--soft);font-size:12.5px;margin-bottom:16px}
+  .subnote b{color:var(--orange-d)}
+  /* tabs + filters */
+  .tabsbar{background:#fff;border:1px solid var(--line);border-radius:14px 14px 0 0;border-bottom:none;padding:6px 16px 0;display:flex;gap:4px;overflow-x:auto}
+  .rtab{white-space:nowrap;padding:12px 14px;font-size:14px;color:var(--soft);cursor:pointer;border-bottom:2.5px solid transparent}
+  .rtab.on{color:var(--orange-d);font-weight:700;border-bottom-color:var(--orange)}
+  .rtab .cnt{font-size:11px;background:var(--bg);color:var(--soft);border-radius:10px;padding:1px 7px;margin-left:5px}
+  .rtab.on .cnt{background:var(--orange-soft);color:var(--orange-d)}
+  .filters{background:#fff;border:1px solid var(--line);border-top:none;padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap}
+  .filters .fi{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--dim)}
+  .filters .fi.sel{max-width:180px;justify-content:space-between;cursor:pointer;color:var(--soft)}
+  /* request cards */
+  .cards{background:var(--bg);border:1px solid var(--line);border-top:none;border-radius:0 0 14px 14px;padding:14px}
+  .rcard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:13px}
+  .rcard:last-child{margin-bottom:0}
+  .rc-head{display:flex;align-items:flex-start;gap:12px}
+  .rc-icon{width:44px;height:44px;border-radius:10px;background:#2a2f3a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+  .rc-tt{min-width:0;flex:1}
+  .rc-svc{font-weight:700;font-size:15.5px}
+  .rc-svc .gm{color:var(--soft);font-weight:600}
+  .rc-no{font-size:12px;color:var(--dim);margin-top:2px}
+  .rc-status{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none}
+  .oc-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin:-2px 0 13px;font-size:12.5px;color:var(--soft)}
+  .oc-bar b{color:var(--ink);font-weight:600}.oc-bar .sp{flex:1}
+  .oc-log{color:var(--soft);cursor:pointer}.oc-log:hover{color:var(--orange-d)}
+  .st{font-size:11.5px;font-weight:700;border-radius:20px;padding:3px 11px}
+  .st-await{background:var(--blue-l);color:var(--blue)}
+  .st-progress{background:var(--orange-soft);color:var(--orange-d)}
+  .st-done{background:var(--green-l);color:var(--green)}
+  .st-review{background:#fbf3df;color:#b8860b}
+  .st-dispute{background:var(--red-l);color:var(--red)}
+  .st-cancel{background:#eef0f3;color:var(--soft)}
+  .rc-offers{font-size:12px;color:var(--soft)}.rc-offers b{color:var(--ink)}
+  /* attribute chips (the variable part) */
+  .attrs{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0 0}
+  .chip{font-size:12px;background:#f7f8fa;border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:var(--soft)}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip.more{color:var(--orange-d);border-color:var(--orange-soft);background:var(--orange-soft);cursor:pointer;font-weight:600}
+  /* requirements / notes */
+  .rc-text{margin-top:11px;font-size:13px;color:var(--soft);background:#fafbfc;border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+  .rc-text .rl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--dim);margin-bottom:2px}
+  .rc-text + .rc-text{margin-top:7px}
+  /* footer meta + actions */
+  .rc-foot{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+  .meta{font-size:12px;color:var(--dim)}.meta b{display:block;font-size:14px;color:var(--ink);font-weight:700;margin-top:1px}
+  .meta.price b{color:var(--orange-d);font-size:16px}
+  .rc-actions{margin-left:auto;display:flex;gap:9px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 15px;font-size:13px;color:var(--ink);cursor:pointer;font-weight:600}
+  .btn:hover{border-color:var(--orange);color:var(--orange-d)}
+  .btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}
+  .btn.primary:hover{background:var(--orange-d);color:#fff}
+  .btn.ghost{border-color:transparent;color:var(--soft)}
+  .empty{text-align:center;color:var(--dim);padding:50px 0;font-size:14px}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr}.side{position:static}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="logo"><span class="hex"><span>iG</span></span><div>iGVault<small data-zh="游戏价值">GAMER VALUE</small></div></div>
+    <div class="sp"></div>
+    <div class="lang" id="langBtn">🌐 <b>English</b> / USD</div>
+  </div>
+
+  <div class="wrap">
+    <!-- sidebar: boosting kept separate from product orders -->
+    <aside class="side">
+      <div class="navgrp">
+        <div class="gt">🧾 <span data-zh="订单">Orders</span></div>
+        <div class="navitem"><span data-zh="我的订单">My Orders</span></div>
+        <div class="navitem"><span data-zh="担保订单">Insured Orders</span></div>
+        <div class="navitem"><span data-zh="租号挂单">Rental Listings</span></div>
+      </div>
+      <div class="navgrp boost">
+        <div class="gt">🎮 <span data-zh="代练">Boosting</span></div>
+        <div class="navitem on"><span data-zh="我的需求">My Requests</span></div>
+      </div>
+      <div class="navgrp">
+        <div class="navitem"><span data-zh="消息">Messages</span><span class="dot"></span></div>
+        <div class="navitem"><span data-zh="个人资料">My Profile</span></div>
+        <div class="navitem"><span data-zh="帮助中心">Help Center</span></div>
+      </div>
+    </aside>
+
+    <!-- main -->
+    <main class="main">
+      <div class="pagehead">
+        <h1 data-zh="我的代练需求">My Boosting Requests</h1>
+        <span class="badge-new" data-zh="代练">Boosting</span>
+        <div class="sp"></div>
+        <button class="createbtn" data-zh="+ 发布需求">+ Create request</button>
+      </div>
+
+      <div class="tabsbar" id="tabsbar"></div>
+      <div class="filters">
+        <div class="fi">🔍 <span data-zh="需求编号 / 关键词">Request no. / keyword</span></div>
+        <div class="fi sel"><span data-zh="全部游戏">All games</span> <span>▾</span></div>
+      </div>
+      <div class="cards" id="cards"></div>
+    </main>
+  </div>
+
+<script>
+  var lang='en';
+  function t(o){return o?(lang=='zh'?o.zh:o.en):'';}
+
+  var STATUS={
+    await:{name:{en:'Awaiting offers',zh:'等待报价'},cls:'st-await'},
+    progress:{name:{en:'In progress',zh:'进行中'},cls:'st-progress'},
+    review:{name:{en:'Awaiting review',zh:'待验收'},cls:'st-review'},
+    done:{name:{en:'Completed',zh:'已完成'},cls:'st-done'},
+    dispute:{name:{en:'Refund & Dispute',zh:'退款 · 争议'},cls:'st-dispute'},
+    cancel:{name:{en:'Canceled',zh:'已取消'},cls:'st-cancel'}
+  };
+  var TABS=[
+    {id:'all',name:{en:'All',zh:'全部'}},
+    {id:'await',name:{en:'Awaiting offers',zh:'等待报价'}},
+    {id:'progress',name:{en:'In progress',zh:'进行中'}},
+    {id:'review',name:{en:'Awaiting review',zh:'待验收'}},
+    {id:'done',name:{en:'Completed',zh:'已完成'}},
+    {id:'refund',name:{en:'Refund & Dispute',zh:'退款 / 争议'},match:['dispute']}
+  ];
+
+  // Each request: universal fields fixed; game-specific base info lives in attrs[] (variable length).
+  var REQ=[
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
+     no:'BR20260814-0071',status:'await',offers:3,published:'2026-08-14 10:20',expires:'2026-08-17 10:20',price:'$18.00',limit:{en:'3 days',zh:'3 天'},
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Hardcore',zh:'赛季 · 硬核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Self-play',zh:'组队陪同'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 70',zh:'1 → 70'}},{l:{en:'Paragon',zh:'巅峰'},v:{en:'200',zh:'200'}},{l:{en:'Class',zh:'职业'},v:{en:'Sorcerer',zh:'法师'}}],
+     req:null,note:{en:'Evenings CET preferred.',zh:'尽量晚上(欧洲时间)。'}},
+
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Custom',zh:'自定义'},svc:{en:'Custom Request',zh:'自定义需求'},
+     no:'BR20260814-0068',status:'progress',offers:5,published:'2026-08-14 09:02',expires:'2026-08-15 09:02',started:'2026-08-14 09:20',estFinish:'2026-08-15 09:20',price:'$25.00',limit:{en:'24 hours',zh:'24 小时'},
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Softcore',zh:'赛季 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Piloted',zh:'上号代打'}}],
+     req:{en:'Battle pass to rank 90 + Tree of Whispers maxed for the week + all Altars of Lilith.',zh:'战令刷到 90 级 + 本周低语之树刷满 + 全部莉莉丝祭坛。'},
+     note:{en:'Please stream while on my account.',zh:'上号期间请开直播。'}},
+
+    {icon:'⚔️',game:{en:'World of Warcraft',zh:'魔兽世界'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
+     no:'BR20260812-0044',status:'done',offers:0,published:'2026-08-12 16:14',expires:'2026-08-19 16:14',started:'2026-08-12 16:40',finished:'2026-08-15 12:30',price:'$30.00',limit:{en:'7 days',zh:'7 天'},
+     attrs:[{l:{en:'Region',zh:'地区'},v:{en:'EU',zh:'欧盟'}},{l:{en:'Faction',zh:'阵营'},v:{en:'Horde',zh:'部落'}},{l:{en:'Realm',zh:'服务器'},v:{en:'Aegwynn',zh:'艾格温'}},{l:{en:'Class',zh:'职业'},v:{en:'Death Knight',zh:'死亡骑士'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 80',zh:'1 → 80'}}],
+     req:null,note:null},
+
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Bosses',zh:'Boss 代打'},svc:{en:'Uber / Lair Boss',zh:'Uber / 巢穴 Boss'},
+     no:'BR20260811-0031',status:'cancel',offers:0,published:'2026-08-11 13:40',expires:'2026-08-14 13:40',price:'$20.00',limit:{en:'3 days',zh:'3 天'},
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Eternal · Softcore',zh:'永久 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PS4/5',zh:'PS4/5'}},{l:{en:'Boss',zh:'Boss'},v:{en:'Duriel',zh:'杜瑞尔'}},{l:{en:'Kills',zh:'击杀次数'},v:{en:'10',zh:'10'}},{l:{en:'Difficulty',zh:'难度'},v:{en:'Torment 4',zh:'痛苦 4'}}],
+     req:null,note:null},
+
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Dungeons',zh:'副本'},svc:{en:'Pit Push',zh:'Pit 冲层'},
+     no:'BR20260814-0073',status:'review',offers:0,published:'2026-08-14 08:00',started:'2026-08-14 08:30',finished:'2026-08-14 15:10',price:'$22.00',limit:{en:'3 days',zh:'3 天'},
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Softcore',zh:'赛季 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Target',zh:'目标层'},v:{en:'Pit 100',zh:'Pit 100'}},{l:{en:'Runs',zh:'次数'},v:{en:'8',zh:'8'}}],
+     req:null,note:{en:'Seller submitted proof — please review and confirm.',zh:'卖家已提交交付凭证 —— 请查看并确认。'}},
+
+    {icon:'⚔️',game:{en:'World of Warcraft',zh:'魔兽世界'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
+     no:'BR20260809-0018',status:'dispute',offers:0,published:'2026-08-09 10:00',started:'2026-08-09 10:30',estFinish:'2026-08-12 10:30',price:'$28.00',limit:{en:'3 days',zh:'3 天'},
+     attrs:[{l:{en:'Region',zh:'地区'},v:{en:'US',zh:'美服'}},{l:{en:'Faction',zh:'阵营'},v:{en:'Alliance',zh:'联盟'}},{l:{en:'Class',zh:'职业'},v:{en:'Mage',zh:'法师'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 80',zh:'1 → 80'}}],
+     req:null,note:{en:'Result did not match — refund requested, under review.',zh:'完成情况不符 —— 已申请退款,平台审核中。'}}
+  ];
+
+  var curTab='all';
+  var CHIP_LIMIT=5;  // attrs beyond this collapse into "+N more"
+
+  function tabMatch(r,id){if(id=='all')return true;var tb=TABS.filter(function(x){return x.id==id;})[0];if(tb&&tb.match)return tb.match.indexOf(r.status)>=0;return r.status==id;}
+  function statusCount(id){return REQ.filter(function(r){return tabMatch(r,id);}).length;}
+  function renderTabs(){
+    document.getElementById('tabsbar').innerHTML=TABS.map(function(tb){
+      return '<div class="rtab'+(tb.id==curTab?' on':'')+'" data-id="'+tb.id+'">'+t(tb.name)+'<span class="cnt">'+statusCount(tb.id)+'</span></div>';
+    }).join('');
+  }
+  function chipHtml(a){return '<span class="chip">'+t(a.l)+': <b>'+t(a.v)+'</b></span>';}
+  function cardHtml(r){
+    var s=STATUS[r.status];
+    var shown=r.attrs.slice(0,CHIP_LIMIT).map(chipHtml).join('');
+    var extra=r.attrs.length>CHIP_LIMIT?'<span class="chip more" data-more="'+r.no+'">+'+(r.attrs.length-CHIP_LIMIT)+' '+(lang=='zh'?'更多':'more')+'</span>':'';
+    var reqTxt=r.req?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'需求要求':'Requirements')+'</div>'+t(r.req)+'</div>':'';
+    var noteTxt=r.note?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'备注':'Notes')+'</div>'+t(r.note)+'</div>':'';
+    var actions;
+    if(r.status=='await') actions='<button class="btn primary" data-zh="订单详情">Order details</button><button class="btn ghost" data-zh="取消">Cancel</button>';
+    else if(r.status=='progress') actions='<button class="btn primary" data-zh="订单详情">Order details</button><button class="btn" data-zh="联系卖家">Contact seller</button>';
+    else if(r.status=='review') actions='<button class="btn primary" data-zh="查看结果">View result</button><button class="btn" data-zh="联系卖家">Contact seller</button>';
+    else if(r.status=='done') actions='<button class="btn primary" data-zh="订单详情">Order details</button><button class="btn" data-zh="再发一单">Post again</button>';
+    else actions='<button class="btn primary" data-zh="订单详情">Order details</button><button class="btn" data-zh="再发一单">Post again</button>';
+    var M=function(label,val){return '<div class="meta">'+label+'<b>'+val+'</b></div>';};
+    var timeMetas;
+    if(r.status=='await') timeMetas=M(lang=='zh'?'发布时间':'Published',r.published)+M(lang=='zh'?'报价有效期至':'Offer valid until',r.expires);
+    else if(r.status=='progress') timeMetas=M(lang=='zh'?'开始时间':'Started',r.started)+M(lang=='zh'?'预计完成':'Est. finish',r.estFinish);
+    else if(r.status=='done') timeMetas=M(lang=='zh'?'开始时间':'Started',r.started)+M(lang=='zh'?'完成时间':'Completed',r.finished);
+    else if(r.status=='review') timeMetas=M(lang=='zh'?'开始时间':'Started',r.started)+M(lang=='zh'?'卖家已提交':'Submitted',r.finished);
+    else timeMetas=M(lang=='zh'?'发布时间':'Published',r.published);
+    var dv=r.attrs.filter(function(a){return a.l.en=='Delivery';})[0];
+    var subline=dv?(lang=='zh'?'完成方式: ':'Delivery: ')+t(dv.v):(lang=='zh'?'游戏平台: ':'Platform: ')+t((r.attrs.filter(function(a){return a.l.en=='Platform';})[0]||{v:{en:'—',zh:'—'}}).v);
+    var offersTag=(r.status=='await')?'<span>'+(lang=='zh'?'可用报价 ':'Offers ')+'<b>'+r.offers+'</b></span>':'';
+    return '<div class="rcard">'+
+      '<div class="oc-bar"><span>'+(lang=='zh'?'需求编号 ':'Request No. ')+'<b>'+r.no+'</b></span>'+
+        '<span>'+(lang=='zh'?'发布 ':'Posted ')+'<b>'+r.published+'</b></span>'+
+        '<span class="sp"></span>'+offersTag+'<span class="st '+s.cls+'">'+t(s.name)+'</span>'+
+        '<a class="oc-log" data-zh="查看详情">Details</a></div>'+
+      '<div class="rc-head"><div class="rc-icon">'+r.icon+'</div>'+
+        '<div class="rc-tt"><div class="rc-svc"><span class="gm">'+t(r.game)+' · '+t(r.cat)+' · </span>'+t(r.svc)+'</div>'+
+          '<div class="rc-no">'+subline+'</div></div></div>'+
+      '<div class="attrs">'+shown+extra+'</div>'+
+      reqTxt+noteTxt+
+      '<div class="rc-foot">'+
+        timeMetas+
+        '<div class="meta price">'+(lang=='zh'?'你的报价':'Your price')+'<b>'+r.price+'</b></div>'+
+        '<div class="meta">'+(lang=='zh'?'代练限时':'Time limit')+'<b>'+t(r.limit)+'</b></div>'+
+        '<div class="rc-actions">'+actions+'</div>'+
+      '</div></div>';
+  }
+  function renderCards(){
+    var list=REQ.filter(function(r){return tabMatch(r,curTab);});
+    var el=document.getElementById('cards');
+    el.innerHTML=list.length?list.map(cardHtml).join(''):'<div class="empty">'+(lang=='zh'?'该状态下暂无需求。':'No requests in this status.')+'</div>';
+  }
+  function renderAll(){renderTabs();renderCards();applyStaticLang();}
+
+  document.getElementById('tabsbar').addEventListener('click',function(e){var t=e.target.closest('.rtab');if(t){curTab=t.dataset.id;renderTabs();renderCards();}});
+  document.getElementById('cards').addEventListener('click',function(e){
+    var m=e.target.closest('.chip.more');
+    if(m){var r=REQ.filter(function(x){return x.no==m.dataset.more;})[0];if(r){var box=m.parentElement;box.innerHTML=r.attrs.map(chipHtml).join('');}}
+  });
+
+  /* language toggle (static labels via data-zh; dynamic via re-render) */
+  function applyStaticLang(){
+    document.querySelectorAll('[data-zh]').forEach(function(el){
+      if(!el.hasAttribute('data-en'))el.setAttribute('data-en',el.textContent);
+      el.textContent=lang=='zh'?el.getAttribute('data-zh'):el.getAttribute('data-en');
+    });
+    document.querySelector('#langBtn b').textContent=lang=='zh'?'中文':'English';
+  }
+  document.getElementById('langBtn').addEventListener('click',function(){lang=lang=='zh'?'en':'zh';renderAll();});
+
+  renderAll();
+</script>
+</body>
+</html>
