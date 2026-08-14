@@ -443,8 +443,8 @@
       </div>
       </div>
       <div class="escrow">🛡 <span><b data-zh="卖家已缴足额保证金">All boosters post a full deposit</b><span data-zh=":每位代练卖家入驻时一次性缴纳足额保证金,掉线 / 损号 / 违约将从保证金先行赔付——用真金白银为你的订单兜底。">: every booster pays a one-time full security deposit up front — forfeited on no-show or account damage, so your order is backed by real money.</span></span></div>
-      <button class="cta" id="getOffers">🏷 <span data-zh="获取报价">Get offers</span></button>
-      <div class="metaline" data-zh="同规格标品 · 多卖家比价,直接买最低价 · PC / 主机">Standardized spec · many sellers, one lowest price · PC &amp; console</div>
+      <button class="cta" id="getOffers">🏷 <span data-zh="$14.99 起 · 获取报价">From $14.99 · Get offers</span></button>
+      <div class="metaline" data-zh="同规格标品 · 多个卖家报价可选 · PC / 主机">Standardized spec · multiple seller offers · PC &amp; console</div>
       <div class="findcustom" id="findCustom">🔍 <span data-zh="没找到想要的?">Can't find what you want?</span> <a data-zh="发布自定义需求 →">Post a custom request →</a></div>
     </div>
   </div>
@@ -599,6 +599,17 @@
 
 <div class="toast" id="toast"></div>
 
+<div class="pmask" id="pubMask">
+  <div class="pmodal">
+    <div class="pic">📣</div>
+    <h3 data-zh="需求已发布">Request published</h3>
+    <div class="pbtns">
+      <button class="pbtn-primary" id="pubGoReq" data-zh="查看我的需求">Go to my request</button>
+      <button class="pbtn-secondary" id="pubMore" data-zh="去挑选更多商品">Browse more services</button>
+    </div>
+  </div>
+</div>
+
 <script>
   /* ---------- i18n ---------- */
   var lang='en';
@@ -744,7 +755,7 @@
   }
   function updateCTA(){var b=document.getElementById('getOffers');if(!b)return;
     if(curCat==='custom'){b.innerHTML='📣 <span>'+(lang=='zh'?'发布需求':'Publish request')+'</span>';}
-    else{b.innerHTML='🏷 <span>'+(lang=='zh'?'获取报价':'Get offers')+'</span>';}}
+    else{b.innerHTML='🏷 <span>'+(lang=='zh'?'$14.99 起 · 获取报价':'From $14.99 · Get offers')+'</span>';}}
   function reRenderCfg(){renderSubrow();renderConfig();}
   function refreshDelivery(){var modes=curSub?curSub.modes:['selfplay','piloted'],first=null;
     dopts.forEach(function(d){var ok=modes.indexOf(d.getAttribute('data-mode'))>=0;d.classList.toggle('hide',!ok);if(ok&&!first)first=d;});
@@ -976,16 +987,6 @@
 
   buildRecap();
 </script>
-<div class="pmask" id="pubMask">
-  <div class="pmodal">
-    <div class="pic">📣</div>
-    <h3 data-zh="需求已发布">Request published</h3>
-    <div class="pbtns">
-      <button class="pbtn-primary" id="pubGoReq" data-zh="查看我的需求">Go to my request</button>
-      <button class="pbtn-secondary" id="pubMore" data-zh="去挑选更多商品">Browse more services</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
