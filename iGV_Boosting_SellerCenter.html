@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iGV Seller · Boosting</title>
+<style>
+  :root{--ink:#20242e;--soft:#5f6673;--dim:#9198a4;--orange:#f1652a;--orange-d:#d9531c;--orange-soft:#fdeee7;
+    --blue:#2f6fe0;--blue-l:#eaf1fc;--green:#12855a;--green-l:#e5f3ec;--red:#d64545;--red-l:#fdecec;--amber:#b8860b;--amber-l:#fbf3df;
+    --line:#e9eaee;--bg:#f4f5f7;--card:#fff;--sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC",system-ui,sans-serif;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14.5px/1.6 var(--sans)}
+  a{color:inherit;text-decoration:none}
+  .hide{display:none!important}
+  .top{background:#fff;border-bottom:1px solid var(--line);height:64px;display:flex;align-items:center;padding:0 28px;gap:16px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:20px}
+  .logo .hex{width:30px;height:30px;background:var(--orange);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;transform:rotate(45deg)}
+  .logo .hex span{transform:rotate(-45deg)}
+  .logo small{display:block;font-size:8.5px;letter-spacing:.12em;color:var(--dim);font-weight:600}
+  .seller-tag{font-size:11px;font-weight:700;background:#2a2f3a;color:#fff;border-radius:6px;padding:3px 9px}
+  .top .sp{flex:1}
+  .lang{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:7px 12px;font-size:13px;color:var(--soft);cursor:pointer}.lang b{color:var(--ink)}
+  .wrap{max-width:1280px;margin:20px auto;padding:0 24px;display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start}
+  .side{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;position:sticky;top:20px}
+  .navgrp{padding:8px 6px 4px}
+  .navgrp .gt{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--dim);padding:6px 10px}
+  .navitem{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;font-size:14px;color:var(--soft);cursor:pointer;margin:1px 0}
+  .navitem:hover{background:var(--bg)}
+  .navitem.on{background:var(--orange-soft);color:var(--orange-d);font-weight:700}
+  .navitem .cnt{margin-left:auto;font-size:11px;background:var(--bg);color:var(--soft);border-radius:10px;padding:1px 8px}
+  .navitem.on .cnt{background:var(--orange);color:#fff}
+  .navgrp.boost{border:1px solid var(--orange-soft);background:#fffaf7;border-radius:11px;margin-top:6px}
+  .navgrp.boost .gt{color:var(--orange-d)}
+  .main{min-width:0}
+  .pagehead{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .pagehead h1{font-size:22px;margin:0}
+  .badge-new{font-size:10.5px;font-weight:700;background:var(--orange-soft);color:var(--orange-d);border-radius:6px;padding:2px 8px}
+  .subnote{color:var(--soft);font-size:12.5px;margin-bottom:16px}
+  /* filter / sort (hall) */
+  .filterbar{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:14px}
+  .frow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.frow+.frow{margin-top:10px}
+  .fi{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:13px;color:var(--soft);cursor:pointer}
+  .fi.sel{justify-content:space-between}
+  .flabel{font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.03em;margin-right:2px}
+  .pill{font-size:12.5px;border:1px solid var(--line);border-radius:20px;padding:6px 13px;color:var(--soft);cursor:pointer}
+  .pill.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-d);font-weight:600}
+  .sortrow{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;color:var(--soft)}
+  .sortpill{font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:6px 12px;color:var(--soft);cursor:pointer;background:#fff}
+  .sortpill.on{border-color:var(--orange);color:var(--orange-d);font-weight:600}
+  /* tabs (boosts) */
+  .tabsbar{background:#fff;border:1px solid var(--line);border-radius:14px 14px 0 0;border-bottom:none;padding:6px 16px 0;display:flex;gap:4px;overflow-x:auto}
+  .rtab{white-space:nowrap;padding:12px 14px;font-size:14px;color:var(--soft);cursor:pointer;border-bottom:2.5px solid transparent}
+  .rtab.on{color:var(--orange-d);font-weight:700;border-bottom-color:var(--orange)}
+  .rtab .cnt{font-size:11px;background:var(--bg);color:var(--soft);border-radius:10px;padding:1px 7px;margin-left:5px}
+  .rtab.on .cnt{background:var(--orange-soft);color:var(--orange-d)}
+  .cards{background:var(--bg);border:1px solid var(--line);border-top:none;border-radius:0 0 14px 14px;padding:14px}
+  /* cards */
+  .rcard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:13px}
+  .rcard:last-child{margin-bottom:0}
+  .rcard.hot{border-color:var(--orange);box-shadow:0 3px 14px rgba(241,101,42,.10)}
+  .rc-head{display:flex;align-items:flex-start;gap:12px}
+  .rc-icon{width:44px;height:44px;border-radius:10px;background:#2a2f3a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+  .rc-tt{min-width:0;flex:1}
+  .rc-svc{font-weight:700;font-size:15.5px}.rc-svc .gm{color:var(--soft);font-weight:600}
+  .rc-no{font-size:12px;color:var(--dim);margin-top:2px}
+  .rc-price{text-align:right;flex:none}
+  .rc-price .p{font-size:22px;font-weight:800;color:var(--orange-d);line-height:1.1}.rc-price .pl{font-size:11px;color:var(--dim)}
+  .hot-tag{display:inline-block;font-size:10px;font-weight:700;background:var(--red-l);color:var(--red);border-radius:5px;padding:1px 7px;margin-bottom:3px}
+  .attrs{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0 0}
+  .chip{font-size:12px;background:#f7f8fa;border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:var(--soft)}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip.more{color:var(--orange-d);border-color:var(--orange-soft);background:var(--orange-soft);cursor:pointer;font-weight:600}
+  .rc-text{margin-top:11px;font-size:13px;color:var(--soft);background:#fafbfc;border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+  .rc-text .rl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--dim);margin-bottom:2px}
+  .oc-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin:-2px 0 13px;font-size:12.5px;color:var(--soft)}
+  .oc-bar b{color:var(--ink);font-weight:600}.oc-bar .sp{flex:1}
+  .oc-log{color:var(--soft);cursor:pointer}.oc-log:hover{color:var(--orange-d)}
+  .due{display:inline-block;font-size:10px;font-weight:700;background:var(--red-l);color:var(--red);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+  .st{font-size:11.5px;font-weight:700;border-radius:20px;padding:3px 11px}
+  .st-progress{background:var(--orange-soft);color:var(--orange-d)}
+  .st-review{background:var(--amber-l);color:var(--amber)}
+  .st-done{background:var(--green-l);color:var(--green)}
+  .st-dispute{background:var(--red-l);color:var(--red)}
+  .st-cancel{background:#eef0f3;color:var(--soft)}
+  .buyer{font-size:12px;color:var(--soft)}.buyer b{color:var(--ink)}
+  .rc-foot{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+  .meta{font-size:12px;color:var(--dim)}.meta b{display:block;font-size:14px;color:var(--ink);font-weight:700;margin-top:1px}
+  .meta.warn b{color:var(--red)}
+  .rc-actions{margin-left:auto;display:flex;gap:9px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 16px;font-size:13px;color:var(--ink);cursor:pointer;font-weight:600}
+  .btn:hover{border-color:var(--orange);color:var(--orange-d)}
+  .btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}.btn.primary:hover{background:var(--orange-d);color:#fff}
+  .btn.ghost{border-color:transparent;color:var(--soft)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+  .empty{text-align:center;color:var(--dim);padding:50px 0}
+  /* modals */
+  .mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .mask.show{display:flex}
+  .modal{background:#fff;border-radius:16px;padding:24px 26px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal h3{margin:0 0 4px;font-size:19px}.modal .msub{color:var(--soft);font-size:13px;margin-bottom:16px}
+  .mrow{display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--line);gap:12px}
+  .mrow b{font-weight:700}.mrow.big b{color:var(--orange-d);font-size:16px}
+  .mdep{background:var(--green-l);color:var(--green);border-radius:9px;padding:10px 12px;font-size:12.5px;margin:14px 0 4px}
+  .mdep.warn{background:var(--red-l);color:var(--red)}
+  .req-star{color:var(--red);margin-right:3px}
+  .uparea{margin:6px 0 4px}.uplbl{font-size:13px;font-weight:700;margin-bottom:8px}
+  .updrop{border:1.5px dashed var(--line);border-radius:11px;padding:22px;text-align:center;color:var(--dim);cursor:pointer}
+  .updrop:hover{border-color:var(--orange);color:var(--orange-d)}.updrop .plus{font-size:30px;line-height:1}
+  .uphint{font-size:11.5px;color:var(--dim);margin-top:7px}
+  .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .thumb{width:66px;height:66px;border-radius:9px;background:#eef0f3;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:24px;position:relative}
+  .thumb .rm{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#20242e;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .upnote label{font-size:13px;font-weight:700;display:block;margin:10px 0 6px}
+  .upnote textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font:14px var(--sans);resize:vertical}
+  .mbtns{display:flex;gap:10px;margin-top:16px}.mbtns .btn{flex:1;text-align:center;padding:12px}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#20242e;color:#fff;padding:11px 20px;border-radius:10px;font-size:13.5px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
+  .toast.show{opacity:1}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr}.side{position:static}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="logo"><span class="hex"><span>iG</span></span><div>iGVault<small data-zh="游戏价值">GAMER VALUE</small></div></div>
+    <span class="seller-tag" data-zh="卖家中心">SELLER</span>
+    <div class="sp"></div>
+    <div class="lang" id="langBtn">🌐 <b>English</b> / USD</div>
+  </div>
+
+  <div class="wrap">
+    <aside class="side">
+      <div class="navgrp">
+        <div class="gt">🧾 <span data-zh="订单中心">Orders</span></div>
+        <div class="navitem"><span data-zh="我的订单">My Orders</span></div>
+        <div class="navitem"><span data-zh="保险单">Insured Orders</span></div>
+        <div class="navitem"><span data-zh="租赁订单">Rental Orders</span></div>
+      </div>
+      <div class="navgrp boost">
+        <div class="gt">🎮 <span data-zh="代练">Boosting</span></div>
+        <div class="navitem on" data-page="hall"><span data-zh="需求列表">Request List</span><span class="cnt" id="hallCnt">0</span></div>
+        <div class="navitem" data-page="boosts"><span data-zh="我的代练单">My Boosts</span><span class="cnt" id="myCnt">0</span></div>
+      </div>
+      <div class="navgrp">
+        <div class="gt">🛒 <span data-zh="产品中心">Products</span></div>
+        <div class="navitem"><span data-zh="我的在售">My Listings</span></div>
+        <div class="navitem"><span data-zh="产品订单">Product Orders</span></div>
+      </div>
+      <div class="navgrp">
+        <div class="navitem"><span data-zh="财务中心">Finance</span></div>
+        <div class="navitem"><span data-zh="消息中心">Messages</span></div>
+        <div class="navitem"><span data-zh="帮助中心">Help Center</span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- PAGE: Request List -->
+      <section id="page-hall">
+        <div class="pagehead"><h1 data-zh="需求列表">Request List</h1><span class="badge-new" data-zh="代练">Boosting</span></div>
+        <div class="subnote" data-zh="全平台买家发布的可接代练需求。接单前需缴纳足额保证金约束交付。">Open boosting requests from buyers across the platform. Accepting requires a full security deposit.</div>
+        <div class="filterbar">
+          <div class="frow">
+            <div class="fi search" style="flex:1;min-width:200px;color:var(--dim)">🔍 <span data-zh="订单号 / 关键词 / 发布者">Order no. / keyword / buyer</span></div>
+            <span class="flabel" data-zh="游戏">Game</span>
+            <div class="fi sel"><span data-zh="全部游戏">All games</span> ▾</div>
+          </div>
+          <div class="frow">
+            <span class="flabel" data-zh="价格">Price</span>
+            <span class="pill on" data-zh="不限">Any</span><span class="pill">$1–20</span><span class="pill">$20–50</span><span class="pill">$50–100</span><span class="pill" data-zh="$100 以上">$100+</span>
+            <span class="flabel" style="margin-left:8px" data-zh="递送方式">Delivery</span>
+            <span class="pill on" data-zh="全部">All</span><span class="pill" data-zh="组队陪同">Self-play</span><span class="pill" data-zh="上号代打">Piloted</span>
+          </div>
+        </div>
+        <div class="sortrow">
+          <span data-zh="排序:">Sort:</span>
+          <span class="sortpill on" data-zh="报价最高">Highest price</span>
+          <span class="sortpill" data-zh="快过期">Expiring soon</span>
+          <span class="sortpill" data-zh="最新发布">Newest</span>
+        </div>
+        <div id="hall"></div>
+      </section>
+
+      <!-- PAGE: My Boosts -->
+      <section id="page-boosts" class="hide">
+        <div class="pagehead"><h1 data-zh="我的代练单">My Boosts</h1><span class="badge-new" data-zh="代练">Boosting</span></div>
+        <div class="tabsbar" id="tabsbar"></div>
+        <div class="cards" id="cards"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="mask" id="acceptMask"><div class="modal" id="acceptModal"></div></div>
+  <div class="mask" id="proofMask"><div class="modal" id="proofModal"></div></div>
+  <div class="toast" id="toast"></div>
+
+<script>
+  var lang='en';
+  function t(o){return o?(lang=='zh'?o.zh:o.en):'';}
+  function toast(m){var el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},2200);}
+  var CHIP_LIMIT=5;
+  function chipHtml(a){return '<span class="chip">'+t(a.l)+': <b>'+t(a.v)+'</b></span>';}
+
+  /* ============ page switch ============ */
+  function switchPage(p){
+    document.getElementById('page-hall').classList.toggle('hide',p!='hall');
+    document.getElementById('page-boosts').classList.toggle('hide',p!='boosts');
+    document.querySelectorAll('.navitem[data-page]').forEach(function(n){n.classList.toggle('on',n.dataset.page==p);});
+    window.scrollTo(0,0);
+  }
+  document.querySelectorAll('.navitem[data-page]').forEach(function(n){n.addEventListener('click',function(){switchPage(n.dataset.page);});});
+
+  /* ============ Request List (hall) ============ */
+  var HALL=[
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
+     price:'$18.00',limit:{en:'3 days',zh:'3 天'},deliv:{en:'Self-play',zh:'组队陪同'},expires:{en:'6h 12m left',zh:'剩 6 小时 12 分'},hot:false,no:'BR20260814-0071',published:'2026-08-14 10:20',
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Hardcore',zh:'赛季 · 硬核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Self-play',zh:'组队陪同'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 70',zh:'1 → 70'}},{l:{en:'Paragon',zh:'巅峰'},v:{en:'200',zh:'200'}},{l:{en:'Class',zh:'职业'},v:{en:'Sorcerer',zh:'法师'}}],
+     req:null,note:{en:'Evenings CET preferred.',zh:'尽量晚上(欧洲时间)。'}},
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Custom',zh:'自定义'},svc:{en:'Custom Request',zh:'自定义需求'},
+     price:'$25.00',limit:{en:'24 hours',zh:'24 小时'},deliv:{en:'Piloted',zh:'上号代打'},expires:{en:'2h 40m left',zh:'剩 2 小时 40 分'},hot:true,no:'BR20260814-0069',published:'2026-08-14 09:02',
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Softcore',zh:'赛季 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Piloted',zh:'上号代打'}}],
+     req:{en:'Battle pass to rank 90 + Tree of Whispers maxed + all Altars of Lilith.',zh:'战令刷到 90 级 + 低语之树刷满 + 全部莉莉丝祭坛。'},note:{en:'Please stream while on my account.',zh:'上号期间请开直播。'}},
+    {icon:'⚔️',game:{en:'World of Warcraft',zh:'魔兽世界'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
+     price:'$30.00',limit:{en:'7 days',zh:'7 天'},deliv:{en:'Piloted',zh:'上号代打'},expires:{en:'1d 3h left',zh:'剩 1 天 3 小时'},hot:false,no:'BR20260814-0066',published:'2026-08-14 08:15',
+     attrs:[{l:{en:'Region',zh:'地区'},v:{en:'EU',zh:'欧盟'}},{l:{en:'Faction',zh:'阵营'},v:{en:'Horde',zh:'部落'}},{l:{en:'Realm',zh:'服务器'},v:{en:'Aegwynn',zh:'艾格温'}},{l:{en:'Class',zh:'职业'},v:{en:'Death Knight',zh:'死亡骑士'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 80',zh:'1 → 80'}}],
+     req:null,note:null},
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Bosses',zh:'Boss 代打'},svc:{en:'Uber / Lair Boss',zh:'Uber / 巢穴 Boss'},
+     price:'$20.00',limit:{en:'3 days',zh:'3 天'},deliv:{en:'Self-play',zh:'组队陪同'},expires:{en:'18h left',zh:'剩 18 小时'},hot:false,no:'BR20260814-0063',published:'2026-08-14 07:30',
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Eternal · Softcore',zh:'永久 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PS4/5',zh:'PS4/5'}},{l:{en:'Boss',zh:'Boss'},v:{en:'Duriel',zh:'杜瑞尔'}},{l:{en:'Kills',zh:'击杀次数'},v:{en:'10',zh:'10'}},{l:{en:'Difficulty',zh:'难度'},v:{en:'Torment 4',zh:'痛苦 4'}}],
+     req:null,note:null}
+  ];
+  document.getElementById('hallCnt').textContent=HALL.length;
+
+  function hallCard(r,i){
+    var shown=r.attrs.slice(0,CHIP_LIMIT).map(chipHtml).join('');
+    var extra=r.attrs.length>CHIP_LIMIT?'<span class="chip more" data-more="'+i+'">+'+(r.attrs.length-CHIP_LIMIT)+' '+(lang=='zh'?'更多':'more')+'</span>':'';
+    var reqTxt=r.req?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'需求要求':'Requirements')+'</div>'+t(r.req)+'</div>':'';
+    var noteTxt=r.note?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'备注':'Notes')+'</div>'+t(r.note)+'</div>':'';
+    return '<div class="rcard'+(r.hot?' hot':'')+'">'+
+      '<div class="rc-head"><div class="rc-icon">'+r.icon+'</div>'+
+        '<div class="rc-tt"><div class="rc-svc"><span class="gm">'+t(r.game)+' · '+t(r.cat)+' · </span>'+t(r.svc)+'</div>'+
+          '<div class="rc-no">'+(lang=='zh'?'订单编号:':'Order No.: ')+r.no+' · '+(lang=='zh'?'发布':'Posted')+' '+r.published+'</div></div>'+
+        '<div class="rc-price">'+(r.hot?'<span class="hot-tag">'+(lang=='zh'?'即将过期':'Expiring')+'</span><br>':'')+'<div class="p">'+r.price+'</div><div class="pl">'+(lang=='zh'?'买家报价':'buyer price')+'</div></div></div>'+
+      '<div class="attrs">'+shown+extra+'</div>'+reqTxt+noteTxt+
+      '<div class="rc-foot">'+
+        '<div class="meta">'+(lang=='zh'?'完成方式':'Delivery')+'<b>'+t(r.deliv)+'</b></div>'+
+        '<div class="meta">'+(lang=='zh'?'代练限时':'Time limit')+'<b>'+t(r.limit)+'</b></div>'+
+        '<div class="meta warn">'+(lang=='zh'?'报价有效期':'Offer expires')+'<b>'+t(r.expires)+'</b></div>'+
+        '<div class="rc-actions"><button class="btn" data-chat="'+i+'" data-zh="聊一聊">Chat</button><button class="btn primary" data-accept="'+i+'" data-zh="接单">Accept</button></div>'+
+      '</div></div>';
+  }
+  function renderHall(){document.getElementById('hall').innerHTML=HALL.map(hallCard).join('');}
+  document.getElementById('hall').addEventListener('click',function(e){
+    var m=e.target.closest('.chip.more');if(m){var r=HALL[+m.dataset.more];m.parentElement.innerHTML=r.attrs.map(chipHtml).join('');return;}
+    var a=e.target.closest('[data-accept]');if(a){openAccept(HALL[+a.dataset.accept]);return;}
+    var c=e.target.closest('[data-chat]');if(c){toast(lang=='zh'?'打开与买家的聊天(原型略)':'Open chat with buyer (stub)');return;}
+  });
+  function openAccept(r){
+    var attrRows=r.attrs.map(function(a){return '<div class="mrow"><span>'+t(a.l)+'</span><b>'+t(a.v)+'</b></div>';}).join('');
+    document.getElementById('acceptModal').innerHTML=
+      '<h3>'+(lang=='zh'?'确认接单':'Confirm accept')+'</h3>'+
+      '<div class="msub">'+t(r.game)+' · '+t(r.cat)+' · '+t(r.svc)+'</div>'+
+      '<div class="mrow big"><span>'+(lang=='zh'?'成交价':'Order price')+'</span><b>'+r.price+'</b></div>'+
+      attrRows+
+      '<div class="mrow"><span>'+(lang=='zh'?'代练限时':'Time limit')+'</span><b>'+t(r.limit)+'</b></div>'+
+      (r.req?'<div class="mrow"><span>'+(lang=='zh'?'需求要求':'Requirements')+'</span><b style="max-width:58%;text-align:right;font-weight:600">'+t(r.req)+'</b></div>':'')+
+      (r.note?'<div class="mrow"><span>'+(lang=='zh'?'备注':'Notes')+'</span><b style="max-width:58%;text-align:right;font-weight:600">'+t(r.note)+'</b></div>':'')+
+      '<div class="mdep warn">⚠️ '+(lang=='zh'?'请确认你有能力在限时内完成再接单。若超时未完成,或完成情况不符合预期导致买家退款,你可能被处以罚款。':'Only accept if you can finish within the time limit. If you miss the deadline, or the result falls short and the buyer is refunded, you may be fined.')+'</div>'+
+      '<div class="mbtns"><button class="btn" id="mCancel" data-zh="再想想">Cancel</button><button class="btn primary" id="mConfirm" data-zh="确认接单">Confirm &amp; accept</button></div>';
+    document.getElementById('acceptMask').classList.add('show');applyStaticLang();
+    document.getElementById('mCancel').onclick=function(){document.getElementById('acceptMask').classList.remove('show');};
+    document.getElementById('mConfirm').onclick=function(){document.getElementById('acceptMask').classList.remove('show');toast(lang=='zh'?'接单成功!已进入「我的代练单」,计时开始':'Accepted! Moved to My Boosts — clock started');};
+  }
+  document.getElementById('acceptMask').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+
+  /* ============ My Boosts ============ */
+  var STATUS={
+    progress:{name:{en:'In progress',zh:'进行中'},cls:'st-progress'},
+    review:{name:{en:'Awaiting review',zh:'待买家验收'},cls:'st-review'},
+    done:{name:{en:'Completed',zh:'已完成'},cls:'st-done'},
+    dispute:{name:{en:'Dispute',zh:'争议 · 售后'},cls:'st-dispute'},
+    cancel:{name:{en:'Canceled',zh:'已取消'},cls:'st-cancel'}
+  };
+  var TABS=[
+    {id:'all',name:{en:'All',zh:'全部'}},
+    {id:'progress',name:{en:'In progress',zh:'进行中'}},
+    {id:'review',name:{en:'Awaiting review',zh:'待验收'}},
+    {id:'done',name:{en:'Completed',zh:'已完成'}},
+    {id:'refund',name:{en:'Refund & Dispute',zh:'退款 / 争议'},match:['dispute','cancel']}
+  ];
+  var MY=[
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Custom',zh:'自定义'},svc:{en:'Custom Request',zh:'自定义需求'},
+     no:'BR20260814-0068',status:'progress',buyer:'D***rex',price:'$25.00',dueSoon:true,started:'2026-08-14 09:20',estFinish:'2026-08-15 09:20',deliv:{en:'Piloted',zh:'上号代打'},
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Softcore',zh:'赛季 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Piloted',zh:'上号代打'}}],
+     req:{en:'Battle pass to rank 90 + Tree of Whispers maxed + all Altars.',zh:'战令 90 级 + 低语之树刷满 + 全祭坛。'},note:{en:'Stream while on account.',zh:'上号请开直播。'}},
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
+     no:'BR20260814-0071',status:'progress',buyer:'A***n88',price:'$18.00',started:'2026-08-14 11:05',estFinish:'2026-08-17 11:05',deliv:{en:'Self-play',zh:'组队陪同'},
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Hardcore',zh:'赛季 · 硬核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 70',zh:'1 → 70'}},{l:{en:'Paragon',zh:'巅峰'},v:{en:'200',zh:'200'}},{l:{en:'Class',zh:'职业'},v:{en:'Sorcerer',zh:'法师'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Self-play',zh:'组队陪同'}}],
+     req:null,note:{en:'Evenings CET.',zh:'欧洲时间晚上。'}},
+    {icon:'⚔️',game:{en:'World of Warcraft',zh:'魔兽世界'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
+     no:'BR20260813-0052',status:'review',buyer:'K***illa',price:'$30.00',started:'2026-08-13 20:10',estFinish:'2026-08-16 20:10',deliv:{en:'Piloted',zh:'上号代打'},
+     attrs:[{l:{en:'Region',zh:'地区'},v:{en:'EU',zh:'欧盟'}},{l:{en:'Faction',zh:'阵营'},v:{en:'Horde',zh:'部落'}},{l:{en:'Realm',zh:'服务器'},v:{en:'Aegwynn',zh:'艾格温'}},{l:{en:'Class',zh:'职业'},v:{en:'Death Knight',zh:'死亡骑士'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 80',zh:'1 → 80'}}],
+     req:null,note:null,autoConfirm:{en:'Auto-confirms in 2d 4h',zh:'2 天 4 小时后自动确认'}},
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Bosses',zh:'Boss 代打'},svc:{en:'Uber / Lair Boss',zh:'Uber / 巢穴 Boss'},
+     no:'BR20260810-0028',status:'done',buyer:'M***oz',price:'$20.00',started:'2026-08-10 14:00',finished:'2026-08-11 09:30',deliv:{en:'Self-play',zh:'组队陪同'},
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Eternal · Softcore',zh:'永久 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PS4/5',zh:'PS4/5'}},{l:{en:'Boss',zh:'Boss'},v:{en:'Duriel',zh:'杜瑞尔'}},{l:{en:'Kills',zh:'击杀次数'},v:{en:'10',zh:'10'}}],
+     req:null,note:null},
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Dungeons',zh:'副本'},svc:{en:'Pit Push',zh:'Pit 冲层'},
+     no:'BR20260809-0019',status:'dispute',buyer:'R***7',price:'$22.00',started:'2026-08-09 12:00',estFinish:'2026-08-12 12:00',deliv:{en:'Piloted',zh:'上号代打'},
+     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Softcore',zh:'赛季 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Target',zh:'目标层'},v:{en:'Pit 100',zh:'Pit 100'}},{l:{en:'Runs',zh:'次数'},v:{en:'8',zh:'8'}}],
+     req:null,note:{en:'Buyer opened a dispute — submit your proof.',zh:'买家发起争议 —— 请提交凭证。'}}
+  ];
+  document.getElementById('myCnt').textContent=MY.length;
+  var curTab='all';
+
+  function tabMatch(r,id){if(id=='all')return true;var tb=TABS.filter(function(x){return x.id==id;})[0];if(tb&&tb.match)return tb.match.indexOf(r.status)>=0;return r.status==id;}
+  function count(id){return MY.filter(function(r){return tabMatch(r,id);}).length;}
+  function renderTabs(){
+    document.getElementById('tabsbar').innerHTML=TABS.map(function(tb){
+      return '<div class="rtab'+(tb.id==curTab?' on':'')+'" data-id="'+tb.id+'">'+t(tb.name)+'<span class="cnt">'+count(tb.id)+'</span></div>';
+    }).join('');
+  }
+  function boostCard(r,i){
+    var s=STATUS[r.status];
+    var shown=r.attrs.slice(0,CHIP_LIMIT).map(chipHtml).join('');
+    var extra=r.attrs.length>CHIP_LIMIT?'<span class="chip more" data-more="'+i+'">+'+(r.attrs.length-CHIP_LIMIT)+' '+(lang=='zh'?'更多':'more')+'</span>':'';
+    var reqTxt=r.req?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'需求要求':'Requirements')+'</div>'+t(r.req)+'</div>':'';
+    var noteTxt=r.note?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'备注':'Notes')+'</div>'+t(r.note)+'</div>':'';
+    var timeM;
+    if(r.status=='done') timeM='<div class="meta">'+(lang=='zh'?'开始时间':'Started')+'<b>'+r.started+'</b></div><div class="meta">'+(lang=='zh'?'完成时间':'Completed')+'<b>'+r.finished+'</b></div>';
+    else{var due=(r.dueSoon?' <span class="due">'+(lang=='zh'?'临期 24h':'Due soon')+'</span>':'');
+      timeM='<div class="meta">'+(lang=='zh'?'开始时间':'Started')+'<b>'+r.started+'</b></div><div class="meta">'+(lang=='zh'?'预计完成':'Est. finish')+'<b>'+r.estFinish+due+'</b></div>';}
+    var payM='<div class="meta">'+(lang=='zh'?'订单金额':'Amount paid')+'<b>'+r.price+'</b></div>';
+    var act;
+    if(r.status=='progress') act='<button class="btn" data-chat="'+i+'" data-zh="联系买家">Contact buyer</button><button class="btn primary" data-done="'+i+'" data-zh="标记完成">Mark done</button>';
+    else if(r.status=='review') act='<span class="buyer">'+t(r.autoConfirm)+'</span><button class="btn" data-chat="'+i+'" data-zh="联系买家">Contact buyer</button>';
+    else if(r.status=='done') act='';
+    else if(r.status=='dispute') act='<button class="btn" data-zh="查看争议">View dispute</button><button class="btn primary" data-zh="提交凭证">Submit proof</button>';
+    else act='<button class="btn ghost" data-zh="查看详情">Details</button>';
+    return '<div class="rcard">'+
+      '<div class="oc-bar"><span>'+(lang=='zh'?'接单时间 ':'Accepted ')+'<b>'+r.started+'</b></span>'+
+        '<span>'+(lang=='zh'?'订单编号 ':'Order No. ')+'<b>'+r.no+'</b></span>'+
+        '<span>'+(lang=='zh'?'买家 ':'Buyer ')+'<b>'+r.buyer+'</b></span>'+
+        '<span class="sp"></span><span class="st '+s.cls+'">'+t(s.name)+'</span>'+
+        '<a class="oc-log" data-zh="事件日志">Event log</a></div>'+
+      '<div class="rc-head"><div class="rc-icon">'+r.icon+'</div>'+
+        '<div class="rc-tt"><div class="rc-svc"><span class="gm">'+t(r.game)+' · '+t(r.cat)+' · </span>'+t(r.svc)+'</div>'+
+          '<div class="rc-no">'+(lang=='zh'?'完成方式:':'Delivery: ')+t(r.deliv)+'</div></div></div>'+
+      '<div class="attrs">'+shown+extra+'</div>'+reqTxt+noteTxt+
+      '<div class="rc-foot">'+timeM+payM+(act?'<div class="rc-actions">'+act+'</div>':'')+'</div></div>';
+  }
+  function renderCards(){
+    var list=MY.filter(function(r){return tabMatch(r,curTab);});
+    document.getElementById('cards').innerHTML=list.length?list.map(function(r){return boostCard(r,MY.indexOf(r));}).join(''):'<div class="empty">'+(lang=='zh'?'该状态下暂无代练单。':'No boosts in this status.')+'</div>';
+  }
+  document.getElementById('tabsbar').addEventListener('click',function(e){var x=e.target.closest('.rtab');if(x){curTab=x.dataset.id;renderTabs();renderCards();}});
+  document.getElementById('cards').addEventListener('click',function(e){
+    var m=e.target.closest('.chip.more');if(m){var r=MY[+m.dataset.more];m.parentElement.innerHTML=r.attrs.map(chipHtml).join('');return;}
+    var d=e.target.closest('[data-done]');if(d){openProof(MY[+d.dataset.done]);return;}
+    var c=e.target.closest('[data-chat]');if(c){toast(lang=='zh'?'打开与买家的聊天(原型略)':'Open chat with buyer (stub)');return;}
+  });
+
+  /* mark-done proof modal (image required) */
+  var proofImgs=0;
+  function openProof(r){
+    proofImgs=0;
+    document.getElementById('proofModal').innerHTML=
+      '<h3>'+(lang=='zh'?'标记完成 · 上传交付凭证':'Mark done · delivery proof')+'</h3>'+
+      '<div class="msub">'+t(r.game)+' · '+t(r.svc)+' · '+t(r.limit?r.limit:{en:'',zh:''})+'</div>'+
+      '<div class="uparea"><div class="uplbl"><span class="req-star">*</span>'+(lang=='zh'?'交付凭证截图 / 视频':'Delivery proof (screenshot / video)')+'</div>'+
+        '<div class="updrop" id="upDrop"><div class="plus">+</div><div>'+(lang=='zh'?'点击上传':'Click to upload')+'</div></div>'+
+        '<div class="uphint">'+(lang=='zh'?'最多 6 个文件,含视频(视频 < 20MB,MP4)。至少上传 1 张图片。':'Up to 6 files incl. video (video < 20MB, MP4). At least 1 image required.')+'</div>'+
+        '<div class="thumbs" id="upThumbs"></div></div>'+
+      '<div class="upnote"><label>'+(lang=='zh'?'其他备注说明(可选)':'Other notes (optional)')+'</label><textarea rows="3" placeholder="'+(lang=='zh'?'请输入':'Type here')+'"></textarea></div>'+
+      '<div class="mbtns"><button class="btn" id="pfCancel" data-zh="取消">Cancel</button><button class="btn primary" id="pfSubmit" disabled data-zh="提交并完成">Submit &amp; finish</button></div>';
+    document.getElementById('proofMask').classList.add('show');applyStaticLang();
+    document.getElementById('upDrop').onclick=addImg;
+    document.getElementById('pfCancel').onclick=function(){document.getElementById('proofMask').classList.remove('show');};
+    document.getElementById('pfSubmit').onclick=function(){if(proofImgs<1)return;document.getElementById('proofMask').classList.remove('show');toast(lang=='zh'?'已提交交付凭证,进入待买家验收':'Proof submitted — awaiting buyer review');};
+  }
+  function addImg(){
+    if(proofImgs>=6)return;proofImgs++;
+    var box=document.getElementById('upThumbs');
+    var d=document.createElement('div');d.className='thumb';d.innerHTML='🖼<span class="rm">✕</span>';
+    d.querySelector('.rm').onclick=function(ev){ev.stopPropagation();d.remove();proofImgs--;refreshSubmit();};
+    box.appendChild(d);refreshSubmit();
+  }
+  function refreshSubmit(){document.getElementById('pfSubmit').disabled=proofImgs<1;}
+  document.getElementById('proofMask').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+
+  /* ============ language ============ */
+  function applyStaticLang(){
+    document.querySelectorAll('[data-zh]').forEach(function(el){
+      if(!el.hasAttribute('data-en'))el.setAttribute('data-en',el.textContent);
+      el.textContent=lang=='zh'?el.getAttribute('data-zh'):el.getAttribute('data-en');
+    });
+    document.querySelector('#langBtn b').textContent=lang=='zh'?'中文':'English';
+  }
+  function renderAll(){renderHall();renderTabs();renderCards();applyStaticLang();}
+  document.getElementById('langBtn').addEventListener('click',function(){lang=lang=='zh'?'en':'zh';renderAll();});
+
+  renderAll();
+</script>
+</body>
+</html>
