@@ -82,6 +82,15 @@
   .modetog{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex:none}
   .modetog .mt{font-size:11px;font-weight:700;padding:3px 7px;cursor:pointer;color:var(--soft);background:#f7f8fa;user-select:none}
   .modetog .mt.on{background:var(--orange);color:#fff}
+  .segin{border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;font:14px var(--sans);text-align:center}
+  .segin:focus{outline:none;border-color:var(--orange)}
+  .uin .segin{border:none;text-align:right;padding:0}
+  .segdel{border:none;background:none;color:var(--red);cursor:pointer;font-size:14px;padding:4px}
+  .segdel:hover{color:var(--orange-d)}
+  .subc{font-size:14px;white-space:nowrap}
+  .segmsg{margin-top:10px;border-radius:9px;padding:9px 12px;font-size:12.5px;display:flex;gap:8px;align-items:flex-start}
+  .segmsg.ok{background:var(--green-l);color:var(--green)}
+  .segmsg.err{background:var(--red-l);color:var(--red);flex-direction:column;gap:4px}
   /* live preview */
   .preview{border:1.5px solid var(--orange);border-radius:12px;padding:16px;background:linear-gradient(180deg,#fff,#fffaf7)}
   .preview .pvh{font-weight:800;font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
@@ -248,23 +257,23 @@
         <div id="tpl-lvl">
         <p class="sub" data-zh="升级:填分段单价 + 系数,系统自动累加 base。">Leveling: fill segment unit prices + coefficients; the base is auto-summed.</p>
 
-        <!-- base: segmented unit prices -->
+        <!-- base: seller-defined custom segments -->
         <div class="pricebox">
-          <div class="pbh"><span data-zh="① 基础价 · 分段单价">① Base · segment unit prices</span><span class="tag-model" data-zh="分段线性">segmented</span></div>
-          <div class="pbs" data-zh="每一段「每级」的价格,尾段更贵。系统按你填的单价自动累加成 base。">Price per level in each band (tail bands cost more). The base is auto-summed from your unit prices.</div>
-          <table class="segtable">
-            <thead><tr><th data-zh="等级段">Level band</th><th data-zh="每级单价">Unit / level</th><th data-zh="该段小计">Band subtotal</th></tr></thead>
-            <tbody>
-              <tr><td class="band"><b>1 – 50</b></td><td class="unit"><div class="uin"><span class="c">$</span><input id="seg0" value="0.20"><span class="per">/lvl</span></div></td><td id="sub0">$9.80</td></tr>
-              <tr><td class="band"><b>50 – 65</b></td><td class="unit"><div class="uin"><span class="c">$</span><input id="seg1" value="0.45"><span class="per">/lvl</span></div></td><td id="sub1">$6.75</td></tr>
-              <tr class="tail"><td class="band"><b>65 – 70</b> · <span data-zh="尾段">tail</span></td><td class="unit"><div class="uin"><span class="c">$</span><input id="seg2" value="0.90"><span class="per">/lvl</span></div></td><td id="sub2">$4.50</td></tr>
-            </tbody>
+          <div class="pbh"><span data-zh="① 基础价 · 自定义分段单价">① Base · custom segment prices</span><span class="tag-model" data-zh="分段线性">segmented</span></div>
+          <div class="pbs" data-zh="自己定义等级段与每段单价。必须从 1 起、相邻段首尾相接、覆盖到上限,否则无法发布。">Define your own bands and per-level prices. Must start at 1, be seamless, and reach the cap — otherwise you can't publish.</div>
+          <table class="segtable" style="table-layout:fixed">
+            <thead><tr><th style="width:78px" data-zh="起始">From</th><th style="width:78px" data-zh="结束">To</th><th data-zh="每级单价">Unit / level</th><th style="width:88px" data-zh="小计">Subtotal</th><th style="width:34px"></th></tr></thead>
+            <tbody id="segBody"></tbody>
           </table>
-          <div class="exline"><span data-zh="示例:1 → 70 满级 base =">Example: 1 → 70 base =</span> <b id="segEx">$21.05</b> · <span class="usereco" id="useReco" data-zh="用平台推荐值">Use platform suggestion</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:12px;flex-wrap:wrap">
+            <button class="btn" id="addSeg" style="padding:7px 14px;font-size:13px"><span data-zh="+ 增加一段">+ Add segment</span></button>
+            <span class="exline" style="margin:0"><span data-zh="覆盖">covers</span> <b id="segCover">1 → 70</b> · <span data-zh="示例 base">base</span> <b id="segEx">$21.05</b> · <span class="usereco" id="useReco" data-zh="用平台推荐值">Use platform suggestion</span></span>
+          </div>
+          <div id="segMsg" class="segmsg ok"></div>
         </div>
 
         <!-- paragon add-on -->
-        <div class="pricebox">
+        <div class="pricebox" id="paragonBox">
           <div class="pbh"><span data-zh="② 巅峰(Paragon)· 每级单价">② Paragon · unit per level</span><span class="tag-model" data-zh="线性增量">linear add-on</span></div>
           <div class="pbs" data-zh="买家若加买巅峰等级,按每级单价线性累加。">If the buyer adds Paragon levels, they're added linearly at this unit price.</div>
           <div class="coefgrid"><div class="cl" data-zh="每巅峰级单价">Per Paragon level</div><div class="coefin"><span class="x">$</span><input id="segP" value="0.08"></div></div>
@@ -379,6 +388,131 @@
         <div id="tpl-na" class="hide">
           <div class="note" id="naNote">—</div>
         </div>
+
+        <div id="tpl-bundle" class="hide">
+          <p class="sub" data-zh="组合包 = Power Leveling + Paragon 两张自定义分段卡放在一起,整包共用属性系数,再打一个捆绑折扣。两段各自都要闭合。">Bundle = the Power Leveling and Paragon custom-segment cards together, sharing coefficients, plus a bundle discount. Each card must be closed.</p>
+
+          <!-- composition: two custom-segment editors -->
+          <div class="pricebox">
+            <div class="pbh"><span data-zh="① 组成 · Power Leveling 分段(1 → 70)">① Power Leveling segments (1 → 70)</span><span class="tag-model" data-zh="自定义分段">segmented</span></div>
+            <table class="segtable" style="table-layout:fixed">
+              <thead><tr><th style="width:78px" data-zh="起始">From</th><th style="width:78px" data-zh="结束">To</th><th data-zh="每级单价">Unit / level</th><th style="width:88px" data-zh="小计">Subtotal</th><th style="width:34px"></th></tr></thead>
+              <tbody id="bunLBody"></tbody>
+            </table>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:12px;flex-wrap:wrap">
+              <button class="btn" id="bunLAdd" style="padding:7px 14px;font-size:13px"><span data-zh="+ 增加一段">+ Add segment</span></button>
+              <span class="exline" style="margin:0"><span data-zh="练级 base">Leveling base</span> <b id="bunLEx">$21.05</b></span>
+            </div>
+            <div id="bunLMsg" class="segmsg ok"></div>
+          </div>
+
+          <div class="pricebox">
+            <div class="pbh"><span data-zh="② 组成 · Paragon 分段(1 → 300)">② Paragon segments (1 → 300)</span><span class="tag-model" data-zh="自定义分段">segmented</span></div>
+            <table class="segtable" style="table-layout:fixed">
+              <thead><tr><th style="width:78px" data-zh="起始">From</th><th style="width:78px" data-zh="结束">To</th><th data-zh="每级单价">Unit / level</th><th style="width:88px" data-zh="小计">Subtotal</th><th style="width:34px"></th></tr></thead>
+              <tbody id="bunPBody"></tbody>
+            </table>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:12px;flex-wrap:wrap">
+              <button class="btn" id="bunPAdd" style="padding:7px 14px;font-size:13px"><span data-zh="+ 增加一段">+ Add segment</span></button>
+              <span class="exline" style="margin:0"><span data-zh="巅峰 base">Paragon base</span> <b id="bunPEx">$21.90</b></span>
+            </div>
+            <div id="bunPMsg" class="segmsg ok"></div>
+          </div>
+
+          <!-- bundle's own attribute coefficients (not reused) -->
+          <div class="pricebox">
+            <div class="pbh"><span data-zh="③ 捆绑专用属性系数(独立填写)">③ Bundle's own coefficients (filled separately)</span></div>
+            <div class="pbs" data-zh="这套系数只用于组合包,不复用单卡。把它设得比单卡更低,就形成套餐优惠(下方实时对比)。每条可选 × 系数 或 +$ 固定。">These coefficients apply only to the bundle, not the single cards. Set them lower than the single cards to create the bundle saving (compared live below). Each row can be × or +$.</div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--soft);margin:6px 0 8px" data-zh="区服 / 模式">Realm / mode</div>
+            <div class="coefgrid">
+              <div class="cl" data-zh="赛季 · 软核 <small>(基准)</small>">Seasonal · SC <small>(baseline)</small></div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="gRealmSS" value="1.00"></div>
+              <div class="cl" data-zh="赛季 · 硬核">Seasonal · HC</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="gRealmSH" value="1.25"></div>
+              <div class="cl" data-zh="永久 · 软核">Eternal · SC</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="gRealmES" value="0.90"></div>
+              <div class="cl" data-zh="永久 · 硬核">Eternal · HC</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="gRealmEH" value="1.20"></div>
+            </div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--soft);margin:14px 0 8px" data-zh="完成方式 / 职业 / 加急">Delivery / class / rush</div>
+            <div class="coefgrid">
+              <div class="cl" data-zh="组队陪同 <small>(基准)</small>">Self-play <small>(baseline)</small></div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="gSelf" value="1.00"></div>
+              <div class="cl" data-zh="上号代打">Piloted</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="gPiloted" value="1.10"></div>
+              <div class="cl" data-zh="职业系数">Class</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="gClass" value="1.00"></div>
+              <div class="cl" data-zh="加急">Rush</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="gRush" value="1.35"></div>
+            </div>
+          </div>
+
+          <!-- preview: separate vs bundle -->
+          <div class="preview">
+            <div class="pvh">🧮 <span data-zh="实时预览 · 分开买 vs 捆绑">Live preview · separate vs bundle</span></div>
+            <div class="pvrow">
+              <div class="pvf"><label data-zh="区服 / 模式">Realm / mode</label><select class="in" id="bndRealm"><option value="ss" data-zh="赛季·软核">Seasonal·SC</option><option value="sh" data-zh="赛季·硬核">Seasonal·HC</option><option value="es" data-zh="永久·软核">Eternal·SC</option><option value="eh" data-zh="永久·硬核">Eternal·HC</option></select></div>
+              <div class="pvf"><label data-zh="完成方式">Delivery</label><select class="in" id="bndDeliv"><option value="self" data-zh="组队陪同">Self-play</option><option value="piloted" data-zh="上号代打">Piloted</option></select></div>
+              <div class="pvf"><label data-zh="加急">Rush</label><select class="in" id="bndRush"><option value="no" data-zh="否">No</option><option value="yes" data-zh="是">Yes</option></select></div>
+            </div>
+            <div style="border-top:1px dashed var(--line);padding-top:12px;font-size:13.5px">
+              <div style="display:flex;justify-content:space-between;padding:3px 0"><span data-zh="练级 1→70(按单卡系数)">Leveling 1→70 (single-card coeff.)</span><b id="bndRowPL">$21.05</b></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0"><span id="bndRowPAlbl" data-zh="巅峰 1→300(按单卡系数)">Paragon 1→300 (single-card coeff.)</span><b id="bndRowPA">$23.90</b></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line);margin-top:4px;color:var(--soft)"><span data-zh="分开单买合计">Buy separately</span><b id="bndSep" style="color:var(--soft)">$44.95</b></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;color:var(--green)"><span data-zh="套餐省">Bundle saves</span><b id="bndSaveRow">−$8.99</b></div>
+            </div>
+            <div class="pvresult" style="border-top:none;padding-top:8px"><div class="pvcalc" id="bndCalc">—</div><div class="pvprice" id="bndPrice">$35.96</div></div>
+            <div class="pvband" id="bndBand">—</div>
+          </div>
+        </div>
+
+        <div id="tpl-bbundle" class="hide">
+          <p class="sub" data-zh="Boss 组合包:勾选打包哪几个 Boss、各打几次,引用 Uber / Lair Boss 的每次单价,再打一个捆绑折扣。">Boss Bundle: pick which bosses to bundle and how many kills each, referencing the Uber / Lair Boss per-kill prices, then apply a bundle discount.</p>
+
+          <div class="pricebox">
+            <div class="pbh"><span data-zh="① 组成 · 勾选打包的 Boss">① Composition · bosses in the bundle</span><span class="tag-model" data-zh="组合包">bundle</span></div>
+            <div class="pbs" data-zh="单价引用「Uber / Lair Boss」费率卡;在这里选打包内容与次数。">Unit prices are referenced from the Uber / Lair Boss card; choose the contents and kill counts here.</div>
+            <table class="segtable">
+              <thead><tr><th data-zh="选">Incl.</th><th>Boss</th><th data-zh="每次单价">Unit / kill</th><th data-zh="次数">Kills</th><th data-zh="小计">Subtotal</th></tr></thead>
+              <tbody>
+                <tr><td><input type="checkbox" id="kb0" checked style="width:16px;height:16px"></td><td class="band"><b data-zh="墨菲斯托">Mephisto</b></td><td>$4.00</td><td class="unit"><div class="uin"><input id="kn0" value="5"></div></td><td id="ksub0">$20.00</td></tr>
+                <tr><td><input type="checkbox" id="kb1" checked style="width:16px;height:16px"></td><td class="band"><b data-zh="彼列">Belial</b></td><td>$4.00</td><td class="unit"><div class="uin"><input id="kn1" value="5"></div></td><td id="ksub1">$20.00</td></tr>
+                <tr><td><input type="checkbox" id="kb2" checked style="width:16px;height:16px"></td><td class="band"><b data-zh="杜瑞尔">Duriel</b></td><td>$2.50</td><td class="unit"><div class="uin"><input id="kn2" value="5"></div></td><td id="ksub2">$12.50</td></tr>
+                <tr><td><input type="checkbox" id="kb3" style="width:16px;height:16px"></td><td class="band"><b data-zh="安达利尔">Andariel</b></td><td>$2.50</td><td class="unit"><div class="uin"><input id="kn3" value="5"></div></td><td id="ksub3">$12.50</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pricebox">
+            <div class="pbh"><span data-zh="② 捆绑专用属性系数(独立填写)">② Bundle's own coefficients (filled separately)</span></div>
+            <div class="pbs" data-zh="只用于 Boss 组合包,不复用单卡。设得比单卡低即形成套餐优惠(下方实时对比)。每条可选 × 或 +$。">Applies only to the Boss Bundle, not the single card. Set lower than the single card to create the saving (compared live below). Each row can be × or +$.</div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--soft);margin:6px 0 8px" data-zh="难度 · 痛苦等级">Difficulty · Torment</div>
+            <div class="coefgrid">
+              <div class="cl" data-zh="痛苦 1 <small>(基准)</small>">Torment 1 <small>(baseline)</small></div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hT1" value="1.00"></div>
+              <div class="cl" data-zh="痛苦 4">Torment 4</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hT4" value="1.15"></div>
+              <div class="cl" data-zh="痛苦 6">Torment 6</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hT6" value="1.30"></div>
+              <div class="cl" data-zh="痛苦 8">Torment 8</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hT8" value="1.55"></div>
+            </div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--soft);margin:14px 0 8px" data-zh="区服 / 完成方式 / 加急">Realm / delivery / rush</div>
+            <div class="coefgrid">
+              <div class="cl" data-zh="赛季 · 软核 <small>(基准)</small>">Seasonal · SC <small>(baseline)</small></div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hRealmSS" value="1.00"></div>
+              <div class="cl" data-zh="赛季 · 硬核">Seasonal · HC</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hRealmSH" value="1.25"></div>
+              <div class="cl" data-zh="永久 · 软核">Eternal · SC</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hRealmES" value="0.95"></div>
+              <div class="cl" data-zh="永久 · 硬核">Eternal · HC</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hRealmEH" value="1.20"></div>
+              <div class="cl" data-zh="组队陪同 <small>(基准)</small>">Self-play <small>(baseline)</small></div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hSelf" value="1.00"></div>
+              <div class="cl" data-zh="上号代打">Piloted</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hPiloted" value="1.10"></div>
+              <div class="cl" data-zh="加急">Rush</div><div class="coefcell" data-mode="x"><span class="modetog"><span class="mt on" data-m="x">×</span><span class="mt" data-m="add">+$</span></span><input id="hRush" value="1.35"></div>
+            </div>
+          </div>
+
+          <div class="preview">
+            <div class="pvh">🧮 <span data-zh="实时预览 · 分开买 vs 捆绑">Live preview · separate vs bundle</span></div>
+            <div class="pvrow">
+              <div class="pvf"><label data-zh="难度">Difficulty</label><select class="in" id="bbDiff"><option value="t1">Torment 1</option><option value="t4" selected>Torment 4</option><option value="t6">Torment 6</option><option value="t8">Torment 8</option></select></div>
+              <div class="pvf"><label data-zh="区服 / 模式">Realm / mode</label><select class="in" id="bbRealm"><option value="ss" data-zh="赛季·软核">Seasonal·SC</option><option value="sh" data-zh="赛季·硬核">Seasonal·HC</option><option value="es" data-zh="永久·软核">Eternal·SC</option><option value="eh" data-zh="永久·硬核">Eternal·HC</option></select></div>
+              <div class="pvf"><label data-zh="完成方式">Delivery</label><select class="in" id="bbDeliv"><option value="self" data-zh="组队陪同">Self-play</option><option value="piloted" data-zh="上号代打">Piloted</option></select></div>
+              <div class="pvf"><label data-zh="加急">Rush</label><select class="in" id="bbRush"><option value="no" data-zh="否">No</option><option value="yes" data-zh="是">Yes</option></select></div>
+            </div>
+            <div style="border-top:1px dashed var(--line);padding-top:12px;font-size:13.5px">
+              <div style="display:flex;justify-content:space-between;padding:6px 0;color:var(--soft)"><span data-zh="分开逐个打(按单卡系数)">Each boss separately (single-card coeff.)</span><b id="bbSep" style="color:var(--soft)">—</b></div>
+              <div style="display:flex;justify-content:space-between;padding:3px 0;color:var(--green)"><span data-zh="套餐省">Bundle saves</span><b id="bbSaveRow">—</b></div>
+            </div>
+            <div class="pvresult" style="border-top:none;padding-top:8px"><div class="pvcalc" id="bbCalc">—</div><div class="pvprice" id="bbPrice">$0.00</div></div>
+            <div class="pvband" id="bbBand">—</div>
+          </div>
+        </div>
       </div>
 
       <!-- insurance -->
@@ -424,12 +558,40 @@
   });
 
   /* ===== pricing rate card ===== */
-  var SEG_RECO={seg0:0.20,seg1:0.45,seg2:0.90,segP:0.08};
-  var BANDS=[{f:0,t:50,id:'seg0',sub:'sub0'},{f:50,t:65,id:'seg1',sub:'sub1'},{f:65,t:70,id:'seg2',sub:'sub2'}];
-  function baseRange(a,b){var s=0;BANDS.forEach(function(g){var lo=Math.max(a,g.f),hi=Math.min(b,g.t);if(hi>lo)s+=(hi-lo)*val(g.id);});return s;}
+  /* seller-defined custom segments; caps per sub-category */
+  var LMIN=1, LCAPS={'Power Leveling':70,'Paragon Leveling':300,'Season Rank':100};
+  var DEFAULT_SEGS={
+    'Power Leveling':[{f:1,t:50,u:0.20},{f:50,t:65,u:0.45},{f:65,t:70,u:0.90}],
+    'Paragon Leveling':[{f:1,t:150,u:0.10},{f:150,t:300,u:0.06}],
+    'Season Rank':[{f:1,t:100,u:0.30}]
+  };
+  function capFor(){return LCAPS[curSubName]||70;}
+  var SEGROWS=DEFAULT_SEGS['Power Leveling'].map(function(s){return {f:s.f,t:s.t,u:s.u};});
+  var lvlLoadedSub='Power Leveling';
+
+  function baseRange(a,b){var s=0;SEGROWS.forEach(function(g){var lo=Math.max(a,g.f),hi=Math.min(b,g.t);if(hi>lo)s+=(hi-lo)*g.u;});return s;}
+  function renderSegs(){
+    document.getElementById('segBody').innerHTML=SEGROWS.map(function(s,i){
+      return '<tr>'+
+        '<td><input class="segin" data-k="f" data-i="'+i+'" value="'+s.f+'"></td>'+
+        '<td><input class="segin" data-k="t" data-i="'+i+'" value="'+s.t+'"></td>'+
+        '<td class="unit"><div class="uin"><span class="c">$</span><input class="segin" data-k="u" data-i="'+i+'" value="'+s.u+'"><span class="per">/lvl</span></div></td>'+
+        '<td class="subc" id="subc'+i+'">$0.00</td>'+
+        '<td><button class="segdel" data-i="'+i+'" aria-label="del">✕</button></td>'+
+      '</tr>';
+    }).join('');
+  }
+  function validateSegs(){
+    var cap=capFor(),e=[];
+    if(SEGROWS.length===0)e.push(lang=='zh'?'至少需要一段。':'Add at least one segment.');
+    SEGROWS.forEach(function(s,i){if(s.t<=s.f)e.push((lang=='zh'?'第 ':'Segment ')+(i+1)+(lang=='zh'?' 段:结束须大于起始。':': end must be greater than start.'));});
+    if(SEGROWS.length&&SEGROWS[0].f!=LMIN)e.push(lang=='zh'?'起点必须为 1。':'Must start at 1.');
+    if(SEGROWS.length&&SEGROWS[SEGROWS.length-1].t!=cap)e.push((lang=='zh'?'终点必须为上限 ':'Must reach the cap ')+cap+'。');
+    for(var i=1;i<SEGROWS.length;i++){if(SEGROWS[i].f!=SEGROWS[i-1].t)e.push((lang=='zh'?'第 '+i+'–'+(i+1)+' 段之间有缺口或重叠(需首尾相接)。':'Gap/overlap between segment '+i+' and '+(i+1)+'.'));}
+    return {ok:e.length===0,errs:e,cap:cap};
+  }
   /* read a coef cell: mode 'x' (multiplier) or 'add' (fixed $) */
   function cell(id){var el=document.getElementById(id);var c=el.closest('.coefcell');return {mode:c?c.getAttribute('data-mode'):'x',v:parseFloat(el.value)||0};}
-  /* accumulate one attribute value into adds/mult/factor list */
   function apply(id,acc){var c=cell(id);if(c.mode=='add'){acc.adds+=c.v;acc.addf.push('+'+money(c.v));}else if(c.v!=1){acc.mult*=c.v;acc.mulf.push('×'+c.v.toFixed(2));}return acc;}
   function priceOf(base,ids){var acc={adds:0,mult:1,addf:[],mulf:[]};ids.forEach(function(id){apply(id,acc);});
     var total=(base+acc.adds)*acc.mult;
@@ -442,9 +604,17 @@
       : '📊 Platform suggested range <b>'+money(lo)+' – '+money(hi)+'</b> (median '+money(med)+'). Your price '+money(total)+(within?' is within range — competitive.':' is outside the range — consider adjusting.'));}
 
   function recalcLvl(){
-    BANDS.forEach(function(g){document.getElementById(g.sub).textContent=money((g.t-g.f)*val(g.id));});
-    document.getElementById('segEx').textContent=money(baseRange(1,70));
-    var a=val('pvFrom'),b=val('pvTo');if(b<a)b=a;
+    var v=validateSegs(), cap=v.cap;
+    document.getElementById('paragonBox').classList.toggle('hide',curSubName!='Power Leveling');
+    SEGROWS.forEach(function(s,i){var el=document.getElementById('subc'+i);if(el)el.textContent=money(Math.max(0,s.t-s.f)*s.u);});
+    document.getElementById('segCover').textContent='1 → '+cap;
+    document.getElementById('segEx').textContent=v.ok?money(baseRange(LMIN,cap)):'—';
+    var m=document.getElementById('segMsg');
+    if(v.ok){m.className='segmsg ok';m.innerHTML='<i>✓</i><span>'+(lang=='zh'?'区间闭合:从 1 连续覆盖到 '+cap+',无缝、无重叠。可以发布。':'Closed: continuous from 1 to '+cap+', no gaps or overlaps. Ready to publish.')+'</span>';}
+    else{m.className='segmsg err';m.innerHTML=v.errs.map(function(x){return '<span>⚠ '+x+'</span>';}).join('');}
+    var pb=document.getElementById('postBtn');if(pb){pb.disabled=!v.ok;}
+    // live preview
+    var a=val('pvFrom'),b=val('pvTo');if(b>cap)b=cap;if(b<a)b=a;
     var base=baseRange(a,b);
     var realmId={ss:'cRealmSS',sh:'cRealmSH',es:'cRealmES',eh:'cRealmEH'}[document.getElementById('pvRealm').value];
     var delivId=document.getElementById('pvDeliv').value=='piloted'?'cPiloted':'cSelf';
@@ -455,11 +625,52 @@
     document.getElementById('pvPrice').textContent=money(r.total);
     document.getElementById('pvBand').innerHTML=bandHtml(base,r.total,r.total/(base||1));
   }
-  ['seg0','seg1','seg2','segP','cRealmSS','cRealmSH','cRealmES','cRealmEH','cSelf','cPiloted','cClass','cRush','pvFrom','pvTo'].forEach(function(id){
+  /* dynamic segment editing (no re-render on value edit → keep focus) */
+  document.getElementById('segBody').addEventListener('input',function(e){
+    var el=e.target.closest('.segin');if(!el)return;
+    SEGROWS[+el.dataset.i][el.dataset.k]=parseFloat(el.value)||0;recalc();
+  });
+  document.getElementById('segBody').addEventListener('click',function(e){
+    var d=e.target.closest('.segdel');if(!d)return;
+    SEGROWS.splice(+d.dataset.i,1);renderSegs();recalc();
+  });
+  document.getElementById('addSeg').addEventListener('click',function(){
+    var last=SEGROWS[SEGROWS.length-1];var start=last?last.t:LMIN;
+    SEGROWS.push({f:start,t:Math.min(start+10,capFor()),u:last?last.u:0.3});renderSegs();recalc();
+  });
+  ['segP','cRealmSS','cRealmSH','cRealmES','cRealmEH','cSelf','cPiloted','cClass','cRush','pvFrom','pvTo'].forEach(function(id){
     document.getElementById(id).addEventListener('input',recalc);
   });
   ['pvRealm','pvDeliv','pvRush'].forEach(function(id){document.getElementById(id).addEventListener('change',recalc);});
-  document.getElementById('useReco').addEventListener('click',function(){for(var k in SEG_RECO)document.getElementById(k).value=SEG_RECO[k];recalc();toast(lang=='zh'?'已填入平台推荐分段单价':'Platform suggested prices applied');});
+  document.getElementById('useReco').addEventListener('click',function(){SEGROWS=(DEFAULT_SEGS[curSubName]||DEFAULT_SEGS['Power Leveling']).map(function(s){return {f:s.f,t:s.t,u:s.u};});renderSegs();recalc();toast(lang=='zh'?'已填入平台推荐分段':'Platform suggested segments applied');});
+
+  /* reusable custom-segment editor (used by the bundle for two cards) */
+  function makeSeg(o){
+    var rows=o.def.map(function(s){return {f:s.f,t:s.t,u:s.u};});
+    var body=document.getElementById(o.body);
+    function render(){body.innerHTML=rows.map(function(s,i){return '<tr>'+
+      '<td><input class="segin" data-k="f" data-i="'+i+'" value="'+s.f+'"></td>'+
+      '<td><input class="segin" data-k="t" data-i="'+i+'" value="'+s.t+'"></td>'+
+      '<td class="unit"><div class="uin"><span class="c">$</span><input class="segin" data-k="u" data-i="'+i+'" value="'+s.u+'"><span class="per">/lvl</span></div></td>'+
+      '<td class="subc" id="'+o.body+'s'+i+'">$0.00</td>'+
+      '<td><button class="segdel" data-i="'+i+'">✕</button></td></tr>';}).join('');}
+    function validate(){var e=[];
+      if(rows.length===0)e.push(lang=='zh'?'至少需要一段。':'Add at least one segment.');
+      rows.forEach(function(s,i){if(s.t<=s.f)e.push((lang=='zh'?'第 ':'Segment ')+(i+1)+(lang=='zh'?' 段:结束须大于起始。':': end must exceed start.'));});
+      if(rows.length&&rows[0].f!=1)e.push(lang=='zh'?'起点必须为 1。':'Must start at 1.');
+      if(rows.length&&rows[rows.length-1].t!=o.cap)e.push((lang=='zh'?'终点必须为上限 ':'Must reach cap ')+o.cap+'。');
+      for(var i=1;i<rows.length;i++){if(rows[i].f!=rows[i-1].t)e.push((lang=='zh'?'第 '+i+'–'+(i+1)+' 段之间有缺口或重叠。':'Gap/overlap between segment '+i+' and '+(i+1)+'.'));}
+      return {ok:e.length===0,errs:e};}
+    function base(){var s=0;rows.forEach(function(g){s+=Math.max(0,g.t-g.f)*g.u;});return s;}
+    function refreshSubs(){rows.forEach(function(s,i){var el=document.getElementById(o.body+'s'+i);if(el)el.textContent=money(Math.max(0,s.t-s.f)*s.u);});}
+    body.addEventListener('input',function(ev){var el=ev.target.closest('.segin');if(!el)return;rows[+el.dataset.i][el.dataset.k]=parseFloat(el.value)||0;o.onChange();});
+    body.addEventListener('click',function(ev){var d=ev.target.closest('.segdel');if(!d)return;rows.splice(+d.dataset.i,1);render();o.onChange();});
+    document.getElementById(o.add).addEventListener('click',function(){var last=rows[rows.length-1];var st=last?last.t:1;rows.push({f:st,t:Math.min(st+10,o.cap),u:last?last.u:0.3});render();o.onChange();});
+    render();
+    return {validate:validate,base:base,refreshSubs:refreshSubs,render:render};
+  }
+  var segBunL=makeSeg({body:'bunLBody',add:'bunLAdd',cap:70,def:DEFAULT_SEGS['Power Leveling'],onChange:recalc});
+  var segBunP=makeSeg({body:'bunPBody',add:'bunPAdd',cap:300,def:DEFAULT_SEGS['Paragon Leveling'],onChange:recalc});
 
   /* ===== Boss Kill (per-kill) rate card ===== */
   var BOSSU=['bU0','bU1','bU2','bU3'];
@@ -492,11 +703,78 @@
     recalc();
   });
 
+  /* ===== Leveling Bundle (two custom-segment cards + discount) ===== */
+  function recalcBundle(){
+    segBunL.refreshSubs();segBunP.refreshSubs();
+    var vL=segBunL.validate(),vP=segBunP.validate();
+    function setMsg(m,v,cap){if(v.ok){m.className='segmsg ok';m.innerHTML='<i>✓</i><span>'+(lang=='zh'?'闭合:1 → '+cap+',无缝无重叠。':'Closed: 1 → '+cap+', no gaps.')+'</span>';}else{m.className='segmsg err';m.innerHTML=v.errs.map(function(x){return '<span>⚠ '+x+'</span>';}).join('');}}
+    setMsg(document.getElementById('bunLMsg'),vL,70);
+    setMsg(document.getElementById('bunPMsg'),vP,300);
+    var basePL=segBunL.base(),basePA=segBunP.base();
+    document.getElementById('bunLEx').textContent=vL.ok?money(basePL):'—';
+    document.getElementById('bunPEx').textContent=vP.ok?money(basePA):'—';
+    var pb=document.getElementById('postBtn');if(pb)pb.disabled=!(vL.ok&&vP.ok);
+    var rk=document.getElementById('bndRealm').value, dk=document.getElementById('bndDeliv').value, rush=document.getElementById('bndRush').value=='yes';
+    // 分开单买:用单卡(前面)系数
+    var cRealm={ss:'cRealmSS',sh:'cRealmSH',es:'cRealmES',eh:'cRealmEH'}[rk];
+    var cDeliv=dk=='piloted'?'cPiloted':'cSelf';
+    var cIds=[cRealm,cDeliv,'cClass'];if(rush)cIds.push('cRush');
+    var pl=priceOf(basePL,cIds).total, pa=priceOf(basePA,cIds).total, sep=pl+pa;
+    // 捆绑:用捆绑专用系数
+    var gRealm={ss:'gRealmSS',sh:'gRealmSH',es:'gRealmES',eh:'gRealmEH'}[rk];
+    var gDeliv=dk=='piloted'?'gPiloted':'gSelf';
+    var gIds=[gRealm,gDeliv,'gClass'];if(rush)gIds.push('gRush');
+    var bundle=priceOf(basePL+basePA,gIds);
+    var save=sep-bundle.total;
+    document.getElementById('bndRowPL').textContent=money(pl);
+    document.getElementById('bndRowPA').textContent=money(pa);
+    document.getElementById('bndRowPAlbl').textContent=(lang=='zh'?'巅峰 1→300(按单卡系数)':'Paragon 1→300 (single-card coeff.)');
+    document.getElementById('bndSep').textContent=money(sep);
+    document.getElementById('bndSaveRow').textContent=(save>=0?'−':'+')+money(Math.abs(save));
+    document.getElementById('bndPrice').textContent=money(bundle.total);
+    document.getElementById('bndCalc').textContent=(lang=='zh'?'捆绑价 = ':'Bundle = ')+bundle.calc;
+    document.getElementById('bndBand').innerHTML=(lang=='zh'
+      ? (save>=0?('💡 分开单买 '+money(sep)+' → 捆绑 '+money(bundle.total)+',为买家省 <b>'+money(save)+'</b>。'):('⚠ 当前捆绑参数比分开买还贵 '+money(-save)+',请把捆绑系数调低。'))
+      : (save>=0?('💡 Separately '+money(sep)+' → bundle '+money(bundle.total)+' — buyers save <b>'+money(save)+'</b>.'):('⚠ The bundle is currently '+money(-save)+' more than buying separately — lower the bundle coefficients.')));
+  }
+  ['gRealmSS','gRealmSH','gRealmES','gRealmEH','gSelf','gPiloted','gClass','gRush'].forEach(function(id){document.getElementById(id).addEventListener('input',recalc);});
+  ['bndRealm','bndDeliv','bndRush'].forEach(function(id){document.getElementById(id).addEventListener('change',recalc);});
+
+  /* ===== Boss Bundle (references per-kill prices + discount) ===== */
+  var BB_UNIT=[4.00,4.00,2.50,2.50];
+  function recalcBossBundle(){
+    var base=0;
+    for(var i=0;i<4;i++){
+      var inc=document.getElementById('kb'+i).checked, k=val('kn'+i), u=val('bU'+i);
+      var st=inc?u*k:0; base+=st;
+      document.getElementById('ksub'+i).textContent=inc?money(st):'—';
+    }
+    var diffKey=document.getElementById('bbDiff').value, rk=document.getElementById('bbRealm').value, dk=document.getElementById('bbDeliv').value, rush=document.getElementById('bbRush').value=='yes';
+    // 分开逐个打:用单卡(Uber/Lair Boss)系数
+    var bIds=[{t1:'bT1',t4:'bT4',t6:'bT6',t8:'bT8'}[diffKey],{ss:'bRealmSS',sh:'bRealmSH',es:'bRealmES',eh:'bRealmEH'}[rk],dk=='piloted'?'bPiloted':'bSelf'];
+    if(rush)bIds.push('bRush');
+    var sep=priceOf(base,bIds).total;
+    // 捆绑:用捆绑专用系数
+    var hIds=[{t1:'hT1',t4:'hT4',t6:'hT6',t8:'hT8'}[diffKey],{ss:'hRealmSS',sh:'hRealmSH',es:'hRealmES',eh:'hRealmEH'}[rk],dk=='piloted'?'hPiloted':'hSelf'];
+    if(rush)hIds.push('hRush');
+    var bundle=priceOf(base,hIds);
+    var save=sep-bundle.total;
+    document.getElementById('bbSep').textContent=money(sep);
+    document.getElementById('bbSaveRow').textContent=(save>=0?'−':'+')+money(Math.abs(save));
+    document.getElementById('bbPrice').textContent=money(bundle.total);
+    document.getElementById('bbCalc').textContent=(lang=='zh'?'捆绑价 = ':'Bundle = ')+bundle.calc;
+    document.getElementById('bbBand').innerHTML=(lang=='zh'
+      ? (save>=0?('💡 分开逐个打 '+money(sep)+' → 捆绑 '+money(bundle.total)+',为买家省 <b>'+money(save)+'</b>。'):('⚠ 当前捆绑参数比分开打还贵 '+money(-save)+',请调低捆绑系数。'))
+      : (save>=0?('💡 Separately '+money(sep)+' → bundle '+money(bundle.total)+' — buyers save <b>'+money(save)+'</b>.'):('⚠ The bundle is '+money(-save)+' more than separate — lower the bundle coefficients.')));
+  }
+  ['kb0','kb1','kb2','kb3','kn0','kn1','kn2','kn3','hT1','hT4','hT6','hT8','hRealmSS','hRealmSH','hRealmES','hRealmEH','hSelf','hPiloted','hRush'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',recalc);el.addEventListener('change',recalc);});
+  ['bbDiff','bbRealm','bbDeliv','bbRush'].forEach(function(id){document.getElementById(id).addEventListener('change',recalc);});
+
   /* ===== dependent category -> subject; template decided by category ===== */
   var CATS_SUB={
-    'Leveling':{zh:'升级',tpl:'lvl',subs:[['Power Leveling','Power Leveling'],['Paragon Leveling','Paragon 巅峰'],['Season Rank','赛季 / 战令'],['Leveling Bundle','升级组合包']]},
+    'Leveling':{zh:'升级',tpl:'lvl',subs:[['Power Leveling','Power Leveling'],['Paragon Leveling','Paragon 巅峰'],['Season Rank','赛季 / 战令'],['Leveling Bundle','升级组合包','bundle']]},
     'Dungeons':{zh:'副本',tpl:'na',base:{en:'per-run fixed',zh:'按次固定'},subs:[['Pit Push','Pit 冲层'],['Nightmare Dungeons','噩梦地窟'],['Helltide Farm','地狱狂潮'],['Infernal Hordes','地狱军团'],['Kurast Undercity','库拉斯特地下城']]},
-    'Boss Kills':{zh:'Boss 代打',tpl:'boss',subs:[['Uber / Lair Boss','Uber / 巢穴 Boss'],['Keys / Summon Mats','钥匙 / 召唤材料'],['Boss Bundle','Boss 组合包']]},
+    'Boss Kills':{zh:'Boss 代打',tpl:'boss',subs:[['Uber / Lair Boss','Uber / 巢穴 Boss'],['Keys / Summon Mats','钥匙 / 召唤材料'],['Boss Bundle','Boss 组合包','bbundle']]},
     'Story & Unlocks':{zh:'剧情解锁',tpl:'na',base:{en:'fixed value + add-ons',zh:'固定值 + 多选加购'},subs:[['Campaign','主线战役'],['Altars of Lilith','莉莉丝祭坛'],['Map & Waypoints','地图 / 传送点'],['Torment Difficulty','解锁痛苦难度'],['Renown','声望'],['Unlock Bundle','解锁组合包']]},
     'Build Service':{zh:'配 Build',tpl:'na',base:{en:'tier fixed',zh:'档位固定'},subs:[['Full Build','成品 Build'],['Masterworking','Masterworking 淬炼'],['Build Check','修车 Build Check']]},
     'Custom':{zh:'自定义',tpl:'na',base:{en:'buyer-priced',zh:'买家自由定价'},subs:[['Custom Request','自定义需求']]}
@@ -513,13 +791,18 @@
   }
   function updatePill(){var p=document.getElementById('ptSku');if(p)p.textContent=(lang=='zh'?CATS_SUB[curCat].zh:curCat)+' / '+curSubName;}
 
-  function recalc(){ if(curTpl=='boss')recalcBoss(); else if(curTpl=='lvl')recalcLvl(); }
+  function recalc(){ if(curTpl=='boss')recalcBoss(); else if(curTpl=='bundle')recalcBundle(); else if(curTpl=='bbundle')recalcBossBundle(); else if(curTpl=='lvl')recalcLvl(); }
 
   function applyTpl(){
-    curTpl=CATS_SUB[curCat].tpl;
-    document.getElementById('tpl-lvl').classList.toggle('hide',curTpl!='lvl');
-    document.getElementById('tpl-boss').classList.toggle('hide',curTpl!='boss');
-    document.getElementById('tpl-na').classList.toggle('hide',curTpl!='na');
+    var subsArr=CATS_SUB[curCat].subs;
+    var subObj=subsArr.filter(function(s){return s[0]==curSubName;})[0];
+    curTpl=(subObj&&subObj[2])?subObj[2]:CATS_SUB[curCat].tpl;
+    ['lvl','boss','bundle','bbundle','na'].forEach(function(x){document.getElementById('tpl-'+x).classList.toggle('hide',curTpl!=x);});
+    if(curTpl=='lvl'&&curSubName!=lvlLoadedSub){
+      SEGROWS=(DEFAULT_SEGS[curSubName]||DEFAULT_SEGS['Power Leveling']).map(function(s){return {f:s.f,t:s.t,u:s.u};});
+      lvlLoadedSub=curSubName;renderSegs();
+    }
+    if(curTpl!='lvl'){var pb=document.getElementById('postBtn');if(pb)pb.disabled=false;}
     if(curTpl=='na'){
       var b=CATS_SUB[curCat].base;
       document.getElementById('naNote').innerHTML=(lang=='zh'
@@ -555,6 +838,7 @@
   document.getElementById('langBtn').addEventListener('click',function(){lang=lang=='zh'?'en':'zh';applyLang();});
 
   goStep(2);
+  renderSegs();
   fillCats();fillSubs();applyTpl();
   recalc();
 </script>
