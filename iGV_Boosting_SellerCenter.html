@@ -93,6 +93,48 @@
   .btn.ghost{border-color:transparent;color:var(--soft)}
   .btn[disabled]{opacity:.5;cursor:not-allowed}
   .empty{text-align:center;color:var(--dim);padding:50px 0}
+  /* ==== My Orders style ==== */
+  .mtabs{background:#fff;border:1px solid var(--line);border-radius:14px;padding:2px 18px 0;display:flex;gap:24px;overflow-x:auto;margin-bottom:14px}
+  .mtab{white-space:nowrap;padding:15px 2px;font-size:14px;color:var(--soft);cursor:pointer;border-bottom:2.5px solid transparent;display:flex;align-items:center;gap:7px}
+  .mtab.on{color:var(--ink);font-weight:700;border-bottom-color:var(--blue)}
+  .mtab .rb{background:var(--red);color:#fff;font-size:10.5px;font-weight:700;border-radius:10px;min-width:18px;height:18px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center}
+  .mfilter{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+  .mfrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.mfrow+.mfrow{margin-top:14px}
+  .mflabel{font-size:13px;color:var(--soft);font-weight:600;white-space:nowrap}
+  .msel,.minput{border:1px solid var(--line);border-radius:8px;padding:9px 12px;font:13.5px var(--sans);background:#fff}
+  .msel{color:var(--soft);min-width:120px;display:inline-flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+  .msearch{display:flex;flex:1;min-width:240px}
+  .msearch .msel{border-radius:8px 0 0 8px;min-width:120px;flex:none}
+  .msearch .minput{border-radius:0 8px 8px 0;border-left:none;flex:1;color:var(--dim)}
+  .mdate{display:flex;align-items:center;gap:8px;color:var(--dim);font-size:13px}
+  .mdate .minput{color:var(--dim);min-width:130px}
+  .mbtns-f{margin-left:auto;display:flex;gap:10px}
+  .btn-search{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 24px;font-weight:600;cursor:pointer;font-size:13.5px}
+  .btn-reset{background:#eef0f3;color:var(--soft);border:none;border-radius:8px;padding:9px 24px;font-weight:600;cursor:pointer;font-size:13.5px}
+  .ordcard{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden}
+  .ord-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#f7f8fa;border-bottom:1px solid var(--line);padding:11px 18px;font-size:13px;color:var(--soft)}
+  .ord-top b{color:var(--ink);font-weight:600}
+  .copy{cursor:pointer;color:var(--dim);font-size:12px}.copy:hover{color:var(--blue)}
+  .msg-ic{cursor:pointer;color:var(--dim);font-size:14px}.msg-ic:hover{color:var(--blue)}
+  .ord-top .sp{flex:1}
+  .stlink{color:var(--blue);font-weight:600;cursor:pointer}
+  .ev-log{color:var(--soft);text-decoration:underline;cursor:pointer;font-size:12.5px}
+  .ord-grid{display:grid;grid-template-columns:2fr 1.7fr 1fr 1.5fr 1.3fr;gap:18px;padding:18px}
+  .od-prod{display:flex;gap:12px;min-width:0}
+  .od-thumb{width:76px;height:76px;border-radius:8px;background:#2a2f3a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;flex:none}
+  .od-title{font-weight:600;font-size:14px}
+  .od-link{color:var(--blue);font-size:13px;cursor:pointer;display:inline-block;margin-top:8px}
+  .od-h{font-weight:700;font-size:13.5px;margin-bottom:6px}
+  .kv{font-size:13px;color:var(--soft);margin:2px 0}.kv b{color:var(--ink);font-weight:600}
+  .viewall{color:var(--blue);font-size:13px;cursor:pointer;text-align:center;display:block;margin-top:6px}
+  .amt{font-size:13px;color:var(--soft)}.amt .big{font-size:16px;font-weight:800;color:var(--ink);margin-top:4px}
+  .ship{font-size:13px;color:var(--soft)}.ship b{color:var(--amber);font-weight:700}
+  .abnormal{color:var(--red);font-size:12.5px;margin-top:10px;line-height:1.5}
+  .od-act{display:flex;flex-direction:column;gap:9px;align-items:stretch}
+  .pager{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:8px 4px 4px;color:var(--soft);font-size:13px}
+  .pager .pg{border:1px solid var(--line);border-radius:7px;padding:5px 11px;cursor:pointer;background:#fff}
+  @media(max-width:1000px){.ord-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:640px){.ord-grid{grid-template-columns:1fr}}
   /* modals */
   .mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
   .mask.show{display:flex}
@@ -130,14 +172,13 @@
     <aside class="side">
       <div class="navgrp">
         <div class="gt">🧾 <span data-zh="订单中心">Orders</span></div>
-        <div class="navitem"><span data-zh="我的订单">My Orders</span></div>
+        <div class="navitem on" data-page="boosts"><span data-zh="我的订单">My Orders</span></div>
         <div class="navitem"><span data-zh="保险单">Insured Orders</span></div>
         <div class="navitem"><span data-zh="租赁订单">Rental Orders</span></div>
       </div>
       <div class="navgrp boost">
         <div class="gt">🎮 <span data-zh="代练">Boosting</span></div>
-        <div class="navitem on" data-page="hall"><span data-zh="需求列表">Request List</span><span class="cnt" id="hallCnt">0</span></div>
-        <div class="navitem" data-page="boosts"><span data-zh="我的代练单">My Boosts</span><span class="cnt" id="myCnt">0</span></div>
+        <div class="navitem" data-page="hall"><span data-zh="需求列表">Request List</span><span class="cnt" id="hallCnt">0</span></div>
       </div>
       <div class="navgrp">
         <div class="gt">🛒 <span data-zh="产品中心">Products</span></div>
@@ -153,42 +194,59 @@
 
     <main class="main">
       <!-- PAGE: Request List -->
-      <section id="page-hall">
+      <section id="page-hall" class="hide">
         <div class="pagehead"><h1 data-zh="需求列表">Request List</h1><span class="badge-new" data-zh="代练">Boosting</span></div>
-        <div class="subnote" data-zh="全平台买家发布的可接代练需求。接单前需缴纳足额保证金约束交付。">Open boosting requests from buyers across the platform. Accepting requires a full security deposit.</div>
-        <div class="filterbar">
-          <div class="frow">
-            <div class="fi search" style="flex:1;min-width:200px;color:var(--dim)">🔍 <span data-zh="订单号 / 关键词 / 发布者">Order no. / keyword / buyer</span></div>
-            <span class="flabel" data-zh="游戏">Game</span>
-            <div class="fi sel"><span data-zh="全部游戏">All games</span> ▾</div>
+        <div class="mfilter">
+          <div class="mfrow">
+            <span class="mflabel" data-zh="搜索:">Search:</span>
+            <div class="msearch"><span class="msel"><span data-zh="订单号">Order Number</span> ▾</span><div class="minput">🔍 <span data-zh="请输入">Search</span></div></div>
+            <span class="mflabel" data-zh="日期:">Date:</span>
+            <div class="mdate"><span class="minput" data-zh="开始日期">Start date</span> - <span class="minput" data-zh="结束日期">End date</span></div>
           </div>
-          <div class="frow">
-            <span class="flabel" data-zh="价格">Price</span>
-            <span class="pill on" data-zh="不限">Any</span><span class="pill">$1–20</span><span class="pill">$20–50</span><span class="pill">$50–100</span><span class="pill" data-zh="$100 以上">$100+</span>
-            <span class="flabel" style="margin-left:8px" data-zh="递送方式">Delivery</span>
-            <span class="pill on" data-zh="全部">All</span><span class="pill" data-zh="组队陪同">Self-play</span><span class="pill" data-zh="上号代打">Piloted</span>
+          <div class="mfrow">
+            <span class="mflabel" data-zh="排序:">Sort by:</span>
+            <span class="msel"><span data-zh="最新优先">newest first</span> ▾</span>
+            <span class="mflabel" data-zh="品牌:">Brand:</span>
+            <span class="msel"><span data-zh="请选择">Please select</span> ▾</span>
+            <span class="mflabel" data-zh="品类:">Category:</span>
+            <span class="msel"><span data-zh="选择">Select</span> ▾</span>
+            <div class="mbtns-f"><button class="btn-search" data-zh="搜索">Search</button><button class="btn-reset" data-zh="重置">Reset</button></div>
           </div>
-        </div>
-        <div class="sortrow">
-          <span data-zh="排序:">Sort:</span>
-          <span class="sortpill on" data-zh="报价最高">Highest price</span>
-          <span class="sortpill" data-zh="快过期">Expiring soon</span>
-          <span class="sortpill" data-zh="最新发布">Newest</span>
         </div>
         <div id="hall"></div>
+        <div class="pager" id="hallPager"></div>
       </section>
 
-      <!-- PAGE: My Boosts -->
-      <section id="page-boosts" class="hide">
-        <div class="pagehead"><h1 data-zh="我的代练单">My Boosts</h1><span class="badge-new" data-zh="代练">Boosting</span></div>
-        <div class="tabsbar" id="tabsbar"></div>
-        <div class="cards" id="cards"></div>
+      <!-- PAGE: My Orders (boosting orders) -->
+      <section id="page-boosts">
+        <div class="pagehead"><h1 data-zh="我的订单">My Orders</h1><span class="badge-new" data-zh="代练">Boosting</span></div>
+        <div class="mtabs" id="tabsbar"></div>
+        <div class="mfilter">
+          <div class="mfrow">
+            <span class="mflabel" data-zh="搜索:">Search:</span>
+            <div class="msearch"><span class="msel"><span data-zh="订单号">Order Number</span> ▾</span><div class="minput">🔍 <span data-zh="请输入">Search</span></div></div>
+            <span class="mflabel" data-zh="日期:">Date:</span>
+            <div class="mdate"><span class="minput" data-zh="开始日期">Start date</span> - <span class="minput" data-zh="结束日期">End date</span></div>
+          </div>
+          <div class="mfrow">
+            <span class="mflabel" data-zh="排序:">Sort by:</span>
+            <span class="msel"><span data-zh="最新优先">newest first</span> ▾</span>
+            <span class="mflabel" data-zh="品牌:">Brand:</span>
+            <span class="msel"><span data-zh="请选择">Please select</span> ▾</span>
+            <span class="mflabel" data-zh="品类:">Category:</span>
+            <span class="msel"><span data-zh="选择">Select</span> ▾</span>
+            <div class="mbtns-f"><button class="btn-search" data-zh="搜索">Search</button><button class="btn-reset" data-zh="重置">Reset</button></div>
+          </div>
+        </div>
+        <div id="cards"></div>
+        <div class="pager" id="boostPager"></div>
       </section>
     </main>
   </div>
 
   <div class="mask" id="acceptMask"><div class="modal" id="acceptModal"></div></div>
   <div class="mask" id="proofMask"><div class="modal" id="proofModal"></div></div>
+  <div class="mask" id="attrMask"><div class="modal" id="attrModal"></div></div>
   <div class="toast" id="toast"></div>
 
 <script>
@@ -229,28 +287,37 @@
   document.getElementById('hallCnt').textContent=HALL.length;
 
   function hallCard(r,i){
-    var shown=r.attrs.slice(0,CHIP_LIMIT).map(chipHtml).join('');
-    var extra=r.attrs.length>CHIP_LIMIT?'<span class="chip more" data-more="'+i+'">+'+(r.attrs.length-CHIP_LIMIT)+' '+(lang=='zh'?'更多':'more')+'</span>':'';
-    var reqTxt=r.req?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'需求要求':'Requirements')+'</div>'+t(r.req)+'</div>':'';
-    var noteTxt=r.note?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'备注':'Notes')+'</div>'+t(r.note)+'</div>':'';
-    return '<div class="rcard'+(r.hot?' hot':'')+'">'+
-      '<div class="rc-head"><div class="rc-icon">'+r.icon+'</div>'+
-        '<div class="rc-tt"><div class="rc-svc"><span class="gm">'+t(r.game)+' · '+t(r.cat)+' · </span>'+t(r.svc)+'</div>'+
-          '<div class="rc-no">'+(lang=='zh'?'订单编号:':'Order No.: ')+r.no+' · '+(lang=='zh'?'发布':'Posted')+' '+r.published+'</div></div>'+
-        '<div class="rc-price">'+(r.hot?'<span class="hot-tag">'+(lang=='zh'?'即将过期':'Expiring')+'</span><br>':'')+'<div class="p">'+r.price+'</div><div class="pl">'+(lang=='zh'?'买家报价':'buyer price')+'</div></div></div>'+
-      '<div class="attrs">'+shown+extra+'</div>'+reqTxt+noteTxt+
-      '<div class="rc-foot">'+
-        '<div class="meta">'+(lang=='zh'?'完成方式':'Delivery')+'<b>'+t(r.deliv)+'</b></div>'+
-        '<div class="meta">'+(lang=='zh'?'代练限时':'Time limit')+'<b>'+t(r.limit)+'</b></div>'+
-        '<div class="meta warn">'+(lang=='zh'?'报价有效期':'Offer expires')+'<b>'+t(r.expires)+'</b></div>'+
-        '<div class="rc-actions"><button class="btn" data-chat="'+i+'" data-zh="聊一聊">Chat</button><button class="btn primary" data-accept="'+i+'" data-zh="接单">Accept</button></div>'+
+    var kvs=r.attrs.slice(0,2).map(kvLine).join('');
+    var noteTxt=r.req?'<div class="kv" style="margin-top:8px">'+t(r.req)+'</div>':(r.note?'<div class="kv" style="margin-top:8px">'+t(r.note)+'</div>':'');
+    return '<div class="ordcard">'+
+      '<div class="ord-top">'+
+        '<span>'+r.published+'</span>'+
+        '<span>'+(lang=='zh'?'订单编号:':'Order Number : ')+'<b>'+r.no+'</b> <span class="copy" data-copy="'+r.no+'">⧉</span></span>'+
+        '<span class="msg-ic" data-chat="'+i+'">💬</span>'+
+        '<span class="sp"></span>'+
+        '<span>'+(lang=='zh'?'状态:':'Status : ')+'<span class="stlink">'+(r.hot?(lang=='zh'?'即将过期':'Expiring soon'):(lang=='zh'?'可接单':'Open for offers'))+'</span></span>'+
+      '</div>'+
+      '<div class="ord-grid">'+
+        '<div class="od-prod"><div class="od-thumb">'+r.icon+'</div><div><div class="od-title">'+t(r.game)+' · '+t(r.svc)+'</div><span class="od-link" data-attrpop="h'+i+'" data-zh="属性详情">Attributes detail</span></div></div>'+
+        '<div><div class="od-h" data-zh="交付信息">Delivery Information</div>'+
+          '<div class="kv">'+(lang=='zh'?'代练限时:':'Delivery Time : ')+'<b>'+t(r.limit)+'</b></div>'+
+          '<div class="kv">'+(lang=='zh'?'完成方式:':'Delivery method : ')+'<b>'+t(r.deliv)+'</b></div>'+
+          (r.account?'<div class="kv">'+(lang=='zh'?'账号信息:':'Account : ')+'<b>'+t(r.account)+'</b></div>':'')+
+          '</div>'+
+        '<div><div class="od-h" data-zh="金额 / 价格">Amount / Price</div><div class="amt">'+(lang=='zh'?'买家报价':'Buyer price')+'<div class="big">'+r.price+' USD</div></div></div>'+
+        '<div><div class="od-h" data-zh="备注">Remark</div><div class="ship">'+(lang=='zh'?'报价有效期:':'Offer expires : ')+'<b style="color:var(--red)">'+t(r.expires)+'</b></div>'+
+          ((r.req||r.note)?'<span class="viewall" data-reqpop="h'+i+'" style="text-align:left" data-zh="查看全部">View All</span>':'')+'</div>'+
+        '<div class="od-act"><button class="btn primary" data-accept="'+i+'" data-zh="接单">Accept</button><button class="btn" data-chat="'+i+'" data-zh="聊一聊">Chat</button></div>'+
       '</div></div>';
   }
-  function renderHall(){document.getElementById('hall').innerHTML=HALL.map(hallCard).join('');}
+  function renderHall(){document.getElementById('hall').innerHTML=HALL.map(hallCard).join('');document.getElementById('hallPager').innerHTML=pagerHtml(HALL.length);}
   document.getElementById('hall').addEventListener('click',function(e){
-    var m=e.target.closest('.chip.more');if(m){var r=HALL[+m.dataset.more];m.parentElement.innerHTML=r.attrs.map(chipHtml).join('');return;}
     var a=e.target.closest('[data-accept]');if(a){openAccept(HALL[+a.dataset.accept]);return;}
     var c=e.target.closest('[data-chat]');if(c){toast(lang=='zh'?'打开与买家的聊天(原型略)':'Open chat with buyer (stub)');return;}
+    var cp=e.target.closest('[data-copy]');if(cp){toast(lang=='zh'?'已复制订单号':'Order number copied');return;}
+    var ap=e.target.closest('[data-attrpop]');if(ap){openAttr(recFrom(ap.dataset.attrpop));return;}
+    var rp=e.target.closest('[data-reqpop]');if(rp){openReq(recFrom(rp.dataset.reqpop));return;}
+    var ev=e.target.closest('.ev-log');if(ev){toast(lang=='zh'?'打开事件日志(原型略)':'Open event log (stub)');return;}
   });
   function openAccept(r){
     var attrRows=r.attrs.map(function(a){return '<div class="mrow"><span>'+t(a.l)+'</span><b>'+t(a.v)+'</b></div>';}).join('');
@@ -266,11 +333,26 @@
       '<div class="mbtns"><button class="btn" id="mCancel" data-zh="再想想">Cancel</button><button class="btn primary" id="mConfirm" data-zh="确认接单">Confirm &amp; accept</button></div>';
     document.getElementById('acceptMask').classList.add('show');applyStaticLang();
     document.getElementById('mCancel').onclick=function(){document.getElementById('acceptMask').classList.remove('show');};
-    document.getElementById('mConfirm').onclick=function(){document.getElementById('acceptMask').classList.remove('show');toast(lang=='zh'?'接单成功!已进入「我的代练单」,计时开始':'Accepted! Moved to My Boosts — clock started');};
+    document.getElementById('mConfirm').onclick=function(){document.getElementById('acceptMask').classList.remove('show');toast(lang=='zh'?'接单成功!已进入「我的订单」,计时开始':'Accepted! Moved to My Orders — clock started');};
   }
   document.getElementById('acceptMask').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
 
-  /* ============ My Boosts ============ */
+  /* attributes / requirements popups */
+  function recFrom(key){var i=+key.replace(/^\D+/,'');return key.charAt(0)=='h'?HALL[i]:MY[i];}
+  function openModal(title,body){
+    document.getElementById('attrModal').innerHTML='<h3 style="display:flex;justify-content:space-between;align-items:center;gap:16px">'+title+'<span class="msg-ic" id="amClose" style="font-size:16px">✕</span></h3>'+body;
+    document.getElementById('attrMask').classList.add('show');applyStaticLang();
+    document.getElementById('amClose').onclick=function(){document.getElementById('attrMask').classList.remove('show');};
+  }
+  function openAttr(r){var rows=r.attrs.map(function(a){return '<div class="mrow"><span>'+t(a.l)+'</span><b>'+t(a.v)+'</b></div>';}).join('');openModal(lang=='zh'?'属性详情':'Attributes detail',rows);}
+  function openReq(r){var b='';
+    if(r.req)b+='<div class="mrow" style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-weight:700">'+(lang=='zh'?'需求要求 Requirements':'Requirements')+'</span><span style="color:var(--soft)">'+t(r.req)+'</span></div>';
+    if(r.note)b+='<div class="mrow" style="flex-direction:column;align-items:flex-start;gap:4px;border-bottom:none"><span style="font-weight:700">'+(lang=='zh'?'备注 Notes':'Notes')+'</span><span style="color:var(--soft)">'+t(r.note)+'</span></div>';
+    if(!b)b='<div class="kv" style="padding:10px 0">'+(lang=='zh'?'无附加说明。':'No additional details.')+'</div>';
+    openModal(lang=='zh'?'需求与备注':'Requirements & Notes',b);}
+  document.getElementById('attrMask').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+
+  /* ============ My Orders (boosting orders) ============ */
   var STATUS={
     progress:{name:{en:'In progress',zh:'进行中'},cls:'st-progress'},
     review:{name:{en:'Awaiting review',zh:'待买家验收'},cls:'st-review'},
@@ -279,11 +361,12 @@
     cancel:{name:{en:'Canceled',zh:'已取消'},cls:'st-cancel'}
   };
   var TABS=[
-    {id:'all',name:{en:'All',zh:'全部'}},
-    {id:'progress',name:{en:'In progress',zh:'进行中'}},
-    {id:'review',name:{en:'Awaiting review',zh:'待验收'}},
-    {id:'done',name:{en:'Completed',zh:'已完成'}},
-    {id:'refund',name:{en:'Refund & Dispute',zh:'退款 / 争议'},match:['dispute','cancel']}
+    {id:'toship',name:{en:'To be shipped',zh:'待发货'},match:['progress'],badge:true},
+    {id:'pending',name:{en:'Pending buyer receipt',zh:'待买家收货'},match:['review']},
+    {id:'received',name:{en:'Received confirmation',zh:'确认收货'},match:['__none__']},
+    {id:'completed',name:{en:'Completed',zh:'已完成'},match:['done']},
+    {id:'refund',name:{en:'Refund/After-sales',zh:'退款 / 售后'},match:['dispute','cancel'],badge:true},
+    {id:'all',name:{en:'All',zh:'全部'}}
   ];
   var MY=[
     {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Custom',zh:'自定义'},svc:{en:'Custom Request',zh:'自定义需求'},
@@ -307,54 +390,67 @@
      attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Softcore',zh:'赛季 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Target',zh:'目标层'},v:{en:'Pit 100',zh:'Pit 100'}},{l:{en:'Runs',zh:'次数'},v:{en:'8',zh:'8'}}],
      req:null,note:{en:'Buyer opened a dispute — submit your proof.',zh:'买家发起争议 —— 请提交凭证。'}}
   ];
-  document.getElementById('myCnt').textContent=MY.length;
+  document.getElementById('myCnt')&&(document.getElementById('myCnt').textContent=MY.length);
   var curTab='all';
 
   function tabMatch(r,id){if(id=='all')return true;var tb=TABS.filter(function(x){return x.id==id;})[0];if(tb&&tb.match)return tb.match.indexOf(r.status)>=0;return r.status==id;}
   function count(id){return MY.filter(function(r){return tabMatch(r,id);}).length;}
   function renderTabs(){
     document.getElementById('tabsbar').innerHTML=TABS.map(function(tb){
-      return '<div class="rtab'+(tb.id==curTab?' on':'')+'" data-id="'+tb.id+'">'+t(tb.name)+'<span class="cnt">'+count(tb.id)+'</span></div>';
+      var c=count(tb.id);
+      var badge=(tb.badge&&c>0)?'<span class="rb">'+c+'</span>':'';
+      return '<div class="mtab'+(tb.id==curTab?' on':'')+'" data-id="'+tb.id+'">'+t(tb.name)+badge+'</div>';
     }).join('');
   }
+  function kvLine(a){return '<div class="kv">'+t(a.l)+': <b>'+t(a.v)+'</b></div>';}
   function boostCard(r,i){
     var s=STATUS[r.status];
-    var shown=r.attrs.slice(0,CHIP_LIMIT).map(chipHtml).join('');
-    var extra=r.attrs.length>CHIP_LIMIT?'<span class="chip more" data-more="'+i+'">+'+(r.attrs.length-CHIP_LIMIT)+' '+(lang=='zh'?'更多':'more')+'</span>':'';
-    var reqTxt=r.req?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'需求要求':'Requirements')+'</div>'+t(r.req)+'</div>':'';
-    var noteTxt=r.note?'<div class="rc-text"><div class="rl">'+(lang=='zh'?'备注':'Notes')+'</div>'+t(r.note)+'</div>':'';
-    var timeM;
-    if(r.status=='done') timeM='<div class="meta">'+(lang=='zh'?'开始时间':'Started')+'<b>'+r.started+'</b></div><div class="meta">'+(lang=='zh'?'完成时间':'Completed')+'<b>'+r.finished+'</b></div>';
-    else{var due=(r.dueSoon?' <span class="due">'+(lang=='zh'?'临期 24h':'Due soon')+'</span>':'');
-      timeM='<div class="meta">'+(lang=='zh'?'开始时间':'Started')+'<b>'+r.started+'</b></div><div class="meta">'+(lang=='zh'?'预计完成':'Est. finish')+'<b>'+r.estFinish+due+'</b></div>';}
-    var payM='<div class="meta">'+(lang=='zh'?'订单金额':'Amount paid')+'<b>'+r.price+'</b></div>';
-    var act;
-    if(r.status=='progress') act='<button class="btn" data-chat="'+i+'" data-zh="联系买家">Contact buyer</button><button class="btn primary" data-done="'+i+'" data-zh="标记完成">Mark done</button>';
-    else if(r.status=='review') act='<span class="buyer">'+t(r.autoConfirm)+'</span><button class="btn" data-chat="'+i+'" data-zh="联系买家">Contact buyer</button>';
-    else if(r.status=='done') act='';
-    else if(r.status=='dispute') act='<button class="btn" data-zh="查看争议">View dispute</button><button class="btn primary" data-zh="提交凭证">Submit proof</button>';
-    else act='<button class="btn ghost" data-zh="查看详情">Details</button>';
-    return '<div class="rcard">'+
-      '<div class="oc-bar"><span>'+(lang=='zh'?'接单时间 ':'Accepted ')+'<b>'+r.started+'</b></span>'+
-        '<span>'+(lang=='zh'?'订单编号 ':'Order No. ')+'<b>'+r.no+'</b></span>'+
-        '<span>'+(lang=='zh'?'买家 ':'Buyer ')+'<b>'+r.buyer+'</b></span>'+
-        '<span class="sp"></span><span class="st '+s.cls+'">'+t(s.name)+'</span>'+
-        '<a class="oc-log" data-zh="事件日志">Event log</a></div>'+
-      '<div class="rc-head"><div class="rc-icon">'+r.icon+'</div>'+
-        '<div class="rc-tt"><div class="rc-svc"><span class="gm">'+t(r.game)+' · '+t(r.cat)+' · </span>'+t(r.svc)+'</div>'+
-          '<div class="rc-no">'+(lang=='zh'?'完成方式:':'Delivery: ')+t(r.deliv)+'</div></div></div>'+
-      '<div class="attrs">'+shown+extra+'</div>'+reqTxt+noteTxt+
-      '<div class="rc-foot">'+timeM+payM+(act?'<div class="rc-actions">'+act+'</div>':'')+'</div></div>';
+    var kvs=r.attrs.slice(0,2).map(kvLine).join('');
+    var delivTime=t(r.limit?r.limit:{en:'—',zh:'—'});
+    var prog=r.status=='done'?'1 / 1':'0 / 1';
+    var ab='';
+    if(r.status=='dispute') ab='<div class="abnormal">'+t(r.note||{en:'Dispute opened — submit your proof.',zh:'买家发起争议 —— 请提交凭证。'})+'</div>';
+    else if(r.dueSoon) ab='<div class="abnormal">'+(lang=='zh'?'临期 24 小时内 —— 请尽快完成并交付。':'Due within 24h — finish and deliver soon.')+'</div>';
+    else if(r.status=='review'&&r.autoConfirm) ab='<div class="kv" style="margin-top:10px;color:var(--amber)">'+t(r.autoConfirm)+'</div>';
+    else if(r.note) ab='<div class="kv" style="margin-top:10px">'+t(r.note)+'</div>';
+    var act='';
+    if(r.status=='progress') act='<button class="btn primary" data-done="'+i+'" data-zh="发货">Delivery</button>';
+    else if(r.status=='dispute') act='<button class="btn" data-zh="退款详情">Refund details</button>';
+    return '<div class="ordcard">'+
+      '<div class="ord-top">'+
+        '<span>'+r.started+'</span>'+
+        '<span>'+(lang=='zh'?'订单编号:':'Order Number : ')+'<b>'+r.no+'</b> <span class="copy" data-copy="'+r.no+'">⧉</span></span>'+
+        '<span>'+(lang=='zh'?'买家:':'Buyer : ')+'<b>'+r.buyer+'</b> <span class="msg-ic" data-chat="'+i+'">💬</span></span>'+
+        '<span class="sp"></span>'+
+        '<span>'+(lang=='zh'?'订单状态:':'Order Status : ')+'<span class="stlink">'+t(s.name)+'</span></span>'+
+        '<a class="ev-log" data-zh="事件日志">Event Log</a>'+
+      '</div>'+
+      '<div class="ord-grid">'+
+        '<div class="od-prod"><div class="od-thumb">'+r.icon+'</div><div><div class="od-title">'+t(r.game)+' · '+t(r.svc)+'</div><span class="od-link" data-attrpop="my'+i+'" data-zh="属性详情">Attributes detail</span></div></div>'+
+        '<div><div class="od-h" data-zh="交付信息">Delivery Information</div>'+
+          '<div class="kv">'+(lang=='zh'?'交付时限:':'Delivery Time : ')+'<b>'+delivTime+'</b></div>'+
+          '<div class="kv">'+(lang=='zh'?'完成方式:':'Delivery method : ')+'<b>'+t(r.deliv)+'</b></div>'+
+          (r.account?'<div class="kv">'+(lang=='zh'?'账号信息:':'Account : ')+'<b>'+t(r.account)+'</b></div>':'')+
+          '</div>'+
+        '<div><div class="od-h" data-zh="金额 / 价格">Amount / Price</div><div class="amt">x1<div class="big">'+r.price+' USD</div></div></div>'+
+        '<div><div class="od-h" data-zh="备注">Remark</div><div class="ship">'+(lang=='zh'?'交付进度:':'Shipping Progress : ')+'<b>'+prog+'</b></div>'+ab+
+          ((r.req||r.note)?'<span class="viewall" data-reqpop="my'+i+'" style="text-align:left" data-zh="查看全部">View All</span>':'')+'</div>'+
+        '<div class="od-act">'+act+'</div>'+
+      '</div></div>';
   }
   function renderCards(){
     var list=MY.filter(function(r){return tabMatch(r,curTab);});
-    document.getElementById('cards').innerHTML=list.length?list.map(function(r){return boostCard(r,MY.indexOf(r));}).join(''):'<div class="empty">'+(lang=='zh'?'该状态下暂无代练单。':'No boosts in this status.')+'</div>';
+    document.getElementById('cards').innerHTML=list.length?list.map(function(r){return boostCard(r,MY.indexOf(r));}).join(''):'<div class="empty">'+(lang=='zh'?'该状态下暂无订单。':'No orders in this status.')+'</div>';
+    document.getElementById('boostPager').innerHTML=pagerHtml(list.length);
   }
-  document.getElementById('tabsbar').addEventListener('click',function(e){var x=e.target.closest('.rtab');if(x){curTab=x.dataset.id;renderTabs();renderCards();}});
+  function pagerHtml(n){return '<span>'+(lang=='zh'?'共 ':'Total ')+n+'</span><span class="pg">‹</span><span class="pg" style="border-color:var(--blue);color:var(--blue)">1</span><span class="pg">›</span><span>'+(lang=='zh'?'前往':'Go to')+'</span>';}
+  document.getElementById('tabsbar').addEventListener('click',function(e){var x=e.target.closest('.mtab');if(x){curTab=x.dataset.id;renderTabs();renderCards();}});
   document.getElementById('cards').addEventListener('click',function(e){
-    var m=e.target.closest('.chip.more');if(m){var r=MY[+m.dataset.more];m.parentElement.innerHTML=r.attrs.map(chipHtml).join('');return;}
     var d=e.target.closest('[data-done]');if(d){openProof(MY[+d.dataset.done]);return;}
     var c=e.target.closest('[data-chat]');if(c){toast(lang=='zh'?'打开与买家的聊天(原型略)':'Open chat with buyer (stub)');return;}
+    var cp=e.target.closest('[data-copy]');if(cp){toast(lang=='zh'?'已复制订单号':'Order number copied');return;}
+    var at=e.target.closest('[data-attr]');if(at){toast(lang=='zh'?'展开全部属性(原型略)':'Show all attributes (stub)');return;}
+    var ev=e.target.closest('.ev-log');if(ev){toast(lang=='zh'?'打开事件日志(原型略)':'Open event log (stub)');return;}
   });
 
   /* mark-done proof modal (image required) */
