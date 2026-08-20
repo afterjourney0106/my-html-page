@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代练递送时间 · 方案说明</title>
+<style>
+  :root{
+    --ink:#1c2430;--soft2:#5b6675;--dim:#93a0b0;--line:#e6e9ee;--bg:#f4f6f8;
+    --orange:#f1652a;--orange-d:#d9531c;--orange-soft:#fdeee7;--orange-line:#f6d6c6;
+    --blue:#2f6fe0;--blue-l:#eef4fd;--green:#12855a;--green-l:#e7f4ee;--amber:#b8791b;--amber-l:#fbf1dc;--red:#c9453f;--red-l:#fbeceb;
+    --sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --serif:"Georgia","Songti SC",serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 var(--sans);-webkit-font-smoothing:antialiased}
+  .doc{max-width:860px;margin:0 auto;padding:0 20px 64px}
+  .hero{padding:52px 0 30px;border-bottom:1px solid var(--line);margin-bottom:34px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--orange-d);text-transform:uppercase;margin-bottom:16px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--orange)}
+  h1{font-size:33px;line-height:1.24;margin:0 0 14px;letter-spacing:-.01em;font-weight:800}
+  .lede{font-size:16px;color:var(--soft2);margin:0;max-width:660px}
+  .meta{display:flex;gap:22px;flex-wrap:wrap;margin-top:24px;font-size:12.5px;color:var(--dim)}
+  .meta b{color:var(--soft2);font-weight:600}
+  h2{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-d);margin:44px 0 6px;display:flex;align-items:baseline;gap:12px}
+  h2 .n{font-family:var(--serif);font-size:15px;color:var(--dim);font-weight:400}
+  .h2sub{font-size:20px;font-weight:800;margin:0 0 18px;letter-spacing:-.01em}
+  p{margin:0 0 14px}
+  .soft{color:var(--soft2)}
+  .callout{background:#fff;border:1px solid var(--line);border-left:3px solid var(--orange);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0}
+  .callout .k{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--orange-d);margin-bottom:6px}
+  .callout p:last-child{margin-bottom:0}
+  .opt{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 26px;margin:18px 0}
+  .opt .tophead{display:flex;align-items:flex-start;gap:14px;margin-bottom:6px}
+  .opt .badge{flex:none;width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;font-family:var(--serif)}
+  .opt.one .badge{background:var(--blue-l);color:var(--blue)}
+  .opt.two .badge{background:var(--green-l);color:var(--green)}
+  .opt.three .badge{background:var(--orange-soft);color:var(--orange-d)}
+  .opt .ot{font-size:19px;font-weight:800;margin:0}
+  .opt .ol{font-size:13px;color:var(--dim);margin:2px 0 0}
+  .opt .mech{background:var(--bg);border-radius:11px;padding:14px 16px;margin:16px 0;font-size:14px}
+  .opt .mech .ml{font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--soft2);margin-bottom:7px}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:#eef1f4;border-radius:7px;padding:2px 7px;color:#334}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:4px}
+  .twocol h4{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin:0 0 8px}
+  .twocol .pro h4{color:var(--green)}
+  .twocol .con h4{color:var(--red)}
+  .twocol ul{margin:0;padding:0;list-style:none}
+  .twocol li{position:relative;padding-left:18px;margin:6px 0;font-size:13.5px;color:var(--soft2)}
+  .twocol .pro li::before{content:"+";position:absolute;left:2px;color:var(--green);font-weight:800}
+  .twocol .con li::before{content:"–";position:absolute;left:2px;color:var(--red);font-weight:800}
+  .fit{font-size:13px;color:var(--soft2);margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+  .fit b{color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:16px 0 6px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:#fafbfc;font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--soft2)}
+  tbody td:first-child{font-weight:600;color:var(--ink);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:2px 9px}
+  .tag.b{background:var(--blue-l);color:var(--blue)}.tag.o{background:var(--orange-soft);color:var(--orange-d)}
+  .tag.g{background:var(--green-l);color:var(--green)}.tag.a{background:var(--amber-l);color:var(--amber)}
+  .zero{background:var(--green-l);border:1px solid #c7e6d6;border-radius:12px;padding:16px 20px;margin:20px 0}
+  .zero .k{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+  .zero p:last-child{margin-bottom:0}
+  .note{font-size:13px;color:var(--dim);border-top:1px solid var(--line);margin-top:40px;padding-top:18px}
+  .note b{color:var(--soft2)}
+  @media(max-width:640px){.twocol{grid-template-columns:1fr}h1{font-size:26px}}
+  @media print{body{background:#fff}.opt,.callout,.zero,table{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <div class="hero">
+    <div class="eyebrow">代练业务 · 供决策</div>
+    <h1>代练「递送时间」<br>方案说明</h1>
+    <p class="lede">明确代练场景下递送时间的定位,并列出可选的几种填写形式与各自优缺点,供决策选择。不预设结论。</p>
+    <div class="meta"><span><b>范围</b>　代练(GamePal &amp; Boosting)</span><span><b>关联</b>　买家代练限时 · 接单产能</span><span><b>状态</b>　方案讨论 · 待拍板</span></div>
+  </div>
+
+  <!-- 背景 -->
+  <h2><span class="n">01</span> 背景与定位</h2>
+  <div class="h2sub">代练的递送时间为什么难"填准"</div>
+  <p>与金币等标准化商品不同,代练是<b>人力服务</b>,实际耗时高度不确定:多为远程代打,过程可能被买家自身占用打断(如买家玩到一半、次日再续)。卖家普遍反馈:精确时长意义不大,只能给个大概。</p>
+  <p>参考金币业务即将上线的「梯度递送时间」需求——金币按<b>买家下单数量</b>分档填不同时长(数量越大越慢,线性且标准)。代练不具备这种线性、标准化特征,因此若要分档,更宜取<b>下单价格</b>作为衡量(价格在一定程度上反映单子的规模与难度)。</p>
+
+  <div class="callout">
+    <div class="k">定位(各方案通用)</div>
+    <p>代练递送时间统一定位为<b>「参考、非承诺」</b>:用于给买家合理预期,<b>不作为超时判罚的硬约束</b>。真正的时间约束由买家发布需求时设定的<b>代练限时</b>承担。</p>
+    <p>此外,递送时长在内部还会作为<b>接单产能</b>计量的依据之一(见《库存与接单产能方案说明》),但该分组对卖家<b>完全隐藏</b>,卖家仅感知"未完成订单达阈值后关闭曝光"。本篇只讨论递送时间<b>对买家展示的填写形式</b>。</p>
+  </div>
+
+  <!-- 方案 -->
+  <h2><span class="n">02</span> 可选方案</h2>
+
+  <!-- 方案一 -->
+  <div class="opt one">
+    <div class="tophead"><div class="badge">1</div><div><p class="ot">单值(现状)</p><p class="ol">一个服务填一个固定递送时长</p></div></div>
+    <p class="soft">沿用当前逻辑:卖家为该服务填一个统一时长(如"预计 24 小时内"),买家在详情页看到这一个值,不随下单情况变化。</p>
+    <div class="mech"><div class="ml">买家看到</div>统一时效一个值,如 <span class="mono">预计 24H 内</span>。</div>
+    <div class="twocol">
+      <div class="pro"><h4>优点</h4><ul>
+        <li>最简单,卖家零负担,零改造</li>
+        <li>与现有商品逻辑完全一致</li>
+      </ul></div>
+      <div class="con"><h4>缺点</h4><ul>
+        <li>一个值撑所有情况,大小单不分,买家易当成承诺</li>
+        <li>卖家为保险倾向填长,小单买家看到虚高时长、劝退转化</li>
+      </ul></div>
+    </div>
+    <div class="fit"><b>适用</b>:诉求单一、时长差异不大的服务;或作为不开启其它形式时的默认。</div>
+  </div>
+
+  <!-- 方案二 -->
+  <div class="opt two">
+    <div class="tophead"><div class="badge">2</div><div><p class="ot">区间参考</p><p class="ol">填"最快 ~ 最慢"一个区间</p></div></div>
+    <p class="soft">卖家填一个区间而非单点(如"预计 1–3 天"),用一句"最慢也就 3 天"给买家预期,同时为被打断留出缓冲,契合代练时长不定的现实。</p>
+    <div class="mech"><div class="ml">买家看到</div>一个区间,如 <span class="mono">预计 1–3 天</span>。</div>
+    <div class="twocol">
+      <div class="pro"><h4>优点</h4><ul>
+        <li>比单值更诚实,天然表达"时长有波动"</li>
+        <li>卖家负担仍低(多填一个数),不易被当成硬承诺</li>
+        <li>改造小</li>
+      </ul></div>
+      <div class="con"><h4>缺点</h4><ul>
+        <li>仍是"一个区间撑所有单",大小单不区分</li>
+        <li>区间过宽会显得敷衍,过窄又失去缓冲意义</li>
+      </ul></div>
+    </div>
+    <div class="fit"><b>适用</b>:希望比单值更贴合现实、又不想做复杂配置的通用起步形态。</div>
+  </div>
+
+  <!-- 方案三 -->
+  <div class="opt three">
+    <div class="tophead"><div class="badge">3</div><div><p class="ot">按价格梯度</p><p class="ol">按下单价格区间分档,各档填不同递送时长(仿金币,自变量换为价格)</p></div></div>
+    <p class="soft">对标金币的「梯度递送时间」:金币按<b>下单数量</b>分 1~5 档;代练不线性,改按<b>下单价格</b>分档。卖家为不同价格区间配不同时长,买家按实际下单价格匹配对应档位、并随价格变化实时刷新。此形态也<b>合并了此前"按规模分档(档位参考)"的思路</b>——因代练缺乏跨品类通用的规模标准,规模最终以价格近似衡量,故并入本方案。</p>
+    <div class="mech"><div class="ml">买家看到</div>按当前下单价格匹配档位时效,改价实时联动。例:<span class="mono">≤$20 → 1天</span> · <span class="mono">$20–50 → 2天</span> · <span class="mono">$50–100 → 3天</span> · <span class="mono">&gt;$100 → 4–5天</span>。</div>
+    <div class="twocol">
+      <div class="pro"><h4>优点</h4><ul>
+        <li>大小单区分,小单展示更短时效,利于转化(金币需求同款收益)</li>
+        <li>价格作分档标准跨品类通用,不依赖等级/耗时等专有维度</li>
+        <li>可复用金币梯度配置的表单、校验、批量导入结构,研发有参照</li>
+      </ul></div>
+      <div class="con"><h4>缺点 / 风险</h4><ul>
+        <li>卖家配置负担最重(需分档、填多档时长)</li>
+        <li>价格与真实难度并非严格挂钩,分档可能不准</li>
+        <li>需完整校验(区间连续不重叠、递增等),改造量最大</li>
+        <li>递送时间为"参考"时,与价格挂钩仍可能被买家误读为承诺</li>
+      </ul></div>
+    </div>
+    <div class="fit"><b>适用</b>:大小单时长差异明显、且希望把"小单快发"透传给买家的服务;可对标金币需求排期落地。</div>
+  </div>
+
+  <!-- 对金币/现状关系 -->
+  <div class="zero">
+    <div class="k">与金币「梯度递送时间」的关系</div>
+    <p>金币需求已按<b>数量区间</b>分档;代练方案三是同一机制、把自变量换为<b>价格区间</b>。二者在表单形态、分档校验、批量导入结构上高度相通,<b>可复用金币的设计与研发经验</b>,代练侧主要差异在"分档自变量"和"递送时间为参考、不判罚"。</p>
+  </div>
+
+  <!-- 对比 -->
+  <div class="h2sub" style="margin-top:36px">三种方案对比</div>
+  <table>
+    <thead><tr><th>维度</th><th>方案一 · 单值</th><th>方案二 · 区间</th><th>方案三 · 价格梯度</th></tr></thead>
+    <tbody>
+      <tr><td>买家看到</td><td>一个固定值</td><td>一个区间</td><td>按下单价格匹配档位</td></tr>
+      <tr><td>大小单区分</td><td><span class="tag a">不分</span></td><td><span class="tag a">不分</span></td><td><span class="tag g">区分</span></td></tr>
+      <tr><td>卖家负担</td><td>最低</td><td>低</td><td>较高</td></tr>
+      <tr><td>改造成本</td><td><span class="tag g">零</span></td><td>低</td><td><span class="tag a">较高</span></td></tr>
+      <tr><td>转化友好度</td><td>低(易虚高)</td><td>中</td><td>高(小单短时效)</td></tr>
+      <tr><td>信息准确度</td><td>低</td><td>中</td><td>较高(仍非承诺)</td></tr>
+      <tr><td>可复用金币经验</td><td>—</td><td>—</td><td><span class="tag o">高</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>说明</b>:三种形态并非互斥,可作为同一字段的演进(如先支持单值/区间,再对特定品类开放价格梯度);此处按独立方案罗列以便比较。递送时间与「接单产能/曝光控制」的联动为内部机制、对卖家隐藏,详见《库存与接单产能方案说明》。
+  </div>
+
+</div>
+</body>
+</html>
