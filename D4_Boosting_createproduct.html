@@ -74,6 +74,8 @@
   .usereco{font-size:12.5px;color:var(--blue);cursor:pointer;font-weight:600}
   .exline{margin-top:10px;font-size:13px;color:var(--soft)}.exline b{color:var(--ink)}
   .coefgrid{display:grid;grid-template-columns:1fr 120px;gap:8px 14px;align-items:center}
+  .invgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+  .invgrid .field{margin-bottom:6px}
   .coefgrid .cl{font-size:13.5px}.coefgrid .cl small{color:var(--dim)}
   .coefin{display:flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff}
   .coefin .x{color:var(--soft)}.coefin input{border:none;outline:none;width:100%;font:14px var(--sans);text-align:right}
@@ -272,16 +274,9 @@
           <div id="segMsg" class="segmsg ok"></div>
         </div>
 
-        <!-- paragon add-on -->
-        <div class="pricebox" id="paragonBox">
-          <div class="pbh"><span data-zh="② 巅峰(Paragon)· 每级单价">② Paragon · unit per level</span><span class="tag-model" data-zh="线性增量">linear add-on</span></div>
-          <div class="pbs" data-zh="买家若加买巅峰等级,按每级单价线性累加。">If the buyer adds Paragon levels, they're added linearly at this unit price.</div>
-          <div class="coefgrid"><div class="cl" data-zh="每巅峰级单价">Per Paragon level</div><div class="coefin"><span class="x">$</span><input id="segP" value="0.08"></div></div>
-        </div>
-
         <!-- attribute coefficients -->
         <div class="pricebox">
-          <div class="pbh"><span data-zh="③ 属性系数 · 不同属性值 = 不同倍率">③ Attribute coefficients · each value = a multiplier</span></div>
+          <div class="pbh"><span data-zh="② 属性系数 · 不同属性值 = 不同倍率">② Attribute coefficients · each value = a multiplier</span></div>
           <div class="pbs" data-zh="每条属性值都可单选计价方式:「× 系数」随 base 放大,或「+$ 固定」加一笔定额(先加进 base 再乘其他系数)。默认取平台推荐,可自行调整。">Each value can be set as “× coefficient” (scales with base) or “+$ fixed” (a flat add, folded into base before other coefficients). Defaults from the platform; adjust as you like.</div>
 
           <div style="font-size:12.5px;font-weight:700;color:var(--soft);margin:6px 0 8px" data-zh="区服 / 模式">Realm / mode</div>
@@ -513,6 +508,18 @@
             <div class="pvband" id="bbBand">—</div>
           </div>
         </div>
+
+        <!-- inventory (with price; simple free-fill, same as existing flow) -->
+        <div class="pricebox" id="invBox">
+          <div class="pbh"><span data-zh="库存">Inventory</span></div>
+          <div class="pbs" data-zh="卖家自行填写的库存数量;真实接单与曝光由平台的接单自运转规则控制。">Seller-entered stock quantity; real order intake and exposure are governed by the platform's auto-rotation rules.</div>
+          <div class="invgrid">
+            <div class="field"><label class="lb"><span class="req">*</span><span data-zh="总库存">Total Inventory</span></label><input class="in" id="invTotal" placeholder="—" data-zh-ph="请输入"></div>
+            <div class="field"><label class="lb"><span data-zh="库存报警值">Low-stock alert</span></label><input class="in" id="invAlert" placeholder="—" data-zh-ph="请输入"></div>
+            <div class="field"><label class="lb"><span data-zh="最低购买">Min. purchase</span></label><input class="in" id="invMin" placeholder="—" data-zh-ph="请输入"></div>
+            <div class="field"><label class="lb"><span data-zh="最大购买量">Max. purchase</span></label><input class="in" id="invMax" placeholder="—" data-zh-ph="请输入"></div>
+          </div>
+        </div>
       </div>
 
       <!-- insurance -->
@@ -605,7 +612,6 @@
 
   function recalcLvl(){
     var v=validateSegs(), cap=v.cap;
-    document.getElementById('paragonBox').classList.toggle('hide',curSubName!='Power Leveling');
     SEGROWS.forEach(function(s,i){var el=document.getElementById('subc'+i);if(el)el.textContent=money(Math.max(0,s.t-s.f)*s.u);});
     document.getElementById('segCover').textContent='1 → '+cap;
     document.getElementById('segEx').textContent=v.ok?money(baseRange(LMIN,cap)):'—';
@@ -638,7 +644,7 @@
     var last=SEGROWS[SEGROWS.length-1];var start=last?last.t:LMIN;
     SEGROWS.push({f:start,t:Math.min(start+10,capFor()),u:last?last.u:0.3});renderSegs();recalc();
   });
-  ['segP','cRealmSS','cRealmSH','cRealmES','cRealmEH','cSelf','cPiloted','cClass','cRush','pvFrom','pvTo'].forEach(function(id){
+  ['cRealmSS','cRealmSH','cRealmES','cRealmEH','cSelf','cPiloted','cClass','cRush','pvFrom','pvTo'].forEach(function(id){
     document.getElementById(id).addEventListener('input',recalc);
   });
   ['pvRealm','pvDeliv','pvRush'].forEach(function(id){document.getElementById(id).addEventListener('change',recalc);});
