@@ -332,6 +332,42 @@
   .odesc-wrap{width:100%;order:9;border-top:1px solid var(--line);margin-top:12px;padding-top:11px}
   .odesc{font-size:12.5px;color:var(--soft);line-height:1.6;background:none;padding:0;border-radius:0}
   .odesc-tog{font-size:11.5px;color:var(--orange-d);cursor:pointer;display:inline-block;margin-top:7px;font-weight:600}
+  /* ==== Custom combo cart (方案A) ==== */
+  .cusBlk{border:1px solid #e9eaee;border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff}
+  .cusBlk .bh{display:flex;justify-content:space-between;align-items:center}
+  .cusBlk .bn{font-weight:700;font-size:14px}
+  .cusRm{color:#d64545;font-size:12px;cursor:pointer;border:none;background:none;font-weight:600}
+  .cusCfg{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .cusCfg .cf{display:flex;flex-direction:column;gap:4px}
+  .cusCfg .cf label{font-size:11px;color:#9198a4}
+  .cusCfg select{border:1px solid #e9eaee;border-radius:8px;padding:6px 10px;font:13px inherit;color:#20242e;background:#fff}
+  .cusCfg .qin{border:1px solid #e9eaee;border-radius:8px;padding:6px 10px;font:13px inherit;color:#20242e;background:#fff;width:74px}
+  .cusCfg .qin:focus{outline:none;border-color:#f1652a}
+  .cusBlk .bsug{text-align:right;font-size:12px;color:#5f6673;margin-top:8px}.cusBlk .bsug b{color:#20242e}
+  .cusAdder{border:1.5px dashed #cfd3da;border-radius:12px;padding:12px 14px;margin-bottom:14px}
+  .cusAdder .l{font-size:12.5px;color:#5f6673;margin-bottom:9px}
+  .cusAdd{font-size:12.5px;border:1px solid #e9eaee;border-radius:20px;padding:6px 12px;cursor:pointer;color:#5f6673;background:#fff;margin:0 6px 6px 0;display:inline-block}
+  .cusAdd:hover{border-color:#f1652a;color:#d9531c}
+  .cusEmpty{text-align:center;color:#9198a4;font-size:12.5px;padding:14px;border:1px dashed #e9eaee;border-radius:12px;margin-bottom:12px}
+  .cusSum{background:#fffaf7;border:1.5px solid #fdeee7;border-radius:12px;padding:13px 15px;margin-bottom:16px}
+  .cusSum .sr{display:flex;justify-content:space-between;font-size:12.5px;color:#5f6673;padding:2px 0}
+  .cusSum .st{display:flex;justify-content:space-between;font-size:15px;font-weight:800;border-top:1px solid #f0d9cc;margin-top:6px;padding-top:8px}
+  .cusSum .st b{color:#d9531c}
+  .cusSum .fn{font-size:11px;color:#9198a4;margin-top:4px}
+  /* two parallel modes: combine services (A) / describe it yourself (C) */
+  .cusModes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+  .cusMode{border:1.5px solid #e9eaee;border-radius:13px;padding:13px 15px;cursor:pointer;background:#fff;transition:.15s}
+  .cusMode:hover{border-color:#f6d6c6}
+  .cusMode.on{border-color:#f1652a;background:#fdeee7}
+  .cusMode .mt{display:flex;align-items:center;gap:9px;font-weight:800;font-size:14.5px}
+  .cusMode.on .mt{color:#d9531c}
+  .cusMode .mi{width:26px;height:26px;border-radius:8px;background:#eef0f3;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+  .cusMode.on .mi{background:#fff}
+  .cusMode .md{font-size:12px;color:#5f6673;margin-top:5px;line-height:1.5}
+  .cnote{font-size:12px;color:#5f6673;background:#f7f8fa;border:1px solid #e9eaee;border-radius:10px;padding:10px 12px;margin-top:10px;line-height:1.6}
+  .cnote b{color:#20242e}
+  .phint{font-size:11px;color:#9198a4;margin-top:5px}
+  @media(max-width:720px){.cusModes{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -385,6 +421,8 @@
   </div>
 </header>
 
+<div id="page-home">
+
 <!-- ==================== SCREEN 1: ORDER ==================== -->
 <div id="screen-order" class="screen">
 <div class="wrap">
@@ -405,7 +443,7 @@
     <button class="tab" data-t="boss"><span class="em">💀</span><span data-zh="Boss 代打">Boss Kills</span></button>
     <button class="tab" data-t="story"><span class="em">📜</span><span data-zh="剧情解锁">Story &amp; Unlocks</span></button>
     <button class="tab" data-t="build"><span class="em">📘</span><span data-zh="配 Build">Build Service</span></button>
-    <button class="tab" data-t="custom"><span class="em">📝</span><span data-zh="自定义">Custom</span></button>
+    <button class="tab" data-t="custom"><span class="em">📝</span><span data-zh="自定义 · 组合">Custom &amp; Combo</span></button>
   </div>
   <div class="subtabs" id="subtabs"></div>
 
@@ -610,6 +648,9 @@
   </div>
 </div>
 
+</div><!-- /page-home -->
+
+
 <script>
   /* ---------- i18n ---------- */
   var lang='en';
@@ -729,17 +770,71 @@
       {id:'master',name:{en:'Masterworking',zh:'Masterworking 淬炼'},modes:['piloted','selfplay'],render:function(L){return HD(L=='zh'?'Masterworking · 淬炼':'Masterworking',L=='zh'?'把装备淬炼拉满,冲击暴击词条。':'Push masterworking ranks, hit the crit affixes.')+R2(F(L=='zh'?'目标等级':'Target rank',SEL([[L=='zh'?'4 级':'Rank 4'],[L=='zh'?'8 级':'Rank 8',1],[L=='zh'?'12 级(满)':'Rank 12 (max)']])),F(L=='zh'?'装备件数':'Items',NUM(6)))+F(L=='zh'?'职业':'Class',CLS(L));}},
       {id:'check',name:{en:'Build Check',zh:'修车 / 查漏'},modes:['selfplay','piloted'],render:function(L){return HD(L=='zh'?'修车 / 查漏补缺':'Build Check',L=='zh'?'高手帮你查装备/词条/巅峰,给优化建议。':'A pro audits your gear/affixes/paragon and fixes it.')+F(L=='zh'?'职业':'Class',CLS(L));}}
     ]},
-    custom:{name:{en:'Custom',zh:'自定义'},subs:[
-      {id:'custom',name:{en:'Custom Request',zh:'自定义需求'},modes:['selfplay','piloted'],render:function(L){return HD(L=='zh'?'自定义需求 · 自由报价':'Custom Request',L=='zh'?'需求不在上面品类里?选好基础属性、写清要求,自己出价发布,卖家来接单。':'Not in the categories above? Set the basics, describe it, name your price — sellers take the job.')+
-        F(L=='zh'?'完成方式':'Delivery method',SEG([[L=='zh'?'组队陪同 · 不交号':'Self-play · no login',1],[L=='zh'?'上号代打 · 需实名':'Piloted · ID']]))+
+    custom:{name:{en:'Custom & Combo',zh:'自定义 · 组合'},subs:[
+      {id:'custom',name:{en:'Custom Request',zh:'自定义需求'},modes:['selfplay','piloted'],render:function(L){
+        var head=HD(L=='zh'?'自定义 · 组合需求':'Custom & combo requests',L=='zh'?'把多个标准服务拼成一个需求,或者用自己的话描述特殊诉求 —— 两种方式都由已认证卖家竞价接单。':'Combine several standard services into one request, or describe something special in your own words. Either way, verified sellers bid on it.')+
+          '<div class="cusModes">'+
+            modeCard('A','🧩',L=='zh'?'组合服务':'Combine services',L=='zh'?'从标准服务里挑几个,拼成一个需求下单':'Pick standard services and stack them into one request')+
+            modeCard('C','✍️',L=='zh'?'自由描述':'Describe it yourself',L=='zh'?'列表里没有?用一句话写下你的特殊诉求':'Not on the list? Write what you need in one sentence')+
+          '</div>';
+        var body;
+        if(cusView=='A'){
+          body='<div class="field"><label>'+(L=='zh'?'组合内容':'Your combo')+'</label>'+cartBlocksHtml(L)+
+            '<div class="cusAdder"><div class="l">+ '+(L=='zh'?'添加服务(从标准品类挑)':'Add a service (pick from standard categories)')+'</div>'+
+            Object.keys(CUS_SVC).map(function(k){return '<span class="cusAdd" data-add="'+k+'">'+(L=='zh'?CUS_SVC[k].name.zh:CUS_SVC[k].name.en)+'</span>';}).join('')+'</div>'+
+            cartSummaryHtml(L)+'</div>';
+        } else {
+          body='<div class="cnote">'+(L=='zh'?'用下面的<b>需求要求</b>把你想要的写清楚 —— 标准服务里没有的诉求都可以提。<b>自由描述不提供建议价</b>,请在下方自己出价,已认证卖家会来竞价。':'Use <b>Requirements</b> below to spell out what you want — anything outside the standard catalog is fine. <b>Free descriptions get no suggested price</b>: name your own below and verified sellers will bid.')+'</div>';
+        }
+        return head+body+
         R2(REALMF(L),PLATFORMF(L))+
-        '<div class="field"><label>'+(L=='zh'?'需求要求':'Requirements')+'</label><textarea class="inp" id="cusReq" rows="3" placeholder="'+(L=='zh'?'例如:战令 90 级、低语之树刷满、指定成就…':'e.g. battle pass to 90, tree of whispers, specific achievements…')+'"></textarea></div>'+
-        '<div class="field"><label>'+(L=='zh'?'备注(可选)':'Notes (optional)')+'</label><textarea class="inp" id="cusNote" rows="2" placeholder="'+(L=='zh'?'补充说明、时间偏好等…':'anything else, timing preferences…')+'"></textarea></div>'+
-        R2('<div class="field"><label>'+(L=='zh'?'你的报价':'Your price')+'</label><div class="pricein"><span class="cur">$</span><input class="inp" id="cusPrice" value="20"></div></div>',
-           '<div class="field"><label>'+(L=='zh'?'代练限时':'Time limit')+'</label><div class="tlrow"><input class="inp" id="cusLimit" value="3"><select id="cusUnit"><option>'+(L=='zh'?'分钟':'Minutes')+'</option><option selected>'+(L=='zh'?'小时':'Hours')+'</option><option>'+(L=='zh'?'天':'Days')+'</option></select></div></div>')+
+        '<div class="field"><label>'+(L=='zh'?'需求要求':'Requirements')+(cusView=='C'?'':(L=='zh'?'(可选)':' (optional)'))+'</label><textarea class="inp" id="cusReq" rows="'+(cusView=='C'?4:2)+'" placeholder="'+(cusView=='C'?(L=='zh'?'详细写下你要什么:目标、范围、时间安排、留证方式等…':'Spell out what you want: goal, scope, timing, proof…'):(L=='zh'?'组合之外的特殊说明:指定时间段、留证方式等…':'Anything beyond the combo: timing, proof, etc…'))+'">'+cusReqTxt+'</textarea></div>'+
+        '<div class="field"><label>'+(L=='zh'?'备注(可选)':'Notes (optional)')+'</label><textarea class="inp" id="cusNote" rows="2" placeholder="'+(L=='zh'?'其他想让卖家知道的信息…':'Anything else the seller should know…')+'">'+cusNoteTxt+'</textarea></div>'+
+        R2('<div class="field"><label>'+(L=='zh'?'你的出价':'Your price')+'</label><div class="pricein"><span class="cur">$</span><input class="inp" id="cusPrice" placeholder="'+(L=='zh'?'请输入':'Enter amount')+'" value="'+((cusView=='A'&&cusCart.length)?cartMid():'')+'"></div><div class="phint">'+(cusView=='A'?(cusCart.length?(L=='zh'?'已按上方建议区间预填,可自行修改':'Pre-filled from the suggested range above — change it freely'):(L=='zh'?'先在上方添加服务,就会给出建议价':'Add services above and a suggested price will appear')):(L=='zh'?'自由描述没有建议价,由你自己定价':'No suggestion for free descriptions — you set the price'))+'</div></div>',
+           '<div class="field"><label>'+(L=='zh'?'代练限时':'Time limit')+'</label><div class="tlrow"><input class="inp" id="cusLimit" value="3"><select id="cusUnit"><option>'+(L=='zh'?'分钟':'Minutes')+'</option><option>'+(L=='zh'?'小时':'Hours')+'</option><option selected>'+(L=='zh'?'天':'Days')+'</option></select></div></div>')+
         F(L=='zh'?'报价有效期':'Offer stays open for',SEL([[L=='zh'?'24 小时':'24 hours'],[L=='zh'?'3 天':'3 days',1],[L=='zh'?'7 天':'7 days']]));}}
     ]}
   };
+
+  /* ==== Custom combo cart (方案A) data + helpers ==== */
+  var CUS_SVC={
+    pl:{name:{en:'Power Leveling',zh:'升级 · Power Leveling'},cfg:[{label:{en:'Levels',zh:'等级'},opts:['1 → 70','50 → 70','1 → 50']}],sug:[18,26]},
+    para:{name:{en:'Paragon',zh:'巅峰 · Paragon'},cfg:[{label:{en:'Target',zh:'目标'},opts:['0 → 200','0 → 300']}],sug:[16,24]},
+    boss:{name:{en:'Uber / Lair Boss',zh:'Boss · Uber / 巢穴'},cfg:[{label:{en:'Boss',zh:'Boss'},opts:['Mephisto','Duriel','Andariel','Belial']},{label:{en:'Difficulty',zh:'难度'},opts:['Torment 4','Torment 6','Torment 8']}],qty:{label:{en:'Kills',zh:'击杀次数'},def:5},sug:[4,6]},
+    pit:{name:{en:'Pit Push',zh:'副本 · Pit 冲层'},cfg:[{label:{en:'Target',zh:'目标层'},opts:['Pit 80','Pit 100','Pit 120']}],qty:{label:{en:'Runs',zh:'次数'},def:4},sug:[3,5]},
+    unlock:{name:{en:'Unlock Difficulty',zh:'解锁 · 难度'},cfg:[{label:{en:'Torment',zh:'痛苦'},opts:['T1–T4','T1–T8']}],sug:[8,14]},
+    renown:{name:{en:'Renown',zh:'声望'},cfg:[{label:{en:'Scope',zh:'范围'},opts:['All zones','Favor only']}],sug:[10,16]},
+    build:{name:{en:'Full Build',zh:'配 · 成品 Build'},cfg:[{label:{en:'Build',zh:'Build'},opts:['Meta build','Custom']}],sug:[15,25]}
+  };
+  var cusCart=[];
+  var cusView='A';
+  function modeCard(m,ic,n,d){return '<div class="cusMode'+(cusView==m?' on':'')+'" data-view="'+m+'"><div class="mt"><span class="mi">'+ic+'</span>'+n+'</div><div class="md">'+d+'</div></div>';}
+  var cusReqTxt='', cusNoteTxt='';
+  function qtyOf(it){var s=CUS_SVC[it.svc];return s.qty?(it.qty||s.qty.def):1;}
+  function lineTotal(it){var s=CUS_SVC[it.svc],q=qtyOf(it);return [s.sug[0]*q,s.sug[1]*q];}
+  function lineSugHtml(it,L){
+    var s=CUS_SVC[it.svc],q=qtyOf(it),t=lineTotal(it);
+    return s.qty
+      ? ((L=='zh'?'建议 ':'Suggested ')+'$'+s.sug[0]+'–'+s.sug[1]+(L=='zh'?' / 次 × ':' each × ')+q+' = <b>$'+t[0]+'–'+t[1]+'</b>')
+      : ((L=='zh'?'建议 ':'Suggested ')+'<b>$'+t[0]+'–'+t[1]+'</b>');
+  }
+  function cartBlocksHtml(L){
+    if(!cusCart.length) return '<div class="cusEmpty">'+(L=='zh'?'还没有服务,点下面「添加服务」开始拼。':'No services yet — add one below to start.')+'</div>';
+    return cusCart.map(function(it,idx){var s=CUS_SVC[it.svc];
+      var cfg=s.cfg.map(function(c,ci){return '<div class="cf"><label>'+(L=='zh'?c.label.zh:c.label.en)+'</label><select data-cfg="'+idx+'-'+ci+'">'+c.opts.map(function(o,oi){return '<option'+((it.sel[ci]||0)==oi?' selected':'')+'>'+o+'</option>';}).join('')+'</select></div>';}).join('');
+      if(s.qty) cfg+='<div class="cf"><label>'+(L=='zh'?s.qty.label.zh:s.qty.label.en)+'</label><input class="qin" type="number" min="1" max="99" data-qty="'+idx+'" value="'+qtyOf(it)+'"></div>';
+      var rt='<button class="cusRm" data-rm="'+idx+'">✕ '+(L=='zh'?'移除':'Remove')+'</button>';
+      return '<div class="cusBlk"><div class="bh"><span class="bn">'+(idx+1)+'. '+(L=='zh'?s.name.zh:s.name.en)+'</span>'+rt+'</div><div class="cusCfg">'+cfg+'</div><div class="bsug" id="bsug'+idx+'">'+lineSugHtml(it,L)+'</div></div>';
+    }).join('');
+  }
+  function cartTotals(){var lo=0,hi=0;cusCart.forEach(function(it){var t=lineTotal(it);lo+=t[0];hi+=t[1];});return [lo,hi];}
+  function cartMid(){var t=cartTotals();return t[1]?Math.round((t[0]+t[1])/2):'';}
+  function cartSummaryHtml(L){
+    if(!cusCart.length) return '<div id="cusSumBox"></div>';
+    var rows=cusCart.map(function(it){var s=CUS_SVC[it.svc],t=lineTotal(it);return '<div class="sr"><span>'+(L=='zh'?s.name.zh:s.name.en)+(s.qty?(' × '+qtyOf(it)):'')+'</span><span>$'+t[0]+'–'+t[1]+'</span></div>';}).join('');
+    var t=cartTotals();
+    return '<div id="cusSumBox"><div class="cusSum">'+rows+'<div class="st"><span>'+(L=='zh'?'组合建议报价':'Combo suggested price')+'</span><b>$'+t[0]+'–'+t[1]+'</b></div><div class="fn">'+(L=='zh'?'仅供参考 —— 各服务平台建议价的加总。卖家自行定价,最终以卖家报价为准。':'Reference only — the sum of platform suggestions for each service. Sellers price their own work; the final price comes from their offers.')+'</div></div>';
+  }
 
   var curCat='lvl', curSub=null;
   var host=document.getElementById('configHost'), subrow=document.getElementById('subtabs');
@@ -749,13 +844,50 @@
   function renderConfig(){
     host.innerHTML=curSub.render(lang) + (curCat!=='custom' ? (PLATFORMF(lang)+ORDERNOTES(lang)) : '');
     host.querySelectorAll('.lvlbox').forEach(setupRange);
+    if(curCat==='custom')lastMid=cartMid();
     var db=document.getElementById('delivBlock');if(db)db.style.display=(curCat==='custom')?'none':'';
     var fc=document.getElementById('findCustom');if(fc)fc.style.display=(curCat==='custom')?'none':'';
     updateCTA();
   }
   function updateCTA(){var b=document.getElementById('getOffers');if(!b)return;
-    if(curCat==='custom'){b.innerHTML='📣 <span>'+(lang=='zh'?'发布需求':'Publish request')+'</span>';}
+    if(curCat==='custom'){
+      var lbl;
+      if(cusView=='A'){var t=cartTotals();lbl=t[1]?((lang=='zh'?'发布组合需求 · 建议 ':'Publish combo · suggested ')+'$'+t[0]+'–'+t[1]):(lang=='zh'?'发布组合需求':'Publish combo request');}
+      else{lbl=(lang=='zh'?'发布自定义需求 · 自己出价':'Publish custom request · your price');}
+      b.innerHTML='📣 <span>'+lbl+'</span>';}
     else{b.innerHTML='🏷 <span>'+(lang=='zh'?'$14.99 起 · 获取报价':'From $14.99 · Get offers')+'</span>';}}
+
+  /* combo cart interactions (delegated on config host) */
+  host.addEventListener('click',function(e){
+    var vw=e.target.closest('.cusMode');if(vw){if(cusView!=vw.dataset.view){cusView=vw.dataset.view;if(cusView=='C')cusCart=[];}renderConfig();return;}
+    var add=e.target.closest('.cusAdd');if(add){cusCart.push({svc:add.dataset.add,sel:{}});renderConfig();return;}
+    var rm=e.target.closest('.cusRm');if(rm){cusCart.splice(+rm.dataset.rm,1);renderConfig();return;}
+  });
+  host.addEventListener('change',function(e){
+    var cf=e.target.closest('[data-cfg]');if(cf){var p=cf.dataset.cfg.split('-');if(cusCart[+p[0]])cusCart[+p[0]].sel[+p[1]]=cf.selectedIndex;}
+  });
+  host.addEventListener('input',function(e){
+    var rq=e.target.closest('#cusReq');  if(rq){cusReqTxt=rq.value;return;}
+    var nt=e.target.closest('#cusNote'); if(nt){cusNoteTxt=nt.value;return;}
+    var qi=e.target.closest('[data-qty]');
+    if(qi){
+      var i=+qi.dataset.qty, v=parseInt(qi.value,10);
+      if(!(v>0))v=1; if(v>99){v=99;qi.value=99;}
+      cusCart[i].qty=v; refreshCombo();
+    }
+  });
+  /* update prices in place so the number input keeps focus */
+  function refreshCombo(){
+    var L=lang;
+    cusCart.forEach(function(it,i){var el=document.getElementById('bsug'+i);if(el)el.innerHTML=lineSugHtml(it,L);});
+    var box=document.getElementById('cusSumBox');
+    if(box){var tmp=document.createElement('div');tmp.innerHTML=cartSummaryHtml(L);box.innerHTML=tmp.firstChild?tmp.firstChild.innerHTML:'';}
+    var pi=document.getElementById('cusPrice');
+    if(pi && (pi.value===''||pi.value==String(lastMid))){pi.value=cartMid();}
+    lastMid=cartMid();
+    updateCTA();
+  }
+  var lastMid='';
   function reRenderCfg(){renderSubrow();renderConfig();}
   function refreshDelivery(){var modes=curSub?curSub.modes:['selfplay','piloted'],first=null;
     dopts.forEach(function(d){var ok=modes.indexOf(d.getAttribute('data-mode'))>=0;d.classList.toggle('hide',!ok);if(ok&&!first)first=d;});
