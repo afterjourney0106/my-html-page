@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iGV 后台 · Custom 影子商品与订单原型</title>
+<style>
+  :root{
+    --nav:#1f2a44;--nav-hover:#28345a;--nav-on:#1d6fe0;--nav-txt:#c3cbdd;
+    --ink:#1f2329;--soft:#5c6470;--dim:#9aa3af;--line:#e8eaed;--bg:#f0f2f5;
+    --blue:#2f6fe0;--blue-d:#1d5fd0;--blue-l:#eaf1fc;
+    --orange:#f1652a;--orange-d:#d9531c;--orange-soft:#fdeee7;
+    --green:#12855a;--green-l:#e7f4ee;--amber:#b8791b;--amber-l:#fbf1dc;--red:#d64545;--red-l:#fdecec;
+    --sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+
+  /* ---------- top bar ---------- */
+  .topbar{height:56px;background:#141c30;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:30}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:19px;color:#fff}
+  .logo .mark{width:28px;height:28px;border-radius:7px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:800}
+  .logo small{display:block;font-size:7.5px;letter-spacing:.16em;color:#8d97ac;font-weight:600;margin-top:-2px}
+  .topbar .sp{flex:1}
+  .userbox{display:flex;align-items:center;gap:9px;color:#dfe4ee;font-size:13px}
+  .userbox .av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7d8aa8,#c9d1e0)}
+
+  /* ---------- layout ---------- */
+  .shell{display:flex;align-items:stretch;min-height:calc(100vh - 56px)}
+  .side{width:210px;flex:none;background:var(--nav);padding:10px 0 40px}
+  .grp{margin-bottom:2px}
+  .grp>.gh{display:flex;align-items:center;gap:10px;padding:12px 18px;color:#e8ecf5;font-size:13.5px;cursor:pointer;user-select:none}
+  .grp>.gh .ic{width:16px;text-align:center;opacity:.85}
+  .grp>.gh .car{margin-left:auto;font-size:10px;color:#8d97ac;transition:transform .15s}
+  .grp.open>.gh .car{transform:rotate(180deg)}
+  .sub{display:none}
+  .grp.open .sub{display:block}
+  .sub a{display:block;padding:10px 18px 10px 44px;color:var(--nav-txt);font-size:13px;cursor:pointer;text-decoration:none}
+  .sub a:hover{background:var(--nav-hover);color:#fff}
+  .sub a.on{background:var(--nav-on);color:#fff;font-weight:600}
+
+  .main{flex:1;min-width:0;padding:14px 18px 40px}
+  .crumbrow{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .crumb{font-size:13px;color:var(--soft)}
+  .crumb b{color:var(--ink);font-weight:500}
+  .crumbrow .sp{flex:1}
+  .shopsw{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--soft)}
+  .sel,.inp{border:1px solid #d9dde3;border-radius:4px;padding:6px 10px;font:13px var(--sans);background:#fff;color:var(--ink);min-width:130px}
+  .sel{cursor:pointer;appearance:none;background-image:linear-gradient(45deg,transparent 50%,#9aa3af 50%),linear-gradient(135deg,#9aa3af 50%,transparent 50%);background-position:calc(100% - 14px) 12px,calc(100% - 9px) 12px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:28px}
+  .inp::placeholder{color:#b9c0ca}
+
+  .card{background:#fff;border-radius:6px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .frow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .frow+.frow{margin-top:12px}
+  .fl{font-size:13px;color:var(--soft);white-space:nowrap}
+  .btns{margin-left:auto;display:flex;gap:8px}
+  .btn{border:1px solid #d9dde3;background:#fff;border-radius:4px;padding:6px 16px;font-size:13px;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--blue);color:var(--blue)}
+  .btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+  .btn.pri:hover{background:var(--blue-d);color:#fff}
+  .btn.sm{padding:4px 12px;font-size:12.5px}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn[disabled]:hover{border-color:#d9dde3;color:var(--ink)}
+
+  /* tabs */
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:-4px -18px 14px;padding:0 18px}
+  .tab{padding:11px 18px;font-size:14px;color:var(--soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+
+  /* table */
+  .twrap{background:#fff;border-radius:6px;overflow:auto;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  thead th{background:#fafafa;color:var(--soft);font-weight:600;white-space:nowrap;position:sticky;top:0}
+  tbody tr:hover{background:#fafcff}
+  tbody tr.sys{background:#fffaf6}
+  tbody tr.sys:hover{background:#fff5ee}
+  .thumb{width:64px;height:44px;border-radius:4px;object-fit:cover;background:#2a2f3a;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff}
+  .pname{max-width:230px;line-height:1.5}
+  .lnk{color:var(--blue);cursor:pointer}
+  .lnk:hover{text-decoration:underline}
+  .muted{color:var(--dim)}
+  .nowrap{white-space:nowrap}
+  .stt{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .dot{width:6px;height:6px;border-radius:50%;flex:none}
+  .st-up .dot{background:var(--green)}.st-up{color:var(--green)}
+  .st-off .dot{background:#b9c0ca}.st-off{color:var(--dim)}
+  .st-pay .dot{background:var(--amber)}.st-pay{color:var(--amber)}
+  .st-run .dot{background:var(--blue)}.st-run{color:var(--blue)}
+  .st-done .dot{background:var(--green)}.st-done{color:var(--green)}
+  .st-close .dot{background:var(--red)}.st-close{color:var(--red)}
+  .badge{display:inline-block;font-size:10.5px;font-weight:700;border-radius:3px;padding:1px 6px;vertical-align:1px;white-space:nowrap}
+  .bg-cus{background:var(--blue-l);color:var(--blue);border:1px solid #cfe0f8}
+  .chk{width:14px;height:14px;accent-color:var(--blue)}
+  .substat{font-size:11px;color:var(--dim);margin-top:2px;white-space:nowrap}
+  .btn.danger{color:var(--red);border-color:#f0c2c2;white-space:nowrap}
+  .btn.danger:hover{border-color:var(--red);color:var(--red);background:#fff6f6}
+
+  /* annotation */
+  .annobar{background:#fff;border-radius:6px;padding:11px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(0,0,0,.04);border-left:3px solid var(--orange)}
+  .annobar .t{font-weight:700;font-size:13px}
+  .annobar .d{font-size:12.5px;color:var(--soft);flex:1;min-width:220px}
+  .swt{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--soft);cursor:pointer;user-select:none}
+  .vtabs{display:inline-flex;border:1px solid #d9dde3;border-radius:5px;overflow:hidden;flex:none}
+  .vtab{padding:5px 14px;font-size:12.5px;font-weight:600;color:var(--soft);cursor:pointer;background:#fff;user-select:none}
+  .vtab+.vtab{border-left:1px solid #d9dde3}
+  .vtab.on{background:var(--ink);color:#fff}
+  /* 方案说明 */
+  .doc{max-width:940px}
+  .doccard{background:#fff;border-radius:6px;padding:18px 22px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .doccard h3{margin:0 0 4px;font-size:15px}
+  .doccard .csub{color:var(--soft);font-size:12.5px;margin:0 0 14px}
+  .doccard h3 .num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:5px;background:var(--ink);color:#fff;font-size:11px;margin-right:8px;vertical-align:1px}
+  .lead{background:var(--blue-l);border:1px solid #cfe0f8;border-radius:6px;padding:13px 16px;font-size:13px;color:#25406e;line-height:1.75;margin-bottom:14px}
+  .lead b{color:#14294d}
+  .dtable{width:100%;border-collapse:collapse;font-size:12.5px;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .dtable th,.dtable td{padding:9px 12px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);text-align:left;vertical-align:top}
+  .dtable th:last-child,.dtable td:last-child{border-right:none}
+  .dtable thead th{background:#fafafa;color:var(--soft);font-weight:600;white-space:nowrap}
+  .dtable tbody tr:last-child td{border-bottom:none}
+  .dtable td.k{white-space:nowrap;font-weight:600}
+  .pill{display:inline-block;font-size:11px;font-weight:700;border-radius:3px;padding:1px 7px;white-space:nowrap}
+  .p-none{background:var(--green-l);color:var(--green)}
+  .p-new{background:var(--orange-soft);color:var(--orange-d)}
+  .p-min{background:var(--blue-l);color:var(--blue)}
+  .steps{counter-reset:st;margin:0;padding:0;list-style:none}
+  .steps li{position:relative;padding-left:26px;margin:9px 0;font-size:13px;color:var(--soft);line-height:1.7}
+  .steps li::before{counter-increment:st;content:counter(st);position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:#eef0f3;color:var(--soft);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .steps li b{color:var(--ink)}
+  .code{font-family:var(--mono);font-size:11.5px;background:#f2f4f7;border-radius:4px;padding:1px 6px;color:#334}
+  .todo{background:var(--amber-l);border:1px solid #efdcae;border-radius:6px;padding:12px 15px;font-size:12.5px;color:#7a5510;line-height:1.8}
+  .todo b{color:#5c3f08}
+  .anno{display:none}
+  body.showanno .anno{display:inline-block}
+  body.showanno .annoblk{display:block}
+  .annoblk{display:none}
+  .ntag{font-size:10px;font-weight:800;background:var(--orange);color:#fff;border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.03em}
+  .anonote{background:var(--orange-soft);border:1px solid #f7d7c7;border-radius:6px;padding:10px 13px;font-size:12.5px;color:#8a5a2a;margin:0 0 14px}
+  .anonote b{color:var(--orange-d)}
+
+  .pager{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:12px 4px 0;color:var(--soft);font-size:12.5px}
+  .pg{border:1px solid #d9dde3;border-radius:4px;padding:4px 10px;background:#fff;cursor:pointer}
+  .pg.on{border-color:var(--blue);color:var(--blue)}
+
+  /* modal */
+  .mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-start;justify-content:center;z-index:60;padding:40px 20px;overflow:auto}
+  .mask.show{display:flex}
+  .modal{background:#fff;border-radius:8px;width:100%;max-width:720px;box-shadow:0 12px 48px rgba(0,0,0,.24)}
+  .mhead{display:flex;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid var(--line)}
+  .mhead h3{margin:0;font-size:16px}
+  .mhead .x{margin-left:auto;cursor:pointer;color:var(--dim);font-size:16px}
+  .mbody{padding:6px 20px 18px}
+  .sec{margin-top:14px}
+  .sec .sh{font-size:12px;font-weight:700;color:var(--soft);letter-spacing:.03em;margin:0 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .kv{display:grid;grid-template-columns:104px 1fr;gap:6px 14px;font-size:12.5px}
+  .kv .k{color:var(--soft)}
+  .kv .v{color:var(--ink)}
+  .kv .v.mono{font-family:var(--mono);font-size:12px}
+  .chain{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin-top:4px}
+  .cn{border:1px solid var(--line);border-radius:6px;padding:9px 12px;flex:1;min-width:150px;background:#fafbfc}
+  .cn .ck{font-size:10px;font-weight:800;letter-spacing:.05em;color:var(--dim);text-transform:uppercase}
+  .cn .cv{font-size:12.5px;font-weight:600;margin-top:3px;font-family:var(--mono)}
+  .cn .cd{font-size:11.5px;color:var(--soft);margin-top:3px}
+  .cn.req{background:var(--blue-l);border-color:#cfe0f8}
+  .cn.sys{background:var(--orange-soft);border-color:#f7d7c7}
+  .cn.pend{background:#fafbfc;border-style:dashed;color:var(--dim)}
+  .cn.pend .cv{color:var(--dim)}
+  .car2{display:flex;align-items:center;color:var(--dim);padding:0 7px;flex:none;font-size:15px}
+  .combo{border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .combo .cr{display:flex;justify-content:space-between;padding:8px 12px;font-size:12.5px;border-bottom:1px solid var(--line)}
+  .combo .cr:last-child{border-bottom:none}
+  .combo .cr.tot{background:#fafbfc;font-weight:700}
+  .free{background:#fafbfc;border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-size:12.5px;color:var(--soft);line-height:1.65}
+  @media(max-width:1100px){.side{width:64px}.side .gh span:not(.ic):not(.car),.sub a{font-size:0}.sub a{padding-left:18px}}
+  @media(max-width:760px){.chain{flex-direction:column}.car2{transform:rotate(90deg);padding:5px 0;justify-content:center}}
+</style>
+</head>
+<body class="showanno">
+
+<div class="topbar">
+  <div class="logo"><span class="mark">iG</span><div>iGV.com<small>GAMER VALUE</small></div></div>
+  <div class="sp"></div>
+  <div class="userbox"><span class="av"></span><span>赵梁 ▾</span></div>
+</div>
+
+<div class="shell">
+  <aside class="side">
+    <div class="grp open">
+      <div class="gh"><span class="ic">▤</span><span>商品管理</span><span class="car">▾</span></div>
+      <div class="sub">
+        <a>选品</a>
+        <a class="on" data-page="prod">已选商品</a>
+        <a>前端类目管理</a>
+      </div>
+    </div>
+    <div class="grp open">
+      <div class="gh"><span class="ic">▤</span><span>订单管理</span><span class="car">▾</span></div>
+      <div class="sub">
+        <a data-page="order">订单列表</a>
+        <a data-page="req">需求列表<span class="ntag anno">NEW</span></a>
+        <a>争议订单</a><a>风控订单</a><a>退款单</a><a>验号订单</a><a>理赔单审核列表</a><a>保险单列表</a>
+      </div>
+    </div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>买家管理</span><span class="car">▾</span></div><div class="sub"><a>买家列表</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>卖家管理</span><span class="car">▾</span></div><div class="sub"><a>卖家列表</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>商城管理</span><span class="car">▾</span></div><div class="sub"><a>商城配置</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>风控管理</span><span class="car">▾</span></div><div class="sub"><a>风控规则</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>SEO管理</span><span class="car">▾</span></div><div class="sub"><a>SEO配置</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>消息管理</span><span class="car">▾</span></div><div class="sub"><a>消息列表</a></div></div>
+  </aside>
+
+  <main class="main">
+
+    <div class="annobar">
+      <span class="t">方案乙 · 影子商品</span>
+      <span class="vtabs">
+        <span class="vtab on" data-view="proto">原型页面</span>
+        <span class="vtab" data-view="doc">方案说明</span>
+      </span>
+      <span class="d" id="annoDesc">成交瞬间由系统生成一个隐藏商品承载订单参数;订单侧与普通订单完全一致。橙色标记处为本方案<b>新增/改动</b>的部分。</span>
+      <label class="swt" id="annoSwWrap"><input type="checkbox" id="annoSw" class="chk" checked> 显示方案标注</label>
+    </div>
+
+    <!-- ==================== PAGE: 已选商品 ==================== -->
+    <section id="page-prod">
+      <div class="crumbrow">
+        <span class="crumb">商品管理 / <b>已选商品</b></span>
+        <span class="sp"></span>
+        <span class="shopsw">商城切换:<select class="sel"><option>自营</option><option>渠道商城 A</option></select></span>
+      </div>
+
+      <div class="anonote annoblk">
+        <b>这一页要看的:</b>什么都没变 —— 影子商品由系统生成、仅用于承载订单参数,<b>不在本页出现</b>,也不进商品审核。运营对它没有任何可执行操作,需求的管理入口统一在「订单管理 &gt; 需求列表」。<b>本方案对商品管理页零改动。</b>
+      </div>
+
+      <div class="card">
+        <div class="frow">
+          <span class="fl">类目:</span><select class="sel"><option>请选择品类</option></select>
+          <span class="fl">品牌:</span><select class="sel"><option>全部</option></select>
+          <span class="fl">租户侧商品状态:</span><select class="sel"><option>全部</option><option>上架</option><option>下架</option></select>
+          <span class="fl">卖家侧商品状态:</span><select class="sel"><option>全部</option><option>可售</option></select>
+          <span class="fl">商品名称:</span><input class="inp" placeholder="请输入">
+        </div>
+        <div class="frow">
+          <span class="fl">商品编号:</span><input class="inp" placeholder="请输入">
+          <select class="sel"><option>卖家店铺</option></select><input class="inp" placeholder="请输入">
+          <span class="fl">是否包赔:</span><select class="sel"><option>全部</option></select>
+          <div class="btns">
+            <button class="btn pri" id="btnQuery">查询</button>
+            <button class="btn pri">上架</button>
+            <button class="btn pri">下架</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="twrap">
+        <table>
+          <thead><tr>
+            <th style="width:34px"><input type="checkbox" class="chk"></th>
+            <th style="width:78px">商品主图</th><th>商品名称</th><th>前端类目</th><th>品牌</th><th>店铺名</th>
+            <th class="nowrap">更新时间</th><th>价格</th><th>租户侧商品状态</th><th>卖家侧商品状态</th><th>是否包赔</th><th>销量</th><th>前端预览</th>
+          </tr></thead>
+          <tbody id="prodBody"></tbody>
+        </table>
+      </div>
+      <div class="pager"><span id="prodCount"></span><span class="pg">‹</span><span class="pg on">1</span><span class="pg">›</span></div>
+    </section>
+
+    <!-- ==================== PAGE: 需求列表 ==================== -->
+    <section id="page-req" style="display:none">
+      <div class="crumbrow"><span class="crumb">订单管理 / <b>需求列表</b></span></div>
+
+      <div class="anonote annoblk">
+        <b>这一页要看的:</b>能进到这一页的需求<b>都已经付过款、且通过了支付风控</b>,资金已在托管中。买家发布后、卖家接单前的需求<b>只活在这里</b> —— 此时既没有订单也没有影子商品。成交后本页状态转为「已成交」并出现指向订单的跳转;取消或过期则<b>原路退款</b>。
+      </div>
+
+      <div class="card" style="padding-top:0">
+        <div class="tabs" id="reqTabs">
+          <div class="tab on" data-st="all">全部</div>
+          <div class="tab" data-st="审核中">审核中</div>
+          <div class="tab" data-st="待接单">待接单</div>
+          <div class="tab" data-st="已成交">已成交</div>
+          <div class="tab" data-st="已过期">已过期</div>
+          <div class="tab" data-st="已取消">已取消</div>
+        </div>
+        <div class="frow">
+          <span class="fl">需求编号:</span><input class="inp" placeholder="请输入">
+          <span class="fl">买家ID:</span><input class="inp" placeholder="请输入">
+          <span class="fl">品牌:</span><select class="sel"><option>全部</option><option>Diablo 4</option></select>
+          <div class="btns"><button class="btn pri">查询</button><button class="btn pri" id="btnPass">通过</button><button class="btn pri" id="btnCancel">取消</button><button class="btn">导出</button></div>
+        </div>
+      </div>
+
+      <div class="twrap">
+        <table>
+          <thead><tr>
+            <th style="width:34px"><input type="checkbox" class="chk" id="reqAll"></th>
+            <th style="min-width:168px">需求编号</th><th style="min-width:92px">状态</th><th>买家ID</th><th>品牌</th><th>品类</th>
+            <th>已付金额<span class="ntag anno">NEW</span></th><th>资金状态<span class="ntag anno">NEW</span></th><th>代练限时</th>
+            <th class="nowrap">发布时间</th><th class="nowrap">更新时间<span class="ntag anno">NEW</span></th><th class="nowrap">有效期至</th><th>关联订单</th>
+          </tr></thead>
+          <tbody id="reqBody"></tbody>
+        </table>
+      </div>
+      <div class="pager"><span id="reqCount"></span><span class="pg">‹</span><span class="pg on">1</span><span class="pg">›</span></div>
+    </section>
+
+    <!-- ==================== PAGE: 方案说明(原型脚手架,非产品页面) ==================== -->
+    <section id="page-doc" style="display:none">
+      <div class="crumbrow"><span class="crumb"><b>方案说明</b> · Custom 买家需求如何落进现有体系</span></div>
+      <div class="doc">
+
+        <div class="lead">
+          Custom 是<b>买家先发需求、卖家再来接</b>的反向链路,和现有「先商品 → 后订单」正好相反。<br>
+          <b>买家在发布需求时就已完成支付</b>并通过支付风控 —— 能进到我们系统里的需求,<b>资金已经在托管中</b>,不存在"发了需求不付款"的情况。<br>
+          方案乙的做法:<b>需求单独建一个域</b>;卖家接单的<b>那一瞬间</b>,由系统生成一个隐藏的「影子商品」来承载交易参数,再把<b>已托管的这笔钱挂到新生成的订单上</b>。<br>
+          结果是 —— <b>订单、托管、结算、退款、争议、理赔全部零改动</b>,金币等其它业务完全不受影响。
+        </div>
+
+        <div class="doccard">
+          <h3><span class="num">1</span>三个页面各自改了什么</h3>
+          <p class="csub">改动集中在需求侧,商品与订单主干几乎不动。</p>
+          <table class="dtable">
+            <thead><tr><th>页面</th><th>改动程度</th><th>具体改了什么</th></tr></thead>
+            <tbody>
+              <tr><td class="k">商品管理 / 已选商品</td><td><span class="pill p-none">零改动</span></td><td>影子商品由系统生成、仅用于承载订单参数,<b>不在本页出现</b>,也不进商品审核。运营对它没有任何可执行操作。</td></tr>
+              <tr><td class="k">订单管理 / 需求列表</td><td><span class="pill p-new">新增页面</span></td><td>买家发布后、卖家接单前的需求<b>只活在这一页</b>。含状态 Tab、批量通过 / 取消、需求详情弹窗。</td></tr>
+              <tr><td class="k">订单管理 / 订单列表</td><td><span class="pill p-min">极小改动</span></td><td>订单号下多一行<b>需求编号</b>(可点开需求详情);筛选区多一个<b>订单来源</b>。其余列、状态、操作全部不变。<b>Custom 订单生成即已支付</b>,不会出现在「待支付」页签下。</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="doccard">
+          <h3><span class="num">2</span>一条需求的完整流转</h3>
+          <p class="csub">支付发生在最前面;前四步在需求域完成,第五步之后完全走现有订单状态机。</p>
+          <ol class="steps">
+            <li>买家在前台填完需求 → <b>先付款</b>。走现有收银台与支付风控,<b>支付成功且风控通过</b>才继续。</li>
+            <li>需求进入我们的系统,<b>资金同时进入托管</b>。系统做<b>内容机审</b>:低风险直接进接单大厅(<b>待接单</b>),命中风险规则则转人工(<b>审核中</b>)。<br><span class="muted">因此需求列表里不存在「待支付」这种状态 —— 没付款的需求根本进不来。</span></li>
+            <li>运营在需求列表处理「审核中」的需求:<b>通过</b>放进大厅;或<b>取消</b>掉违规需求,系统<b>原路退款</b>。</li>
+            <li>卖家在接单大厅看到需求并接单 → 需求转为<b>已成交</b>,同时从大厅下架、其余报价自动置为未选中。</li>
+            <li>系统在<b>同一个事务</b>里做三件事:生成影子商品(隐藏、不上架)、生成订单并<b>把已托管的资金挂到该订单上</b>、把需求锁定。订单生成即为<b>已支付</b>,直接进入<b>待交付</b>。</li>
+            <li>之后的待收货、已完成、退款、争议、理赔<b>与普通订单完全一致</b>。</li>
+          </ol>
+        </div>
+
+        <div class="doccard">
+          <h3><span class="num">3</span>钱在哪一步动</h3>
+          <p class="csub">资金只在两个时点变动:发布时进托管,结束时要么给卖家、要么退买家。</p>
+          <table class="dtable">
+            <thead><tr><th>时点</th><th>资金动作</th><th>需求 / 订单状态</th></tr></thead>
+            <tbody>
+              <tr><td class="k">买家发布需求</td><td><b>收款并进入托管</b>(走现有收银台 + 支付风控)</td><td>支付失败或风控拦截 → 需求<b>根本不进系统</b>;成功 → 审核中 / 待接单</td></tr>
+              <tr><td class="k">运营取消需求</td><td><b>原路退款</b></td><td>已取消 · 资金状态转为<b>已退款</b></td></tr>
+              <tr><td class="k">买家撤回需求</td><td><b>原路退款</b></td><td>已取消 · 资金状态转为<b>已退款</b></td></tr>
+              <tr><td class="k">有效期到期无人接单</td><td><b>自动原路退款</b></td><td>已过期 · 资金状态转为<b>已退款</b></td></tr>
+              <tr><td class="k">卖家接单</td><td>托管资金<b>挂到新生成的订单</b>,不重复收款</td><td>需求已成交 · 订单直接是<b>已支付 / 待交付</b></td></tr>
+              <tr><td class="k">买家确认收货</td><td>托管资金<b>放款给卖家</b>(扣佣金)</td><td>订单已完成 —— 与普通订单一致</td></tr>
+            </tbody>
+          </table>
+          <div class="lead" style="margin:14px 0 0">
+            <b>已定规则 ①　退款手续费由平台承担。</b>三种退款情形(运营取消 / 买家撤回 / 到期无人接单)都<b>全额原路退回</b>,支付渠道不退的手续费<b>平台吸收并单独记账</b>,不从买家退款里扣。<br>
+            理由:运营主动取消违规需求时若还要扣买家手续费,必然引发客诉;而买家撤回与到期退款的金额通常不大,统一规则比分情况处理更省事、也更少纠纷。
+          </div>
+          <p class="csub" style="margin:12px 0 0">因为钱在最前面就收了,卖家不存在"接了单买家不付款"的风险,接单大厅也不会被没有支付意愿的需求淹没 —— 这是这套流程相对"接单后付款"最大的好处。</p>
+        </div>
+
+        <div class="doccard">
+          <h3><span class="num">4</span>运营在需求列表能做的操作</h3>
+          <p class="csub">批量操作放在筛选区,和已选商品的「上架 / 下架」同一个位置和用法。</p>
+          <table class="dtable">
+            <thead><tr><th>操作</th><th>对哪些状态生效</th><th>结果</th></tr></thead>
+            <tbody>
+              <tr><td class="k">通过</td><td>仅「审核中」</td><td>转为<b>待接单</b>,进入接单大厅,状态下方标注<span class="code">租户人工审核通过</span></td></tr>
+              <tr><td class="k">取消</td><td>「审核中」「待接单」</td><td>转为<b>已取消</b>,立即从大厅下架,<b>并原路退款给买家</b>,资金状态转为已退款;状态下方标注<span class="code">租户手动取消</span></td></tr>
+              <tr><td class="k">勾选框</td><td>仅上述两种状态可勾</td><td>已成交 / 已过期 / 已取消的行勾选框<b>禁用</b>(无可执行操作)</td></tr>
+              <tr><td class="k">点需求编号</td><td>全部</td><td>打开需求详情:<b>需求信息 / 需求要求 / 备注</b> —— 这三块是会转成商品属性与订单数据的内容</td></tr>
+            </tbody>
+          </table>
+          <p class="csub" style="margin:12px 0 0">没勾选就点按钮、或勾选中没有可操作的行,都会给出明确提示;执行前有二次确认并显示条数。</p>
+          <div class="lead" style="margin:14px 0 0">
+            <b>已定规则 ②　需求发布后不允许改价、不允许修改内容。</b>因为钱在发布时就已收取,任何改动都会牵出补差价或部分退款。买家如果要调整,只能<b>撤回(全额退款)后重新发布</b>。<br>
+            因此需求列表与需求详情都<b>没有编辑入口</b>,运营侧同样不能代改 —— 只有「通过」和「取消」两个动作。
+          </div>
+        </div>
+
+        <div class="doccard">
+          <h3><span class="num">5</span>状态、资金状态与「更新时间」</h3>
+          <p class="csub">状态下方的灰色小字标明<b>是谁改的</b>,写法与已选商品的「租户手动下架」一致。<b>没有「待支付」状态</b> —— 未付款的需求不会进入系统。</p>
+          <table class="dtable">
+            <thead><tr><th>状态</th><th>怎么进来的</th><th>资金状态</th><th>更新时间记录的是</th><th>小字</th></tr></thead>
+            <tbody>
+              <tr><td class="k">审核中</td><td>已付款,但内容机审命中风险规则,转人工</td><td>已托管</td><td>转人工的时刻</td><td>—</td></tr>
+              <tr><td class="k">待接单</td><td>已付款,机审直接通过或运营人工通过</td><td>已托管</td><td>发布时刻 / 通过时刻</td><td>人工通过时显示<span class="code">租户人工审核通过</span></td></tr>
+              <tr><td class="k">已成交</td><td>卖家接单</td><td>已托管(挂到订单)</td><td>接单时刻</td><td>—</td></tr>
+              <tr><td class="k">已过期</td><td>报价有效期到,无人接单</td><td><b>已退款</b>(自动)</td><td>到期时刻</td><td>—</td></tr>
+              <tr><td class="k">已取消</td><td>买家撤回,或运营取消</td><td><b>已退款</b></td><td>撤回 / 取消时刻</td><td><span class="code">买家撤回</span> 或 <span class="code">租户手动取消</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="doccard">
+          <h3><span class="num">6</span>后端改动清单</h3>
+          <p class="csub">原则:只新增,不改既有列的约束与既有枚举的语义。</p>
+          <table class="dtable">
+            <thead><tr><th>对象</th><th>改动</th></tr></thead>
+            <tbody>
+              <tr><td class="k">新增表</td><td><b>需求表</b>(需求编号、买家、品牌品类、发起方式、需求要求、备注、已付金额、代练限时、报价有效期、状态、变更来源,以及<b>支付字段</b>:第三方支付单号、支付方式、支付时间、支付风控结果、资金状态)+ <b>报价表</b>(卖家报价;卖家「直接按买家出价接单」也建模成一条 <span class="code">auto_accept=true</span> 的报价)</td></tr>
+              <tr><td class="k">商品表</td><td>新增来源枚举 <span class="code">source = SYSTEM_CUSTOM</span>;影子商品不可搜索、不上架、不进审核、不参与销量排行</td></tr>
+              <tr><td class="k">订单表</td><td>新增<b>可空</b>字段 <span class="code">request_no</span> 反向引用需求;<b>不动</b> <span class="code">product_id</span> 的非空约束</td></tr>
+              <tr><td class="k">订单渠道</td><td>新增枚举 <span class="code">CUSTOM_REQUEST</span>,老数据取值与含义原样不动</td></tr>
+              <tr><td class="k">编号规则</td><td>需求编号 <span class="code">BR + 日期 + 序列</span>,发布即生成;订单号 <span class="code">SO…</span> 仍由现有生成器在<b>成交时</b>产生。两套号分开发,避免未成交的需求在订单号段留下空洞。</td></tr>
+              <tr><td class="k">交易参数</td><td>佣金率按品类「代练」取平台默认;保修期 / 是否包赔 / 自动确认时长取 Custom 平台默认(后台可配);递送时间以买家的「代练限时」为准。成交时快照进订单。</td></tr>
+              <tr><td class="k">支付与托管</td><td>复用现有收银台、支付风控与托管能力,<b>在需求发布时调用</b>;成交时不再发起收款,只把已托管资金关联到订单</td></tr>
+              <tr><td class="k">退款</td><td>复用现有退款能力。取消 / 撤回 / 过期三种情况都触发<b>全额原路退款</b>(手续费由平台承担),建议接入现有退款单以便财务对账</td></tr>
+              <tr><td class="k">不改的部分</td><td>支付、托管、结算、退款、争议、理赔、风控、对账的<b>能力本身</b> —— 一行不动,只是调用时点提前了</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== PAGE: 订单列表 ==================== -->
+    <section id="page-order" style="display:none">
+      <div class="crumbrow"><span class="crumb">订单管理 / <b>订单列表</b></span></div>
+
+      <div class="anonote annoblk">
+        <b>这一页要看的:</b>Custom 订单和普通订单<b>躺在同一张表、同一套状态</b>,只多了一行「需求编号」用于回溯。因为买家在<b>发布需求时就已付款</b>,Custom 订单生成即处于<b>已支付</b>状态,不会出现「待支付」。
+      </div>
+
+      <div class="card" style="padding-top:0">
+        <div class="tabs">
+          <div class="tab on">所有订单</div><div class="tab">待支付</div><div class="tab">未完成</div><div class="tab">已完成</div>
+        </div>
+        <div class="frow">
+          <span class="fl">订单号:</span><input class="inp" placeholder="请输入">
+          <span class="fl">母单号:</span><input class="inp" placeholder="请输入">
+          <span class="fl">第三方支付单号:</span><input class="inp" placeholder="请输入">
+          <select class="sel"><option>卖家店铺</option></select><input class="inp" placeholder="请输入">
+        </div>
+        <div class="frow">
+          <span class="fl">买家ID:</span><input class="inp" placeholder="请输入">
+          <span class="fl">支付方式:</span><select class="sel"><option>全部</option></select>
+          <span class="fl">订单来源:<span class="ntag anno">NEW</span></span>
+          <select class="sel" id="osrcSel"><option value="all">全部</option><option value="mall">商城下单</option><option value="custom">自定义需求</option></select>
+          <div class="btns"><button class="btn pri" id="btnQuery2">查询</button><button class="btn pri">高级筛选</button></div>
+        </div>
+      </div>
+
+      <div class="twrap">
+        <table>
+          <thead><tr>
+            <th style="min-width:190px">订单号 / 母单号</th><th>状态</th><th class="nowrap">订单创建时间</th><th class="nowrap">订单更新时间</th>
+            <th>品牌</th><th>品类</th><th>订单金额</th><th>卖家店铺</th><th>卖家ID</th><th>递送状态</th><th>买家ID</th>
+          </tr></thead>
+          <tbody id="orderBody"></tbody>
+        </table>
+      </div>
+      <div class="pager"><span id="ordCount"></span><span class="pg">‹</span><span class="pg on">1</span><span class="pg">›</span></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ==================== 需求详情 modal ==================== -->
+<div class="mask" id="mask">
+  <div class="modal">
+    <div class="mhead"><h3>需求详情</h3><span class="badge bg-cus">自定义需求</span><span class="x" id="mClose">✕</span></div>
+    <div class="mbody" id="mBody"></div>
+  </div>
+</div>
+
+<script>
+/* ---------------- data ---------------- */
+var PRODUCTS=[
+  {sys:false,img:'🗡',name:'Roublard lv 200 Serveur kelerog Non Certifier up manuelement',cat:'Game/In Game Trading/Accounts',brand:'Dofus Touch',shop:'Amine Boussfiha',time:'15:02:58 8/26/2026',price:'132.00 USD',tenant:'上架',seller:'可售',ins:'否',sold:0},
+  {sys:false,img:'💎',name:'IOS 50,000+ Chrono Crystal Accounts - Automatic Delivery - Bandai ID Login',cat:'Game/In Game Trading/Accounts',brand:'Dragon Ball Legends',shop:'DBL Pro',time:'15:02:33 8/26/2026',price:'3.00 USD',tenant:'上架',seller:'可售',ins:'否',sold:0},
+  {sys:false,img:'🪙',name:'WOW TBC Classic Anniversary Gold For Spineshatter EU - Alliance',cat:'Game/In Game Trading/Coins',brand:'WOW TBC Classic Anniversary',shop:'Mliba',time:'15:02:52 8/26/2026',price:'0.00939995 USD',tenant:'上架',seller:'可售',ins:'否',sold:0},
+  {sys:false,img:'⚔️',name:'Diablo 4 Power Leveling 1-70 · Fast & Safe',cat:'Game/GamePal & Boosting/Leveling',brand:'Diablo 4',shop:'ApexBoost',time:'14:58:20 8/26/2026',price:'18.00 USD',tenant:'上架',seller:'可售',ins:'是',sold:37},
+];
+
+var ORDERS=[
+  {custom:true,no:'SO2092508097999405058',mo:'2608260703270286',req:'BR20260826-0071',st:'未完成',stc:'st-run',ct:'15:03:02 8/26/2026',ut:'15:03:03 8/26/2026',brand:'Diablo 4',cat:'Game/GamePal & Boosting/Custom',amt:'52.00 USD',shop:'ApexBoost',sid:'17648914804',ship:'待交付',bid:'20848529361'},
+  {custom:false,no:'SO2092508068391399425',mo:'2608260702557285',st:'待支付',stc:'st-pay',ct:'15:02:55 8/26/2026',ut:'15:02:55 8/26/2026',brand:'Fortnite',cat:'Game/In Game Trading/Accounts',amt:'70.59 EUR',shop:'Nubinuberi',sid:'117582821',ship:'',bid:'20814911078'},
+  {custom:false,no:'SO2092507515879358465',mo:'2608260700437284',st:'交易已关闭',stc:'st-close',ct:'15:00:43 8/26/2026',ut:'15:03:25 8/26/2026',brand:'Dofus',cat:'Game/In Game Trading/Coins',amt:'399.6 EUR',shop:'OVERSEAS market',sid:'114474957',ship:'',bid:'19528037559'},
+  {custom:true,no:'SO2092507421110238771',mo:'2608260659267283',req:'BR20260826-0068',st:'未完成',stc:'st-run',ct:'14:41:15 8/26/2026',ut:'14:59:55 8/26/2026',brand:'Diablo 4',cat:'Game/GamePal & Boosting/Custom',amt:'34.00 USD',shop:'Best_For_U',sid:'117582821',ship:'待交付',bid:'10000011788'},
+  {custom:false,no:'SO2092507195221610497',mo:'2608260659267282',st:'未完成',stc:'st-run',ct:'14:59:27 8/26/2026',ut:'14:59:55 8/26/2026',brand:'Stonebook',cat:'ebooks/Ebook Service/Subscription Service',amt:'23.99 USD',shop:'maomao mbp',sid:'17648914804',ship:'买家签收',bid:'10000011788'},
+  {custom:false,no:'SO2092506884113920001',mo:'2608260655120281',st:'已完成',stc:'st-done',ct:'14:52:10 8/26/2026',ut:'15:01:02 8/26/2026',brand:'Diablo 4',cat:'Game/GamePal & Boosting/Leveling',amt:'18.00 USD',shop:'ApexBoost',sid:'17648914804',ship:'已完成',bid:'19528037559'}
+];
+
+var REQUESTS=[
+  {no:'BR20260826-0083',st:'待接单',stc:'st-run',bid:'20848529361',brand:'Diablo 4',cat:'GamePal & Boosting/Custom',mode:'组合服务',
+   sum:'升级 1→70 + 巅峰 0→200',pay:'已托管',price:'46.00 USD',limit:'3 天',offers:2,ut:'15:10:22 8/26/2026',pub:'15:10:22 8/26/2026',exp:'15:10:22 8/29/2026',order:null},
+  {no:'BR20260826-0085',st:'待接单',stc:'st-run',bid:'19528037559',brand:'Diablo 4',cat:'GamePal & Boosting/Custom',mode:'自由描述',
+   sum:'刷隐藏成就 + 战令 60 级',pay:'已托管',price:'28.00 USD',limit:'2 天',offers:0,ut:'15:12:40 8/26/2026',pub:'15:12:40 8/26/2026',exp:'15:12:40 8/27/2026',order:null},
+  {no:'BR20260826-0079',st:'审核中',stc:'st-pay',bid:'10000011788',brand:'Diablo 4',cat:'GamePal & Boosting/Custom',mode:'自由描述',
+   sum:'代打全部赛季内容(含硬核)',pay:'已托管',price:'180.00 USD',limit:'7 天',offers:0,ut:'15:07:03 8/26/2026',pub:'15:06:11 8/26/2026',exp:'15:06:11 9/2/2026',order:null},
+  {no:'BR20260826-0071',st:'已成交',stc:'st-done',bid:'20848529361',brand:'Diablo 4',cat:'GamePal & Boosting/Custom',mode:'组合服务',
+   sum:'升级 + 巅峰 + 墨菲斯托 ×5',pay:'已托管',price:'52.00 USD',limit:'3 天',offers:3,ut:'15:03:02 8/26/2026',pub:'14:52:31 8/26/2026',exp:'14:52:31 8/29/2026',order:'SO2092508097999405058'},
+  {no:'BR20260826-0068',st:'已成交',stc:'st-done',bid:'10000011788',brand:'Diablo 4',cat:'GamePal & Boosting/Custom',mode:'自由描述',
+   sum:'隐藏成就 + 战令 60 级',pay:'已托管',price:'34.00 USD',limit:'2 天',offers:1,ut:'14:41:15 8/26/2026',pub:'14:30:08 8/26/2026',exp:'15:30:08 8/27/2026',order:'SO2092507421110238771'},
+  {no:'BR20260825-0042',st:'已过期',stc:'st-off',bid:'20814911078',brand:'Diablo 4',cat:'GamePal & Boosting/Custom',mode:'组合服务',
+   sum:'Pit 冲层 ×8',pay:'已退款',price:'22.00 USD',limit:'3 天',offers:0,ut:'11:20:03 8/26/2026',pub:'11:20:03 8/25/2026',exp:'11:20:03 8/26/2026',order:null},
+  {no:'BR20260826-0061',st:'已取消',stc:'st-close',bid:'19528037559',brand:'Diablo 4',cat:'GamePal & Boosting/Custom',mode:'自由描述',
+   sum:'买家已撤回',pay:'已退款',price:'40.00 USD',limit:'5 天',offers:1,ut:'13:51:26 8/26/2026',pub:'13:44:50 8/26/2026',exp:'13:44:50 8/31/2026',order:null,by:'买家撤回'},
+  {no:'BR20260826-0055',st:'已取消',stc:'st-close',bid:'20814911078',brand:'Diablo 4',cat:'GamePal & Boosting/Custom',mode:'自由描述',
+   sum:'含站外联系方式',pay:'已退款',price:'75.00 USD',limit:'3 天',offers:0,ut:'13:15:40 8/26/2026',pub:'13:02:17 8/26/2026',exp:'13:02:17 8/29/2026',order:null,by:'租户手动取消'}
+];
+
+var REQ_DETAIL={
+  'BR20260826-0083':{
+    mode:'组合服务',buyer:'20848529361 (D***rex)',pub:'15:10:22 8/26/2026',expire:'3 天',limit:'3 天',
+    audit:'机审通过 · 未命中风险规则',price:'46.00 USD',offers:2,
+    seller:null,accept:null,shadow:null,order:null,
+    combo:[['升级 · 1 → 70','$18–26'],['巅峰 · 0 → 200','$16–24']],sugg:'$34–50',
+    req:'先练到满级,再把巅峰刷到 200。法师,赛季软核。',note:'工作日晚上开工就行。'
+  },
+  'BR20260826-0085':{
+    mode:'自由描述',buyer:'19528037559 (K***illa)',pub:'15:12:40 8/26/2026',expire:'24 小时',limit:'2 天',
+    audit:'机审通过 · 未命中风险规则',price:'28.00 USD',offers:0,
+    seller:null,accept:null,shadow:null,order:null,combo:null,sugg:null,
+    req:'帮我把本赛季隐藏成就做了,顺便战令刷到 60 级。',note:'—'
+  },
+  'BR20260826-0079':{
+    payMethod:'PayPal · a***z@mail.com',payNo:'PI-2608260701883012',payTime:'15:06:11 8/26/2026',
+    payRisk:'已通过 · 命中「大额」提示,人工复核放行',payState:'已托管',
+    mode:'自由描述',buyer:'10000011788 (A***n88)',pub:'15:06:11 8/26/2026',expire:'7 天',limit:'7 天',
+    audit:'机审转人工 · 待人工处理(命中「价格偏离建议区间」)',price:'180.00 USD',offers:0,
+    seller:null,accept:null,shadow:null,order:null,combo:null,sugg:null,
+    req:'把这个赛季所有内容都代打完,包括硬核角色。',note:'预算可以再谈。'
+  },
+  'BR20260825-0042':{
+    payMethod:'PayPal · m***z@mail.com',payNo:'PI-2508251120030077',payTime:'11:20:03 8/25/2026',
+    payRisk:'已通过 · 未命中规则',payState:'已退款(到期无人接单,自动退回)',
+    mode:'组合服务',buyer:'20814911078 (M***oz)',pub:'11:20:03 8/25/2026',expire:'24 小时',limit:'3 天',
+    audit:'机审通过 · 未命中风险规则',price:'22.00 USD',offers:0,
+    seller:null,accept:null,shadow:null,order:null,
+    combo:[['副本 · Pit 冲层 × 8','$24–40']],sugg:'$24–40',
+    req:'Pit 100 冲 8 次。',note:'—'
+  },
+  'BR20260826-0055':{
+    payMethod:'Visa ****9930',payNo:'PI-2608260655120114',payTime:'13:02:17 8/26/2026',
+    payRisk:'已通过 · 未命中规则',payState:'已退款(2608261520 发起,原路退回)',
+    mode:'自由描述',buyer:'20814911078 (M***oz)',pub:'13:02:17 8/26/2026',expire:'3 天',limit:'3 天',
+    audit:'机审通过 · 上线后由运营人工取消',price:'75.00 USD',offers:0,
+    seller:null,accept:null,shadow:null,order:null,combo:null,sugg:null,
+    realm:'赛季 · 软核',plat:'PC',deliv:'上号代打',
+    req:'需要长期代打,详细可加我 Discord:xxxx#1234 私聊。',note:'价格好商量。'
+  },
+  'BR20260826-0061':{
+    payMethod:'Visa ****4821',payNo:'PI-2608260644120098',payTime:'13:44:50 8/26/2026',
+    payRisk:'已通过 · 未命中规则',payState:'已退款(买家撤回,原路退回)',
+    mode:'自由描述',buyer:'19528037559 (K***illa)',pub:'13:44:50 8/26/2026',expire:'5 天',limit:'5 天',
+    audit:'机审通过 · 未命中风险规则',price:'40.00 USD',offers:1,
+    seller:null,accept:null,shadow:null,order:null,combo:null,sugg:null,
+    req:'原需求已被买家撤回。',note:'—'
+  },
+  'BR20260826-0071':{
+    mode:'组合服务',buyer:'20848529361 (D***rex)',pub:'14:52:31 8/26/2026',expire:'3 天',limit:'3 天',
+    audit:'机审通过 · 未命中风险规则',price:'52.00 USD',offers:3,
+    seller:'ApexBoost (17648914804)',accept:'15:03:02 8/26/2026',
+    shadow:'PRD-SYS-20260826-0071',order:'SO2092508097999405058',
+    combo:[['升级 · 1 → 70','$18–26'],['巅峰 · 0 → 200','$16–24'],['Boss · 墨菲斯托 × 5','$20–30']],
+    sugg:'$54–80',
+    req:'练到满级后把巅峰刷到 200,再打墨菲斯托 5 次(痛苦 4)。',note:'尽量晚上开工(欧洲时间)。'
+  },
+  'BR20260826-0068':{
+    mode:'自由描述',buyer:'10000011788 (A***n88)',pub:'14:30:08 8/26/2026',expire:'24 小时',limit:'2 天',
+    audit:'机审转人工 · 已人工通过(命中「价格偏离」)',price:'34.00 USD',offers:1,
+    seller:'Best_For_U (117582821)',accept:'14:41:15 8/26/2026',
+    shadow:'PRD-SYS-20260826-0068',order:'SO2092507421110238771',
+    combo:null,sugg:null,
+    req:'帮我把本赛季的隐藏成就「无伤通关噩梦地下城」做了,顺便把战令刷到 60 级。角色是法师,赛季软核。',
+    note:'上号期间请开直播留证,别动仓库里的装备。'
+  }
+};
+
+/* ---------------- render: products ---------------- */
+function renderProducts(){
+  var list=PRODUCTS;
+  document.getElementById('prodBody').innerHTML=list.map(function(p){
+    var stTenant='<span class="stt st-up"><i class="dot"></i>上架</span>';
+    var stSeller='<span class="stt st-up"><i class="dot"></i>可售</span>';
+    var nameHtml=p.name;
+    var prev='<button class="btn pri sm">预览</button>';
+    var box='<input type="checkbox" class="chk">';
+    return '<tr>'+
+      '<td>'+box+'</td>'+
+      '<td><div class="thumb">'+p.img+'</div></td>'+
+      '<td class="pname">'+nameHtml+'</td>'+
+      '<td>'+p.cat+'</td><td>'+p.brand+'</td><td>'+p.shop+'</td>'+
+      '<td class="nowrap">'+p.time+'</td><td class="nowrap">'+p.price+'</td>'+
+      '<td>'+stTenant+'</td><td>'+stSeller+'</td><td>'+p.ins+'</td><td>'+p.sold+'</td><td>'+prev+'</td></tr>';
+  }).join('');
+  document.getElementById('prodCount').textContent='共 '+list.length+' 条';
+}
+
+/* ---------------- render: orders ---------------- */
+function renderOrders(){
+  var mode=document.getElementById('osrcSel').value;
+  var list=ORDERS.filter(function(o){
+    if(mode==='mall') return !o.custom;
+    if(mode==='custom') return o.custom;
+    return true;
+  });
+  document.getElementById('orderBody').innerHTML=list.map(function(o){
+    var reqLine=o.custom
+      ? '<div style="margin-top:4px">需求编号:<span class="lnk" data-req="'+o.req+'">'+o.req+'</span> <span class="badge bg-cus">自定义需求</span><span class="ntag anno">NEW</span></div>'
+      : '';
+    return '<tr>'+
+      '<td><div>订单号:'+o.no+'</div><div class="muted">母单号:'+o.mo+'</div>'+reqLine+
+        '<div style="margin-top:5px"><span class="lnk">复制</span> &nbsp; <span class="lnk">订单详情</span></div></td>'+
+      '<td><span class="stt '+o.stc+'"><i class="dot"></i>'+o.st+'</span></td>'+
+      '<td class="nowrap">'+o.ct+'</td><td class="nowrap">'+o.ut+'</td>'+
+      '<td>'+o.brand+'</td><td>'+o.cat+'</td><td class="nowrap">'+o.amt+'</td>'+
+      '<td>'+o.shop+'</td><td>'+o.sid+'</td><td>'+(o.ship||'<span class="muted">—</span>')+'</td><td>'+o.bid+'</td></tr>';
+  }).join('');
+  document.getElementById('ordCount').textContent='共 '+list.length+' 条';
+}
+
+/* ---------------- render: requests ---------------- */
+var reqTab='all';
+function renderRequests(){
+  var list=REQUESTS.filter(function(r){return reqTab==='all'||r.st===reqTab;});
+  document.getElementById('reqBody').innerHTML=list.length?list.map(function(r){
+    var ord=r.order
+      ? '<span class="lnk" data-order="'+r.order+'">'+r.order.slice(0,10)+'…</span>'
+      : '<span class="muted">尚未生成</span>';
+    var sub=r.by?('<div class="substat">'+r.by+'</div>'):'';
+    var actionable=(r.st==='审核中'||r.st==='待接单');
+    var box=actionable
+      ? '<input type="checkbox" class="chk reqchk" data-no="'+r.no+'">'
+      : '<input type="checkbox" class="chk" disabled title="该状态下无可执行操作">';
+    return '<tr>'+
+      '<td>'+box+'</td>'+
+      '<td><span class="lnk" data-req="'+r.no+'">'+r.no+'</span></td>'+
+      '<td><span class="stt '+r.stc+'"><i class="dot"></i>'+r.st+'</span>'+sub+'</td>'+
+      '<td>'+r.bid+'</td><td>'+r.brand+'</td><td>'+r.cat+'</td>'+
+      '<td class="nowrap">'+r.price+'</td>'+
+      '<td class="nowrap"><span class="stt '+(r.pay==='已托管'?'st-done':'st-off')+'"><i class="dot"></i>'+r.pay+'</span></td>'+
+      '<td class="nowrap">'+r.limit+'</td>'+
+      '<td class="nowrap">'+r.pub+'</td><td class="nowrap">'+r.ut+'</td><td class="nowrap">'+r.exp+'</td>'+
+      '<td>'+ord+'</td></tr>';
+  }).join('') : '<tr><td colspan="13" style="text-align:center;color:#9aa3af;padding:36px 0">该状态下暂无需求</td></tr>';
+  document.getElementById('reqCount').textContent='共 '+list.length+' 条';
+}
+function nowStamp(){
+  var d=new Date(), p=function(n){return (n<10?'0':'')+n;};
+  return p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds())+' '+(d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear();
+}
+function selectedReqs(){
+  return Array.prototype.slice.call(document.querySelectorAll('#reqBody .reqchk:checked'))
+    .map(function(c){return c.dataset.no;});
+}
+document.getElementById('reqAll').addEventListener('change',function(){
+  var on=this.checked;
+  document.querySelectorAll('#reqBody .reqchk').forEach(function(c){c.checked=on;});
+});
+document.getElementById('btnPass').addEventListener('click',function(){
+  var sel=selectedReqs();
+  if(!sel.length){alert('请先勾选需要通过的需求。');return;}
+  var hit=REQUESTS.filter(function(r){return sel.indexOf(r.no)>=0&&r.st==='审核中';});
+  if(!hit.length){alert('勾选的需求中没有「审核中」的,无需通过。');return;}
+  if(!confirm('确认通过 '+hit.length+' 条需求?\n通过后立即进入接单大厅,卖家可见并可接单。'))return;
+  hit.forEach(function(r){
+    r.st='待接单';r.stc='st-run';r.by='租户人工审核通过';r.ut=nowStamp();
+    var d=REQ_DETAIL[r.no]; if(d)d.audit='机审转人工 · 已人工审核通过';
+  });
+  document.getElementById('reqAll').checked=false;
+  renderRequests();
+});
+document.getElementById('btnCancel').addEventListener('click',function(){
+  var sel=selectedReqs();
+  if(!sel.length){alert('请先勾选需要取消的需求。');return;}
+  var hit=REQUESTS.filter(function(r){return sel.indexOf(r.no)>=0&&(r.st==='审核中'||r.st==='待接单');});
+  if(!hit.length){alert('勾选的需求中没有可取消的。');return;}
+  if(!confirm('确认取消 '+hit.length+' 条需求?\n取消后立即从接单大厅下架,并<b>原路退款</b>给买家。'.replace(/<[^>]+>/g,'')))return;
+  hit.forEach(function(r){
+    r.st='已取消';r.stc='st-close';r.by='租户手动取消';r.pay='已退款';r.ut=nowStamp();
+    var d=REQ_DETAIL[r.no]; if(d)d.audit='机审通过 · 上线后由运营人工取消';
+  });
+  document.getElementById('reqAll').checked=false;
+  renderRequests();
+});
+document.getElementById('reqTabs').addEventListener('click',function(e){
+  var t=e.target.closest('.tab'); if(!t)return;
+  document.querySelectorAll('#reqTabs .tab').forEach(function(x){x.classList.remove('on');});
+  t.classList.add('on'); reqTab=t.dataset.st;
+  document.getElementById('reqAll').checked=false;
+  renderRequests();
+});
+
+/* ---------------- 需求详情 modal ---------------- */
+function openReq(no){
+  var d=REQ_DETAIL[no]; if(!d)return;
+  var comboHtml = d.combo
+    ? '<div class="combo">'+d.combo.map(function(c){return '<div class="cr"><span>'+c[0]+'</span></div>';}).join('')+'</div>'
+    : '';
+  var kv=function(k,v){return '<span class="k">'+k+'</span><span class="v">'+v+'</span>';};
+
+  document.getElementById('mBody').innerHTML=
+    '<div class="sec"><div class="sh">需求信息</div><div class="kv">'+
+      kv('需求编号',no)+
+      kv('发起方式',d.mode)+
+      kv('买家',d.buyer)+
+      kv('品牌 / 品类','Diablo 4 · GamePal &amp; Boosting / Custom')+
+      kv('赛季 / 模式',d.realm||'赛季 · 软核')+
+      kv('平台',d.plat||'PC')+
+      kv('递送方式',d.deliv||'组队陪同')+
+      kv('代练限时',d.limit)+
+      kv('已付金额',d.price+'　<span class="badge bg-cus">发布时已支付</span>')+
+      kv('支付方式',d.payMethod||'Visa ****4821')+
+      kv('第三方支付单号','<span class="code">'+(d.payNo||'PI-2608260703270286')+'</span>')+
+      kv('支付时间',d.payTime||d.pub)+
+      kv('支付风控',d.payRisk||'已通过 · 未命中规则')+
+      kv('资金状态',d.payState||'已托管')+
+      kv('发布时间',d.pub)+
+      kv('报价有效期',d.expire)+
+      kv('关联订单',d.order?('<span class="lnk">'+d.order+'</span>'):'<span class="muted">尚未生成</span>')+
+    '</div>'+
+    (d.combo?('<div style="margin-top:12px"><div class="muted" style="margin-bottom:6px">组合内容(转为商品属性)</div>'+comboHtml+'</div>'):'')+
+    '</div>'+
+
+    '<div class="sec"><div class="sh">需求要求</div><div class="free">'+d.req+'</div></div>'+
+    '<div class="sec"><div class="sh">备注</div><div class="free">'+(d.note&&d.note!=='—'?d.note:'<span class="muted">无</span>')+'</div></div>';
+
+  document.getElementById('mask').classList.add('show');
+}
+
+/* ---------------- wiring ---------------- */
+document.querySelectorAll('.grp>.gh').forEach(function(h){
+  h.addEventListener('click',function(){h.parentElement.classList.toggle('open');});
+});
+var curPage='prod', curView='proto';
+function paint(){
+  ['prod','req','order'].forEach(function(k){
+    document.getElementById('page-'+k).style.display=(curView==='proto'&&curPage===k)?'':'none';
+  });
+  document.getElementById('page-doc').style.display=(curView==='doc')?'':'none';
+  document.querySelectorAll('.vtab').forEach(function(v){v.classList.toggle('on',v.dataset.view===curView);});
+  document.getElementById('annoSwWrap').style.visibility=(curView==='proto')?'':'hidden';
+  document.getElementById('annoDesc').innerHTML=(curView==='proto')
+    ? '成交瞬间由系统生成一个隐藏商品承载订单参数;订单侧与普通订单完全一致。橙色标记处为本方案<b>新增/改动</b>的部分。'
+    : '本方案的改动点、运营操作点与后端改动清单。此说明页是原型脚手架,<b>不是产品页面</b>。';
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.sub a').forEach(function(a){
+  a.addEventListener('click',function(){
+    if(!a.dataset.page)return;
+    document.querySelectorAll('.sub a').forEach(function(x){x.classList.remove('on');});
+    a.classList.add('on');
+    curPage=a.dataset.page; curView='proto'; paint();
+  });
+});
+document.querySelectorAll('.vtab').forEach(function(v){
+  v.addEventListener('click',function(){curView=v.dataset.view;paint();});
+});
+document.getElementById('osrcSel').addEventListener('change',renderOrders);
+document.getElementById('btnQuery').addEventListener('click',renderProducts);
+document.getElementById('btnQuery2').addEventListener('click',renderOrders);
+document.body.addEventListener('click',function(e){
+  var r=e.target.closest('[data-req]'); if(r){openReq(r.dataset.req);}
+});
+document.getElementById('mClose').addEventListener('click',function(){document.getElementById('mask').classList.remove('show');});
+document.getElementById('mask').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+document.getElementById('annoSw').addEventListener('change',function(){
+  document.body.classList.toggle('showanno',this.checked);
+});
+
+renderProducts();renderOrders();renderRequests();paint();
+</script>
+</body>
+</html>
