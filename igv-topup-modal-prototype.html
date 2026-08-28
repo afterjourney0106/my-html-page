@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>充值弹窗两步流</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --stage:#E4E6EA;
+  --page:#F6F7F9;
+  --surface:#FFFFFF;
+  --surface-2:#F4F5F7;
+  --ink:#1B2028;
+  --ink-2:#48505C;
+  --muted:#7A828E;
+  --line:#DFE2E7;
+  --line-2:#EDEFF2;
+  --brand:#F0522B;
+  --brand-ink:#C63C18;
+  --brand-soft:#FFF0EB;
+  --meta:#0E7C86;
+  --meta-soft:#E1F1F2;
+  --meta-line:#9FCFD3;
+  --ok:#1F8A4C;
+  --shadow:0 24px 60px -20px rgba(20,26,36,.35), 0 4px 12px -4px rgba(20,26,36,.12);
+  --radius:14px;
+  --font-ui:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --stage:#12161C;
+    --page:#171C23;
+    --surface:#1E242C;
+    --surface-2:#252C36;
+    --ink:#E9ECF0;
+    --ink-2:#B8C0CB;
+    --muted:#8C95A2;
+    --line:#2F3843;
+    --line-2:#28303A;
+    --brand:#FF6B3D;
+    --brand-ink:#FF8A63;
+    --brand-soft:#3A2119;
+    --meta:#45BFC8;
+    --meta-soft:#122E31;
+    --meta-line:#2A5F64;
+    --ok:#4ECB7C;
+    --shadow:0 24px 60px -20px rgba(0,0,0,.7), 0 4px 12px -4px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --stage:#12161C;
+  --page:#171C23;
+  --surface:#1E242C;
+  --surface-2:#252C36;
+  --ink:#E9ECF0;
+  --ink-2:#B8C0CB;
+  --muted:#8C95A2;
+  --line:#2F3843;
+  --line-2:#28303A;
+  --brand:#FF6B3D;
+  --brand-ink:#FF8A63;
+  --brand-soft:#3A2119;
+  --meta:#45BFC8;
+  --meta-soft:#122E31;
+  --meta-line:#2A5F64;
+  --ok:#4ECB7C;
+  --shadow:0 24px 60px -20px rgba(0,0,0,.7), 0 4px 12px -4px rgba(0,0,0,.4);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--stage);
+  color:var(--ink);
+  font-family:var(--font-ui);
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--meta);outline-offset:2px;border-radius:4px}
+
+/* ---------- meta chrome ---------- */
+.shell{max-width:1180px;margin:0 auto;padding:28px 20px 64px;display:flex;flex-direction:column;gap:20px}
+
+.masthead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+.mast-left{display:flex;flex-direction:column;gap:6px}
+.eyebrow{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--meta);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--meta-line)}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em;text-wrap:balance}
+.sub{margin:0;color:var(--muted);font-size:13.5px;max-width:62ch;line-height:1.55}
+
+.controls{display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{
+  border:0;background:transparent;color:var(--ink-2);font-size:12.5px;font-weight:600;
+  padding:7px 13px;border-radius:7px;transition:background .15s,color .15s;
+}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.ghost{
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-2);
+  font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:10px;transition:border-color .15s,color .15s;
+}
+.ghost:hover{border-color:var(--meta);color:var(--meta)}
+.ghost[aria-pressed="true"]{background:var(--meta-soft);border-color:var(--meta-line);color:var(--meta)}
+
+/* ---------- stage ---------- */
+.stage{
+  position:relative;background:var(--page);border:1px solid var(--line);
+  border-radius:18px;overflow:hidden;box-shadow:var(--shadow);
+}
+.stage-bar{
+  height:34px;background:var(--surface-2);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:6px;padding:0 12px;
+}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.stage-url{
+  margin-left:10px;font-family:var(--font-mono);font-size:10.5px;color:var(--muted);
+  background:var(--page);border:1px solid var(--line-2);border-radius:5px;padding:2px 9px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;
+}
+.viewport{position:relative;padding:0;min-height:560px;display:flex;justify-content:center}
+.mockwrap{position:relative;width:100%;transition:width .35s cubic-bezier(.2,.7,.3,1)}
+.stage.is-mobile .mockwrap{width:390px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+
+/* ---------- mocked igv page ---------- */
+.site{background:var(--page);min-height:560px}
+.site-nav{
+  display:flex;align-items:center;gap:14px;padding:14px 22px;background:var(--surface);
+  border-bottom:1px solid var(--line-2);
+}
+.logo{display:flex;align-items:center;gap:7px;font-weight:800;font-size:16px;letter-spacing:-.02em}
+.logo-mark{
+  width:22px;height:22px;border-radius:6px;background:var(--brand);color:#fff;
+  display:grid;place-items:center;font-size:12px;font-weight:800;
+}
+.nav-search{
+  flex:1;max-width:280px;height:30px;border-radius:8px;background:var(--surface-2);
+  border:1px solid var(--line-2);display:flex;align-items:center;padding:0 11px;
+  font-size:12px;color:var(--muted);
+}
+.nav-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.nav-pill{font-size:11.5px;font-weight:600;color:var(--ink-2);background:var(--surface-2);border-radius:7px;padding:6px 11px}
+.stage.is-mobile .nav-search,.stage.is-mobile .nav-pill{display:none}
+
+.crumbs{padding:14px 22px 0;font-size:11.5px;color:var(--muted);font-family:var(--font-mono)}
+.page-head{padding:10px 22px 16px;display:flex;align-items:center;gap:12px}
+.game-thumb{
+  width:44px;height:44px;border-radius:10px;flex:none;
+  background:linear-gradient(140deg,#3B4FA8,#8A4FC8 60%,#D96BA8);
+}
+.page-head h2{margin:0;font-size:19px;font-weight:700;letter-spacing:-.02em}
+.page-head p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+
+.filters{padding:0 22px 16px;display:flex;gap:8px;flex-wrap:wrap}
+.filter{
+  font-size:12px;font-weight:600;color:var(--ink-2);background:var(--surface);
+  border:1px solid var(--line);border-radius:9px;padding:7px 12px;
+}
+
+.grid{
+  padding:0 22px 28px;display:grid;gap:14px;
+  grid-template-columns:repeat(auto-fill,minmax(238px,1fr));
+}
+.stage.is-mobile .grid{grid-template-columns:1fr 1fr;gap:10px;padding:0 14px 24px}
+
+.card{
+  position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:15px;text-align:left;display:flex;flex-direction:column;gap:11px;
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+.card:hover{transform:translateY(-2px);border-color:var(--brand);box-shadow:0 10px 24px -12px rgba(240,82,43,.45)}
+.card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card-name{font-size:13.5px;font-weight:700;line-height:1.35;letter-spacing:-.01em}
+.card-art{
+  width:52px;height:52px;flex:none;border-radius:9px;
+  background:linear-gradient(150deg,#BFE3FF,#7FB7F5);
+  display:grid;place-items:center;font-size:10px;font-weight:800;color:#1B3B63;text-align:center;line-height:1.1;padding:4px;
+}
+.card-tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{font-size:10px;font-weight:600;color:var(--muted);background:var(--surface-2);border-radius:5px;padding:3px 7px}
+.card-foot{display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;padding-top:4px}
+.price-label{font-size:10px;color:var(--muted);display:block}
+.price{font-size:19px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.price .cur{font-size:12px;font-weight:600;vertical-align:.35em;margin-right:1px}
+.offers{font-size:10.5px;font-weight:700;color:var(--brand);background:var(--brand-soft);border-radius:20px;padding:4px 9px}
+.card-hint{
+  position:absolute;inset:auto 12px 12px auto;font-family:var(--font-mono);font-size:9.5px;
+  color:var(--brand);opacity:0;transition:opacity .15s;
+}
+.card:hover .card-hint{opacity:1}
+
+/* ---------- overlay + modal ---------- */
+.overlay{
+  position:absolute;inset:0;background:rgba(16,20,26,.5);backdrop-filter:blur(2px);
+  display:grid;place-items:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .22s ease;z-index:20;
+}
+.overlay.open{opacity:1;pointer-events:auto}
+
+.modal{
+  width:min(560px,100%);background:var(--surface);border-radius:16px;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;
+  max-height:calc(100% - 8px);
+  transform:translateY(10px) scale(.985);transition:transform .24s cubic-bezier(.2,.7,.3,1);
+  border:1px solid var(--line);
+}
+.overlay.open .modal{transform:none}
+
+.stage.is-mobile .overlay{padding:0;align-items:end}
+.stage.is-mobile .modal{
+  width:100%;max-height:88%;border-radius:18px 18px 0 0;border-bottom:0;
+  transform:translateY(24px);
+}
+.stage.is-mobile .overlay.open .modal{transform:none}
+
+.m-head{
+  display:flex;align-items:center;gap:10px;padding:15px 18px;border-bottom:1px solid var(--line-2);flex:none;
+}
+.m-title{font-size:15.5px;font-weight:700;letter-spacing:-.01em;flex:1;min-width:0}
+.m-title small{display:block;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:2px}
+.iconbtn{
+  width:30px;height:30px;flex:none;border-radius:8px;border:1px solid transparent;background:transparent;
+  color:var(--ink-2);display:grid;place-items:center;font-size:16px;line-height:1;transition:background .15s,color .15s;
+}
+.iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+#backBtn{opacity:0;pointer-events:none;width:0;margin:0;transition:opacity .2s,width .25s}
+.modal.step2 #backBtn,.modal.step3 #backBtn{opacity:1;pointer-events:auto;width:30px;margin-right:0}
+
+.m-body{position:relative;overflow:hidden;transition:height .28s cubic-bezier(.2,.7,.3,1)}
+.panel{padding:16px 18px 18px;display:flex;flex-direction:column;gap:14px}
+.panel[hidden]{display:none}
+.panel.enter{animation:slideIn .26s cubic-bezier(.2,.7,.3,1)}
+.panel.enter-back{animation:slideBack .26s cubic-bezier(.2,.7,.3,1)}
+@keyframes slideIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+@keyframes slideBack{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+.m-body.scrolls{overflow-y:auto}
+
+/* step 1 : sellers */
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{font-size:11px;font-weight:600;color:var(--ink-2);background:var(--surface-2);border-radius:6px;padding:4px 9px}
+.sortline{margin-left:auto;font-size:11.5px;color:var(--muted);font-weight:600}
+
+.sellers{display:flex;flex-direction:column;gap:9px}
+.seller{
+  display:grid;grid-template-columns:auto 34px 1fr auto;gap:11px;align-items:center;
+  background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:11px 13px;
+  text-align:left;transition:border-color .15s,background .15s;width:100%;
+}
+.seller:hover{border-color:var(--brand)}
+.seller[aria-checked="true"]{border-color:var(--brand);background:var(--brand-soft)}
+.radio{
+  width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line);flex:none;position:relative;
+}
+.seller[aria-checked="true"] .radio{border-color:var(--brand);border-width:5px}
+.avatar{width:34px;height:34px;border-radius:9px;flex:none;display:grid;place-items:center;font-size:14px}
+.a1{background:#2B3550}.a2{background:#3C6E4F}.a3{background:#5A3D6B}
+.s-meta{min-width:0}
+.s-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:5px}
+.verified{color:var(--brand);font-size:11px}
+.s-stats{font-size:10.5px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums;
+  display:flex;gap:9px;flex-wrap:wrap}
+.s-price{text-align:right;font-variant-numeric:tabular-nums}
+.s-price b{font-size:16px;font-weight:800;letter-spacing:-.02em}
+.s-price span{display:block;font-size:10px;color:var(--muted);margin-top:1px}
+.best{
+  font-family:var(--font-mono);font-size:9px;font-weight:600;color:var(--brand);
+  background:var(--brand-soft);border-radius:4px;padding:1px 5px;margin-left:5px;letter-spacing:.04em;
+}
+
+.m-foot{
+  flex:none;border-top:1px solid var(--line-2);padding:13px 18px;
+  display:flex;align-items:center;gap:14px;background:var(--surface);
+}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex:none}
+.qty button{width:30px;height:32px;border:0;background:var(--surface-2);color:var(--ink-2);font-size:15px}
+.qty button:hover{background:var(--line-2)}
+.qty span{width:38px;text-align:center;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.total{margin-left:auto;text-align:right;line-height:1.25}
+.total b{font-size:17px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.total small{display:block;font-size:10.5px;color:var(--ok);font-weight:600}
+.cta{
+  border:0;background:var(--brand);color:#fff;font-size:13.5px;font-weight:700;
+  padding:11px 22px;border-radius:10px;flex:none;transition:filter .15s,transform .1s;
+}
+.cta:hover{filter:brightness(1.06)}
+.cta:active{transform:translateY(1px)}
+.cta:disabled{opacity:.45;cursor:not-allowed}
+.cta.wide{width:100%}
+
+/* order summary bar (step 2) */
+.summary{
+  display:flex;align-items:center;gap:11px;background:var(--surface-2);
+  border:1px solid var(--line-2);border-radius:11px;padding:10px 12px;
+}
+.summary .card-art{width:38px;height:38px;font-size:8.5px}
+.sum-txt{min-width:0;flex:1}
+.sum-txt b{font-size:12.5px;font-weight:700;display:block}
+.sum-txt span{font-size:10.5px;color:var(--muted);display:block;margin-top:2px}
+.sum-price{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+
+/* form */
+.field{display:flex;flex-direction:column;gap:7px}
+.label{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.label .req{color:var(--brand)}
+.label .why{
+  margin-left:auto;font-size:11px;font-weight:600;color:var(--meta);background:none;border:0;padding:0;
+}
+.opts{display:flex;gap:7px;flex-wrap:wrap}
+.opt{
+  font-size:12px;font-weight:600;color:var(--ink-2);background:var(--surface);
+  border:1px solid var(--line);border-radius:9px;padding:8px 13px;transition:border-color .15s,background .15s,color .15s;
+}
+.opt:hover{border-color:var(--brand)}
+.opt[aria-pressed="true"]{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-ink)}
+input[type="text"]{
+  font-family:var(--font-mono);font-size:13px;padding:10px 12px;border-radius:9px;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%;
+}
+input[type="text"]::placeholder{color:var(--muted);font-family:var(--font-ui)}
+input[type="text"]:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.hint{font-size:11px;color:var(--muted);line-height:1.5}
+.err{font-size:11.5px;color:var(--brand-ink);font-weight:600;display:none}
+.field.invalid input[type="text"]{border-color:var(--brand)}
+.field.invalid .err{display:block}
+.remember{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-2);font-weight:600}
+.remember input{accent-color:var(--brand);width:14px;height:14px}
+.tut{
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:11px 12px;
+  font-size:11.5px;color:var(--ink-2);line-height:1.6;
+}
+.tut summary{cursor:pointer;font-weight:700;color:var(--ink);font-size:12px;list-style:none}
+.tut summary::-webkit-details-marker{display:none}
+.tut summary::before{content:"ⓘ ";color:var(--meta)}
+.tut ol{margin:9px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+
+/* step 3 */
+.done{align-items:center;text-align:center;padding:34px 24px 30px;gap:10px}
+.done-mark{
+  width:46px;height:46px;border-radius:50%;background:var(--meta-soft);color:var(--meta);
+  display:grid;place-items:center;font-size:22px;border:1px solid var(--meta-line);
+}
+.done h3{margin:6px 0 0;font-size:16px;font-weight:700}
+.done p{margin:0;font-size:12.5px;color:var(--muted);max-width:36ch;line-height:1.6}
+
+/* leave-guard */
+.guard{
+  position:absolute;inset:0;background:rgba(16,20,26,.35);display:grid;place-items:center;z-index:5;padding:20px;
+}
+.guard[hidden]{display:none}
+.guard-box{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;
+  max-width:300px;text-align:center;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);
+}
+.guard-box p{margin:0;font-size:12.5px;line-height:1.6;color:var(--ink-2)}
+.guard-box b{color:var(--ink);font-size:13.5px}
+.guard-row{display:flex;gap:8px}
+.guard-row button{flex:1;font-size:12.5px;font-weight:700;padding:9px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2)}
+.guard-row button.danger{background:var(--brand);border-color:var(--brand);color:#fff}
+
+/* ---------- annotations ---------- */
+.pin{
+  position:absolute;z-index:40;width:20px;height:20px;border-radius:50%;
+  background:var(--meta);color:#fff;border:2px solid var(--surface);
+  font-family:var(--font-mono);font-size:10px;font-weight:600;display:grid;place-items:center;
+  cursor:help;opacity:0;pointer-events:none;transition:opacity .2s,transform .15s;padding:0;
+}
+.annotated .pin{opacity:1;pointer-events:auto}
+.pin:hover{transform:scale(1.18)}
+.pin .bubble{
+  position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%);
+  width:210px;background:var(--meta-soft);color:var(--ink);border:1px solid var(--meta-line);
+  border-radius:9px;padding:9px 11px;font-family:var(--font-ui);font-size:11px;font-weight:500;
+  line-height:1.55;text-align:left;opacity:0;pointer-events:none;transition:opacity .15s;
+}
+.pin:hover .bubble,.pin:focus-visible .bubble{opacity:1}
+.pin.down .bubble{bottom:auto;top:calc(100% + 9px)}
+
+/* ---------- notes ---------- */
+.notes{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(268px,1fr))}
+.note{
+  background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px 17px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.note-k{
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--meta);
+}
+.note h3{margin:0;font-size:14px;font-weight:700;letter-spacing:-.01em}
+.note p{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.65}
+.note p b{color:var(--ink)}
+
+.footnote{
+  font-size:11.5px;color:var(--muted);line-height:1.6;border-top:1px solid var(--line);padding-top:14px;
+}
+.footnote code{font-family:var(--font-mono);font-size:11px;background:var(--surface-2);padding:1px 5px;border-radius:4px}
+</style>
+
+</head>
+<body>
+<div class="shell">
+
+  <header class="masthead">
+    <div class="mast-left">
+      <p class="eyebrow">iGV · Top-Up 流程改造 · 可点击原型</p>
+      <h1>充值弹窗两步流</h1>
+      <p class="sub">列表页点击商品 → 弹窗选卖家 → 同一个弹窗内切到填写充值信息。不叠第二层弹窗。点卡片开始，或用右上角切到手机视图看 bottom sheet 版本。</p>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="设备视图">
+        <button id="vDesk" aria-pressed="true">桌面</button>
+        <button id="vMob" aria-pressed="false">手机</button>
+      </div>
+      <button class="ghost" id="annoBtn" aria-pressed="false">显示标注</button>
+      <button class="ghost" id="resetBtn">重置</button>
+    </div>
+  </header>
+
+  <section class="stage" id="stage">
+    <div class="stage-bar">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="stage-url" id="urlBar">www.igv.com/honkai-star-rail/top-up</span>
+    </div>
+    <div class="viewport">
+      <div class="mockwrap" id="mockwrap">
+
+        <div class="site">
+          <nav class="site-nav">
+            <span class="logo"><span class="logo-mark">iG</span>iGV</span>
+            <span class="nav-search">Search in iGV…</span>
+            <span class="nav-right">
+              <span class="nav-pill">Seller</span>
+              <span class="nav-pill">My Orders</span>
+              <span class="nav-pill">EN / USD</span>
+            </span>
+          </nav>
+
+          <p class="crumbs">Home / All Games / Honkai: Star Rail / Top-Up</p>
+          <div class="page-head">
+            <span class="game-thumb"></span>
+            <div>
+              <h2>Honkai: Star Rail Top-Up</h2>
+              <p>官方直充 · 1,394 件在售 · 平均 15 分钟到账</p>
+            </div>
+          </div>
+
+          <div class="filters">
+            <span class="filter">Server: America ×</span>
+            <span class="filter">Delivery: Direct Top Up ×</span>
+            <span class="filter">Platform ▾</span>
+            <span class="filter">More filters ▾</span>
+          </div>
+
+          <div class="grid" id="grid"></div>
+        </div>
+
+        <div class="overlay" id="overlay">
+          <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+            <div class="m-head">
+              <button class="iconbtn" id="backBtn" aria-label="返回选择卖家">←</button>
+              <div class="m-title" id="mTitle">980+110 Oneiric Shard<small id="mSub">3 位卖家在售 · America</small></div>
+              <button class="iconbtn" id="closeBtn" aria-label="关闭">✕</button>
+            </div>
+
+            <div class="m-body" id="mBody">
+
+              <!-- STEP 1 -->
+              <div class="panel" id="p1">
+                <div class="chips">
+                  <span class="chip">America</span>
+                  <span class="chip">Direct ID recharge</span>
+                  <span class="chip">iOS</span>
+                  <span class="sortline">Best Match ▾</span>
+                </div>
+                <div class="sellers" id="sellers"></div>
+              </div>
+
+              <!-- STEP 2 -->
+              <div class="panel" id="p2" hidden>
+                <div class="summary">
+                  <span class="card-art">980<br>+110</span>
+                  <span class="sum-txt">
+                    <b>980+110 Oneiric Shard</b>
+                    <span id="sumSeller">AKMShoppp · Direct Top Up · 约 1 小时</span>
+                  </span>
+                  <span class="sum-price" id="sumPrice">$18.51</span>
+                </div>
+
+                <div class="field" id="fRegion">
+                  <span class="label"><span class="req">*</span> 服务器区服</span>
+                  <div class="opts" data-group="region">
+                    <button class="opt" aria-pressed="false">Asia</button>
+                    <button class="opt" aria-pressed="false">America</button>
+                    <button class="opt" aria-pressed="false">Europe</button>
+                    <button class="opt" aria-pressed="false">HK/MO/TW</button>
+                  </div>
+                  <span class="err">请选择你的服务器区服</span>
+                </div>
+
+                <div class="field" id="fUid">
+                  <span class="label"><span class="req">*</span> 游戏 UID</span>
+                  <input type="text" id="uid" placeholder="9 位数字，例如 800123456" inputmode="numeric" autocomplete="off">
+                  <span class="err">UID 应为 9 位数字</span>
+                  <label class="remember"><input type="checkbox" id="rememberUid" checked> 记住这个 UID，下次自动填好</label>
+                </div>
+
+                <div class="field" id="fPlat">
+                  <span class="label"><span class="req">*</span> 充值平台</span>
+                  <div class="opts" data-group="platform">
+                    <button class="opt" aria-pressed="false">iOS</button>
+                    <button class="opt" aria-pressed="false">Android</button>
+                    <button class="opt" aria-pressed="false">PC / 官网</button>
+                  </div>
+                  <span class="err">请选择充值平台</span>
+                </div>
+
+                <details class="tut">
+                  <summary>UID 在游戏里怎么找？</summary>
+                  <ol>
+                    <li>UID 常驻显示在游戏画面左下角。</li>
+                    <li>也可以在手机端左上角的头像面板里看到；PC 端按 ESC 打开面板即可。</li>
+                    <li>请务必核对区服与 UID，充错账号无法找回。</li>
+                  </ol>
+                </details>
+              </div>
+
+              <!-- STEP 3 -->
+              <div class="panel done" id="p3" hidden>
+                <span class="done-mark">✓</span>
+                <h3>原型到此为止</h3>
+                <p>真实流程在这一步进入支付。信息已随订单带走，卖家侧直接看到区服与 UID，无需再私聊索要。</p>
+              </div>
+
+            </div>
+
+            <div class="m-foot" id="mFoot">
+              <div class="qty" id="qtyBox">
+                <button id="qMinus" aria-label="减少数量">−</button>
+                <span id="qVal">1</span>
+                <button id="qPlus" aria-label="增加数量">+</button>
+              </div>
+              <div class="total" id="totalBox">
+                <b id="totalVal">$18.51</b>
+                <small>比官方省 9%</small>
+              </div>
+              <button class="cta" id="primaryBtn">Buy Now</button>
+            </div>
+
+            <div class="guard" id="guard" hidden>
+              <div class="guard-box">
+                <b>要放弃已填的信息吗？</b>
+                <p>你已经填了区服和 UID。关掉弹窗这些内容不会保存。</p>
+                <div class="guard-row">
+                  <button id="guardStay">继续填写</button>
+                  <button class="danger" id="guardLeave">关闭</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <article class="note">
+      <span class="note-k">01 / 层级</span>
+      <h3>一层遮罩，两个步骤</h3>
+      <p>第二步复用同一个弹窗容器，用 <b>← 返回</b> 代替第二层遮罩。✕ 永远只有一个含义：退出整个购买流程。容器宽度不变，高度做过渡，避免切换时"抖一下"。</p>
+    </article>
+    <article class="note">
+      <span class="note-k">02 / 返回</span>
+      <h3>返回必须无损</h3>
+      <p>点 ← 回到卖家列表，<b>选中的卖家、数量、已填的表单全部保留</b>。再点 Buy Now 直接看到刚才填的内容。原型里可以来回切换验证。</p>
+    </article>
+    <article class="note">
+      <span class="note-k">03 / 关闭</span>
+      <h3>填过就要拦一下</h3>
+      <p>第二步已有输入时，点 ✕ 或点遮罩会先弹二次确认。空表单则直接关闭，不打扰。</p>
+    </article>
+    <article class="note">
+      <span class="note-k">04 / 表单</span>
+      <h3>字段跟着卖家走</h3>
+      <p>Direct Top Up 要区服 + UID + 平台，Face to Face 则是另一套字段。所以填写必须排在选卖家之后 —— 两步的顺序不能颠倒。</p>
+    </article>
+    <article class="note">
+      <span class="note-k">05 / 转化</span>
+      <h3>UID 记忆是最实在的一笔</h3>
+      <p>登录用户默认带出上次该游戏的区服与 UID，第二步从"填三个字段"降为"确认一眼"。这是整个改造里对转化率影响最直接的细节。</p>
+    </article>
+    <article class="note">
+      <span class="note-k">06 / 手机端</span>
+      <h3>bottom sheet，不是小弹窗</h3>
+      <p>切到手机视图看：弹窗贴底、圆角顶、可占 88% 高度，底部 CTA 常驻。安卓返回键应对应"上一步"，两个步骤各 push 一条 <b>history state</b>，不能一按就退出列表页。</p>
+    </article>
+    <article class="note">
+      <span class="note-k">07 / 可分享</span>
+      <h3>URL 不能丢</h3>
+      <p>弹窗打开时同步改写地址栏到商品详情 URL（看上方地址栏）。分享出去的链接仍要能直接落到商品内容页，SEO 与站外投放都依赖它。</p>
+    </article>
+    <article class="note">
+      <span class="note-k">08 / 备选</span>
+      <h3>也可以把第二步挪进 checkout</h3>
+      <p>弹窗只做"选卖家"，Buy Now 直接进结算页填信息 + 付款。弹窗更轻、表单空间充裕，代价是丢掉弹窗内闭环。手机端这个方案往往更好。</p>
+    </article>
+  </section>
+
+  <p class="footnote">交互原型，非真实交易页面：不联网、不收集任何信息，所有卖家、价格、订单数据均为示意。设备视图切换只改变布局，逻辑一致。快捷键 <code>Esc</code> 关闭弹窗。</p>
+
+</div>
+
+<script>
+(function(){
+  var PRODUCTS = [
+    {n:"980+110 Oneiric Shard", a:"980<br>+110", p:18.51, o:3, tags:["Oneiric Shard","America"]},
+    {n:"60 Oneiric Shards",     a:"60",          p:0.90, o:6, tags:["Oneiric Shard","iOS"]},
+    {n:"300+30 Oneiric Shard",  a:"300<br>+30",  p:4.52, o:2, tags:["Oneiric Shard","America"]},
+    {n:"Express Supply Pass",   a:"PASS",        p:7.27, o:2, tags:["Other","Monthly"]},
+    {n:"1980+260 Oneiric Shard",a:"1980<br>+260",p:36.14,o:4, tags:["Oneiric Shard","America"]},
+    {n:"3280+600 Oneiric Shard",a:"3280<br>+600",p:54.03,o:2, tags:["Oneiric Shard","America"]},
+    {n:"6480+1600 Oneiric Shard",a:"6480<br>+1600",p:98.40,o:3,tags:["Oneiric Shard","Points"]},
+    {n:"Diamond Pass · Season", a:"PASS",        p:10.18,o:2, tags:["Other","Season"]}
+  ];
+  var SELLERS = [
+    {id:"akm", name:"AKMShoppp", cls:"a1", ico:"🎮", orders:"10,355 单", rate:"95.94%", time:"约 1 小时", method:"Direct Top Up", price:18.51, best:true},
+    {id:"bib", name:"Bibeki",    cls:"a2", ico:"🐸", orders:"4,860 单",  rate:"87.37%", time:"约 3 小时", method:"Direct Top Up", price:19.00, best:false},
+    {id:"mod", name:"Moderators Shop", cls:"a3", ico:"🛡", orders:"2,190 单", rate:"99.37%", time:"约 15 分钟", method:"Face to Face Trade", price:19.42, best:false}
+  ];
+
+  var $ = function(id){ return document.getElementById(id); };
+  var state = { step:1, seller:"akm", qty:1, product:PRODUCTS[0], region:"", platform:"", uid:"", open:false };
+
+  /* ---------- build list ---------- */
+  var grid = $("grid");
+  PRODUCTS.forEach(function(p, i){
+    var b = document.createElement("button");
+    b.className = "card";
+    b.innerHTML =
+      '<div class="card-top"><span class="card-name">'+p.n+'</span><span class="card-art">'+p.a+'</span></div>'+
+      '<div class="card-tags">'+p.tags.map(function(t){return '<span class="tag">'+t+'</span>';}).join("")+'</div>'+
+      '<div class="card-foot"><span><span class="price-label">From</span>'+
+      '<span class="price"><span class="cur">$</span>'+p.p.toFixed(2)+'</span></span>'+
+      '<span class="offers">'+p.o+' Offers</span></div>'+
+      '<span class="card-hint">点击打开 ↗</span>';
+    b.addEventListener("click", function(){ openModal(p); });
+    grid.appendChild(b);
+  });
+
+  /* ---------- build sellers ---------- */
+  var sellersEl = $("sellers");
+  SELLERS.forEach(function(s){
+    var b = document.createElement("button");
+    b.className = "seller";
+    b.setAttribute("role","radio");
+    b.setAttribute("aria-checked", s.id === state.seller ? "true" : "false");
+    b.dataset.id = s.id;
+    b.innerHTML =
+      '<span class="radio"></span>'+
+      '<span class="avatar '+s.cls+'">'+s.ico+'</span>'+
+      '<span class="s-meta"><span class="s-name">'+s.name+'<span class="verified">✔</span></span>'+
+      '<span class="s-stats"><span>'+s.orders+'</span><span>好评 '+s.rate+'</span><span>'+s.time+'</span><span>'+s.method+'</span></span></span>'+
+      '<span class="s-price"><b>$'+s.price.toFixed(2)+'</b>'+(s.best?'<span class="best">BEST</span>':'')+'<span>/ Unit</span></span>';
+    b.addEventListener("click", function(){
+      state.seller = s.id;
+      Array.prototype.forEach.call(sellersEl.children, function(c){
+        c.setAttribute("aria-checked", c.dataset.id === s.id ? "true" : "false");
+      });
+      syncTotals();
+    });
+    sellersEl.appendChild(b);
+  });
+
+  function seller(){ for(var i=0;i<SELLERS.length;i++){ if(SELLERS[i].id===state.seller) return SELLERS[i]; } }
+
+  function syncTotals(){
+    var s = seller();
+    var t = s.price * state.qty;
+    $("qVal").textContent = state.qty;
+    $("totalVal").textContent = "$" + t.toFixed(2);
+    $("sumSeller").textContent = s.name + " · " + s.method + " · " + s.time;
+    $("sumPrice").textContent = "$" + t.toFixed(2);
+  }
+
+  /* ---------- open / close ---------- */
+  var overlay = $("overlay"), modal = $("modal"), body = $("mBody"), guard = $("guard");
+
+  function openModal(p){
+    state.product = p; state.open = true; state.qty = 1;
+    $("mTitle").childNodes[0].nodeValue = p.n;
+    $("mSub").textContent = SELLERS.length + " 位卖家在售 · America";
+    document.querySelector("#p2 .summary b").textContent = p.n;
+    document.querySelector("#p2 .card-art").innerHTML = p.a;
+    setStep(1, true);
+    syncTotals();
+    overlay.classList.add("open");
+    $("urlBar").textContent = "www.igv.com/honkai-star-rail/top-up/" + p.n.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  }
+
+  function dirty(){ return !!(state.region || state.platform || state.uid); }
+
+  function tryClose(){
+    if(state.step === 2 && dirty()){ guard.hidden = false; return; }
+    closeModal();
+  }
+  function closeModal(){
+    state.open = false;
+    overlay.classList.remove("open");
+    guard.hidden = true;
+    $("urlBar").textContent = "www.igv.com/honkai-star-rail/top-up";
+    setTimeout(resetForm, 250);
+  }
+  function resetForm(){
+    state.region=""; state.platform=""; state.uid="";
+    $("uid").value = "";
+    Array.prototype.forEach.call(document.querySelectorAll("#p2 .opt"), function(o){ o.setAttribute("aria-pressed","false"); });
+    Array.prototype.forEach.call(document.querySelectorAll("#p2 .field"), function(f){ f.classList.remove("invalid"); });
+    setStep(1, true);
+  }
+
+  /* ---------- step machine ---------- */
+  var PANELS = { 1:$("p1"), 2:$("p2"), 3:$("p3") };
+
+  function setStep(n, instant){
+    var back = n < state.step;
+    var from = body.offsetHeight;
+    var prev = PANELS[state.step];
+    state.step = n;
+
+    for(var k in PANELS){ PANELS[k].hidden = (Number(k) !== n); PANELS[k].classList.remove("enter","enter-back"); }
+    var next = PANELS[n];
+
+    modal.className = "modal step" + n;
+    $("mTitle").childNodes[0].nodeValue = n === 1 ? state.product.n : (n === 2 ? "填写充值信息" : "下单完成");
+    $("mSub").textContent = n === 1 ? (SELLERS.length + " 位卖家在售 · America")
+                          : n === 2 ? "第 2 步，共 2 步 · 信息将直接交给卖家"
+                          : "订单号 IGV-2608-88214";
+
+    $("qtyBox").style.display = n === 1 ? "" : "none";
+    $("totalBox").style.display = n === 3 ? "none" : "";
+    $("mFoot").style.display = n === 3 ? "none" : "";
+    var btn = $("primaryBtn");
+    btn.textContent = n === 1 ? "Buy Now" : ("确认并支付 " + $("totalVal").textContent);
+    btn.className = n === 1 ? "cta" : "cta wide";
+
+    if(instant){ body.style.height = "auto"; if(!prev) return; }
+    else next.classList.add(back ? "enter-back" : "enter");
+
+    var to = next.scrollHeight;
+    body.style.height = from + "px";
+    body.offsetHeight; // reflow
+    body.style.height = to + "px";
+    clearTimeout(body._t);
+    body._t = setTimeout(function(){ body.style.height = "auto"; }, 300);
+    placePins();
+  }
+
+  $("primaryBtn").addEventListener("click", function(){
+    if(state.step === 1){ setStep(2); return; }
+    if(state.step === 2){ if(validate()) setStep(3); }
+  });
+  $("backBtn").addEventListener("click", function(){ setStep(state.step - 1); });
+  $("closeBtn").addEventListener("click", tryClose);
+  overlay.addEventListener("mousedown", function(e){ if(e.target === overlay) tryClose(); });
+  $("guardStay").addEventListener("click", function(){ guard.hidden = true; });
+  $("guardLeave").addEventListener("click", closeModal);
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape" && state.open) tryClose(); });
+
+  $("qMinus").addEventListener("click", function(){ if(state.qty > 1){ state.qty--; syncTotals(); } });
+  $("qPlus").addEventListener("click", function(){ if(state.qty < 99){ state.qty++; syncTotals(); } });
+
+  /* ---------- form ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll("#p2 .opts"), function(g){
+    g.addEventListener("click", function(e){
+      var b = e.target.closest(".opt"); if(!b) return;
+      Array.prototype.forEach.call(g.children, function(c){ c.setAttribute("aria-pressed", c === b ? "true" : "false"); });
+      state[g.dataset.group] = b.textContent;
+      g.closest(".field").classList.remove("invalid");
+    });
+  });
+  $("uid").addEventListener("input", function(e){
+    e.target.value = e.target.value.replace(/\D/g,"").slice(0,9);
+    state.uid = e.target.value;
+    if(state.uid.length === 9) $("fUid").classList.remove("invalid");
+  });
+
+  function validate(){
+    var ok = true;
+    if(!state.region){ $("fRegion").classList.add("invalid"); ok = false; }
+    if(state.uid.length !== 9){ $("fUid").classList.add("invalid"); ok = false; }
+    if(!state.platform){ $("fPlat").classList.add("invalid"); ok = false; }
+    if(!ok){ var f = document.querySelector("#p2 .field.invalid"); if(f) f.scrollIntoView({block:"nearest",behavior:"smooth"}); }
+    return ok;
+  }
+
+  /* ---------- device + annotations ---------- */
+  var stage = $("stage");
+  $("vDesk").addEventListener("click", function(){ setDevice("desk"); });
+  $("vMob").addEventListener("click", function(){ setDevice("mob"); });
+  function setDevice(d){
+    stage.classList.toggle("is-mobile", d === "mob");
+    $("vDesk").setAttribute("aria-pressed", d === "desk" ? "true" : "false");
+    $("vMob").setAttribute("aria-pressed", d === "mob" ? "true" : "false");
+    body.style.height = "auto";
+    setTimeout(placePins, 380);
+  }
+
+  var PINS = [
+    {n:"1", host:"#backBtn", dx:15, dy:15, down:true,  t:"返回箭头替代第二层遮罩。整个流程只有一层 overlay。"},
+    {n:"2", host:"#closeBtn", dx:15, dy:15, down:true, t:"✕ 始终只有一个含义：退出购买。第二步填过内容会先二次确认。"},
+    {n:"3", host:"#p2 .summary", dx:-8, dy:10, down:true, t:"订单摘要吸在表单上方，用户随时知道自己在为哪个卖家、哪个数量填信息。"},
+    {n:"4", host:"#rememberUid", dx:-10, dy:8, down:true, t:"UID 记忆。登录用户下次进来这一步只需确认，不需重填。"},
+    {n:"5", host:"#primaryBtn", dx:10, dy:-6, down:false, t:"CTA 带上金额，第二步变成整行按钮，手机端常驻底部。"}
+  ];
+  var pinEls = [];
+  PINS.forEach(function(p){
+    var b = document.createElement("button");
+    b.className = "pin" + (p.down ? " down" : "");
+    b.type = "button";
+    b.innerHTML = p.n + '<span class="bubble">' + p.t + '</span>';
+    b.setAttribute("aria-label", "标注 " + p.n + "：" + p.t);
+    modal.appendChild(b);
+    pinEls.push({el:b, cfg:p});
+  });
+  function placePins(){
+    var mr = modal.getBoundingClientRect();
+    pinEls.forEach(function(o){
+      var host = document.querySelector(o.cfg.host);
+      if(!host || !host.offsetParent){ o.el.style.display = "none"; return; }
+      var r = host.getBoundingClientRect();
+      o.el.style.display = "";
+      o.el.style.left = (r.left - mr.left + r.width / 2 + o.cfg.dx - 10) + "px";
+      o.el.style.top  = (r.top  - mr.top  + o.cfg.dy - 10) + "px";
+    });
+  }
+  $("annoBtn").addEventListener("click", function(){
+    var on = stage.classList.toggle("annotated");
+    this.setAttribute("aria-pressed", on ? "true" : "false");
+    this.textContent = on ? "隐藏标注" : "显示标注";
+    if(on) placePins();
+  });
+  window.addEventListener("resize", placePins);
+  body.addEventListener("transitionend", placePins);
+
+  $("resetBtn").addEventListener("click", function(){ closeModal(); });
+
+  syncTotals();
+  setStep(1, true);
+})();
+</script>
+
+</body>
+</html>
