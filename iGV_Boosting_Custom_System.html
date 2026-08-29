@@ -3,7 +3,585 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>iGV 后台 · Custom 影子商品与订单原型</title>
+<title>iGV 后台 · Custom 需求落地方案（新方案 / 旧方案）</title>
+<style>
+  :root{--ink:#1f2329;--soft:#5c6470;--dim:#9aa3af;--line:#e8eaed;--orange:#f1652a;--blue:#2f6fe0;
+    --sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;}
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:#0d1424;font:13px/1.6 var(--sans);color:var(--ink);display:flex;flex-direction:column}
+  .switchbar{flex:none;height:52px;background:#0d1424;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid #22304d}
+  .switchbar .ttl{color:#fff;font-weight:700;font-size:14px;letter-spacing:.01em;white-space:nowrap}
+  .switchbar .ttl small{display:block;font-size:10.5px;color:#7d89a3;font-weight:500;letter-spacing:.04em;margin-top:-2px}
+  .pills{display:flex;gap:8px;margin-left:14px}
+  .pill{display:flex;align-items:center;gap:8px;padding:7px 15px;border-radius:20px;background:#182338;color:#a9b4c9;font-size:12.5px;cursor:pointer;border:1px solid transparent;white-space:nowrap;user-select:none}
+  .pill:hover{background:#1e2b45;color:#e6ebf4}
+  .pill.on{background:#fff;color:var(--ink);font-weight:700;border-color:#fff}
+  .pill .tag{font-size:10px;font-weight:800;border-radius:3px;padding:1px 6px;letter-spacing:.03em}
+  .pill .tag.n{background:var(--orange);color:#fff}
+  .pill .tag.o{background:#3b4a68;color:#c3cbdd}
+  .pill.on .tag.o{background:#e8eaed;color:var(--soft)}
+  .switchbar .note{margin-left:auto;color:#7d89a3;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stage{flex:1;min-height:0;position:relative;background:#f0f2f5}
+  iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;background:#f0f2f5}
+  iframe.on{display:block}
+  @media(max-width:820px){.switchbar .note{display:none}}
+</style>
+</head>
+<body>
+
+<div class="switchbar">
+  <div class="ttl">Diablo 4 代练 · Custom 需求落地方案<small>两版对照 · 同一份后台原型</small></div>
+  <div class="pills">
+    <div class="pill on" data-v="new"><span class="tag n">新</span>新方案</div>
+    <div class="pill" data-v="old"><span class="tag o">旧</span>旧方案</div>
+  </div>
+  <div class="note">新方案:不新增需求列表 · 旧方案:独立需求列表 —— 两版各自带「原型 / 方案说明」内页切换</div>
+</div>
+
+<div class="stage">
+  <iframe id="fnew" class="on"></iframe>
+  <iframe id="fold"></iframe>
+</div>
+
+<script type="text/plain" id="src-new"><!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iGV 后台 · Custom 新方案原型</title>
+<style>
+  :root{
+    --nav:#1f2a44;--nav-hover:#28345a;--nav-on:#1d6fe0;--nav-txt:#c3cbdd;
+    --ink:#1f2329;--soft:#5c6470;--dim:#9aa3af;--line:#e8eaed;--bg:#f0f2f5;
+    --blue:#2f6fe0;--blue-d:#1d5fd0;--blue-l:#eaf1fc;
+    --orange:#f1652a;--orange-d:#d9531c;--orange-soft:#fdeee7;
+    --green:#12855a;--green-l:#e7f4ee;--amber:#b8791b;--amber-l:#fbf1dc;--red:#d64545;--red-l:#fdecec;
+    --purple:#7048b6;--purple-l:#f0ebfa;
+    --sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+  .topbar{height:56px;background:#141c30;display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:30}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:19px;color:#fff}
+  .logo .mark{width:28px;height:28px;border-radius:7px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:800}
+  .logo small{display:block;font-size:7.5px;letter-spacing:.16em;color:#8d97ac;font-weight:600;margin-top:-2px}
+  .topbar .sp{flex:1}
+  .userbox{display:flex;align-items:center;gap:9px;color:#dfe4ee;font-size:13px}
+  .userbox .av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7d8aa8,#c9d1e0)}
+
+  .shell{display:flex;align-items:stretch;min-height:calc(100vh - 56px)}
+  .side{width:210px;flex:none;background:var(--nav);padding:10px 0 40px}
+  .grp{margin-bottom:2px}
+  .grp>.gh{display:flex;align-items:center;gap:10px;padding:12px 18px;color:#e8ecf5;font-size:13.5px;cursor:pointer;user-select:none}
+  .grp>.gh .ic{width:16px;text-align:center;opacity:.85}
+  .grp>.gh .car{margin-left:auto;font-size:10px;color:#8d97ac;transition:transform .15s}
+  .grp.open>.gh .car{transform:rotate(180deg)}
+  .sub{display:none}.grp.open .sub{display:block}
+  .sub a{display:block;padding:10px 18px 10px 44px;color:var(--nav-txt);font-size:13px;cursor:pointer;text-decoration:none}
+  .sub a:hover{background:var(--nav-hover);color:#fff}
+  .sub a.on{background:var(--nav-on);color:#fff;font-weight:600}
+
+  .main{flex:1;min-width:0;padding:14px 18px 40px}
+  .crumbrow{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .crumb{font-size:13px;color:var(--soft)}.crumb b{color:var(--ink);font-weight:500}
+  .crumbrow .sp{flex:1}
+  .shopsw{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--soft)}
+  .sel,.inp{border:1px solid #d9dde3;border-radius:4px;padding:6px 10px;font:13px var(--sans);background:#fff;color:var(--ink);min-width:130px}
+  .sel{cursor:pointer;appearance:none;background-image:linear-gradient(45deg,transparent 50%,#9aa3af 50%),linear-gradient(135deg,#9aa3af 50%,transparent 50%);background-position:calc(100% - 14px) 12px,calc(100% - 9px) 12px;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:28px}
+  .inp::placeholder{color:#b9c0ca}
+
+  .card{background:#fff;border-radius:6px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .frow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.frow+.frow{margin-top:12px}
+  .fl{font-size:13px;color:var(--soft);white-space:nowrap}
+  .btns{margin-left:auto;display:flex;gap:8px}
+  .btn{border:1px solid #d9dde3;background:#fff;border-radius:4px;padding:6px 16px;font-size:13px;cursor:pointer;color:var(--ink)}
+  .btn:hover{border-color:var(--blue);color:var(--blue)}
+  .btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+  .btn.pri:hover{background:var(--blue-d);color:#fff}
+  .btn.sm{padding:4px 12px;font-size:12.5px}
+
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:-4px -18px 14px;padding:0 18px;overflow-x:auto}
+  .tab{padding:11px 16px;font-size:14px;color:var(--soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+  .tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+  .tab .cnt{font-size:11px;background:#eef0f3;color:var(--soft);border-radius:9px;padding:0 6px;margin-left:5px}
+  .tab.on .cnt{background:var(--blue-l);color:var(--blue)}
+
+  .twrap{background:#fff;border-radius:6px;overflow:auto;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  thead th{background:#fafafa;color:var(--soft);font-weight:600;white-space:nowrap;position:sticky;top:0}
+  tbody tr:hover{background:#fafcff}
+  tbody tr.cus{background:#fbfaff}
+  tbody tr.cus:hover{background:#f6f4fe}
+  .thumb{width:64px;height:44px;border-radius:4px;background:#2a2f3a;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff}
+  .pname{max-width:250px;line-height:1.5}
+  .lnk{color:var(--blue);cursor:pointer}.lnk:hover{text-decoration:underline}
+  .muted{color:var(--dim)}
+  .nowrap{white-space:nowrap}
+  .stt{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .dot{width:6px;height:6px;border-radius:50%;flex:none}
+  .st-pay .dot{background:var(--amber)}.st-pay{color:var(--amber)}
+  .st-risk .dot{background:var(--purple)}.st-risk{color:var(--purple)}
+  .st-pool .dot{background:var(--blue)}.st-pool{color:var(--blue)}
+  .st-run .dot{background:var(--blue)}.st-run{color:var(--blue)}
+  .st-done .dot{background:var(--green)}.st-done{color:var(--green)}
+  .st-close .dot{background:var(--red)}.st-close{color:var(--red)}
+  .st-up .dot{background:var(--green)}.st-up{color:var(--green)}
+  .badge{display:inline-block;font-size:10.5px;font-weight:700;border-radius:3px;padding:1px 6px;vertical-align:1px;white-space:nowrap}
+  .bg-cus{background:var(--purple-l);color:var(--purple);border:1px solid #ddd0f2}
+  .bg-self{background:var(--amber-l);color:var(--amber);border:1px solid #efdcae}
+  .substat{font-size:11px;color:var(--dim);margin-top:2px;white-space:nowrap}
+  .code{font-family:var(--mono);font-size:11.5px;background:#f2f4f7;border-radius:3px;padding:1px 5px;color:#334}
+  .qty-enc{color:var(--purple);font-weight:700}
+  .warnmark{color:var(--red);font-weight:700;cursor:help}
+
+  .annobar{background:#fff;border-radius:6px;padding:11px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;box-shadow:0 1px 2px rgba(0,0,0,.04);border-left:3px solid var(--orange)}
+  .annobar .t{font-weight:700;font-size:13px}
+  .annobar .d{font-size:12.5px;color:var(--soft);flex:1;min-width:220px}
+  .swt{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--soft);cursor:pointer;user-select:none}
+  .chk{width:14px;height:14px;accent-color:var(--blue)}
+  .anno{display:none}body.showanno .anno{display:inline-block}
+  body.showanno .annoblk{display:block}.annoblk{display:none}
+  .ntag{font-size:10px;font-weight:800;background:var(--orange);color:#fff;border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.03em}
+  .anonote{background:var(--orange-soft);border:1px solid #f7d7c7;border-radius:6px;padding:10px 13px;font-size:12.5px;color:#8a5a2a;margin:0 0 14px;line-height:1.75}
+  .anonote b{color:var(--orange-d)}
+  .risknote{background:var(--red-l);border:1px solid #f3c9c9;border-radius:6px;padding:10px 13px;font-size:12.5px;color:#8c2f2f;margin:0 0 14px;line-height:1.75}
+  .risknote b{color:#b32d2d}
+
+  .selfv{position:relative}
+  body.showanno .selfv{background:var(--orange-soft);border-bottom:1px dashed var(--orange);border-radius:3px;padding:1px 3px}
+  .pager{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:12px 4px 0;color:var(--soft);font-size:12.5px}
+  .pg{border:1px solid #d9dde3;border-radius:4px;padding:4px 10px;background:#fff;cursor:pointer}
+  .pg.on{border-color:var(--blue);color:var(--blue)}
+
+  .toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(12px);background:#232a36;color:#fff;padding:13px 20px;border-radius:8px;font-size:13px;line-height:1.7;box-shadow:0 8px 30px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:.18s;z-index:80;max-width:640px;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast .tsub{font-size:11.5px;color:#aab3c2}
+  /* ---------- 顶部视图切换 + 方案说明 ---------- */
+  .vtabs{background:#141c30;display:flex;gap:2px;padding:0 20px}
+  .vtab{padding:9px 18px;font-size:13px;color:#aeb8cc;cursor:pointer;border-radius:6px 6px 0 0}
+  .vtab:hover{color:#fff}
+  .vtab.on{background:var(--bg);color:var(--ink);font-weight:600}
+  .doc{padding:18px 22px 60px;max-width:1280px}
+  .doc h1{font-size:20px;margin:0 0 6px}
+  .doc .lead{font-size:13.5px;color:var(--soft);margin:0 0 20px;line-height:1.8}
+  .doc h2{font-size:15px;margin:26px 0 10px;padding-left:9px;border-left:3px solid var(--orange)}
+  .flowwrap{background:#fff;border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.04);overflow:auto;padding:2px}
+  .flow{display:grid;grid-template-columns:118px repeat(6,minmax(168px,1fr));min-width:1140px;font-size:12px}
+  .flow>div{padding:11px 12px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+  .flow>div:nth-child(7n){border-right:none}
+  .flow .rh{background:#fafafa;color:var(--soft);font-weight:600;white-space:nowrap}
+  .flow .step{background:#f6f8fc;font-weight:600;color:var(--ink);line-height:1.5}
+  .flow .step .n{display:inline-block;width:17px;height:17px;line-height:17px;text-align:center;border-radius:50%;background:var(--blue);color:#fff;font-size:10.5px;margin-right:6px}
+  .flow .self{background:var(--orange-soft)}
+  .flow .switch{background:#fff8ec;box-shadow:inset 3px 0 0 var(--orange)}
+  .flow .sm{font-size:11px;color:var(--dim);display:block;margin-top:2px;line-height:1.5}
+  .flow .mono{font-family:var(--mono);font-size:11px}
+  .branch{margin-top:12px;background:var(--red-l);border:1px solid #f3c9c9;border-radius:6px;padding:12px 15px;font-size:12.5px;color:#8c2f2f;line-height:1.85}
+  .branch b{color:#b32d2d}
+  @media(max-width:1100px){.side{width:64px}.side .gh span:not(.ic):not(.car),.sub a{font-size:0}.sub a{padding-left:18px}}
+</style>
+</head>
+<body class="showanno">
+
+<div class="topbar">
+  <div class="logo"><span class="mark">iG</span><div>iGV.com<small>GAMER VALUE</small></div></div>
+  <div class="sp"></div>
+  <div class="userbox"><span class="av"></span><span>赵梁 ▾</span></div>
+</div>
+
+<div class="vtabs">
+  <div class="vtab on" data-view="proto">原型</div>
+  <div class="vtab" data-view="doc">方案说明</div>
+</div>
+
+<div class="shell">
+  <aside class="side">
+    <div class="grp open">
+      <div class="gh"><span class="ic">▤</span><span>商品管理</span><span class="car">▾</span></div>
+      <div class="sub"><a>选品</a><a data-page="prod">已选商品</a><a>前端类目管理</a></div>
+    </div>
+    <div class="grp open">
+      <div class="gh"><span class="ic">▤</span><span>订单管理</span><span class="car">▾</span></div>
+      <div class="sub">
+        <a class="on" data-page="order">订单列表</a>
+        <a>争议订单</a><a>风控订单</a><a>退款单</a><a>验号订单</a><a>理赔单审核列表</a><a>保险单列表</a>
+      </div>
+    </div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>买家管理</span><span class="car">▾</span></div><div class="sub"><a>买家列表</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>卖家管理</span><span class="car">▾</span></div><div class="sub"><a>卖家列表</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>商城管理</span><span class="car">▾</span></div><div class="sub"><a>商城配置</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>风控管理</span><span class="car">▾</span></div><div class="sub"><a>风控规则</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>SEO管理</span><span class="car">▾</span></div><div class="sub"><a>SEO配置</a></div></div>
+    <div class="grp"><div class="gh"><span class="ic">▤</span><span>消息管理</span><span class="car">▾</span></div><div class="sub"><a>消息列表</a></div></div>
+  </aside>
+
+  <main class="main">
+
+    <div class="annobar">
+      <span class="t">新方案</span>
+      <span class="d">不新增需求列表 —— 代练需求从下单那一刻就是一笔正式订单。未接单期间卖家挂<b>代练自营</b>系统账号,接单后改成实际卖家。橙色标记处为本方案<b>新增/改动</b>的部分。</span>
+      <label class="swt"><input type="checkbox" id="annoSw" class="chk" checked> 显示方案标注</label>
+    </div>
+
+    <!-- ==================== 订单列表 ==================== -->
+    <section id="page-order">
+      <div class="crumbrow"><span class="crumb">订单管理 / <b>订单列表</b></span></div>
+
+      <div class="anonote annoblk">
+        <b>这一页要看的:</b>紫色底的行是代练自定义需求订单 —— <b>字段、状态、Tab 全部沿用订单列表原有的</b>,没有新增任何列和筛选项。<br>
+        状态只用现有四种:<span class="code">待支付</span> / <span class="code">未完成</span> / <span class="code">已完成</span> / <span class="code">交易已取消</span>;
+        <b>支付后的风控中、过风控待接单,都归在「未完成」里</b>。<br>
+        未接单期间,<b>卖家店铺 / 卖家ID / 卖家邮箱三列填自营账号的值</b>,接单后改写成实际卖家。金额靠 <span class="code">$1.00 × 数量</span> 编码,不占列。
+      </div>
+
+      <div class="card" style="padding-top:0">
+        <div class="tabs" id="otabs"></div>
+        <div class="frow">
+          <span class="fl">订单号:</span><input class="inp" placeholder="请输入">
+          <span class="fl">母单号:</span><input class="inp" placeholder="请输入">
+          <span class="fl">第三方支付单号:</span><input class="inp" placeholder="请输入">
+          <select class="sel"><option>卖家店铺</option></select><input class="inp" placeholder="请输入">
+        </div>
+        <div class="frow">
+          <span class="fl">买家ID:</span><input class="inp" placeholder="请输入">
+          <span class="fl">支付方式:</span><select class="sel"><option>全部</option></select>
+          <div class="btns"><button class="btn pri">查询</button><button class="btn pri">高级筛选</button></div>
+        </div>
+      </div>
+
+      <div class="twrap">
+        <table>
+          <thead><tr>
+            <th style="min-width:196px">订单号 / 母单号</th><th style="min-width:88px">状态</th>
+            <th class="nowrap">订单创建时间</th><th class="nowrap">订单更新时间</th><th>品牌</th><th>品类</th>
+            <th>订单金额</th><th>卖家店铺</th><th>卖家ID</th><th>卖家邮箱</th>
+            <th>递送状态</th><th>买家ID</th><th>买家邮箱</th>
+          </tr></thead>
+          <tbody id="orderBody"></tbody>
+        </table>
+      </div>
+      <div class="pager"><span id="ordCount"></span><span class="pg">‹</span><span class="pg on">1</span><span class="pg">›</span></div>
+    </section>
+
+    <!-- ==================== 已选商品 ==================== -->
+    <section id="page-prod" style="display:none">
+      <div class="crumbrow">
+        <span class="crumb">商品管理 / <b>已选商品</b></span>
+        <span class="sp"></span>
+        <span class="shopsw">商城切换:<select class="sel"><option>自营</option></select></span>
+      </div>
+
+      <div class="anonote annoblk">
+        <b>这一页要看的:</b>Custom 不再动态生成商品 —— 由<b>自营账号提前上架一个「单位商品」</b>(第一行,黄底),价格固定 <span class="code">1.00 USD</span>,正常上架、正常可售。买家出价多少,下单时数量就是多少。
+      </div>
+
+      <div class="risknote annoblk">
+        <b>⚠ 已知副作用:</b>这个商品的<b>「销量」变成了金额总和</b>(下表显示 1,247 = 累计成交 $1,247),不再是件数。库存同理需填极大值、预警失效。
+        <b>建议给该商品打一个标记,在销量排行、品类销量报表、库存预警里排除它。</b>
+      </div>
+
+      <div class="card">
+        <div class="frow">
+          <span class="fl">类目:</span><select class="sel"><option>请选择品类</option></select>
+          <span class="fl">品牌:</span><select class="sel"><option>全部</option></select>
+          <span class="fl">租户侧商品状态:</span><select class="sel"><option>全部</option></select>
+          <span class="fl">卖家侧商品状态:</span><select class="sel"><option>全部</option></select>
+          <span class="fl">商品名称:</span><input class="inp" placeholder="请输入">
+        </div>
+        <div class="frow">
+          <span class="fl">商品编号:</span><input class="inp" placeholder="请输入">
+          <select class="sel"><option>卖家店铺</option></select><input class="inp" placeholder="请输入">
+          <span class="fl">是否包赔:</span><select class="sel"><option>全部</option></select>
+          <div class="btns"><button class="btn pri">查询</button><button class="btn pri">上架</button><button class="btn pri">下架</button></div>
+        </div>
+      </div>
+
+      <div class="twrap">
+        <table>
+          <thead><tr>
+            <th style="width:34px"><input type="checkbox" class="chk"></th>
+            <th style="width:78px">商品主图</th><th>商品名称</th><th>前端类目</th><th>品牌</th><th>店铺名</th>
+            <th class="nowrap">更新时间</th><th>价格</th><th>租户侧商品状态</th><th>卖家侧商品状态</th><th>是否包赔</th><th>销量</th><th>前端预览</th>
+          </tr></thead>
+          <tbody id="prodBody"></tbody>
+        </table>
+      </div>
+      <div class="pager"><span id="prodCount"></span><span class="pg">‹</span><span class="pg on">1</span><span class="pg">›</span></div>
+    </section>
+
+  </main>
+</div>
+
+
+<div id="viewdoc" style="display:none">
+<div class="doc">
+
+  <h1>新方案 · 代练自定义需求怎么流转</h1>
+  <p class="lead">
+    一句话:<b>买家点「发布需求」的那一刻，就是一笔正式订单</b>，直接落进现有订单列表，走现有的支付、风控、托管、交付、结算、售后。<br>
+    不新增需求列表、不新增字段、不新增状态、不新增 Tab。唯一的两处"借用"是:<b>未接单期间卖家三列先填自营账号</b>，<b>金额用 $1.00 单位商品 × 数量 编码</b>。
+  </p>
+
+  <h2>一、全流程泳道图</h2>
+  <div class="flowwrap">
+  <div class="flow">
+    <div class="rh"></div>
+    <div class="step"><span class="n">1</span>提交需求<span class="sm">买家在 Custom 页填组合/描述并出价</span></div>
+    <div class="step"><span class="n">2</span>支付<span class="sm">发布即付款，进支付风控</span></div>
+    <div class="step"><span class="n">3</span>待接单<span class="sm">过风控，进入卖家接单池</span></div>
+    <div class="step"><span class="n">4</span>卖家接单<span class="sm">第一个接单的卖家锁单</span></div>
+    <div class="step"><span class="n">5</span>交付 / 验收<span class="sm">上号代打或组队陪同</span></div>
+    <div class="step"><span class="n">6</span>完成 / 结算<span class="sm">买家确认或超时自动确认</span></div>
+
+    <div class="rh">系统动作</div>
+    <div>用计算器算出的报价 → <span class="mono">数量 = 出价</span>，下单到自营预置的<b>单位商品</b>上，生成订单号 + 母单号</div>
+    <div>调起收银台，款项进<b>托管</b></div>
+    <div>需求进接单池，卖家端 Request List 可见</div>
+    <div>把订单的卖家三列<b>改写成接单卖家</b>，佣金按品类「代练」重算</div>
+    <div>走现有递送 / 争议 / 验号流程</div>
+    <div>放款给卖家，进结算单</div>
+
+    <div class="rh">订单状态<span class="sm">只用现有 4 种</span></div>
+    <div><span class="stt st-pay"><i class="dot"></i>待支付</span></div>
+    <div><span class="stt st-run"><i class="dot"></i>未完成</span><span class="sm">内部环节:风控审核中</span></div>
+    <div><span class="stt st-run"><i class="dot"></i>未完成</span><span class="sm">内部环节:等待接单</span></div>
+    <div><span class="stt st-run"><i class="dot"></i>未完成</span><span class="sm">内部环节:已接单</span></div>
+    <div><span class="stt st-run"><i class="dot"></i>未完成</span><span class="sm">内部环节:交付中</span></div>
+    <div><span class="stt st-done"><i class="dot"></i>已完成</span></div>
+
+    <div class="rh">卖家店铺<br>卖家ID / 邮箱</div>
+    <div class="self">代练自营<span class="sm mono">90000000001</span></div>
+    <div class="self">代练自营<span class="sm mono">90000000001</span></div>
+    <div class="self">代练自营<span class="sm mono">90000000001</span></div>
+    <div class="switch"><b>改写 →</b> 实际卖家<span class="sm">ApexBoost / 117644849</span></div>
+    <div>实际卖家</div>
+    <div>实际卖家</div>
+
+    <div class="rh">递送状态</div>
+    <div><span class="muted">—</span></div>
+    <div><span class="muted">—</span></div>
+    <div><span class="muted">—</span></div>
+    <div>待发货</div>
+    <div>已发货</div>
+    <div>已完成</div>
+
+    <div class="rh">资金</div>
+    <div><span class="muted">未收款</span></div>
+    <div>已收款 · 风控中</div>
+    <div>托管中</div>
+    <div>托管中</div>
+    <div>托管中</div>
+    <div>放款 / 结算</div>
+
+    <div class="rh">买家侧看到</div>
+    <div>待支付</div>
+    <div>支付确认中</div>
+    <div>等待卖家接单</div>
+    <div>卖家已接单</div>
+    <div>代练进行中</div>
+    <div>已完成</div>
+  </div>
+  </div>
+
+  <div class="branch">
+    <b>取消分支 —— 全部收敛到现有的「交易已取消」:</b><br>
+    ① 步骤 1 未支付超时 → 自动取消（无退款）&nbsp;&nbsp;&nbsp;
+    ② 步骤 2 支付风控拒绝 → 取消 + 原路退款&nbsp;&nbsp;&nbsp;
+    ③ 步骤 3 超过报价有效期无人接单 → 自动取消 + 全额退款<br>
+    三种情况在列表里都只显示<b>交易已取消</b>，卖家三列仍是<b>代练自营</b>（因为从没被接单）。<b>退款手续费按已定规则由平台承担。</b>
+  </div>
+
+  <h2>待讨论的顾虑 · $1 单位商品的金额精度</h2>
+  <div class="branch" style="background:var(--amber-l);border-color:#efdcae;color:#7a5313">
+    <b>这里需要结合之前的绑定/定价规则再讨论一次(不在本方案里给结论):</b><br>
+    ① <b>币种换算</b> —— 单位商品定价是 1.00 USD,而买家侧是按 EUR / GBP 等本币展示和支付的,汇率换算后很难正好落在整数美元上;<br>
+    ② <b>总金额非整数</b> —— 数量只能是整数,$52.50、€48.37 这类出价没法用 <span class="code">1.00 × N</span> 精确编码;计算器算出的组合报价本身也常常带小数;<br>
+    ③ 由此还牵连:优惠/活动改价后的尾数、退款金额、结算佣金取整,都会落到同一个精度问题上。<br>
+    需要确认:Custom 出价是<b>强制取整</b>,还是<b>调低单位商品的单价</b>(如 0.01),还是沿用<b>现有绑定的定价/换算规则</b>来处理尾数。
+  </div>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var SELF={shop:'代练自营',id:'90000000001',mail:'boosting.self@igv.com'};
+
+/* 状态严格沿用订单列表原有的四种:待支付 / 未完成 / 已完成 / 交易已取消。
+   支付后风控中、过风控待接单 都属于「未完成」。inner 只用于订单详情内部说明,不上列表。 */
+var ORDERS=[
+  {cus:true,no:'SO2093276544779411458',mo:'26082809563472417',st:'待支付',stc:'st-pay',
+   ct:'17:56:34 8/28/2026',ut:'17:56:35 8/28/2026',brand:'Diablo 4',cat:'Game/GamePal & Boosting/Custom',qty:10,amt:'10.00 USD',
+   shop:SELF.shop,sid:SELF.id,smail:SELF.mail,self:true,ship:'',bid:'1807803361600270338',bmail:'aj4070729@gmail.com',
+   inner:'买家下单未支付',mode:'自由描述',limit:'2 天',expire:'3 天',
+   req:'帮我把本赛季隐藏成就做了,顺便战令刷到 60 级。法师,赛季软核。',note:'尽量晚上开工。',combo:null},
+
+  {cus:true,no:'SO2093276049114910722',mo:'26082809543672416',st:'未完成',stc:'st-run',
+   ct:'17:54:36 8/28/2026',ut:'17:55:09 8/28/2026',brand:'Diablo 4',cat:'Game/GamePal & Boosting/Custom',qty:25,amt:'25.00 USD',
+   shop:SELF.shop,sid:SELF.id,smail:SELF.mail,self:true,ship:'',bid:'1964263772819628034',bmail:'johnmarketpoe@gmail.com',
+   inner:'已支付 · 风控审核中',mode:'组合服务',limit:'3 天',expire:'3 天',
+   req:'升级到满级后再打两个 Uber Boss。',note:'—',
+   combo:[['升级 · 1 → 70','1 项'],['Boss · 墨菲斯托 ×5','1 项']]},
+
+  {cus:true,no:'SO2093275992108240898',mo:'26082809542272415',st:'未完成',stc:'st-run',
+   ct:'17:54:22 8/28/2026',ut:'17:54:36 8/28/2026',brand:'Diablo 4',cat:'Game/GamePal & Boosting/Custom',qty:52,amt:'52.00 USD',
+   shop:SELF.shop,sid:SELF.id,smail:SELF.mail,self:true,ship:'',bid:'1816421439706300418',bmail:'zhaojun031@outlook.com',
+   inner:'已支付 · 已过风控 · 等待卖家接单',mode:'组合服务',limit:'3 天',expire:'3 天',
+   req:'练到满级后把巅峰刷到 200,再打墨菲斯托 5 次(痛苦 4)。',note:'尽量晚上开工(欧洲时间)。',
+   combo:[['升级 · 1 → 70','1 项'],['巅峰 · 0 → 200','1 项'],['Boss · 墨菲斯托 ×5','1 项']]},
+
+  {cus:true,no:'SO2093275987076943874',mo:'26082809542172414',st:'未完成',stc:'st-run',
+   ct:'17:54:21 8/28/2026',ut:'17:56:40 8/28/2026',brand:'Diablo 4',cat:'Game/GamePal & Boosting/Custom',qty:34,amt:'34.00 USD',
+   shop:'ApexBoost',sid:'117644849',smail:'apexboost.eu@gmail.com',self:false,assigned:'17:56:40 8/28/2026',ship:'待发货',bid:'2060715662783401986',bmail:'jeanvilais.pro@gmail.com',
+   inner:'已接单 · 待交付',mode:'自由描述',limit:'2 天',expire:'24 小时',
+   req:'刷隐藏成就 + 战令 60 级。',note:'上号期间请开直播留证。',combo:null},
+
+  {cus:true,no:'SO2093275884113920001',mo:'26082809539172413',st:'已完成',stc:'st-done',
+   ct:'17:52:03 8/28/2026',ut:'17:53:55 8/28/2026',brand:'Diablo 4',cat:'Game/GamePal & Boosting/Custom',qty:18,amt:'18.00 USD',
+   shop:'Best_For_U',sid:'117713022',smail:'bestforu.shop@gmail.com',self:false,assigned:'17:52:55 8/28/2026',ship:'已发货',bid:'1952803755912340021',bmail:'xnexil.com@gmail.com',
+   inner:'已接单 · 已完成',mode:'组合服务',limit:'3 天',expire:'3 天',
+   req:'Pit 100 冲 8 次。',note:'—',combo:[['副本 · Pit 冲层 ×8','1 项']]},
+
+  {cus:true,no:'SO2093275120887410992',mo:'26082809531272412',st:'交易已取消',stc:'st-close',
+   ct:'17:40:19 8/28/2026',ut:'17:55:21 8/28/2026',brand:'Diablo 4',cat:'Game/GamePal & Boosting/Custom',qty:15,amt:'15.00 USD',
+   shop:SELF.shop,sid:SELF.id,smail:SELF.mail,self:true,ship:'',bid:'2081491107812009911',bmail:'kevin.mrz@outlook.com',
+   inner:'未支付超时,自动关闭',mode:'自由描述',limit:'3 天',expire:'3 天',
+   req:'帮忙解锁全部难度。',note:'—',combo:null},
+
+  {cus:false,no:'SO2093276544779411457',mo:'26082809563472411',st:'待支付',stc:'st-pay',
+   ct:'17:56:34 8/28/2026',ut:'17:56:35 8/28/2026',brand:'Valorant Beta',cat:'Game/In Game Trading/Accounts',qty:1,amt:'6.39 EUR',
+   shop:'Azury Store',sid:'117644849',smail:'aj4070729@gmail.com',self:false,ship:'',bid:'1807803361600270338',bmail:'aj4070729@gmail.com'},
+
+  {cus:false,no:'SO2093276049114910721',mo:'26082809543672410',st:'交易已取消',stc:'st-close',
+   ct:'17:54:36 8/28/2026',ut:'17:55:09 8/28/2026',brand:'Wuthering Waves',cat:'Game/In Game Trading/Accounts',qty:1,amt:'6.27 EUR',
+   shop:'BestSpeed',sid:'117713022',smail:'johnmarketpoe@gmail.com',self:false,ship:'',bid:'1964263772819628034',bmail:'xnexil.com@gmail.com'},
+
+  {cus:false,no:'SO2093275992108240897',mo:'26082809542272409',st:'未完成',stc:'st-run',
+   ct:'17:54:22 8/28/2026',ut:'17:54:36 8/28/2026',brand:'World Of Warcraft Europe',cat:'Game/In Game Trading/Coins',qty:1,amt:'43.5 EUR',
+   shop:'Integrity Business',sid:'1777222548427702274',smail:'zhaojun031@outlook.com',self:false,ship:'待发货',bid:'1816421439706300418',bmail:'zhaojun031@outlook.com'}
+];
+
+var PRODUCTS=[
+  {self:true,img:'📝',name:'【代练】Diablo 4 自定义需求 · 单位商品',cat:'Game/GamePal & Boosting/Custom',brand:'Diablo 4',
+   shop:'代练自营',time:'09:00:00 8/01/2026',price:'1.00 USD',ins:'否',sold:'1,247'},
+  {self:false,img:'⚔️',name:'Diablo 4 Power Leveling 1-70 · Fast & Safe',cat:'Game/GamePal & Boosting/Leveling',brand:'Diablo 4',
+   shop:'ApexBoost',time:'14:58:20 8/26/2026',price:'18.00 USD',ins:'是',sold:'37'},
+  {self:false,img:'🪙',name:'WOW TBC Classic Anniversary Gold For Spineshatter EU',cat:'Game/In Game Trading/Coins',brand:'WOW TBC',
+   shop:'Mliba',time:'15:02:52 8/26/2026',price:'0.0094 USD',ins:'否',sold:'0'},
+  {self:false,img:'💎',name:'IOS 50,000+ Chrono Crystal Accounts - Automatic Delivery',cat:'Game/In Game Trading/Accounts',brand:'Dragon Ball Legends',
+   shop:'DBL Pro',time:'15:02:33 8/26/2026',price:'3.00 USD',ins:'否',sold:'0'}
+];
+
+/* ---------------- tabs ---------------- */
+var TABS=[{id:'all',n:'所有订单'},{id:'待支付',n:'待支付'},{id:'未完成',n:'未完成'},{id:'已完成',n:'已完成'}];
+var curTab='all';
+
+function match(o){
+  if(curTab!=='all'&&o.st!==curTab) return false;
+  return true;
+}
+function renderTabs(){
+  document.getElementById('otabs').innerHTML=TABS.map(function(t){
+    var c=ORDERS.filter(function(o){return t.id==='all'||o.st===t.id;}).length;
+    return '<div class="tab'+(t.id===curTab?' on':'')+'" data-id="'+t.id+'">'+t.n+
+      '<span class="cnt">'+c+'</span></div>';
+  }).join('');
+}
+
+function renderOrders(){
+  var list=ORDERS.filter(match);
+  document.getElementById('orderBody').innerHTML=list.length?list.map(function(o){
+    var idx=ORDERS.indexOf(o);
+    var selfv=function(v){return o.self?('<span class="selfv">'+v+'</span>'):v;};
+    return '<tr class="'+(o.cus?'cus':'')+'">'+
+      '<td><div>订单号:'+o.no+'</div><div class="muted">母单号:'+o.mo+'</div>'+
+        (o.cus?'<div style="margin-top:3px" class="annoblk-i"><span class="badge bg-cus anno">自定义需求</span></div>':'')+
+        '<div style="margin-top:5px"><span class="lnk">复制</span> &nbsp; <span class="lnk" data-detail="'+idx+'">订单详情</span></div></td>'+
+      '<td><span class="stt '+o.stc+'"><i class="dot"></i>'+o.st+'</span></td>'+
+      '<td class="nowrap">'+o.ct+'</td><td class="nowrap">'+o.ut+'</td>'+
+      '<td>'+o.brand+'</td><td>'+o.cat+'</td>'+
+      '<td class="nowrap"><b>'+o.amt+'</b></td>'+
+      '<td>'+selfv(o.shop)+'</td><td class="nowrap">'+selfv(o.sid)+'</td><td>'+selfv(o.smail)+'</td>'+
+      '<td>'+(o.ship||'<span class="muted">—</span>')+'</td>'+
+      '<td class="nowrap">'+o.bid+'</td><td>'+o.bmail+'</td></tr>';
+  }).join(''):'<tr><td colspan="13" style="text-align:center;color:#9aa3af;padding:36px 0">该条件下暂无订单</td></tr>';
+  document.getElementById('ordCount').textContent='共 '+list.length+' 条';
+}
+
+function renderProducts(){
+  document.getElementById('prodBody').innerHTML=PRODUCTS.map(function(p){
+    var nm=p.name+(p.self?' <span class="badge bg-self">代练 Custom 单位商品</span>':'');
+    var sold=p.self?(p.sold+' <span class="warnmark anno" title="这里其实是累计成交金额,不是件数">⚠</span>'):p.sold;
+    return '<tr'+(p.self?' style="background:#fffdf6"':'')+'>'+
+      '<td><input type="checkbox" class="chk"></td>'+
+      '<td><div class="thumb">'+p.img+'</div></td>'+
+      '<td class="pname">'+nm+(p.self?'<div class="substat">买家出价 $N → 下单数量 N;订单金额 = 1.00 × N</div>':'')+'</td>'+
+      '<td>'+p.cat+'</td><td>'+p.brand+'</td><td>'+p.shop+'</td><td class="nowrap">'+p.time+'</td>'+
+      '<td class="nowrap"><b>'+p.price+'</b></td>'+
+      '<td><span class="stt st-up"><i class="dot"></i>上架</span></td>'+
+      '<td><span class="stt st-up"><i class="dot"></i>可售</span></td>'+
+      '<td>'+p.ins+'</td><td>'+sold+'</td>'+
+      '<td><button class="btn pri sm">预览</button></td></tr>';
+  }).join('');
+  document.getElementById('prodCount').textContent='共 '+PRODUCTS.length+' 条';
+}
+
+/* ---------------- detail ---------------- */
+function openDetail(i){
+  var o=ORDERS[i];
+  var t=document.getElementById('toast');
+  t.innerHTML='跳转到<b>订单详情页</b>(新页面) —— 订单号 '+o.no+
+    (o.cus?'<br><span class="tsub">代练自定义需求:需求内容 / 需求要求 / 备注 / 金额算式($1.00 × '+o.qty+') 都在详情页展示</span>':'');
+  t.classList.add('show');
+  clearTimeout(window._tt); window._tt=setTimeout(function(){t.classList.remove('show');},3200);
+}
+
+/* ---------------- wiring ---------------- */
+document.querySelectorAll('.grp>.gh').forEach(function(h){h.addEventListener('click',function(){h.parentElement.classList.toggle('open');});});
+document.querySelectorAll('.sub a').forEach(function(a){
+  a.addEventListener('click',function(){
+    if(!a.dataset.page)return;
+    document.querySelectorAll('.sub a').forEach(function(x){x.classList.remove('on');});
+    a.classList.add('on');
+    document.getElementById('page-order').style.display=(a.dataset.page==='order')?'':'none';
+    document.getElementById('page-prod').style.display=(a.dataset.page==='prod')?'':'none';
+    window.scrollTo(0,0);
+  });
+});
+document.getElementById('otabs').addEventListener('click',function(e){
+  var t=e.target.closest('.tab'); if(!t)return;
+  curTab=t.dataset.id; renderTabs(); renderOrders();
+});
+document.getElementById('orderBody').addEventListener('click',function(e){
+  var d=e.target.closest('[data-detail]'); if(d)openDetail(+d.dataset.detail);
+});
+document.querySelectorAll('.vtab').forEach(function(v){
+  v.addEventListener('click',function(){
+    document.querySelectorAll('.vtab').forEach(function(x){x.classList.remove('on');});
+    v.classList.add('on');
+    var doc=v.dataset.view==='doc';
+    document.querySelector('.shell').style.display=doc?'none':'flex';
+    document.getElementById('viewdoc').style.display=doc?'block':'none';
+    window.scrollTo(0,0);
+  });
+});
+document.getElementById('annoSw').addEventListener('change',function(){document.body.classList.toggle('showanno',this.checked);});
+
+renderTabs();renderOrders();renderProducts();
+<\/script>
+</body>
+</html>
+</script>
+<script type="text/plain" id="src-old"><!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iGV 后台 · Custom 旧方案原型</title>
 <style>
   :root{
     --nav:#1f2a44;--nav-hover:#28345a;--nav-on:#1d6fe0;--nav-txt:#c3cbdd;
@@ -108,6 +686,21 @@
   .vtab.on{background:var(--ink);color:#fff}
   /* 方案说明 */
   .doc{max-width:940px}
+  .dlead{font-size:13.5px;color:var(--soft);margin:0 0 20px;line-height:1.8}
+  .dh2{font-size:15px;margin:26px 0 10px;padding-left:9px;border-left:3px solid var(--orange)}
+  .flowwrap{background:#fff;border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.04);overflow:auto;padding:2px}
+  .flow{display:grid;grid-template-columns:118px repeat(6,minmax(168px,1fr));min-width:1140px;font-size:12px}
+  .flow>div{padding:11px 12px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+  .flow>div:nth-child(7n){border-right:none}
+  .flow .rh{background:#fafafa;color:var(--soft);font-weight:600;white-space:nowrap}
+  .flow .step{background:#f6f8fc;font-weight:600;color:var(--ink);line-height:1.5}
+  .flow .step .n{display:inline-block;width:17px;height:17px;line-height:17px;text-align:center;border-radius:50%;background:var(--blue);color:#fff;font-size:10.5px;margin-right:6px}
+  .flow .reqzone{background:var(--blue-l)}
+  .flow .switch{background:#fff8ec;box-shadow:inset 3px 0 0 var(--orange)}
+  .flow .sm{font-size:11px;color:var(--dim);display:block;margin-top:2px;line-height:1.5}
+  .branch{margin-top:12px;background:var(--red-l);border:1px solid #f3c9c9;border-radius:6px;padding:12px 15px;font-size:12.5px;color:#8c2f2f;line-height:1.85}
+  .branch b{color:#b32d2d}
+
   .doccard{background:#fff;border-radius:6px;padding:18px 22px;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
   .doccard h3{margin:0 0 4px;font-size:15px}
   .doccard .csub{color:var(--soft);font-size:12.5px;margin:0 0 14px}
@@ -213,7 +806,7 @@
   <main class="main">
 
     <div class="annobar">
-      <span class="t">方案乙 · 影子商品</span>
+      <span class="t">旧方案</span>
       <span class="vtabs">
         <span class="vtab on" data-view="proto">原型页面</span>
         <span class="vtab" data-view="doc">方案说明</span>
@@ -308,116 +901,89 @@
 
     <!-- ==================== PAGE: 方案说明(原型脚手架,非产品页面) ==================== -->
     <section id="page-doc" style="display:none">
-      <div class="crumbrow"><span class="crumb"><b>方案说明</b> · Custom 买家需求如何落进现有体系</span></div>
-      <div class="doc">
+      <div class="crumbrow"><span class="crumb"><b>方案说明</b> · 旧方案:需求与订单怎么流转</span></div>
 
-        <div class="lead">
-          Custom 是<b>买家先发需求、卖家再来接</b>的反向链路,和现有「先商品 → 后订单」正好相反。<br>
-          <b>买家在发布需求时就已完成支付</b>并通过支付风控 —— 能进到我们系统里的需求,<b>资金已经在托管中</b>,不存在"发了需求不付款"的情况。<br>
-          方案乙的做法:<b>需求单独建一个域</b>;卖家接单的<b>那一瞬间</b>,由系统生成一个隐藏的「影子商品」来承载交易参数,再把<b>已托管的这笔钱挂到新生成的订单上</b>。<br>
-          结果是 —— <b>订单、托管、结算、退款、争议、理赔全部零改动</b>,金币等其它业务完全不受影响。
-        </div>
+      <h1 style="font-size:20px;margin:0 0 6px">旧方案 · 代练自定义需求怎么流转</h1>
+      <p class="dlead">
+        一句话:<b>需求单独建一个域(需求列表)</b>，买家发布并付款后先活在需求域里；<b>卖家接单的那一瞬间</b>，系统生成一个隐藏的「影子商品」承载交易参数，同时生成订单并把已托管的资金挂上去。<br>
+        <b>订单列表里只会出现已被接单的 Custom 订单</b>，未接单的需求不进订单列表。
+      </p>
 
-        <div class="doccard">
-          <h3><span class="num">1</span>三个页面各自改了什么</h3>
-          <p class="csub">改动集中在需求侧,商品与订单主干几乎不动。</p>
-          <table class="dtable">
-            <thead><tr><th>页面</th><th>改动程度</th><th>具体改了什么</th></tr></thead>
-            <tbody>
-              <tr><td class="k">商品管理 / 已选商品</td><td><span class="pill p-none">零改动</span></td><td>影子商品由系统生成、仅用于承载订单参数,<b>不在本页出现</b>,也不进商品审核。运营对它没有任何可执行操作。</td></tr>
-              <tr><td class="k">订单管理 / 需求列表</td><td><span class="pill p-new">新增页面</span></td><td>买家发布后、卖家接单前的需求<b>只活在这一页</b>。含状态 Tab、批量通过 / 取消、需求详情弹窗。</td></tr>
-              <tr><td class="k">订单管理 / 订单列表</td><td><span class="pill p-min">极小改动</span></td><td>订单号下多一行<b>需求编号</b>(可点开需求详情);筛选区多一个<b>订单来源</b>。其余列、状态、操作全部不变。<b>Custom 订单生成即已支付</b>,不会出现在「待支付」页签下。</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <h2 class="dh2">一、全流程泳道图</h2>
+      <div class="flowwrap">
+      <div class="flow">
+        <div class="rh"></div>
+        <div class="step"><span class="n">1</span>发布需求 · 付款<span class="sm">买家填需求并出价，先走收银台</span></div>
+        <div class="step"><span class="n">2</span>审核<span class="sm">内容机审，命中风险转人工</span></div>
+        <div class="step"><span class="n">3</span>待接单<span class="sm">进入卖家接单大厅</span></div>
+        <div class="step"><span class="n">4</span>卖家接单<span class="sm">生成影子商品 + 生成订单</span></div>
+        <div class="step"><span class="n">5</span>交付 / 验收<span class="sm">上号代打或组队陪同</span></div>
+        <div class="step"><span class="n">6</span>完成 / 结算<span class="sm">买家确认或超时自动确认</span></div>
 
-        <div class="doccard">
-          <h3><span class="num">2</span>一条需求的完整流转</h3>
-          <p class="csub">支付发生在最前面;前四步在需求域完成,第五步之后完全走现有订单状态机。</p>
-          <ol class="steps">
-            <li>买家在前台填完需求 → <b>先付款</b>。走现有收银台与支付风控,<b>支付成功且风控通过</b>才继续。</li>
-            <li>需求进入我们的系统,<b>资金同时进入托管</b>。系统做<b>内容机审</b>:低风险直接进接单大厅(<b>待接单</b>),命中风险规则则转人工(<b>审核中</b>)。<br><span class="muted">因此需求列表里不存在「待支付」这种状态 —— 没付款的需求根本进不来。</span></li>
-            <li>运营在需求列表处理「审核中」的需求:<b>通过</b>放进大厅;或<b>取消</b>掉违规需求,系统<b>原路退款</b>。</li>
-            <li>卖家在接单大厅看到需求并接单 → 需求转为<b>已成交</b>,同时从大厅下架、其余报价自动置为未选中。</li>
-            <li>系统在<b>同一个事务</b>里做三件事:生成影子商品(隐藏、不上架)、生成订单并<b>把已托管的资金挂到该订单上</b>、把需求锁定。订单生成即为<b>已支付</b>,直接进入<b>待交付</b>。</li>
-            <li>之后的待收货、已完成、退款、争议、理赔<b>与普通订单完全一致</b>。</li>
-          </ol>
-        </div>
+        <div class="rh">系统动作</div>
+        <div>生成<b>需求编号 BR…</b>，调起收银台，款项进<b>托管</b></div>
+        <div>机审直接放行 → 待接单；命中规则 → 转人工，运营在需求列表<b>通过 / 取消</b></div>
+        <div>需求上架接单大厅，卖家端 Request List 可见</div>
+        <div><b>同一事务</b>里做三件事:生成影子商品(隐藏)、生成订单、把已托管资金挂到订单上</div>
+        <div>走现有递送 / 争议 / 验号流程</div>
+        <div>放款给卖家，进结算单</div>
 
-        <div class="doccard">
-          <h3><span class="num">3</span>钱在哪一步动</h3>
-          <p class="csub">资金只在两个时点变动:发布时进托管,结束时要么给卖家、要么退买家。</p>
-          <table class="dtable">
-            <thead><tr><th>时点</th><th>资金动作</th><th>需求 / 订单状态</th></tr></thead>
-            <tbody>
-              <tr><td class="k">买家发布需求</td><td><b>收款并进入托管</b>(走现有收银台 + 支付风控)</td><td>支付失败或风控拦截 → 需求<b>根本不进系统</b>;成功 → 审核中 / 待接单</td></tr>
-              <tr><td class="k">运营取消需求</td><td><b>原路退款</b></td><td>已取消 · 资金状态转为<b>已退款</b></td></tr>
-              <tr><td class="k">买家撤回需求</td><td><b>原路退款</b></td><td>已取消 · 资金状态转为<b>已退款</b></td></tr>
-              <tr><td class="k">有效期到期无人接单</td><td><b>自动原路退款</b></td><td>已过期 · 资金状态转为<b>已退款</b></td></tr>
-              <tr><td class="k">卖家接单</td><td>托管资金<b>挂到新生成的订单</b>,不重复收款</td><td>需求已成交 · 订单直接是<b>已支付 / 待交付</b></td></tr>
-              <tr><td class="k">买家确认收货</td><td>托管资金<b>放款给卖家</b>(扣佣金)</td><td>订单已完成 —— 与普通订单一致</td></tr>
-            </tbody>
-          </table>
-          <div class="lead" style="margin:14px 0 0">
-            <b>已定规则 ①　退款手续费由平台承担。</b>三种退款情形(运营取消 / 买家撤回 / 到期无人接单)都<b>全额原路退回</b>,支付渠道不退的手续费<b>平台吸收并单独记账</b>,不从买家退款里扣。<br>
-            理由:运营主动取消违规需求时若还要扣买家手续费,必然引发客诉;而买家撤回与到期退款的金额通常不大,统一规则比分情况处理更省事、也更少纠纷。
-          </div>
-          <p class="csub" style="margin:12px 0 0">因为钱在最前面就收了,卖家不存在"接了单买家不付款"的风险,接单大厅也不会被没有支付意愿的需求淹没 —— 这是这套流程相对"接单后付款"最大的好处。</p>
-        </div>
+        <div class="rh">需求状态<span class="sm">需求列表</span></div>
+        <div class="reqzone">审核中 / 待接单</div>
+        <div class="reqzone">审核中 → 待接单</div>
+        <div class="reqzone">待接单</div>
+        <div class="switch"><b>已成交</b><span class="sm">从大厅下架，不再可接</span></div>
+        <div class="muted">已成交(不再变化)</div>
+        <div class="muted">已成交(不再变化)</div>
 
-        <div class="doccard">
-          <h3><span class="num">4</span>运营在需求列表能做的操作</h3>
-          <p class="csub">批量操作放在筛选区,和已选商品的「上架 / 下架」同一个位置和用法。</p>
-          <table class="dtable">
-            <thead><tr><th>操作</th><th>对哪些状态生效</th><th>结果</th></tr></thead>
-            <tbody>
-              <tr><td class="k">通过</td><td>仅「审核中」</td><td>转为<b>待接单</b>,进入接单大厅,状态下方标注<span class="code">租户人工审核通过</span></td></tr>
-              <tr><td class="k">取消</td><td>「审核中」「待接单」</td><td>转为<b>已取消</b>,立即从大厅下架,<b>并原路退款给买家</b>,资金状态转为已退款;状态下方标注<span class="code">租户手动取消</span></td></tr>
-              <tr><td class="k">勾选框</td><td>仅上述两种状态可勾</td><td>已成交 / 已过期 / 已取消的行勾选框<b>禁用</b>(无可执行操作)</td></tr>
-              <tr><td class="k">点需求编号</td><td>全部</td><td>打开需求详情:<b>需求信息 / 需求要求 / 备注</b> —— 这三块是会转成商品属性与订单数据的内容</td></tr>
-            </tbody>
-          </table>
-          <p class="csub" style="margin:12px 0 0">没勾选就点按钮、或勾选中没有可操作的行,都会给出明确提示;执行前有二次确认并显示条数。</p>
-          <div class="lead" style="margin:14px 0 0">
-            <b>已定规则 ②　需求发布后不允许改价、不允许修改内容。</b>因为钱在发布时就已收取,任何改动都会牵出补差价或部分退款。买家如果要调整,只能<b>撤回(全额退款)后重新发布</b>。<br>
-            因此需求列表与需求详情都<b>没有编辑入口</b>,运营侧同样不能代改 —— 只有「通过」和「取消」两个动作。
-          </div>
-        </div>
+        <div class="rh">订单状态<span class="sm">订单列表</span></div>
+        <div class="muted">尚未生成</div>
+        <div class="muted">尚未生成</div>
+        <div class="muted">尚未生成</div>
+        <div class="switch"><span class="stt st-run"><i class="dot"></i>未完成</span><span class="sm">生成即已支付，直接待交付<br>不会出现「待支付」</span></div>
+        <div><span class="stt st-run"><i class="dot"></i>未完成</span></div>
+        <div><span class="stt st-done"><i class="dot"></i>已完成</span></div>
 
-        <div class="doccard">
-          <h3><span class="num">5</span>状态、资金状态与「更新时间」</h3>
-          <p class="csub">状态下方的灰色小字标明<b>是谁改的</b>,写法与已选商品的「租户手动下架」一致。<b>没有「待支付」状态</b> —— 未付款的需求不会进入系统。</p>
-          <table class="dtable">
-            <thead><tr><th>状态</th><th>怎么进来的</th><th>资金状态</th><th>更新时间记录的是</th><th>小字</th></tr></thead>
-            <tbody>
-              <tr><td class="k">审核中</td><td>已付款,但内容机审命中风险规则,转人工</td><td>已托管</td><td>转人工的时刻</td><td>—</td></tr>
-              <tr><td class="k">待接单</td><td>已付款,机审直接通过或运营人工通过</td><td>已托管</td><td>发布时刻 / 通过时刻</td><td>人工通过时显示<span class="code">租户人工审核通过</span></td></tr>
-              <tr><td class="k">已成交</td><td>卖家接单</td><td>已托管(挂到订单)</td><td>接单时刻</td><td>—</td></tr>
-              <tr><td class="k">已过期</td><td>报价有效期到,无人接单</td><td><b>已退款</b>(自动)</td><td>到期时刻</td><td>—</td></tr>
-              <tr><td class="k">已取消</td><td>买家撤回,或运营取消</td><td><b>已退款</b></td><td>撤回 / 取消时刻</td><td><span class="code">买家撤回</span> 或 <span class="code">租户手动取消</span></td></tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="rh">商品</div>
+        <div class="muted">无</div>
+        <div class="muted">无</div>
+        <div class="muted">无</div>
+        <div class="switch">生成<b>影子商品</b><span class="sm">隐藏、不上架、不进审核、不在已选商品出现</span></div>
+        <div class="muted">影子商品(仅承载参数)</div>
+        <div class="muted">影子商品(仅承载参数)</div>
 
-        <div class="doccard">
-          <h3><span class="num">6</span>后端改动清单</h3>
-          <p class="csub">原则:只新增,不改既有列的约束与既有枚举的语义。</p>
-          <table class="dtable">
-            <thead><tr><th>对象</th><th>改动</th></tr></thead>
-            <tbody>
-              <tr><td class="k">新增表</td><td><b>需求表</b>(需求编号、买家、品牌品类、发起方式、需求要求、备注、已付金额、代练限时、报价有效期、状态、变更来源,以及<b>支付字段</b>:第三方支付单号、支付方式、支付时间、支付风控结果、资金状态)+ <b>报价表</b>(卖家报价;卖家「直接按买家出价接单」也建模成一条 <span class="code">auto_accept=true</span> 的报价)</td></tr>
-              <tr><td class="k">商品表</td><td>新增来源枚举 <span class="code">source = SYSTEM_CUSTOM</span>;影子商品不可搜索、不上架、不进审核、不参与销量排行</td></tr>
-              <tr><td class="k">订单表</td><td>新增<b>可空</b>字段 <span class="code">request_no</span> 反向引用需求;<b>不动</b> <span class="code">product_id</span> 的非空约束</td></tr>
-              <tr><td class="k">订单渠道</td><td>新增枚举 <span class="code">CUSTOM_REQUEST</span>,老数据取值与含义原样不动</td></tr>
-              <tr><td class="k">编号规则</td><td>需求编号 <span class="code">BR + 日期 + 序列</span>,发布即生成;订单号 <span class="code">SO…</span> 仍由现有生成器在<b>成交时</b>产生。两套号分开发,避免未成交的需求在订单号段留下空洞。</td></tr>
-              <tr><td class="k">交易参数</td><td>佣金率按品类「代练」取平台默认;保修期 / 是否包赔 / 自动确认时长取 Custom 平台默认(后台可配);递送时间以买家的「代练限时」为准。成交时快照进订单。</td></tr>
-              <tr><td class="k">支付与托管</td><td>复用现有收银台、支付风控与托管能力,<b>在需求发布时调用</b>;成交时不再发起收款,只把已托管资金关联到订单</td></tr>
-              <tr><td class="k">退款</td><td>复用现有退款能力。取消 / 撤回 / 过期三种情况都触发<b>全额原路退款</b>(手续费由平台承担),建议接入现有退款单以便财务对账</td></tr>
-              <tr><td class="k">不改的部分</td><td>支付、托管、结算、退款、争议、理赔、风控、对账的<b>能力本身</b> —— 一行不动,只是调用时点提前了</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="rh">卖家</div>
+        <div class="muted">无</div>
+        <div class="muted">无</div>
+        <div class="muted">无</div>
+        <div class="switch"><b>接单卖家</b><span class="sm">订单从生成起卖家就是真实的</span></div>
+        <div>实际卖家</div>
+        <div>实际卖家</div>
 
+        <div class="rh">资金</div>
+        <div>已收款 · 进托管</div>
+        <div>托管中</div>
+        <div>托管中</div>
+        <div>托管资金<b>挂到订单</b><span class="sm">不重复收款</span></div>
+        <div>托管中</div>
+        <div>放款 / 结算</div>
+
+        <div class="rh">买家侧看到</div>
+        <div>需求已发布</div>
+        <div>审核中</div>
+        <div>等待卖家接单</div>
+        <div>卖家已接单</div>
+        <div>代练进行中</div>
+        <div>已完成</div>
+      </div>
+      </div>
+
+      <div class="branch">
+        <b>取消分支 —— 都停在需求域，不会产生订单:</b><br>
+        ① 运营在需求列表取消违规需求（审核中 / 待接单）→ <b>已取消</b> + 原路退款&nbsp;&nbsp;&nbsp;
+        ② 买家撤回需求 → <b>已取消</b> + 原路退款&nbsp;&nbsp;&nbsp;
+        ③ 报价有效期到期无人接单 → <b>已过期</b> + 自动原路退款<br>
+        三种情况资金状态都转为<b>已退款</b>，<b>退款手续费按已定规则由平台承担</b>；需求发布后<b>不允许改价、不允许改内容</b>，买家要调整只能撤回后重发。
       </div>
     </section>
 
@@ -742,7 +1308,7 @@ function paint(){
   document.getElementById('annoSwWrap').style.visibility=(curView==='proto')?'':'hidden';
   document.getElementById('annoDesc').innerHTML=(curView==='proto')
     ? '成交瞬间由系统生成一个隐藏商品承载订单参数;订单侧与普通订单完全一致。橙色标记处为本方案<b>新增/改动</b>的部分。'
-    : '本方案的改动点、运营操作点与后端改动清单。此说明页是原型脚手架,<b>不是产品页面</b>。';
+    : '需求与订单的流转全流程。此说明页是原型脚手架,<b>不是产品页面</b>。';
   window.scrollTo(0,0);
 }
 document.querySelectorAll('.sub a').forEach(function(a){
@@ -769,6 +1335,29 @@ document.getElementById('annoSw').addEventListener('change',function(){
 });
 
 renderProducts();renderOrders();renderRequests();paint();
+<\/script>
+</body>
+</html>
+</script>
+
+<script>
+var loaded={};
+function load(v){
+  if(loaded[v])return;
+  var f=document.getElementById(v==='new'?'fnew':'fold');
+  f.srcdoc=document.getElementById('src-'+v).textContent.replace(/<\\\/script/g,'</scr'+'ipt');
+  loaded[v]=true;
+}
+document.querySelectorAll('.pill').forEach(function(p){
+  p.addEventListener('click',function(){
+    var v=p.dataset.v;
+    document.querySelectorAll('.pill').forEach(function(x){x.classList.toggle('on',x===p);});
+    load(v);
+    document.getElementById('fnew').classList.toggle('on',v==='new');
+    document.getElementById('fold').classList.toggle('on',v==='old');
+  });
+});
+load('new');
 </script>
 </body>
 </html>
