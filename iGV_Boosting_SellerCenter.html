@@ -20,6 +20,8 @@
   .seller-tag{font-size:11px;font-weight:700;background:#2a2f3a;color:#fff;border-radius:6px;padding:3px 9px}
   .top .sp{flex:1}
   .lang{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:7px 12px;font-size:13px;color:var(--soft);cursor:pointer}.lang b{color:var(--ink)}
+
+
   .wrap{max-width:1280px;margin:20px auto;padding:0 24px;display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start}
   .side{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;position:sticky;top:20px}
   .navgrp{padding:8px 6px 4px}
@@ -36,68 +38,6 @@
   .pagehead h1{font-size:22px;margin:0}
   .badge-new{font-size:10.5px;font-weight:700;background:var(--orange-soft);color:var(--orange-d);border-radius:6px;padding:2px 8px}
   .subnote{color:var(--soft);font-size:12.5px;margin-bottom:16px}
-  /* filter / sort (hall) */
-  .filterbar{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:14px}
-  .frow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.frow+.frow{margin-top:10px}
-  .fi{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:13px;color:var(--soft);cursor:pointer}
-  .fi.sel{justify-content:space-between}
-  .flabel{font-size:12px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.03em;margin-right:2px}
-  .pill{font-size:12.5px;border:1px solid var(--line);border-radius:20px;padding:6px 13px;color:var(--soft);cursor:pointer}
-  .pill.on{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-d);font-weight:600}
-  .sortrow{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;color:var(--soft)}
-  .sortpill{font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:6px 12px;color:var(--soft);cursor:pointer;background:#fff}
-  .sortpill.on{border-color:var(--orange);color:var(--orange-d);font-weight:600}
-  /* tabs (boosts) */
-  .tabsbar{background:#fff;border:1px solid var(--line);border-radius:14px 14px 0 0;border-bottom:none;padding:6px 16px 0;display:flex;gap:4px;overflow-x:auto}
-  .rtab{white-space:nowrap;padding:12px 14px;font-size:14px;color:var(--soft);cursor:pointer;border-bottom:2.5px solid transparent}
-  .rtab.on{color:var(--orange-d);font-weight:700;border-bottom-color:var(--orange)}
-  .rtab .cnt{font-size:11px;background:var(--bg);color:var(--soft);border-radius:10px;padding:1px 7px;margin-left:5px}
-  .rtab.on .cnt{background:var(--orange-soft);color:var(--orange-d)}
-  .cards{background:var(--bg);border:1px solid var(--line);border-top:none;border-radius:0 0 14px 14px;padding:14px}
-  /* cards */
-  .rcard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:13px}
-  .rcard:last-child{margin-bottom:0}
-  .rcard.hot{border-color:var(--orange);box-shadow:0 3px 14px rgba(241,101,42,.10)}
-  .rc-head{display:flex;align-items:flex-start;gap:12px}
-  .rc-icon{width:44px;height:44px;border-radius:10px;background:#2a2f3a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
-  .rc-tt{min-width:0;flex:1}
-  .rc-svc{font-weight:700;font-size:15.5px}.rc-svc .gm{color:var(--soft);font-weight:600}
-  .rc-no{font-size:12px;color:var(--dim);margin-top:2px}
-  .rc-price{text-align:right;flex:none}
-  .rc-price .p{font-size:22px;font-weight:800;color:var(--orange-d);line-height:1.1}.rc-price .pl{font-size:11px;color:var(--dim)}
-  .hot-tag{display:inline-block;font-size:10px;font-weight:700;background:var(--red-l);color:var(--red);border-radius:5px;padding:1px 7px;margin-bottom:3px}
-  .attrs{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0 0}
-  .chip{font-size:12px;background:#f7f8fa;border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:var(--soft)}
-  .chip b{color:var(--ink);font-weight:600}
-  .chip.more{color:var(--orange-d);border-color:var(--orange-soft);background:var(--orange-soft);cursor:pointer;font-weight:600}
-  .rc-text{margin-top:11px;font-size:13px;color:var(--soft);background:#fafbfc;border:1px solid var(--line);border-radius:9px;padding:10px 12px}
-  .rc-text .rl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--dim);margin-bottom:2px}
-  .oc-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#f7f8fa;border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin:-2px 0 13px;font-size:12.5px;color:var(--soft)}
-  .oc-bar b{color:var(--ink);font-weight:600}.oc-bar .sp{flex:1}
-  .oc-log{color:var(--soft);cursor:pointer}.oc-log:hover{color:var(--orange-d)}
-  .due{display:inline-block;font-size:10px;font-weight:700;background:var(--red-l);color:var(--red);border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:1px}
-  .st{font-size:11.5px;font-weight:700;border-radius:20px;padding:3px 11px}
-  .st-progress{background:var(--orange-soft);color:var(--orange-d)}
-  .st-review{background:var(--amber-l);color:var(--amber)}
-  .st-done{background:var(--green-l);color:var(--green)}
-  .st-dispute{background:var(--red-l);color:var(--red)}
-  .st-cancel{background:#eef0f3;color:var(--soft)}
-  .buyer{font-size:12px;color:var(--soft)}.buyer b{color:var(--ink)}
-  .rc-foot{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
-  .meta{font-size:12px;color:var(--dim)}.meta b{display:block;font-size:14px;color:var(--ink);font-weight:700;margin-top:1px}
-  .meta.warn b{color:var(--red)}
-  .rc-actions{margin-left:auto;display:flex;gap:9px}
-  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 16px;font-size:13px;color:var(--ink);cursor:pointer;font-weight:600}
-  .btn:hover{border-color:var(--orange);color:var(--orange-d)}
-  .btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}.btn.primary:hover{background:var(--orange-d);color:#fff}
-  .btn.ghost{border-color:transparent;color:var(--soft)}
-  .btn[disabled]{opacity:.5;cursor:not-allowed}
-  .empty{text-align:center;color:var(--dim);padding:50px 0}
-  /* ==== My Orders style ==== */
-  .mtabs{background:#fff;border:1px solid var(--line);border-radius:14px;padding:2px 18px 0;display:flex;gap:24px;overflow-x:auto;margin-bottom:14px}
-  .mtab{white-space:nowrap;padding:15px 2px;font-size:14px;color:var(--soft);cursor:pointer;border-bottom:2.5px solid transparent;display:flex;align-items:center;gap:7px}
-  .mtab.on{color:var(--ink);font-weight:700;border-bottom-color:var(--blue)}
-  .mtab .rb{background:var(--red);color:#fff;font-size:10.5px;font-weight:700;border-radius:10px;min-width:18px;height:18px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center}
   .mfilter{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
   .mfrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.mfrow+.mfrow{margin-top:14px}
   .mflabel{font-size:13px;color:var(--soft);font-weight:600;white-space:nowrap}
@@ -111,6 +51,11 @@
   .mbtns-f{margin-left:auto;display:flex;gap:10px}
   .btn-search{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 24px;font-weight:600;cursor:pointer;font-size:13.5px}
   .btn-reset{background:#eef0f3;color:var(--soft);border:none;border-radius:8px;padding:9px 24px;font-weight:600;cursor:pointer;font-size:13.5px}
+  .mtabs{background:#fff;border:1px solid var(--line);border-radius:14px;padding:2px 18px 0;display:flex;gap:24px;overflow-x:auto;margin-bottom:14px}
+  .mtab{white-space:nowrap;padding:15px 2px;font-size:14px;color:var(--soft);cursor:pointer;border-bottom:2.5px solid transparent;display:flex;align-items:center;gap:7px}
+  .mtab.on{color:var(--ink);font-weight:700;border-bottom-color:var(--blue)}
+  .mtab .rb{background:var(--red);color:#fff;font-size:10.5px;font-weight:700;border-radius:10px;min-width:18px;height:18px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center}
+
   .ordcard{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden}
   .ord-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:#f7f8fa;border-bottom:1px solid var(--line);padding:11px 18px;font-size:13px;color:var(--soft)}
   .ord-top b{color:var(--ink);font-weight:600}
@@ -126,19 +71,39 @@
   .od-link{color:var(--blue);font-size:13px;cursor:pointer;display:inline-block;margin-top:8px}
   .od-h{font-weight:700;font-size:13.5px;margin-bottom:6px}
   .kv{font-size:13px;color:var(--soft);margin:2px 0}.kv b{color:var(--ink);font-weight:600}
-  .viewall{color:var(--blue);font-size:13px;cursor:pointer;text-align:center;display:block;margin-top:6px}
   .amt{font-size:13px;color:var(--soft)}.amt .big{font-size:16px;font-weight:800;color:var(--ink);margin-top:4px}
   .ship{font-size:13px;color:var(--soft)}.ship b{color:var(--amber);font-weight:700}
   .abnormal{color:var(--red);font-size:12.5px;margin-top:10px;line-height:1.5}
   .od-act{display:flex;flex-direction:column;gap:9px;align-items:stretch}
   .pager{display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:8px 4px 4px;color:var(--soft);font-size:13px}
   .pager .pg{border:1px solid var(--line);border-radius:7px;padding:5px 11px;cursor:pointer;background:#fff}
+
+  /* delivery attribute details: inline / clamp / view-all */
+  .viewall{color:var(--blue);font-size:13px;cursor:pointer;text-align:center;display:block;margin-top:6px}
+  .blk{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+  .blk .bl{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+  .clamp{font-size:13px;color:var(--soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .clamp.open{-webkit-line-clamp:unset;display:block}
+  .more{color:var(--blue);font-size:12px;cursor:pointer;margin-top:3px;display:inline-block}
+  .c1flow{max-height:150px;overflow:hidden}
+
+  /* attribute-detail modal: divider (opt.1) / grouped card (opt.2) */
+  .divider{font-size:11px;font-weight:700;color:var(--dim);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.03em}
+  .group{background:var(--bg);border-radius:9px;padding:9px 12px;margin:9px 0}
+  .group .gh{font-size:13px;font-weight:700;margin-bottom:5px;color:var(--ink)}
+  .group .mrow{padding:5px 0}
+  .calctag{display:inline-block;margin-left:6px;font-size:10px;font-weight:700;color:var(--amber);background:var(--amber-l);border:1px solid #eddfae;border-radius:4px;padding:0 5px;vertical-align:1px}
+  .mrow.calcrow b{color:var(--orange-d)}
+  .todo{margin-top:16px;border:1.5px dashed var(--amber);background:#fffaf0;border-radius:11px;padding:12px 14px;font-size:12px;color:#7a5313;line-height:1.85}
+  .todo .tt{font-weight:800;margin-bottom:5px;color:#8a5a2a}
+  .todo .tg{display:inline-block;font-size:10.5px;font-weight:700;color:var(--amber);background:var(--amber-l);border:1px solid #eddfae;border-radius:4px;padding:0 5px}
+  .todo b{color:#5c3d0d}
+
   @media(max-width:1000px){.ord-grid{grid-template-columns:1fr 1fr}}
   @media(max-width:640px){.ord-grid{grid-template-columns:1fr}}
-  /* modals */
   .mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
   .mask.show{display:flex}
-  .modal{background:#fff;border-radius:16px;padding:24px 26px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal{background:#fff;border-radius:16px;padding:24px 26px;max-width:480px;width:100%;max-height:80vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
   .modal h3{margin:0 0 4px;font-size:19px}.modal .msub{color:var(--soft);font-size:13px;margin-bottom:16px}
   .mrow{display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--line);gap:12px}
   .mrow b{font-weight:700}.mrow.big b{color:var(--orange-d);font-size:16px}
@@ -155,6 +120,10 @@
   .upnote label{font-size:13px;font-weight:700;display:block;margin:10px 0 6px}
   .upnote textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font:14px var(--sans);resize:vertical}
   .mbtns{display:flex;gap:10px;margin-top:16px}.mbtns .btn{flex:1;text-align:center;padding:12px}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 16px;font-size:13px;color:var(--ink);cursor:pointer;font-weight:600}
+  .btn:hover{border-color:var(--orange);color:var(--orange-d)}
+  .btn.primary{background:var(--orange);color:#fff;border-color:var(--orange)}.btn.primary:hover{background:var(--orange-d);color:#fff}
+  .empty{text-align:center;color:var(--dim);padding:50px 0}
   .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#20242e;color:#fff;padding:11px 20px;border-radius:10px;font-size:13.5px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
   .toast.show{opacity:1}
   @media(max-width:900px){.wrap{grid-template-columns:1fr}.side{position:static}}
@@ -196,6 +165,7 @@
       <!-- PAGE: Request List -->
       <section id="page-hall" class="hide">
         <div class="pagehead"><h1 data-zh="需求列表">Request List</h1><span class="badge-new" data-zh="代练">Boosting</span></div>
+        <p class="subnote" data-zh="未达成一致的需求:展示需求要求 / 备注供你判断是否接单,不展示账号等递送属性明细(接单后才可见)。">Not yet accepted: Requirements / Notes are shown to help you decide, but delivery-attribute details (e.g. account credentials) are hidden until you accept.</p>
         <div class="mfilter">
           <div class="mfrow">
             <span class="mflabel" data-zh="搜索:">Search:</span>
@@ -251,10 +221,15 @@
 
 <script>
   var lang='en';
+  /* 定稿:递送信息 = 方案一(整块合并 + View All);属性详情弹窗 = 方案二(按子服务分组卡片) */
+  var SCHEME='c1';
   function t(o){return o?(lang=='zh'?o.zh:o.en):'';}
   function toast(m){var el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},2200);}
-  var CHIP_LIMIT=5;
-  function chipHtml(a){return '<span class="chip">'+t(a.l)+': <b>'+t(a.v)+'</b></span>';}
+  function isRange(a){var v=t(a.v)||'';return v.indexOf('\u2192')>=0;} /* 形如 1 → 70 的线性数值 */
+  function rowHtml(a){
+    var calc=isRange(a);
+    return '<div class="mrow'+(calc?' calcrow':'')+'"><span>'+t(a.l)+(calc?'<span class="calctag">'+(lang=='zh'?'计算器':'calculator')+'</span>':'')+'</span><b>'+t(a.v)+'</b></div>';
+  }
 
   /* ============ page switch ============ */
   function switchPage(p){
@@ -262,19 +237,139 @@
     document.getElementById('page-boosts').classList.toggle('hide',p!='boosts');
     document.querySelectorAll('.navitem[data-page]').forEach(function(n){n.classList.toggle('on',n.dataset.page==p);});
     window.scrollTo(0,0);
+    applyC1Overflow(); // 切换页面后重新量一遍(隐藏页面里的内容之前测不出高度)
   }
   document.querySelectorAll('.navitem[data-page]').forEach(function(n){n.addEventListener('click',function(){switchPage(n.dataset.page);});});
+
+  /* ============ shared: 递送信息 (Delivery Information) block ============ */
+  /* order: 递送信息(标题) -> 递送时间 -> 递送方式 -> 递送属性明细(账号等短字段,仅 My Orders 才可能有;Request List 阶段永不展示) */
+  /* Requirements / Notes 属于"买家原始需求",两版方案都要展示,只是位置/形态不同 */
+  function deliveryTimeVal(r){
+    // Hall(需求列表)阶段 r.limit 是「代练限时」时长;My Orders 阶段没有 limit 字段,改显示交付截止时间点(estFinish)
+    return r.estFinish?r.estFinish:(r.limit?t(r.limit):'—');
+  }
+  function deliveryInfoHtml(r,id,isHall,timeLabel){
+    var html='<div class="od-h" data-zh="交付信息">Delivery Information</div>';
+    html+='<div class="kv">'+timeLabel+'<b>'+deliveryTimeVal(r)+'</b></div>';
+    html+='<div class="kv">'+(lang=='zh'?'完成方式:':'Delivery method : ')+'<b>'+t(r.deliv)+'</b></div>';
+    var shortFields=(!isHall && r.deliveryDetails)?r.deliveryDetails:[]; // Request List 阶段永远为空
+
+    if(SCHEME=='c1'){
+      // 保守:把 Delivery Information 当一整个模块,Requirements / Notes 直接续在时间/方式下面 —— 不单独起框、不加分隔线。
+      // 整块内容给一个统一的高度预算,超出部分裁掉;渲染后再实测是否真的溢出,溢出了才露出 View All(短字段本身要点开才能看,始终露出)。
+      var flow='';
+      if(r.req) flow+='<div class="kv">'+(lang=='zh'?'需求要求:':'Requirements : ')+'<b>'+t(r.req)+'</b></div>';
+      if(r.note) flow+='<div class="kv">'+(lang=='zh'?'备注:':'Notes : ')+'<b>'+t(r.note)+'</b></div>';
+      if(flow||shortFields.length){
+        if(flow) html+='<div class="c1flow" id="'+id+'-flow">'+flow+'</div>';
+        var startHidden=flow && !shortFields.length; // 有短字段就直接露出;只有长文本时,先隐藏,等实测溢出再露出
+        html+='<span class="viewall'+(startHidden?' hide':'')+'" id="'+id+'-viewall" data-dpop="'+id+'" style="text-align:left" data-zh="查看全部">View All</span>';
+      }
+    } else {
+      // 折中:Requirements / Notes 各自独立的摘要 2 行 + 就地展开;短字段单独一块,因为是拆开的独立区块,需要「递送属性明细」这个标签让人知道点开是什么
+      if(r.req) html+=clampBlock(id+'-req',(lang=='zh'?'需求要求':'Requirements'),t(r.req));
+      if(r.note) html+=clampBlock(id+'-note',(lang=='zh'?'备注':'Notes'),t(r.note));
+      if(shortFields.length){
+        html+='<div class="blk"><div class="kv">'+(lang=='zh'?'递送属性明细:':'Delivery details : ')+'</div>'+
+          '<span class="viewall" data-dpop="'+id+'" style="text-align:left" data-zh="查看全部">View All</span></div>';
+      }
+    }
+    return html;
+  }
+  function clampBlock(id,label,text){
+    return '<div class="blk"><div class="bl">'+label+'</div><div class="clamp" id="'+id+'">'+text+'</div><span class="more" data-clamp="'+id+'">'+(lang=='zh'?'展开':'Expand')+'</span></div>';
+  }
+  function applyC1Overflow(){
+    // 方案一专用:.c1flow 渲染后实际内容比容器高,才把对应的 View All 露出来
+    if(SCHEME!='c1') return;
+    document.querySelectorAll('.c1flow').forEach(function(box){
+      if(box.scrollHeight>box.clientHeight+1){
+        var va=document.getElementById(box.id.replace(/-flow$/,'')+'-viewall');
+        if(va) va.classList.remove('hide');
+      }
+    });
+  }
+  function toggleClamp(id,el){
+    var box=document.getElementById(id);if(!box)return;
+    var open=box.classList.toggle('open');
+    el.textContent=open?(lang=='zh'?'收起':'Collapse'):(lang=='zh'?'展开':'Expand');
+  }
+  function openDeliveryPop(key){
+    var r=recFrom(key);
+    {
+      // 递送信息(方案一):时间/方式/Requirements/Notes/短字段同属一个模块,View All 完整展示一遍
+      var body='<div class="mrow"><span>'+(lang=='zh'?'递送时间':'Delivery Time')+'</span><b>'+deliveryTimeVal(r)+'</b></div>'+rowHtml({l:{en:'Delivery method',zh:'递送方式'},v:r.deliv});
+      if(r.req) body+=rowHtml({l:{en:'Requirements',zh:'需求要求'},v:r.req});
+      if(r.note) body+=rowHtml({l:{en:'Notes',zh:'备注'},v:r.note});
+      if(r.deliveryDetails && r.deliveryDetails.length){
+        body+='<div class="divider">'+(lang=='zh'?'递送属性明细':'Delivery details')+'</div>'+r.deliveryDetails.map(rowHtml).join('');
+      }
+      openModal(lang=='zh'?'递送信息':'Delivery Information',body);
+    }
+  }
+
+  /* ============ shared: 属性详情(不含递送属性) ============ */
+  /* 一般情况:r.attrs 是平铺列表。特殊情况(Custom 组合包):r.attrsGroups 是按子服务分组的列表 */
+  function openAttr(r){
+    // sharedAttrs: 不分组、订单全局共用的关键属性(区服/平台/职业),永远排在最前面
+    var body=(r.sharedAttrs||[]).map(rowHtml).join('');
+    var hasCalc=false;
+    var scan=function(list){list.forEach(function(a){if(isRange(a))hasCalc=true;});};
+    scan(r.sharedAttrs||[]);
+    if(r.attrsGroups){
+      r.attrsGroups.forEach(function(g){scan(g.attrs);});
+      body+=r.attrsGroups.map(function(g){
+        return '<div class="group"><div class="gh">'+t(g.name)+'</div>'+g.attrs.map(rowHtml).join('')+'</div>';
+      }).join('');
+    } else {
+      scan(r.attrs);
+      body+=r.attrs.map(rowHtml).join('');
+    }
+    if(hasCalc) body+=todoNote();
+    openModal(lang=='zh'?'属性详情':'Attributes detail',body);
+  }
+  /* 弹窗内的待讨论备注:等级/巅峰这类需要计算器的线性数值,算不算关键属性、怎么呈现 */
+  function todoNote(){
+    return '<div class="todo">'+
+      '<div class="tt">'+(lang=='zh'?'⚑ 待讨论(原型备注,非正式文案)':'⚑ To be decided (prototype note)')+'</div>'+
+      (lang=='zh'
+        ? '标了 <span class="tg">计算器</span> 的属性(等级 1 → 70、巅峰 1 → 200 这类<b>线性数值</b>)是买家用计算器分段计价出来的,和赛季/平台/职业这种<b>枚举型关键属性</b>不是一回事:<br>'+
+          '· 它更像<b>工作量口径</b>而不是筛选条件,卖家真正关心的是"从哪到哪"和由此产生的耗时;<br>'+
+          '· 但它又必须让卖家一眼看到,否则无法判断能不能在限时内做完。<br>'+
+          '<b>需要拍板:</b>① 它算不算"关键属性",要不要跟赛季/平台一起置顶?② 在这里是按 <span class="tg">1 → 70</span> 这样一行展示,还是拆成"当前值 / 目标值"两行?③ 要不要额外显示计算器给出的<b>分段与工作量</b>(如 1–50 / 50–70 两段),让卖家更好估时?'
+        : 'Attributes tagged <span class="tg">calculator</span> (Level 1 → 70, Paragon 1 → 200 — <b>linear numeric ranges</b>) come from the buyer\'s segmented price calculator. They are not the same kind of thing as Realm / Platform / Class, which are <b>enumerated key attributes</b>:<br>'+
+          '· they describe <b>workload</b> rather than a filter, and what the seller really needs is "from where to where" and the time it implies;<br>'+
+          '· yet they must be visible at a glance, or the seller cannot judge the deadline.<br>'+
+          '<b>To decide:</b> (1) do they count as "key attributes" and get pinned next to Realm / Platform? (2) show them as one line <span class="tg">1 → 70</span>, or split into Current / Target on two lines? (3) should we also surface the calculator\'s <b>segments and workload</b> (e.g. 1–50 / 50–70) so sellers can estimate time?')+
+      '</div>';
+  }
+  function openModal(title,body){
+    document.getElementById('attrModal').innerHTML='<h3 style="display:flex;justify-content:space-between;align-items:center;gap:16px">'+title+'<span class="msg-ic" id="amClose" style="font-size:16px">✕</span></h3>'+body;
+    document.getElementById('attrMask').classList.add('show');applyStaticLang();
+    document.getElementById('amClose').onclick=function(){document.getElementById('attrMask').classList.remove('show');};
+  }
+  document.getElementById('attrMask').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
+  function recFrom(key){var i=+key.replace(/^\D+/,'');return key.charAt(0)=='h'?HALL[i]:MY[i];}
 
   /* ============ Request List (hall) ============ */
   var HALL=[
     {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
      price:'$18.00',limit:{en:'3 days',zh:'3 天'},deliv:{en:'Self-play',zh:'组队陪同'},expires:{en:'6h 12m left',zh:'剩 6 小时 12 分'},hot:false,no:'BR20260814-0071',published:'2026-08-14 10:20',
-     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Hardcore',zh:'赛季 · 硬核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Self-play',zh:'组队陪同'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 70',zh:'1 → 70'}},{l:{en:'Paragon',zh:'巅峰'},v:{en:'200',zh:'200'}},{l:{en:'Class',zh:'职业'},v:{en:'Sorcerer',zh:'法师'}}],
+     sharedAttrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Hardcore',zh:'赛季 · 硬核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Class',zh:'职业'},v:{en:'Sorcerer',zh:'法师'}}],
+     attrsGroups:[
+       {name:{en:'Leveling',zh:'等级提升'},attrs:[{l:{en:'Level',zh:'等级'},v:{en:'1 → 70',zh:'1 → 70'}}]},
+       {name:{en:'Paragon',zh:'巅峰历练'},attrs:[{l:{en:'Paragon',zh:'巅峰'},v:{en:'1 → 200',zh:'1 → 200'}}]}
+     ],
      req:null,note:{en:'Evenings CET preferred.',zh:'尽量晚上(欧洲时间)。'}},
-    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Custom',zh:'自定义'},svc:{en:'Custom Request',zh:'自定义需求'},
-     price:'$25.00',limit:{en:'24 hours',zh:'24 小时'},deliv:{en:'Piloted',zh:'上号代打'},expires:{en:'2h 40m left',zh:'剩 2 小时 40 分'},hot:true,no:'BR20260814-0069',published:'2026-08-14 09:02',
-     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Softcore',zh:'赛季 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Piloted',zh:'上号代打'}}],
-     req:{en:'Battle pass to rank 90 + Tree of Whispers maxed + all Altars of Lilith.',zh:'战令刷到 90 级 + 低语之树刷满 + 全部莉莉丝祭坛。'},note:{en:'Please stream while on my account.',zh:'上号期间请开直播。'}},
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Custom',zh:'自定义'},svc:{en:'Custom Bundle',zh:'自定义组合包'},
+     price:'$52.00',limit:{en:'24 hours',zh:'24 小时'},deliv:{en:'Piloted',zh:'上号代打'},expires:{en:'2h 40m left',zh:'剩 2 小时 40 分'},hot:true,no:'BR20260814-0069',published:'2026-08-14 09:02',
+     attrsGroups:[
+       {name:{en:'Power Leveling',zh:'Power Leveling'},attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Hardcore',zh:'赛季 · 硬核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Class',zh:'职业'},v:{en:'Sorcerer',zh:'法师'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 70',zh:'1 → 70'}},{l:{en:'Paragon',zh:'巅峰'},v:{en:'1 → 200',zh:'1 → 200'}}]},
+       {name:{en:'Uber Boss Kill',zh:'Uber Boss 代打'},attrs:[{l:{en:'Boss',zh:'Boss'},v:{en:'Duriel',zh:'杜瑞尔'}},{l:{en:'Kills',zh:'击杀次数'},v:{en:'5',zh:'5'}},{l:{en:'Difficulty',zh:'难度'},v:{en:'Torment 4',zh:'痛苦 4'}}]},
+       {name:{en:'Pit Push',zh:'Pit 冲层'},attrs:[{l:{en:'Target',zh:'目标层'},v:{en:'Pit 100',zh:'Pit 100'}},{l:{en:'Runs',zh:'次数'},v:{en:'5',zh:'5'}}]}
+     ],
+     req:{en:"Battle pass to rank 90 + Tree of Whispers maxed for the week + all Altars of Lilith. Also please clear all side dungeons on the way and collect Whispers caches without skipping any. Prioritize XP-efficient routes and avoid detours. If you run into any Helltide events along the way, grab the chest if it's safe to do so, but don't go out of your way for it — the goals above take priority. Let me know if anything on this list isn't achievable within the time limit so we can adjust expectations before you start.",zh:'战令刷到 90 级 + 本周低语之树刷满 + 全部莉莉丝祭坛。顺路把沿途的小地下城清一下,低语宝箱不要漏。请优先走经验效率高的路线,不要绕路。如果路上遇到炼狱潮活动,方便的话顺手开一下宝箱,但不用特意绕路去找,上面几项目标优先级更高。如果清单里有哪项在限时内做不完,请提前跟我说一声,我们再调整预期。'},
+     note:{en:"Please stream while on my account, and check in every 2 hours via chat so I know progress. Avoid PvP zones entirely — I don't want to risk any world PvP encounters while you're on. I have some gear in my stash that I don't want salvaged or sold, so please don't touch inventory beyond what's needed for the run. If you need to log off mid-session for any reason, message me first so I'm not left wondering.",zh:'上号期间请开直播,并每 2 小时在聊天里同步一下进度。请完全避开 PvP 区域,我不想承担世界 PvP 的风险。仓库里有些装备不要分解或出售,除了跑图必需之外不要动我的背包。如果中途需要下线,请先跟我说一声,别让我干等。'}},
     {icon:'⚔️',game:{en:'World of Warcraft',zh:'魔兽世界'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
      price:'$30.00',limit:{en:'7 days',zh:'7 天'},deliv:{en:'Piloted',zh:'上号代打'},expires:{en:'1d 3h left',zh:'剩 1 天 3 小时'},hot:false,no:'BR20260814-0066',published:'2026-08-14 08:15',
      attrs:[{l:{en:'Region',zh:'地区'},v:{en:'EU',zh:'欧盟'}},{l:{en:'Faction',zh:'阵营'},v:{en:'Horde',zh:'部落'}},{l:{en:'Realm',zh:'服务器'},v:{en:'Aegwynn',zh:'艾格温'}},{l:{en:'Class',zh:'职业'},v:{en:'Death Knight',zh:'死亡骑士'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 80',zh:'1 → 80'}}],
@@ -287,8 +382,7 @@
   document.getElementById('hallCnt').textContent=HALL.length;
 
   function hallCard(r,i){
-    var kvs=r.attrs.slice(0,2).map(kvLine).join('');
-    var noteTxt=r.req?'<div class="kv" style="margin-top:8px">'+t(r.req)+'</div>':(r.note?'<div class="kv" style="margin-top:8px">'+t(r.note)+'</div>':'');
+    var id='h'+i;
     return '<div class="ordcard">'+
       '<div class="ord-top">'+
         '<span>'+r.published+'</span>'+
@@ -298,15 +392,10 @@
         '<span>'+(lang=='zh'?'状态:':'Status : ')+'<span class="stlink">'+(r.hot?(lang=='zh'?'即将过期':'Expiring soon'):(lang=='zh'?'可接单':'Open for offers'))+'</span></span>'+
       '</div>'+
       '<div class="ord-grid">'+
-        '<div class="od-prod"><div class="od-thumb">'+r.icon+'</div><div><div class="od-title">'+t(r.game)+' · '+t(r.svc)+'</div><span class="od-link" data-attrpop="h'+i+'" data-zh="属性详情">Attributes detail</span></div></div>'+
-        '<div><div class="od-h" data-zh="交付信息">Delivery Information</div>'+
-          '<div class="kv">'+(lang=='zh'?'代练限时:':'Delivery Time : ')+'<b>'+t(r.limit)+'</b></div>'+
-          '<div class="kv">'+(lang=='zh'?'完成方式:':'Delivery method : ')+'<b>'+t(r.deliv)+'</b></div>'+
-          (r.account?'<div class="kv">'+(lang=='zh'?'账号信息:':'Account : ')+'<b>'+t(r.account)+'</b></div>':'')+
-          '</div>'+
+        '<div class="od-prod"><div class="od-thumb">'+r.icon+'</div><div><div class="od-title">'+t(r.game)+' · '+t(r.svc)+'</div><span class="od-link" data-attrpop="'+id+'" data-zh="属性详情">Attributes detail</span></div></div>'+
+        '<div>'+deliveryInfoHtml(r,id,true,(lang=='zh'?'代练限时:':'Delivery Time : '))+'</div>'+
         '<div><div class="od-h" data-zh="金额 / 价格">Amount / Price</div><div class="amt">'+(lang=='zh'?'买家报价':'Buyer price')+'<div class="big">'+r.price+' USD</div></div></div>'+
-        '<div><div class="od-h" data-zh="备注">Remark</div><div class="ship">'+(lang=='zh'?'报价有效期:':'Offer expires : ')+'<b style="color:var(--red)">'+t(r.expires)+'</b></div>'+
-          ((r.req||r.note)?'<span class="viewall" data-reqpop="h'+i+'" style="text-align:left" data-zh="查看全部">View All</span>':'')+'</div>'+
+        '<div><div class="od-h" data-zh="备注">Remark</div><div class="ship">'+(lang=='zh'?'报价有效期:':'Offer expires : ')+'<b style="color:var(--red)">'+t(r.expires)+'</b></div></div>'+
         '<div class="od-act"><button class="btn primary" data-accept="'+i+'" data-zh="接单">Accept</button><button class="btn" data-chat="'+i+'" data-zh="聊一聊">Chat</button></div>'+
       '</div></div>';
   }
@@ -316,11 +405,17 @@
     var c=e.target.closest('[data-chat]');if(c){toast(lang=='zh'?'打开与买家的聊天(原型略)':'Open chat with buyer (stub)');return;}
     var cp=e.target.closest('[data-copy]');if(cp){toast(lang=='zh'?'已复制订单号':'Order number copied');return;}
     var ap=e.target.closest('[data-attrpop]');if(ap){openAttr(recFrom(ap.dataset.attrpop));return;}
-    var rp=e.target.closest('[data-reqpop]');if(rp){openReq(recFrom(rp.dataset.reqpop));return;}
+    var dp=e.target.closest('[data-dpop]');if(dp){openDeliveryPop(dp.dataset.dpop);return;}
+    var cl=e.target.closest('[data-clamp]');if(cl){toggleClamp(cl.dataset.clamp,cl);return;}
     var ev=e.target.closest('.ev-log');if(ev){toast(lang=='zh'?'打开事件日志(原型略)':'Open event log (stub)');return;}
   });
   function openAccept(r){
-    var attrRows=r.attrs.map(function(a){return '<div class="mrow"><span>'+t(a.l)+'</span><b>'+t(a.v)+'</b></div>';}).join('');
+    var attrRows=(r.sharedAttrs||[]).map(function(a){return '<div class="mrow"><span>'+t(a.l)+'</span><b>'+t(a.v)+'</b></div>';}).join('');
+    if(r.attrsGroups){
+      attrRows+=r.attrsGroups.map(function(g){return '<div class="mrow" style="border-bottom:none;padding:12px 0 2px"><b>'+t(g.name)+'</b></div>'+g.attrs.map(function(a){return '<div class="mrow"><span>'+t(a.l)+'</span><b>'+t(a.v)+'</b></div>';}).join('');}).join('');
+    } else {
+      attrRows+=r.attrs.map(function(a){return '<div class="mrow"><span>'+t(a.l)+'</span><b>'+t(a.v)+'</b></div>';}).join('');
+    }
     document.getElementById('acceptModal').innerHTML=
       '<h3>'+(lang=='zh'?'确认接单':'Confirm accept')+'</h3>'+
       '<div class="msub">'+t(r.game)+' · '+t(r.cat)+' · '+t(r.svc)+'</div>'+
@@ -336,21 +431,6 @@
     document.getElementById('mConfirm').onclick=function(){document.getElementById('acceptMask').classList.remove('show');toast(lang=='zh'?'接单成功!已进入「我的订单」,计时开始':'Accepted! Moved to My Orders — clock started');};
   }
   document.getElementById('acceptMask').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
-
-  /* attributes / requirements popups */
-  function recFrom(key){var i=+key.replace(/^\D+/,'');return key.charAt(0)=='h'?HALL[i]:MY[i];}
-  function openModal(title,body){
-    document.getElementById('attrModal').innerHTML='<h3 style="display:flex;justify-content:space-between;align-items:center;gap:16px">'+title+'<span class="msg-ic" id="amClose" style="font-size:16px">✕</span></h3>'+body;
-    document.getElementById('attrMask').classList.add('show');applyStaticLang();
-    document.getElementById('amClose').onclick=function(){document.getElementById('attrMask').classList.remove('show');};
-  }
-  function openAttr(r){var rows=r.attrs.map(function(a){return '<div class="mrow"><span>'+t(a.l)+'</span><b>'+t(a.v)+'</b></div>';}).join('');openModal(lang=='zh'?'属性详情':'Attributes detail',rows);}
-  function openReq(r){var b='';
-    if(r.req)b+='<div class="mrow" style="flex-direction:column;align-items:flex-start;gap:4px"><span style="font-weight:700">'+(lang=='zh'?'需求要求 Requirements':'Requirements')+'</span><span style="color:var(--soft)">'+t(r.req)+'</span></div>';
-    if(r.note)b+='<div class="mrow" style="flex-direction:column;align-items:flex-start;gap:4px;border-bottom:none"><span style="font-weight:700">'+(lang=='zh'?'备注 Notes':'Notes')+'</span><span style="color:var(--soft)">'+t(r.note)+'</span></div>';
-    if(!b)b='<div class="kv" style="padding:10px 0">'+(lang=='zh'?'无附加说明。':'No additional details.')+'</div>';
-    openModal(lang=='zh'?'需求与备注':'Requirements & Notes',b);}
-  document.getElementById('attrMask').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});
 
   /* ============ My Orders (boosting orders) ============ */
   var STATUS={
@@ -369,28 +449,44 @@
     {id:'all',name:{en:'All',zh:'全部'}}
   ];
   var MY=[
-    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Custom',zh:'自定义'},svc:{en:'Custom Request',zh:'自定义需求'},
-     no:'BR20260814-0068',status:'progress',buyer:'D***rex',price:'$25.00',dueSoon:true,started:'2026-08-14 09:20',estFinish:'2026-08-15 09:20',deliv:{en:'Piloted',zh:'上号代打'},
-     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Softcore',zh:'赛季 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Piloted',zh:'上号代打'}}],
-     req:{en:'Battle pass to rank 90 + Tree of Whispers maxed + all Altars.',zh:'战令 90 级 + 低语之树刷满 + 全祭坛。'},note:{en:'Stream while on account.',zh:'上号请开直播。'}},
+    {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Custom',zh:'自定义'},svc:{en:'Custom Bundle',zh:'自定义组合包'},
+     no:'BR20260814-0068',status:'progress',buyer:'D***rex',price:'$52.00',dueSoon:true,started:'2026-08-14 09:20',estFinish:'2026-08-15 09:20',deliv:{en:'Piloted',zh:'上号代打'},
+     attrsGroups:[
+       {name:{en:'Power Leveling',zh:'Power Leveling'},attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Hardcore',zh:'赛季 · 硬核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Class',zh:'职业'},v:{en:'Sorcerer',zh:'法师'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 70',zh:'1 → 70'}},{l:{en:'Paragon',zh:'巅峰'},v:{en:'1 → 200',zh:'1 → 200'}}]},
+       {name:{en:'Uber Boss Kill',zh:'Uber Boss 代打'},attrs:[{l:{en:'Boss',zh:'Boss'},v:{en:'Duriel',zh:'杜瑞尔'}},{l:{en:'Kills',zh:'击杀次数'},v:{en:'5',zh:'5'}},{l:{en:'Difficulty',zh:'难度'},v:{en:'Torment 4',zh:'痛苦 4'}}]},
+       {name:{en:'Pit Push',zh:'Pit 冲层'},attrs:[{l:{en:'Target',zh:'目标层'},v:{en:'Pit 100',zh:'Pit 100'}},{l:{en:'Runs',zh:'次数'},v:{en:'5',zh:'5'}}]}
+     ],
+     req:{en:'Battle pass to rank 90 + Tree of Whispers maxed for the week + all Altars of Lilith. Also please clear all side dungeons on the way and collect Whispers caches without skipping any.',zh:'战令刷到 90 级 + 本周低语之树刷满 + 全部莉莉丝祭坛。顺路清一下沿途的小地下城,低语宝箱不要漏。'},
+     note:{en:'Please stream while on my account, and check in every 2 hours via chat so I know progress. Avoid PvP zones.',zh:'上号期间请开直播,并每 2 小时在聊天里同步一下进度。请避开 PvP 区域。'},
+     deliveryDetails:[{l:{en:'Account',zh:'账号'},v:{en:'d4.rex.eu@mail.com',zh:'d4.rex.eu@mail.com'}},{l:{en:'Password',zh:'密码'},v:{en:'D4rexPass!92',zh:'D4rexPass!92'}},{l:{en:'Backup info',zh:'备用信息'},v:{en:'2FA backup code 4821-9037',zh:'2FA 备用码 4821-9037'}}]},
+
     {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
      no:'BR20260814-0071',status:'progress',buyer:'A***n88',price:'$18.00',started:'2026-08-14 11:05',estFinish:'2026-08-17 11:05',deliv:{en:'Self-play',zh:'组队陪同'},
-     attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Hardcore',zh:'赛季 · 硬核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 70',zh:'1 → 70'}},{l:{en:'Paragon',zh:'巅峰'},v:{en:'200',zh:'200'}},{l:{en:'Class',zh:'职业'},v:{en:'Sorcerer',zh:'法师'}},{l:{en:'Delivery',zh:'完成方式'},v:{en:'Self-play',zh:'组队陪同'}}],
+     sharedAttrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Hardcore',zh:'赛季 · 硬核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Class',zh:'职业'},v:{en:'Sorcerer',zh:'法师'}}],
+     attrsGroups:[
+       {name:{en:'Leveling',zh:'等级提升'},attrs:[{l:{en:'Level',zh:'等级'},v:{en:'1 → 70',zh:'1 → 70'}}]},
+       {name:{en:'Paragon',zh:'巅峰历练'},attrs:[{l:{en:'Paragon',zh:'巅峰'},v:{en:'1 → 200',zh:'1 → 200'}}]}
+     ],
      req:null,note:{en:'Evenings CET.',zh:'欧洲时间晚上。'}},
+
     {icon:'⚔️',game:{en:'World of Warcraft',zh:'魔兽世界'},cat:{en:'Leveling',zh:'升级'},svc:{en:'Power Leveling',zh:'Power Leveling'},
      no:'BR20260813-0052',status:'review',buyer:'K***illa',price:'$30.00',started:'2026-08-13 20:10',estFinish:'2026-08-16 20:10',deliv:{en:'Piloted',zh:'上号代打'},
      attrs:[{l:{en:'Region',zh:'地区'},v:{en:'EU',zh:'欧盟'}},{l:{en:'Faction',zh:'阵营'},v:{en:'Horde',zh:'部落'}},{l:{en:'Realm',zh:'服务器'},v:{en:'Aegwynn',zh:'艾格温'}},{l:{en:'Class',zh:'职业'},v:{en:'Death Knight',zh:'死亡骑士'}},{l:{en:'Level',zh:'等级'},v:{en:'1 → 80',zh:'1 → 80'}}],
-     req:null,note:null,autoConfirm:{en:'Auto-confirms in 2d 4h',zh:'2 天 4 小时后自动确认'}},
+     req:null,note:null,autoConfirm:{en:'Auto-confirms in 2d 4h',zh:'2 天 4 小时后自动确认'},
+     deliveryDetails:[{l:{en:'Account',zh:'账号'},v:{en:'wow.kdz.eu@mail.com',zh:'wow.kdz.eu@mail.com'}},{l:{en:'Password',zh:'密码'},v:{en:'KDZilla77!',zh:'KDZilla77!'}},{l:{en:'Backup info',zh:'备用信息'},v:{en:"Security question: mother's maiden name",zh:'安全问题:母亲的娘家姓'}}]},
+
     {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Bosses',zh:'Boss 代打'},svc:{en:'Uber / Lair Boss',zh:'Uber / 巢穴 Boss'},
      no:'BR20260810-0028',status:'done',buyer:'M***oz',price:'$20.00',started:'2026-08-10 14:00',finished:'2026-08-11 09:30',deliv:{en:'Self-play',zh:'组队陪同'},
      attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Eternal · Softcore',zh:'永久 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PS4/5',zh:'PS4/5'}},{l:{en:'Boss',zh:'Boss'},v:{en:'Duriel',zh:'杜瑞尔'}},{l:{en:'Kills',zh:'击杀次数'},v:{en:'10',zh:'10'}}],
      req:null,note:null},
+
     {icon:'😈',game:{en:'Diablo 4',zh:'暗黑破坏神 4'},cat:{en:'Dungeons',zh:'副本'},svc:{en:'Pit Push',zh:'Pit 冲层'},
      no:'BR20260809-0019',status:'dispute',buyer:'R***7',price:'$22.00',started:'2026-08-09 12:00',estFinish:'2026-08-12 12:00',deliv:{en:'Piloted',zh:'上号代打'},
      attrs:[{l:{en:'Realm',zh:'赛季/模式'},v:{en:'Seasonal · Softcore',zh:'赛季 · 软核'}},{l:{en:'Platform',zh:'平台'},v:{en:'PC',zh:'PC'}},{l:{en:'Target',zh:'目标层'},v:{en:'Pit 100',zh:'Pit 100'}},{l:{en:'Runs',zh:'次数'},v:{en:'8',zh:'8'}}],
-     req:null,note:{en:'Buyer opened a dispute — submit your proof.',zh:'买家发起争议 —— 请提交凭证。'}}
+     req:null,note:{en:'Please avoid dying in Pit — softcore.',zh:'Pit 里请别死,软核角色。'},
+     deliveryDetails:[{l:{en:'Account',zh:'账号'},v:{en:'d4.runner7@mail.com',zh:'d4.runner7@mail.com'}},{l:{en:'Password',zh:'密码'},v:{en:'Runner7Secure!',zh:'Runner7Secure!'}},{l:{en:'Backup info',zh:'备用信息'},v:{en:'2FA backup code 5521-0043',zh:'2FA 备用码 5521-0043'}}],
+     disputeReason:{en:'Buyer opened a dispute — submit your proof.',zh:'买家发起争议 —— 请提交凭证。'}}
   ];
-  document.getElementById('myCnt')&&(document.getElementById('myCnt').textContent=MY.length);
   var curTab='all';
 
   function tabMatch(r,id){if(id=='all')return true;var tb=TABS.filter(function(x){return x.id==id;})[0];if(tb&&tb.match)return tb.match.indexOf(r.status)>=0;return r.status==id;}
@@ -402,17 +498,14 @@
       return '<div class="mtab'+(tb.id==curTab?' on':'')+'" data-id="'+tb.id+'">'+t(tb.name)+badge+'</div>';
     }).join('');
   }
-  function kvLine(a){return '<div class="kv">'+t(a.l)+': <b>'+t(a.v)+'</b></div>';}
   function boostCard(r,i){
+    var id='my'+i;
     var s=STATUS[r.status];
-    var kvs=r.attrs.slice(0,2).map(kvLine).join('');
-    var delivTime=t(r.limit?r.limit:{en:'—',zh:'—'});
     var prog=r.status=='done'?'1 / 1':'0 / 1';
     var ab='';
-    if(r.status=='dispute') ab='<div class="abnormal">'+t(r.note||{en:'Dispute opened — submit your proof.',zh:'买家发起争议 —— 请提交凭证。'})+'</div>';
+    if(r.status=='dispute') ab='<div class="abnormal">'+t(r.disputeReason||{en:'Dispute opened — submit your proof.',zh:'买家发起争议 —— 请提交凭证。'})+'</div>';
     else if(r.dueSoon) ab='<div class="abnormal">'+(lang=='zh'?'临期 24 小时内 —— 请尽快完成并交付。':'Due within 24h — finish and deliver soon.')+'</div>';
     else if(r.status=='review'&&r.autoConfirm) ab='<div class="kv" style="margin-top:10px;color:var(--amber)">'+t(r.autoConfirm)+'</div>';
-    else if(r.note) ab='<div class="kv" style="margin-top:10px">'+t(r.note)+'</div>';
     var act='';
     if(r.status=='progress') act='<button class="btn primary" data-done="'+i+'" data-zh="发货">Delivery</button>';
     else if(r.status=='dispute') act='<button class="btn" data-zh="退款详情">Refund details</button>';
@@ -426,15 +519,10 @@
         '<a class="ev-log" data-zh="事件日志">Event Log</a>'+
       '</div>'+
       '<div class="ord-grid">'+
-        '<div class="od-prod"><div class="od-thumb">'+r.icon+'</div><div><div class="od-title">'+t(r.game)+' · '+t(r.svc)+'</div><span class="od-link" data-attrpop="my'+i+'" data-zh="属性详情">Attributes detail</span></div></div>'+
-        '<div><div class="od-h" data-zh="交付信息">Delivery Information</div>'+
-          '<div class="kv">'+(lang=='zh'?'交付时限:':'Delivery Time : ')+'<b>'+delivTime+'</b></div>'+
-          '<div class="kv">'+(lang=='zh'?'完成方式:':'Delivery method : ')+'<b>'+t(r.deliv)+'</b></div>'+
-          (r.account?'<div class="kv">'+(lang=='zh'?'账号信息:':'Account : ')+'<b>'+t(r.account)+'</b></div>':'')+
-          '</div>'+
+        '<div class="od-prod"><div class="od-thumb">'+r.icon+'</div><div><div class="od-title">'+t(r.game)+' · '+t(r.svc)+'</div><span class="od-link" data-attrpop="'+id+'" data-zh="属性详情">Attributes detail</span></div></div>'+
+        '<div>'+deliveryInfoHtml(r,id,false,(lang=='zh'?'交付时限:':'Delivery Time : '))+'</div>'+
         '<div><div class="od-h" data-zh="金额 / 价格">Amount / Price</div><div class="amt">x1<div class="big">'+r.price+' USD</div></div></div>'+
-        '<div><div class="od-h" data-zh="备注">Remark</div><div class="ship">'+(lang=='zh'?'交付进度:':'Shipping Progress : ')+'<b>'+prog+'</b></div>'+ab+
-          ((r.req||r.note)?'<span class="viewall" data-reqpop="my'+i+'" style="text-align:left" data-zh="查看全部">View All</span>':'')+'</div>'+
+        '<div><div class="od-h" data-zh="备注">Remark</div><div class="ship">'+(lang=='zh'?'交付进度:':'Shipping Progress : ')+'<b>'+prog+'</b></div>'+ab+'</div>'+
         '<div class="od-act">'+act+'</div>'+
       '</div></div>';
   }
@@ -449,7 +537,9 @@
     var d=e.target.closest('[data-done]');if(d){openProof(MY[+d.dataset.done]);return;}
     var c=e.target.closest('[data-chat]');if(c){toast(lang=='zh'?'打开与买家的聊天(原型略)':'Open chat with buyer (stub)');return;}
     var cp=e.target.closest('[data-copy]');if(cp){toast(lang=='zh'?'已复制订单号':'Order number copied');return;}
-    var at=e.target.closest('[data-attr]');if(at){toast(lang=='zh'?'展开全部属性(原型略)':'Show all attributes (stub)');return;}
+    var ap=e.target.closest('[data-attrpop]');if(ap){openAttr(recFrom(ap.dataset.attrpop));return;}
+    var dp=e.target.closest('[data-dpop]');if(dp){openDeliveryPop(dp.dataset.dpop);return;}
+    var cl=e.target.closest('[data-clamp]');if(cl){toggleClamp(cl.dataset.clamp,cl);return;}
     var ev=e.target.closest('.ev-log');if(ev){toast(lang=='zh'?'打开事件日志(原型略)':'Open event log (stub)');return;}
   });
 
@@ -489,7 +579,7 @@
     });
     document.querySelector('#langBtn b').textContent=lang=='zh'?'中文':'English';
   }
-  function renderAll(){renderHall();renderTabs();renderCards();applyStaticLang();}
+  function renderAll(){renderHall();renderTabs();renderCards();applyStaticLang();applyC1Overflow();}
   document.getElementById('langBtn').addEventListener('click',function(){lang=lang=='zh'?'en':'zh';renderAll();});
 
   renderAll();
