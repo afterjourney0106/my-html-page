@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D4 代练竞品调研 · Overgear / Eldorado / IGGM</title>
+<style>
+  :root{
+    --ink:#1c2430;--soft:#5b6675;--dim:#93a0b0;--line:#e6e9ee;--bg:#f4f6f8;
+    --orange:#f1652a;--orange-d:#d9531c;--orange-soft:#fdeee7;
+    --blue:#2f6fe0;--blue-l:#eef4fd;--green:#12855a;--green-l:#e7f4ee;--amber:#b8791b;--amber-l:#fbf1dc;--red:#c9453f;--red-l:#fbeceb;--purple:#6b4fd0;--purple-l:#eeeafc;
+    --sans:-apple-system,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    --serif:"Georgia","Songti SC",serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 var(--sans);-webkit-font-smoothing:antialiased}
+  .doc{max-width:940px;margin:0 auto;padding:0 20px 70px}
+  .hero{padding:52px 0 28px;border-bottom:1px solid var(--line);margin-bottom:30px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--orange-d);text-transform:uppercase;margin-bottom:16px}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--orange)}
+  h1{font-size:32px;line-height:1.24;margin:0 0 14px;letter-spacing:-.01em;font-weight:800}
+  .lede{font-size:16px;color:var(--soft);margin:0;max-width:680px}
+  .meta{display:flex;gap:22px;flex-wrap:wrap;margin-top:22px;font-size:12.5px;color:var(--dim)}
+  .meta b{color:var(--soft);font-weight:600}
+  h2{font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-d);margin:46px 0 6px;display:flex;align-items:baseline;gap:12px}
+  h2 .n{font-family:var(--serif);font-size:15px;color:var(--dim);font-weight:400}
+  .h2sub{font-size:21px;font-weight:800;margin:0 0 18px;letter-spacing:-.01em}
+  h3{font-size:16px;margin:26px 0 10px}
+  p{margin:0 0 14px}
+  .soft{color:var(--soft)}
+  .callout{background:#fff;border:1px solid var(--line);border-left:3px solid var(--orange);border-radius:0 12px 12px 0;padding:16px 20px;margin:18px 0}
+  .callout .k{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--orange-d);margin-bottom:6px}
+  .callout p:last-child{margin-bottom:0}
+  ul.clean{margin:0 0 16px;padding:0;list-style:none}
+  ul.clean li{position:relative;padding-left:22px;margin:8px 0;color:var(--soft)}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:11px;width:6px;height:6px;border-radius:2px;background:var(--orange);transform:rotate(45deg)}
+  ul.clean li b{color:var(--ink);font-weight:600}
+  /* profile cards */
+  .prof{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:16px 0}
+  .prof .top{display:flex;align-items:center;gap:14px;margin-bottom:4px;flex-wrap:wrap}
+  .prof .nm{font-size:19px;font-weight:800}
+  .chip{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:3px 10px}
+  .c-b2c{background:var(--blue-l);color:var(--blue)}
+  .c-c2c{background:var(--purple-l);color:var(--purple)}
+  .c-url{font-size:12px;color:var(--dim);margin-left:auto}
+  .kv{display:grid;grid-template-columns:130px 1fr;gap:6px 16px;margin-top:12px;font-size:14px}
+  .kv .k{color:var(--dim);font-weight:600}
+  .kv .v{color:var(--ink)}
+  .kv .v b{color:var(--orange-d)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:16px 0 6px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{background:#fafbfc;font-size:12px;font-weight:800;letter-spacing:.03em;color:var(--soft)}
+  tbody td:first-child{font-weight:600;color:var(--ink);white-space:nowrap}
+  tbody tr:last-child td{border-bottom:none}
+  .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:2px 9px;white-space:nowrap}
+  .tag.g{background:var(--green-l);color:var(--green)}.tag.a{background:var(--amber-l);color:var(--amber)}.tag.r{background:var(--red-l);color:var(--red)}.tag.b{background:var(--blue-l);color:var(--blue)}.tag.p{background:var(--purple-l);color:var(--purple)}
+  .find{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:14px 0}
+  .find .ft{font-weight:800;font-size:15px;margin-bottom:6px;display:flex;gap:10px;align-items:baseline}
+  .find .fn{font-family:var(--serif);color:var(--orange-d)}
+  .find p:last-child{margin-bottom:0}
+  .reco{background:var(--orange-soft);border-radius:12px;padding:16px 18px;font-size:14px;color:#8a5320;margin:12px 0}
+  .reco b{color:var(--orange-d)}
+  .imp{background:var(--green-l);border:1px solid #c7e6d6;border-radius:12px;padding:14px 18px;margin:10px 0;font-size:14px}
+  .imp .k{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:5px}
+  .note{font-size:12.5px;color:var(--dim);border-top:1px solid var(--line);margin-top:44px;padding-top:16px}
+  @media(max-width:640px){.kv{grid-template-columns:1fr}h1{font-size:25px}.c-url{display:none}}
+  @media print{body{background:#fff}.prof,.callout,.find,table,.reco,.imp{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <div class="hero">
+    <div class="eyebrow">竞品调研 · 供决策参考</div>
+    <h1>Diablo 4 代练 · 三家竞品调研</h1>
+    <p class="lede">聚焦 D4 代练,深挖 Overgear、Eldorado、IGGM三家的商品结构、定价、下单流程、递送与信任机制,并落到对 iGV(C2C + 想做标准化)的启示。</p>
+    <div class="meta"><span><b>范围</b>　Diablo 4 Boosting</span><span><b>竞品</b>　Overgear · Eldorado · IGGM</span><span><b>数据来源</b>　三家官网公开页面(实时抓取)</span></div>
+  </div>
+
+  <!-- 摘要 -->
+  <h2><span class="n">00</span> 一页速览</h2>
+  <div class="h2sub">三家最本质的差别:B2C 自营货架 vs C2C 卖家竞价</div>
+  <p><b>Overgear 与 IGGM 是 B2C</b>——平台自营/统一供给,把服务做成标准化商品货架,买家配置好直接下单、平台定价。<b>Eldorado 是 C2C</b>——平台只提供"配置需求 + 撮合"的框架,由卖家(booster)竞价报价,买家从多个报价里挑,价格由市场决定。</p>
+  <p>对 iGV 的核心启示先说结论:<b>三家都印证"标准化配置器"是 D4 代练的主流交互</b>;而 <b>Eldorado 证明了 C2C 也能把这套配置器跑通(配置 → 卖家竞价 → 选报价)</b>。iGV 作为 C2C,机会正是把 B2C 那种"好逛好配的标准化货架"和 C2C 的"多卖家竞价"结合起来。</p>
+
+  <!-- 竞品档案 -->
+  <h2><span class="n">01</span> 三家竞品档案</h2>
+
+  <!-- Overgear -->
+  <div class="prof">
+    <div class="top"><span class="nm">Overgear</span><span class="chip c-b2c">B2C 自营</span><span class="c-url">overgear.com/games/diablo-4</span></div>
+    <p class="soft" style="margin:6px 0 0">"In-House Boosters(自有 booster、全程受控)"是其核心卖点,强调专业、可控、快启动。品类做得最全、包装最重营销。</p>
+    <div class="kv">
+      <div class="k">商品结构</div><div class="v">品类高度标准化:Leveling(Power/Paragon/Bundle)、Bosses、Dungeons、Items、Materials、Build Services、Build Kits、<b>Bundles(套餐)</b>。每个服务是一个独立商品页 + 配置器。</div>
+      <div class="k">定价方式</div><div class="v">平台统一定价;配置器按目标(等级区间/次数/难度)动态算价(前端 JS 渲染)。<b>Bundle 打包立减</b>(如 Leveling Bundle 省 20%),并有 Starter/Ancestral/Mythic/Torment 四档梯度成品套餐。</div>
+      <div class="k">下单流程</div><div class="v">选服务 → 配置(等级/次数/难度/完成方式)→ 直接下单付款 → 系统按区域/排期派单给 booster → 账户内跟进/聊天。<b>先商品后订单</b>。</div>
+      <div class="k">递送 / 完成方式</div><div class="v">三种:<b>Piloted(上号代打,VPN 保护)</b>、<b>Self-play(组队陪同)</b>、<b>Remote Control(远程控制本机)</b>;货币/道具类走组队交易。</div>
+      <div class="k">自定义</div><div class="v">有:"Request custom offer / Create your custom offer"——找不到就找专家定制,约 2 分钟回复(走客服/专家撮合,非结构化配置)。</div>
+      <div class="k">信任 / 保障</div><div class="v">In-house booster、Zero-Ban Protocol(纯手工+VPN)、24/7 客服、按服务标 ETA(如满级 30 分钟);Credential on File 协议。</div>
+    </div>
+  </div>
+
+  <!-- Eldorado -->
+  <div class="prof">
+    <div class="top"><span class="nm">Eldorado</span><span class="chip c-c2c">C2C 竞价</span><span class="c-url">eldorado.gg/diablo-4-boosting</span></div>
+    <p class="soft" style="margin:6px 0 0">C2C 撮合平台。核心机制是"<b>买家配置需求 → 卖家竞价 → 买家挑报价并可直接砍价</b>",主打"数百 booster 竞争,价格低至省 40%"。</p>
+    <div class="kv">
+      <div class="k">商品结构</div><div class="v">前端仍是<b>标准化配置器</b>,顶部一排服务:Power Leveling、Altars of Lilith、Mythic Prankster、Paragon Leveling、Boss Kills、<b>Custom Request</b>。但商品本身不是卖家预先挂的 SKU,而是<b>买家发起需求</b>后由卖家接。</div>
+      <div class="k">定价方式</div><div class="v"><b>无平台定价,卖家竞价</b>。买家配好需求 → 收到多个卖家报价(含价格+交付时间)→ 可与任一卖家聊天砍价。大单可谈"每单折扣"(如多个 Pit/Boss 单价更低)。</div>
+      <div class="k">下单流程</div><div class="v">7 步:选服务 → 填配置信息 → 发送 Request → 卖家发来多个报价 → 与卖家聊细节 → 选定报价付款、开始 → 全程更新/聊天,完成后卖家标记 Delivered。<b>先需求后订单(反向)</b>。</div>
+      <div class="k">递送 / 完成方式</div><div class="v">配置器内含 <b>Solo / Duo / Stream / Solo queue / Offline mode</b> 等完成方式选项;Nightmare Dungeon 等支持 self-play 陪同或 piloted 代打二选一。</div>
+      <div class="k">自定义</div><div class="v"><b>Custom Request 是独立小类</b>:买家用自然语言描述诉求(如只要解锁 Altars、Waypoints、Renown),等卖家报价。明确限制:Custom Request 只能用于 boosting,不能买账号/道具。</div>
+      <div class="k">信任 / 保障</div><div class="v"><b>TradeShield 托管</b>、卖家资质审核、买家保护与质保、money-back;展示"近 337,879 单 98% 好评"。强调价格由买家掌控(多报价+可议价)。</div>
+    </div>
+  </div>
+
+  <!-- IGGM -->
+  <div class="prof">
+    <div class="top"><span class="nm">IGGM</span><span class="chip c-b2c">B2C 自营</span><span class="c-url">iggm.com/diablo-4-boosting</span></div>
+    <p class="soft" style="margin:6px 0 0">B2C。风格务实、SEO/攻略内容重(站内大量 D4 攻略引流)。配置器规整,主打便宜、安全、快。</p>
+    <div class="kv">
+      <div class="k">商品结构</div><div class="v">标准化配置器。D4 分 Gold / Items / Carry Run / Boosting 几大类;Boosting 内含 Power Leveling、Paragon、Boss、副本、材料farming、Build 等;Carry Run 单列。</div>
+      <div class="k">定价方式</div><div class="v">平台统一定价。配置器支持<b>选服务器(Season/Eternal · Soft/Hardcore)+ 起止点区间(start/end 分段选点)+ 选项</b>,并<b>按购买数量给折扣</b>(getDiscountByQuantity)。</div>
+      <div class="k">下单流程</div><div class="v">选服务 → 选服务器/区间/选项 → 加入购物车下单付款 → 客服对接开工。<b>先商品后订单</b>。</div>
+      <div class="k">递送 / 完成方式</div><div class="v">以账号代打为主(客服对接);具体完成方式按服务不同,页面未强前置展示。</div>
+      <div class="k">自定义</div><div class="v">无结构化自定义入口;"找不到就联系 24 小时客服定制"——走客服人工,不在前端做组合配置。</div>
+      <div class="k">信任 / 保障</div><div class="v">booster 多重安全验证、不用违规手段、7×24 客服;主打最低价与安全。内容营销(攻略)构建信任与流量。</div>
+    </div>
+  </div>
+
+  <!-- 横向对比 -->
+  <h2><span class="n">02</span> 横向对比矩阵</h2>
+  <table>
+    <thead><tr><th>维度</th><th>Overgear</th><th>Eldorado</th><th>IGGM</th></tr></thead>
+    <tbody>
+      <tr><td>模式</td><td><span class="tag b">B2C 自营</span></td><td><span class="tag p">C2C 竞价</span></td><td><span class="tag b">B2C 自营</span></td></tr>
+      <tr><td>标准化货架</td><td>有(最全)</td><td>有(配置器)</td><td>有</td></tr>
+      <tr><td>定价</td><td>平台统一 + 配置器动态</td><td><b>卖家竞价 / 可议价</b></td><td>平台统一 + 按量折扣</td></tr>
+      <tr><td>下单方向</td><td>先商品后订单</td><td><b>先需求后订单</b></td><td>先商品后订单</td></tr>
+      <tr><td>套餐 / Bundle</td><td><span class="tag g">强(省20% + 4档成品)</span></td><td>大单可谈折扣</td><td>按量折扣</td></tr>
+      <tr><td>自定义组合</td><td>客服定制</td><td><span class="tag g">Custom Request 独立小类</span></td><td>客服定制</td></tr>
+      <tr><td>完成方式</td><td>Piloted/Self/Remote</td><td>Solo/Duo/Stream/Offline…</td><td>以代打为主</td></tr>
+      <tr><td>递送时间</td><td>标 ETA(如30分钟)</td><td>卖家报价含交付时间</td><td>按服务/客服</td></tr>
+      <tr><td>信任机制</td><td>自有booster+ZeroBan</td><td><b>TradeShield托管+多报价</b></td><td>安全验证+攻略内容</td></tr>
+      <tr><td>价格心智</td><td>公道价+促销</td><td><b>竞价最低(省40%)</b></td><td>最低价</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 关键发现 -->
+  <h2><span class="n">03</span> 关键发现</h2>
+
+  <div class="find">
+    <div class="ft"><span class="fn">发现 1</span> 标准化"配置器"是 D4 代练的行业标配交互</div>
+    <p>三家(无论 B2C 还是 C2C)前端都是同一套范式:<b>选服务 → 配等级区间/次数/难度/服务器/完成方式 → 出价/下单</b>。这印证 iGV 做标准化配置器方向正确——这是买家已经被教育好的心智。iGV 已有的"分段选点 + 属性系数"配置器与 IGGM 的"start/end 区间 + 服务器 + 选项 + 按量折扣"高度一致。</p>
+  </div>
+
+  <div class="find">
+    <div class="ft"><span class="fn">发现 2</span> C2C 的差异化正解:Eldorado 式"配置 + 竞价"</div>
+    <p>Eldorado 证明 C2C 不必牺牲标准化体验:买家照样在规整配置器里配好需求,只是把"平台定价"换成"<b>多卖家竞价 + 可议价</b>",并用"省 40%"把 C2C 的价格优势讲成卖点。这与 iGV 的 C2C 定位天然契合,是比 B2C 更有说服力的价格叙事。</p>
+  </div>
+
+  <div class="find">
+    <div class="ft"><span class="fn">发现 3</span> 自定义(Custom)两条路线,C2C 更适合做成独立小类</div>
+    <p>B2C 两家(Overgear/IGGM)的"自定义"都是<b>甩给客服人工定制</b>,因为自营模式难以承接长尾。Eldorado 则把 <b>Custom Request 做成一个独立小类</b>(买家描述 → 卖家接),并明确限定只用于 boosting。这正是 iGV Custom 方向的最佳对标——C2C 天然能把自定义结构化承接,而不是丢给客服。</p>
+  </div>
+
+  <div class="find">
+    <div class="ft"><span class="fn">发现 4</span> 套餐/组合是提客单价的通用手法</div>
+    <p>Overgear 的 Bundle(省 20% + 四档成品套餐 Starter/Ancestral/Mythic/Torment)、Eldorado 的大单议价、IGGM 的按量折扣——三家都用"打包/量大更便宜"拉高客单价。印证 iGV 做 <b>Leveling Bundle / Boss Bundle</b> 与 <b>Custom 组合需求</b> 的价值,且"组合更省"是买家买账的通用逻辑。</p>
+  </div>
+
+  <div class="find">
+    <div class="ft"><span class="fn">发现 5</span> 完成方式(上号/组队)被前置为关键决策,且强绑信任</div>
+    <p>Overgear 明确区分 Piloted/Self-play/Remote 并强调 VPN、Zero-Ban;Eldorado 把 Solo/Duo/Stream/Offline 放进配置器。<b>完成方式是买家的核心信任决策点</b>,普遍前置展示并配安全话术——印证 iGV 把"组队/给号"作为独立字段前置、并承载押金/安全表达的做法。</p>
+  </div>
+
+  <div class="find">
+    <div class="ft"><span class="fn">发现 6</span> 递送时间以"参考 ETA"呈现,而非硬承诺</div>
+    <p>Overgear 标"约 30 分钟"级 ETA 但注明依服务而定;Eldorado 的交付时间由<b>卖家在报价里给出</b>(而非平台统一);IGGM 按服务/客服。三家都不把递送时间当成刚性 SLA——印证 iGV "递送时间先用固定值/参考,不做硬约束"的判断。</p>
+  </div>
+
+  <!-- 对 iGV 的启示 -->
+  <h2><span class="n">04</span> 对 iGV 的启示</h2>
+
+  <div class="imp">
+    <div class="k">定位</div>
+    竞品矩阵里存在一个空位:<b>做成标准化货架的 C2C</b>。B2C(Overgear/IGGM)有标准化不稀奇;纯 C2C 里只有 Eldorado 把"配置+竞价"跑通。iGV 若把"运营配置的标准化商品 + 多卖家竞价 + 结构化 Custom"三者做扎实,就是这一空位里最完整的形态。
+  </div>
+
+  <ul class="clean">
+    <li><b>标准化优先、坚持配置器范式</b>:与三家一致,这是买家习惯;iGV 的分段单价 + 属性系数已对齐 IGGM/Overgear 的配置逻辑,继续打磨。</li>
+    <li><b>价格叙事学 Eldorado</b>:C2C 的"多卖家竞价、价格更低"是比 B2C 更强的卖点,可作为对外主张(类似"省 X%")。</li>
+    <li><b>Custom 做成结构化独立小类(对标 Eldorado)</b>,而非像 B2C 甩给客服;iGV 的 A(购物车)+ C(对话式)方向比 Eldorado 的纯文本描述更进一步,是差异化机会。</li>
+    <li><b>套餐/组合继续做</b>:Bundle + Custom 组合 + "组合更省"的呈现,是三家验证过的提客单价手法。</li>
+    <li><b>完成方式前置 + 信任绑定</b>:把"组队/给号"前置展示并配押金/托管话术,与竞品一致且是买家决策关键。</li>
+    <li><b>递送时间保持"参考"</b>:三家都不做硬 SLA,iGV 固定值/参考的方向稳妥。</li>
+  </ul>
+
+  <div class="reco">
+    <b>一句话总结:</b>三家验证了"标准化配置器 + 套餐 + 完成方式前置 + 参考交付时间"是 D4 代练的成熟范式;真正的差异化空位是——<b>用 C2C 的多卖家竞价承接标准化货架,并把 Custom 做成结构化的组合/自定义小类</b>。这正是 iGV 现有规划的方向,竞品数据整体支持,且给出了可借鉴的具体手法(Eldorado 的竞价叙事与 Custom 小类、Overgear 的 Bundle 分档与完成方式话术)。
+  </div>
+
+  <div class="note">
+    数据来源:Overgear、Eldorado、IGGM 三家官网 D4 相关公开页面实时抓取(含品类导航、配置器结构、下单流程与 FAQ 文案)。配置器内的<b>具体价格数值</b>多由前端脚本动态渲染,未在静态页面取得,故本报告聚焦结构与机制而非逐项报价;涉及数值处(如 Overgear Bundle 省 20%、Eldorado 省 40%/98% 好评/33.7 万单、IGGM 按量折扣)均引自页面公开文案。竞品页面随季节与活动更新,实际以官网为准。
+  </div>
+
+</div>
+</body>
+</html>
