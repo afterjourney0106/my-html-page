@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WoW无限代练调研</title>
+<style>
+:root{
+  --bg:#f6f5f1;--card:#ffffff;--ink:#1d1d1b;--muted:#6b6a64;--line:#e3e1d9;
+  --accent:#b4531a;--accent-soft:#f6e6d9;--blue:#2d5f8a;--blue-soft:#e2ecf5;
+  --green:#3d7a4a;--green-soft:#e3f0e5;--red:#a83a32;--red-soft:#f6e1df;--gold:#9a7415;--gold-soft:#f5ecd2;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161614;--card:#201f1c;--ink:#ecebe6;--muted:#a3a198;--line:#34332e;
+    --accent:#e08a4f;--accent-soft:#3a2a1e;--blue:#7fb0db;--blue-soft:#1d2a36;
+    --green:#83c291;--green-soft:#1d2e21;--red:#e0877f;--red-soft:#3a2220;--gold:#d8b456;--gold-soft:#342c17;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px;display:grid;grid-template-columns:220px 1fr;gap:32px}
+nav{position:sticky;top:0;align-self:start;padding:28px 0;font-size:13px}
+nav a{display:block;color:var(--muted);text-decoration:none;padding:4px 0 4px 10px;border-left:2px solid var(--line)}
+nav a:hover{color:var(--accent);border-color:var(--accent)}
+nav .grp{margin:14px 0 4px;font-weight:600;color:var(--ink)}
+main{padding:28px 0 80px;min-width:0}
+header.hero{padding:8px 0 22px;border-bottom:1px solid var(--line);margin-bottom:10px}
+h1{font-size:30px;margin:0 0 6px;letter-spacing:.5px}
+h2{font-size:23px;margin:48px 0 6px;padding-top:10px}
+h2 .no{color:var(--accent);margin-right:8px}
+h3{font-size:17px;margin:26px 0 8px}
+p{margin:8px 0}
+.sub{color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi b{display:block;font-size:20px;color:var(--accent)}
+.kpi span{font-size:12.5px;color:var(--muted)}
+.tldr{background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:8px;padding:12px 16px;margin:14px 0}
+.note{background:var(--blue-soft);border-left:4px solid var(--blue);border-radius:8px;padding:10px 14px;margin:12px 0;font-size:14px}
+.warn{background:var(--red-soft);border-left:4px solid var(--red);border-radius:8px;padding:10px 14px;margin:12px 0;font-size:14px}
+.ok{background:var(--green-soft);border-left:4px solid var(--green);border-radius:8px;padding:10px 14px;margin:12px 0;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card)}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--bg);font-weight:600}
+.tbl{overflow-x:auto;margin:10px 0;border-radius:8px}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:20px;margin:1px 2px 1px 0;background:var(--bg);border:1px solid var(--line)}
+.t-hot{background:var(--red-soft);border-color:transparent;color:var(--red)}
+.t-mid{background:var(--gold-soft);border-color:transparent;color:var(--gold)}
+.t-low{background:var(--green-soft);border-color:transparent;color:var(--green)}
+.t-new{background:var(--blue-soft);border-color:transparent;color:var(--blue)}
+ul,ol{padding-left:22px;margin:6px 0}
+li{margin:3px 0}
+.timeline{position:relative;margin:14px 0 6px;padding-left:22px}
+.timeline:before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--line)}
+.tl{position:relative;margin:0 0 14px}
+.tl:before{content:"";position:absolute;left:-21px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--card);border:2px solid var(--accent)}
+.tl b{color:var(--accent)}
+.phase{border-top:3px solid var(--accent)}
+svg text{fill:var(--ink)}
+.src{font-size:12.5px;color:var(--muted)}
+.src a{color:var(--blue)}
+a{color:var(--blue)}
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr}
+  nav{display:none}
+  .grid2,.grid3,.grid4{grid-template-columns:1fr}
+  h1{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <div class="grp">WoW 无限 代练调研</div>
+  <div class="grp">① 版本解读</div>
+  <a href="#p1-what">这是个什么版本</a>
+  <a href="#p1-update">更新点</a>
+  <a href="#p1-compare">无限 vs 现有永久 60 服</a>
+  <a href="#p1-impact">对业务影响最大的变化</a>
+  <a href="#p1-token">时光徽章是什么</a>
+  <a href="#p1-hot">为什么有热度</a>
+  <a href="#p1-pain">玩家痛点</a>
+  <div class="grp">② 代练产品与配置</div>
+  <a href="#p2-list">WoW 代练产品清单</a>
+  <a href="#p2-pick">首发商品筛选</a>
+  <a href="#p2-config">iGV 配置方案</a>
+  <div class="grp">③ 定价与功能适配</div>
+  <a href="#p3-pricing">卖家的定价方式</a>
+  <a href="#p3-fit">现有功能能否满足</a>
+  <div class="grp">⑤ 需求变化预测</div>
+  <a href="#p5-data">数据与口径</a>
+  <a href="#p5-curve">两次开服的真实曲线</a>
+  <a href="#p5-rules">从数据得到的规律</a>
+  <a href="#p5-forecast">无限的需求预测</a>
+  <a href="#p5-diff">和历史不一样的地方</a>
+  <a href="#p5-monitor">要盯的指标</a>
+  <div class="grp">附录</div>
+  <a href="#src">资料来源</a>
+</nav>
+<main>
+<header class="hero">
+  <h1>《魔兽世界：无限》（WoW: Forever）代练业务调研</h1>
+  <div class="sub">调研日期：2026-09-16 ｜ 修订：V1.3 ｜ 市场范围：欧洲 / 北美（不含中国大陆） ｜ 配置框架：iGV 代练落地方案（卖家挂商品 + 买家发需求）</div>
+</header>
+
+
+<!-- ============ PART 1 ============ -->
+<section id="p1-what">
+<h2><span class="no">①</span>WoW 无限：版本解读</h2>
+<h3>1.1 这是个什么版本？</h3>
+<div class="card">
+<p><b>通俗说法：</b>魔兽现在有两条线——"正式服"（一直出新资料片，最新是《至暗之夜》）和"怀旧服"（把老版本原样重开，再一步步开到后面的资料片，开完了又重开）。<b>WoW 无限是第三条线</b>：停在 60 级的原版世界，<b>永远不升级到资料片</b>，但暴雪会不断往这个 60 级世界里加新地图、新副本、新任务、新的种族职业组合。剧情是平行时间线，和原版故事分叉。</p>
+<p>玩家圈子里一直管这种形态叫"经典加强版"（英文 Classic+），之前只有私人服务器（如 Turtle WoW）在做，这次是官方正式做了。</p>
+</div>
+<div class="tbl"><table>
+<tr><th style="width:150px">项目</th><th>内容</th></tr>
+<tr><td>英文名 / 中文名</td><td>World of Warcraft: Forever ／《魔兽世界：无限》</td></tr>
+<tr><td>发布</td><td>暴雪嘉年华 2026（2026-09-12）</td></tr>
+<tr><td>付费</td><td>包含在魔兽订阅里，不需要单独买游戏；新种族"天裔"需买礼包：英雄礼包 $29.99 ／ 史诗礼包 $59.99（含测试资格 + 30 天游戏时间）／ 典藏合集 $79.99（再加魔兽争霸3重制版，限时到 2027-01-11）</td></tr>
+<tr><td>测试（Beta）</td><td>美西时间 9/17 – 10/21 左右，等级上限 30 级，<b>只有买了史诗礼包或典藏合集的人能进</b></td></tr>
+<tr><td>正式上线</td><td>10/27 开放预留角色名、建角色 → <b>北京时间 11/5 07:00 上线</b>（美西时间 11/4 15:00）</td></tr>
+<tr><td>服务器结构</td><td><b>取消传统"服务器"</b>：每个大区（美服 / 欧服）按游戏规则各一个世界——普通 / PvP / 角色扮演 / 硬核；不同规则之间不能组队，联盟和部落仍然分开；角色名改成"名 + 姓"，保证大区内不重名</td></tr>
+<tr><td>固定原则</td><td>等级上限永远 60 级；没有飞行坐骑；低等级区域不会随玩家等级调整难度；暂无角色转移（只有硬核角色死后能转去其他规则）</td></tr>
+<tr><td>时光徽章 / 付费直升</td><td>开发者明确表示<b>"暂无计划"</b>推出（理由："练级的过程才是游戏本身"）</td></tr>
+</table></div>
+</section>
+
+<section id="p1-update">
+<h3>1.2 更新点</h3>
+<div class="grid2">
+<div class="card"><b>🗺️ 世界更大了</b>
+<ul>
+<li>新增 / 重做区域：海加尔山、大河林地（Riverglades）、泽风岛（Zephras Isle，天裔的新手区）、Shen'dralas 等</li>
+<li>1–60 级全程新增 <b>1000 多个任务</b></li>
+<li>设计上鼓励"在野外遇到人一起玩"，而不是一个人按最快路线升级</li>
+</ul></div>
+<div class="card"><b>⚔️ 新副本、新团本、新战场</b>
+<ul>
+<li><b>9 个新副本</b>（五人小队副本，如铁炉堡地下的 Hall of Thanes 13–18 级、洛丹伦废墟 15–20 级、达拉然城、Alcaz 监狱等）</li>
+<li>团本（多人团队副本）12/9 开放：深穴 10 人、海加尔峰 20 人、奥妮克希亚的巢穴 40 人</li>
+<li>新战场"暗矛群岛"，15 对 15（抢据点 + 夺旗）</li>
+</ul></div>
+<div class="card"><b>🧝 新种族 + 新种族职业组合</b>
+<ul>
+<li>新种族 <b>天裔（Skyborne）</b>：背景是中立的精灵，<b>建角色时选择加入联盟或部落</b>，自带滑翔技能（需买礼包）</li>
+<li>新组合：亡灵圣骑士、矮人萨满、侏儒牧师、人类猎人、兽人法师、巨魔术士</li>
+<li>每个种族改为"2 个主动 + 2 个被动"种族技能，种族差异更大</li>
+</ul></div>
+<div class="card"><b>🛡️ 职业与装备重做</b>
+<ul>
+<li>加了新技能、天赋重做（例：圣骑士 6 级就有神圣打击），原来需要别人给的团队增益改成人人自带</li>
+<li>命中、暴击合并为通用属性；每个副本的掉落都重新设计，新增几百件装备；野外掉落的紫色装备大幅加强</li>
+<li>→ <b>网上的老攻略、老的"毕业装备清单"基本不能用了</b></li>
+</ul></div>
+<div class="card"><b>🔨 专业 + 露营</b>
+<ul>
+<li>600 多个新配方，高级配方要从副本首领身上掉</li>
+<li><b>露营系统</b>：野外搭营火，有专业的玩家可以摆铁砧、炼金台等设施，大家共享 1 小时增益效果</li>
+<li>烹饪的食物给属性，还能加杀怪经验</li>
+<li><b>生活技能新增属性收益</b>（例：满级钓鱼 +8% 全属性）</li>
+</ul></div>
+<div class="card"><b>📈 传承系统（Legacy）</b>
+<ul>
+<li>全账号共享的"传承点数"，每个角色各自点三类加成：专业 / 冒险 / 资源（例：多拿休息经验、采集多出材料、施法不耗材料）</li>
+<li>首发每个角色最多用 16 点，账号总共可拿 65 点，另有外观奖励</li>
+<li>→ <b>鼓励玩家练多个角色</b></li>
+</ul></div>
+<div class="card"><b>✨ 画面与便利</b>
+<ul>
+<li>画面全面升级（新光照、阴影、水面等），可选高清 / 标清模型、现代 / 经典画面风格</li>
+<li>官方支持手柄</li>
+<li>新增<b>队伍查找功能</b>（找队更容易）</li>
+<li>幻化（改变装备外观，可关闭）：绿色和蓝色装备的外观全队都能获得，紫色装备外观只给拿到装备的人</li>
+</ul></div>
+<div class="card"><b>🗓️ 后续路线图</b>
+<ul>
+<li>2026/27 冬季：硬核规则开放</li>
+<li>2027 春季：2 个新团本、2 个新副本、传说武器任务线、PvP 赛季刷新</li>
+<li>2027 夏季：重做一个经典团本、新团本、2 个新副本、专业与传承系统更新</li>
+</ul></div>
+</div>
+<div class="note">说明：团本数量与名称在不同媒体报道中略有出入（部分报道只提到 10 人和 20 人两个），以 Blizzard Watch 整理的现场路线图为准；测试结束日官方写 10/21，媒体多写 10/22。</div>
+</section>
+
+<section id="p1-compare">
+<h3>1.3 无限 vs 现有永久 60 级服务器（经典怀旧服 / 20 周年服 / 硬核服）</h3>
+<p class="sub">可信度：<span class="tag t-low">官方</span>暴雪公布或开发者表态　<span class="tag t-mid">媒体</span>游戏媒体深度报道　<span class="tag t-hot">未确认</span>只有传言</p>
+<div class="tbl"><table>
+<tr><th style="width:120px">模块</th><th>现有永久 60 服</th><th>无限</th><th style="width:70px">类型</th><th style="width:70px">可信度</th><th>对业务的影响</th></tr>
+<tr><td><b>服务器结构</b></td><td>固定服务器，买卖金币要选具体服务器</td><td>取消服务器：每个大区按规则（普通 / PvP / 角色扮演 / 硬核）各一个世界，玩家按语言匹配</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-low">官方</span></td><td>金币和代练商品不再按服务器区分，只分 大区 × 规则 × 阵营；卖家库存集中，商品数量少很多</td></tr>
+<tr><td><b>副本升级经验</b></td><td>杀怪经验高，满级角色带低级号反复刷副本是主流代练方式</td><td>副本里杀怪经验大幅下调，副本任务经验大幅提高</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-low">官方</span></td><td><b>"刷副本冲级"类代练基本失效</b>，等级代练改为做任务为主，工时变长</td></tr>
+<tr><td><b>时光徽章 / 付费直升</b></td><td>不适用</td><td>官方"暂无计划"推出</td><td><span class="tag">不变</span></td><td><span class="tag t-low">官方</span></td><td>金币价格没有官方价格压着，第三方金币有空间；想快速满级只能找代练</td></tr>
+<tr><td><b>拾取规则</b></td><td>五人本和团本都是团长分配或全团掷骰，可以组金团（用金币竞拍装备的团，20 周年服、硬核服已禁）</td><td><b>只有五人本改成个人拾取，团本没改</b>；五人本的改动是为了升级过渡</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-mid">卖家实测</span></td><td>团本仍是团队分配，<b>金团照常运作</b>（官方禁，但打团的号和分钱的号分开，实际规避）；买金币参加金团仍是刚需；"指定装备代打"在团本可以做</td></tr>
+<tr><td><b>团本规模与开放</b></td><td>40 人团本为主，所有经典团本都开着</td><td>首批深穴 10 人、海加尔峰 20 人、奥妮克希亚 40 人（12/9）；经典团本 2027 夏才有一个重做版</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-low">官方</span></td><td>10 / 20 人团本小工作室也凑得齐人，供给门槛低；开服初期没有熔火之心、黑翼之巢等老团本代练</td></tr>
+<tr><td><b>阵营</b></td><td>联盟 / 部落</td><td>仍只有联盟 / 部落；新种族天裔建角色时选边，建好后不能改</td><td><span class="tag t-new">新增种族</span></td><td><span class="tag t-low">官方</span></td><td>阵营选项不变；天裔需要买家先买 $29.99 礼包，代练前要确认</td></tr>
+<tr><td><b>种族职业组合</b></td><td>固定组合（如亡灵不能当圣骑士）</td><td>新增亡灵圣骑士、矮人萨满、侏儒牧师、人类猎人、兽人法师、巨魔术士</td><td><span class="tag t-new">新增</span></td><td><span class="tag t-low">官方</span></td><td>可以按"新组合练级路线"单独卖</td></tr>
+<tr><td><b>种族技能</b></td><td>原版种族技能</td><td>每个种族 2 主动 + 2 被动</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-low">官方</span></td><td>影响小</td></tr>
+<tr><td><b>职业技能与天赋</b></td><td>原版</td><td>天赋重做、新增技能；团队增益改为人人自带</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-low">官方</span></td><td>老的代练路线和打法要重新摸，开服前两周效率偏低</td></tr>
+<tr><td><b>装备与属性</b></td><td>原版装备，法术和物理命中分开</td><td>命中 / 暴击合并；副本掉落全部重做，新增几百件；野外紫色装备加强</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-low">官方</span></td><td>老的毕业装备清单失效；前期"满级该穿什么"信息差大，副本带刷、陪玩教学有需求</td></tr>
+<tr><td><b>专业</b></td><td>原版配方</td><td>600+ 新配方；高级配方从副本首领掉；可制作营地设施</td><td><span class="tag t-new">新增</span></td><td><span class="tag t-low">官方</span></td><td>材料和配方需要金币 → 金币需求增加；生活技能有属性收益，专业冲级是卖家反馈订单量最大的两类之一</td></tr>
+<tr><td><b>露营</b></td><td>无</td><td>野外搭营火，专业设施，共享 1 小时增益</td><td><span class="tag t-new">新增</span></td><td><span class="tag t-low">官方</span></td><td>间接带动专业需求</td></tr>
+<tr><td><b>传承系统</b></td><td>无</td><td>账号共享点数，每个角色各自点加成</td><td><span class="tag t-new">新增</span></td><td><span class="tag t-low">官方</span></td><td>鼓励练多个角色 → 等级代练复购</td></tr>
+<tr><td><b>坐骑</b></td><td>40 级、60 级分别买坐骑 + 学骑术，约 100 金 / 1000 金</td><td>改为学骑术直接送坐骑；价格未公布</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-mid">媒体</span></td><td>骑术价格决定开服金币需求有多高，测试期间要核实</td></tr>
+<tr><td><b>幻化</b></td><td>无</td><td>可开关；绿蓝装备外观全队获得，紫色装备外观只给拿到的人</td><td><span class="tag t-new">新增</span></td><td><span class="tag t-low">官方</span></td><td>以后可能有"刷外观"需求，优先级低</td></tr>
+<tr><td><b>新副本 / 地图 / 任务 / 战场</b></td><td>原版</td><td>9 个新副本、多块新地图、1000+ 任务、15 对 15 新战场</td><td><span class="tag t-new">新增</span></td><td><span class="tag t-low">官方</span></td><td>副本代练的选项要更新；练级路线重新设计</td></tr>
+<tr><td><b>硬核规则</b></td><td>角色死一次就作废</td><td>单独的规则，冬季开放；死后可转去其他规则继续玩</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-low">官方</span></td><td>硬核代练要配死亡赔付规则</td></tr>
+<tr><td><b>角色转移</b></td><td>可付费转服</td><td>暂无（只有硬核死后转规则）</td><td><span class="tag t-mid">改动</span></td><td><span class="tag t-mid">媒体</span></td><td>不能从别处搬金币、角色过来，所有人金币都从零开始</td></tr>
+<tr><td><b>付费内容</b></td><td>只有订阅</td><td>订阅内含，新种族要单独买礼包</td><td><span class="tag t-new">新增</span></td><td><span class="tag t-low">官方</span></td><td>不涉及</td></tr>
+<tr><td><b>画面 / 手柄</b></td><td>原画面</td><td>画面全面升级，支持手柄</td><td><span class="tag t-new">新增</span></td><td><span class="tag t-low">官方</span></td><td>无直接影响</td></tr>
+</table></div>
+</section>
+
+<section id="p1-impact">
+<h3>1.4 对业务影响最大的变化</h3>
+<div class="grid2">
+<div class="card"><b>① 副本升级经验被砍（官方）</b><br>开发者原话：副本里杀怪的经验"大幅降低"，副本任务经验"高了非常非常多"。满级角色带低级号反复刷副本冲级这条路基本走不通，等级代练要改为"做任务 + 副本任务首次通关"，工时比经典服更长，定价要往上调。</div>
+<div class="card"><b>② 暂无时光徽章和付费直升（官方）</b><br>对第三方金币是利好（没有官方价格压价），对等级代练也是利好（没有官方直升可以替代）。但"暂无计划"不等于永远不上，需要持续关注。</div>
+<div class="card"><b>③ 取消服务器（官方）</b><br>对卖家是利好：金币可以按 大区 × 规则 × 阵营 统一定价，代练商品和库存更集中。</div>
+<div class="card"><b>④ 拾取规则只改了五人本（卖家实测）</b><br>五人本改为个人拾取，团本没改。团本仍是团队分配，金团照常运作，金币需求不受影响；团本代练可以按"带打次数"卖，也可以做"指定装备"。官方尚无正式文档，以卖家实测为准。</div>
+</div>
+
+</section>
+
+<section id="p1-token">
+<h3>1.5 时光徽章是什么？为什么会影响金币业务？</h3>
+<div class="card">
+<p><b>时光徽章（英文 WoW Token）是暴雪官方的"真钱换金币"通道：</b></p>
+<ol>
+<li>玩家 A 花真钱（比如 $20）向暴雪买一个徽章，挂到拍卖行卖掉，换到金币；</li>
+<li>玩家 B 用金币从拍卖行买下这个徽章，兑换成 30 天游戏时间或战网余额；</li>
+<li>本质就是<b>官方允许的"用钱买金币 / 用金币换月卡"</b>。</li>
+</ol>
+<p><b>它给第三方金币价格设了一个会变动的上限：</b></p>
+<div class="tbl"><table>
+<tr><th>组成部分</th><th>谁决定</th><th>举例</th></tr>
+<tr><td>一个徽章卖多少真钱</td><td><b>官方定死</b></td><td>固定 $20</td></tr>
+<tr><td>一个徽章在拍卖行值多少金币</td><td><b>市场供需决定</b></td><td>系统定期自动调价：卖徽章的人多就降价，买徽章的人多就涨价</td></tr>
+</table></div>
+<p><b>上限 = 官方真钱价格 ÷ 拍卖行徽章金币价格。</b>例：徽章 $20 值 1 万金 → 官方渠道相当于 $2 / 1000 金；一个月后徽章涨到 2 万金 → 上限降到 $1 / 1000 金。</p>
+<p><b>对金币业务的三个影响：</b></p>
+<ol>
+<li><b>压价格：</b>第三方金币只能卖得比官方渠道便宜，而且因为有封号风险，实际要便宜不少才有人买；</li>
+<li><b>分流买家：</b>在意安全的买家会直接买徽章；</li>
+<li><b>价格波动大：</b>徽章价格一波动，金价跟着波动。国服时光服上线徽章后 24 小时内，徽章价从约 3150 金涨到 4700 金再回落；TBC 怀旧服徽章价从 4000 金一路降到 1800 金。</li>
+</ol>
+<p>无限目前暂无徽章计划，所以<b>暂时不存在这个上限</b>，金币价格完全由第三方市场决定。</p>
+</div>
+</section>
+
+<section id="p1-hot">
+<h3>1.6 为什么会有热度？为什么热度大？</h3>
+<div class="grid2">
+<div class="card"><b>① 玩家喊了七年的"经典加强版"，终于官方做了</b><br>
+自 2019 年怀旧服上线，玩家一直要求"别只重开老版本，在 60 级世界里加新东西"。私人服务器 Turtle WoW 就靠这个做到了 <b>峰值 1.3 万人同时在线、几十万用户</b>，暴雪 2025 年 8 月起诉了它——说明需求真实存在，官方现在自己来接这批人。</div>
+<div class="card"><b>② "不会被清零"的长期版本</b><br>
+怀旧服玩家最大的怨念是循环："开荒 → 升级到下一个资料片 → 装备作废 → 等下一个新服"。无限承诺永久 60 级，角色投入长期有效，对上班族、老玩家吸引力很大。</div>
+<div class="card"><b>③ 所有人同一天从 1 级开始</b><br>
+没有老玩家留下的装备和金币，大家起点一样。历史参考：2019 年怀旧服开服时，直播平台 Twitch 同时观看 <b>超过 100 万人</b>，首周观看时长 5500 万小时。</div>
+<div class="card"><b>④ 三类人群同时被吸引</b><br>
+怀旧服玩家（TBC 周年服人口已从峰值 32.5 万降到约 22.7 万，正在找下一个去处）＋ 玩腻了正式服的玩家 ＋ 私服玩家和流失的老玩家。暴雪也把它定位为和正式服、怀旧服并列的"第三条产品线"，会长期投入。</div>
+<div class="card"><b>⑤ 门槛低，话题多</b><br>
+订阅内含，不用额外买游戏；亡灵圣骑士、矮人萨满这些"梦想组合"是讨论最多的点；预告片在 Reddit 魔兽板块一天 7000+ 点赞，官方 X（推特）相关内容 600 万浏览。</div>
+<div class="card"><b>⑥ 时间点好</b><br>
+11 月初上线，正好接上黑五、圣诞、寒假这段欧美游戏消费高峰；12/9 团本开放正好在圣诞前。</div>
+</div>
+<div class="warn"><b>也有争议（会影响热度能持续多久）：</b>天裔种族要单独付 $29.99、进测试要 $59.99，被批"一上线就搞额外收费"（Reddit 700+ 条讨论）；一部分坚持原汁原味的怀旧玩家不接受改动；幻化、取消服务器也有分歧。</div>
+</section>
+
+<section id="p1-pain">
+<h3>1.7 玩家痛点（= 代练和金币的机会点）</h3>
+<div class="tbl"><table>
+<tr><th style="width:150px">痛点</th><th>具体表现</th><th style="width:170px">对应机会</th></tr>
+<tr><td><b>练级时间长，还没有"刷副本冲级"的捷径</b></td><td>经典服普通玩家从 1 级到 60 级大约要玩 200 多个小时。无限新增了 1000 多个任务，杀一只怪设计为 10–15 秒，而且暴雪把副本里杀怪的经验砍了很多，以前"找满级玩家带着刷副本快速升级"的办法不管用了。上班族每天只能玩 2–3 小时，要一两个月才能满级，这时开服第一批玩家已经在打团本了。</td><td>代练 - 等级代练<br>代练 - 副本代练</td></tr>
+<tr><td><b>开服人挤人</b></td><td>取消服务器后，同一大区同一规则的玩家都在一个世界里。开服前几天新手区、任务怪都要抢，任务物品要排队。</td><td>代练 - 等级代练</td></tr>
+<tr><td><b>全服没钱</b></td><td>新世界没有老玩家留下的金币，不能从别的服务器转角色或金币，官方也不卖时光徽章，所有人都从零开始攒钱。花钱的地方反而更多：40 级和 60 级骑术、技能书、600 多个新配方需要的材料、营地设施。</td><td>金币<br>代练 - 坐骑代练</td></tr>
+<tr><td><b>专业成本高、周期长</b></td><td>新配方很多，高级配方要反复刷副本首领才掉；采矿、草药这类采集专业要在野外跑很久，还要和其他人抢资源点。</td><td>代练 - 专业代练<br>金币</td></tr>
+<tr><td><b>老经验用不上</b></td><td>职业技能、天赋、装备属性、副本掉落都改了，网上的老攻略和"毕业装备清单"不适用。新副本需要控制怪物、控制仇恨，随便组的队伍经常团灭。</td><td>代练 - 副本代练<br>代练 - 陪玩教学</td></tr>
+<tr><td><b>满级后追团本进度</b></td><td>12/9 团本开放，公会招人要看装备，进团本前还要做一系列任务。团本拾取仍是团队分配，装备多通过金团（用金币竞拍装备的团）成交。</td><td>代练 - 团本代练<br>金币</td></tr>
+<tr><td><b>想练多个角色</b></td><td>传承系统的点数全账号共享，满级的角色越多加成越多；新组合（亡灵圣骑士、矮人萨满等）很多人都想试，主号满级后会想练第二、第三个角色。</td><td>代练 - 等级代练</td></tr>
+<tr><td><b>硬核模式怕死</b></td><td>硬核规则下角色死一次，在这个模式里的进度就没了（只能转去普通规则）。练到 50 多级死掉，几十个小时就白费了。</td><td>代练 - 硬核代练</td></tr>
+<tr><td><b>PvP 门槛高</b></td><td>新增 15 对 15 战场，刷荣誉很花时间；在 PvP 规则下，低级角色在野外容易被高级玩家击杀。</td><td>代练 - PvP 代练</td></tr>
+</table></div>
+</section>
+
+<!-- ============ PART 2 ============ -->
+<section id="p2-list">
+<h2><span class="no">②</span>WoW 代练产品清单与 iGV 配置方案</h2>
+<h3>2.1 WoW 代练都有哪些产品</h3>
+<p class="sub">WoW 代练已经分成一批固定的小分类，每一类的名字、做法和买家目的都不一样。</p>
+<div class="tbl"><table>
+<tr><th style="width:110px">小分类</th><th style="width:150px">常见叫法</th><th>具体做什么（怎么做）</th><th style="width:210px">买家为什么买</th><th style="width:110px">常见交付方式</th></tr>
+<tr><td><b>等级代练</b></td><td>Power Leveling / Level Boost<br>升级、冲级</td><td>把角色从当前等级练到目标等级。打手接手角色，按最优路线做任务、打怪、顺带跑几个副本任务。<b>实际订单以碎片式区间为主</b>（37–40、46–50、56–60 这种），买家卡在某个等级段玩不动了，找人升几级再自己接着玩；1–60 整段周期长、价格高，下单的很少。过程中赚到的钱、掉落、装备都留在角色身上。</td><td>满级要玩 200 多个小时，上班族跟不上开服进度；满级后才能进团本、打战场、和朋友一起玩</td><td>代上号为主</td></tr>
+<tr><td><b>副本代练</b></td><td>Dungeon Boost / Carry<br>副本带刷、带本</td><td>5 人小副本，由打手组队把买家带过一遍。分两种用途：<b>升级阶段</b>带着做副本任务拿经验；<b>满级阶段</b>反复刷指定副本，掉什么装备归买家。按"次数"卖。</td><td>自己排队组不到人、野队打不过；满级后要凑一套能进团本的装备</td><td>陪打为主（买家自己在队伍里）</td></tr>
+<tr><td><b>团本代练</b></td><td>Raid Boost / Carry<br>团本带打、带团</td><td>10 人 / 20 人 / 40 人的大型副本，由一整个代打团队带买家打通关。买家可以自己上号跟团，也可以交号。按"打一次"或"全通一次"计价。</td><td>团本要固定时间、固定人数，还要会打；买家想拿装备但进不去公会团</td><td>陪打为主</td></tr>
+<tr><td><b>专业代练</b></td><td>Profession Leveling<br>专业冲级、生活技能</td><td>把采矿、草药、锻造、炼金、钓鱼这类"生活技能"从 1 练到 300。打手满世界采材料、反复制造物品把熟练度刷上去，材料可以买家自备，也可以卖家出（另收钱）。</td><td>专业是赚钱和做装备的基础，过程枯燥、耗时几十小时；无限里生活技能还有属性收益（满级钓鱼 +8% 全属性）</td><td>代上号为主</td></tr>
+<tr><td><b>PvP 代练</b></td><td>Honor Farm / Rank Boost<br>荣誉代刷、军衔</td><td>玩家对战内容。<b>荣誉</b>：反复打战场攒荣誉点数，用来换 PvP 装备；<b>军衔</b>：把 PvP 军衔从低打到高，军衔越高能买的装备越好。按点数档位或军衔区间计价。</td><td>刷荣誉要连续打几百场战场，非常熬人</td><td>代上号 / 陪打都有</td></tr>
+<tr><td>坐骑 / 骑术</td><td>Mount / Riding Boost</td><td>帮买家攒够钱并学会骑术（40 级、60 级各一次），有的还包含跑特定任务拿稀有坐骑。</td><td>没坐骑跑图慢一倍；骑术很贵，开服初期攒不出来</td><td>代上号</td></tr>
+<tr><td>声望代练</td><td>Reputation Boost</td><td>反复做某个阵营的任务或刷副本，把和这个阵营的关系刷到最高，解锁只有高声望才能买的装备、配方、坐骑。</td><td>声望要重复刷几十小时</td><td>代上号</td></tr>
+<tr><td>团本进入任务</td><td>Attunement</td><td>进某些团本前要先做一长串前置任务、跑几个副本拿钥匙。打手帮买家把这串任务做完。</td><td>前置任务又长又绕，不做就进不去团本</td><td>陪打 / 代上号</td></tr>
+<tr><td>装备代练</td><td>Gearing / BiS Gear<br>毕业装、团本前装备</td><td>不按副本次数卖，而是承诺凑齐"一整套装备"或"指定的某几件装备"，打手反复刷副本、团本、做制造装备直到拿到。</td><td>买家只关心结果：能不能穿上一套能打团本的装备</td><td>陪打为主</td></tr>
+<tr><td>按小时代打</td><td>Hourly Driving / Rent a Gamer</td><td>按小时雇一个打手，想让他干什么都行——刷钱、刷材料、跑任务、陪打。</td><td>需求零散，不好归到某个固定商品里</td><td>代上号 / 陪打</td></tr>
+<tr><td>陪玩教学</td><td>Coaching</td><td>高手和买家一起玩，边打边讲：职业怎么出装、副本怎么打、PvP 怎么打。按小时收费。</td><td>想自己学会，而不是让人代打</td><td>陪打</td></tr>
+<tr><td>硬核代练</td><td>Hardcore Boost</td><td>在"死一次角色就作废"的规则下练级，打手打得更谨慎、更慢，通常还卖一份"死亡赔付"（死了免费重练或按比例退款）。</td><td>硬核死亡不可逆，自己练风险太大</td><td>代上号 / 双人陪打</td></tr>
+<tr><td>金币</td><td>Gold</td><td>严格说不属于代练，是打手刷好金币后卖给买家，通过游戏内邮件或当面交易给到。</td><td>骑术、材料、消耗品都要花钱，新服没人有钱</td><td>—（走金币类目）</td></tr>
+</table></div>
+<div class="note">交付方式三种：<b>代上号</b>（打手登录买家账号，最快最便宜，但要交账号）、<b>陪打</b>（买家自己控制角色和打手组队，不交账号）、<b>远程协助</b>（打手远程操作买家电脑，不给账号密码）。另有"直播留证"作为附加服务。</div>
+</section>
+
+<section id="p2-pick">
+<h3>2.2 首发商品筛选</h3>
+<p class="sub">标准：多数竞品都有、且是主推或实际在售的商品先做；只有个别网站有、或还是"售罄"占位的商品放到二期，等开服后看真实需求再决定。</p>
+<div class="tbl"><table>
+<tr><th style="width:150px">商品</th><th>有该商品的竞品</th><th>市场表现</th><th style="width:110px">结论</th></tr>
+<tr><td><b>等级代练</b></td><td>Overgear、WowVendor、LFCarry、Epiccarry、BoostRoom、BlazingBoost、IGGM、G2G、Eldorado、PlayerAuctions（全部）</td><td>各站唯一或主推的在售商品，G2G 上的商品几乎全是它</td><td><span class="tag t-low">✅ 首发</span></td></tr>
+<tr><td><b>副本代练</b></td><td>Overgear、LFCarry、Epiccarry、Eldorado（单独分类）、WowVendor（加购项）</td><td>各站常规分类</td><td><span class="tag t-low">✅ 首发</span></td></tr>
+<tr><td><b>团本代练</b></td><td>Overgear、LFCarry、Epiccarry</td><td>各站常规分类，12/9 团本开放后才有</td><td><span class="tag t-low">✅ 首发</span></td></tr>
+<tr><td><b>专业代练</b></td><td>Overgear、LFCarry、Epiccarry、WowVendor（加购项）</td><td>各站常规分类；卖家反馈是<b>订单量最大的两类之一</b></td><td><span class="tag t-low">✅ 首发</span></td></tr>
+<tr><td><b>PvP 代练</b></td><td>Overgear、Epiccarry、BoostRoom、Eldorado（单独分类）</td><td>各站常规分类</td><td><span class="tag t-low">✅ 首发</span></td></tr>
+<tr><td>坐骑 / 骑术</td><td>Overgear、Epiccarry</td><td>两家均为售罄占位</td><td><span class="tag t-mid">二期评估</span></td></tr>
+<tr><td>声望代练</td><td>Overgear、Epiccarry</td><td>两家均为售罄占位</td><td><span class="tag t-mid">二期评估</span></td></tr>
+<tr><td>陪玩教学</td><td>LFCarry、BoostRoom</td><td>非主推</td><td><span class="tag t-mid">二期评估</span></td></tr>
+<tr><td>硬核代练</td><td>LFCarry</td><td>仅一家，硬核冬季才开放</td><td><span class="tag t-mid">二期评估</span></td></tr>
+<tr><td>装备代练</td><td>Overgear、Epiccarry</td><td>售罄占位；团本拾取未改，可做但需求待观察</td><td><span class="tag t-mid">二期评估</span></td></tr>
+<tr><td>团本进入任务</td><td>Overgear</td><td>仅一家</td><td><span class="tag t-mid">二期评估</span></td></tr>
+<tr><td>按小时代打</td><td>Overgear、PlayerAuctions（1 条）</td><td>非主推</td><td><span class="tag t-mid">二期评估</span></td></tr>
+<tr><td>专业套餐、传说物品、单件装备</td><td>Overgear</td><td>仅一家</td><td><span class="tag t-mid">二期评估</span></td></tr>
+</table></div>
+<div class="note">各站的配置项名称不同（速度叫 Execution speed / Speed，方式叫 Boost method / Delivery method 等），但功能结构一致：一个基础价 + 若干加价项。二期商品的具体做法在真实配置前再逐项调研。竞品详细对比见第④部分。</div>
+</section>
+
+<section id="p2-config">
+<h3>2.3 iGV 配置方案</h3>
+<div class="tbl"><table>
+<tr><th style="width:190px">模式</th><th>WoW 无限怎么用</th></tr>
+<tr><td><b>模式一：卖家挂商品</b> ✓</td><td>卖家按平台模板上架、填价目表；买家选服务 → 填参数 → 获取报价 → 在弹窗里选卖家下单</td></tr>
+<tr><td><b>模式二：买家发需求 · 卖家抢单</b> ✓</td><td>"自定义 · 组合"tab：组合多个服务（整单一个卖家接）或自由描述；买家自己出价，选代练限时（2 小时 / 6 小时 / 24 小时 / 3 天），超时无人接自动退款</td></tr>
+<tr><td>模式三：平台派单</td><td>暂不支持</td></tr>
+</table></div>
+
+<div class="card"><b>买家下单路径（模式一）：</b>服务类型 tab → 选模板 → 填计算器参数（含服务器组合）→ 选交付方式 + 期望完成时间 →（可选）备注 → 点"$xx 起 · 获取报价" → 弹窗按卖家价目表列出能接这个规格的卖家 → 选卖家 → 结算<br>
+<b>卖家上架路径：</b>第一步 品牌 / 品类 → 第二步 选服务类型（= 选模板）+ 图文（中台锁定，只读）→ 第三步 交付方式 + 交付时长 + 价目表（分段单价 / 系数）+ 保障期 → 右侧计算器试算，显示抽佣 35% 与预计到手 → 发布</div>
+
+<h4 style="margin:16px 0 6px">① 服务类型 tab 与模板</h4>
+<div class="tbl"><table>
+<tr><th style="width:90px">服务类型 tab</th><th style="width:120px">模板</th><th>固定价行（一个模板只有一行）</th><th>系数行</th><th style="width:90px">上线时间</th></tr>
+<tr><td><b>升级</b></td><td>等级提升</td><td><b>区间型</b>：等级 1 → 60。卖家分段填每级单价，例：1–20 级 $1.2 / 级、20–40 级 $3.6 / 级、40–50 级 $5.3 / 级、50–60 级 $9.1 / 级</td><td><b>服务器组合</b>（单选，见下方说明）<br>速度（单选：标准 ×1 / 加急 ×1.5 / 特急 ×1.8）<br>附加服务（多选：直播留证 +$、每小时进度更新 +$、封号包赔 +$、过程截图 +$）</td><td>11/5</td></tr>
+<tr><td><b>副本</b></td><td>副本带刷</td><td><b>按次数</b>：选副本（9 个新副本 + 原版副本）× 次数</td><td><b>服务器组合</b>（单选）<br>附加服务（多选）</td><td>11/5</td></tr>
+<tr><td><b>团本</b></td><td>团本带打</td><td><b>按次数</b>：深穴 / 海加尔峰 / 奥妮克希亚 × 次数</td><td><b>服务器组合</b>（单选）<br>附加服务（多选）</td><td>12/9</td></tr>
+<tr><td><b>专业</b></td><td><b>每个专业一个模板</b>：采矿 / 草药 / 剥皮 / 锻造 / 裁缝 / 炼金 / 附魔 / 工程 / 钓鱼 / 烹饪 / 急救</td><td><b>区间型</b>：技能 1 → 300，<b>每个专业各一套分段价</b></td><td><b>服务器组合</b>（单选）<br>材料（单选：自备 ×1 / 卖家提供 +$）</td><td>11/5</td></tr>
+<tr><td rowspan="2"><b>PvP</b></td><td>荣誉代刷</td><td><b>按次数</b>：每档荣誉（如每 1 万点）× 次数</td><td><b>服务器组合</b>（单选）<br>附加服务（多选）</td><td>等官方公布荣誉系统</td></tr>
+<tr><td>军衔提升</td><td><b>区间型</b>：军衔 当前 → 目标</td><td><b>服务器组合</b>（单选）</td><td>等官方确认是否沿用军衔</td></tr>
+<tr><td><b>自定义</b></td><td>自定义模板</td><td colspan="2">不定价；卖家上架即获得 WoW 无限的抢单资格</td><td>11/5</td></tr>
+</table></div>
+<div class="note">
+<b>配置要点：</b><br>
+· <b>专业按专业拆模板</b>：卖家反馈各专业价格差异大，拆成多个模板后每个专业都有自己的分段价，不用在同一套价上乘系数。<br>
+· <b>服务器组合作为计价属性</b>：大区 × 规则 × 阵营 共 12 个取值全部列出（US-PvE-Alliance、US-PvE-Horde、US-PvP-Alliance、US-PvP-Horde、US-RP-Alliance、US-RP-Horde，EU 同理），卖家勾选自己能接的组合并各自定价，买家选哪个组合就按哪个组合的价格成交。<br>
+· <b>不做"刷副本冲级"类商品</b>（官方已削弱副本杀怪经验）。副本合并为一个模板："升级阶段带打副本任务"和"满级刷首通装备"用同一套按次数计价，卖家在商品里选副本即可。<br>
+· <b>团本按"带打次数"卖</b>；团本拾取未改（仍团队分配），后续可按需求追加"指定装备"选项。<br>
+· <b>PvP 模板结构待官方信息</b>：官方已提到新 PvP 系统和赛季刷新，但荣誉、军衔规则尚未公布。<br>
+· 团本、PvP 模板在上线前不配置；没配模板的服务类型不显示 tab，到时运营开启即可。</div>
+
+<h4 style="margin:16px 0 6px">② 计价方式</h4>
+<div class="card">
+<p><b>最终价 = 固定价 + 所有"+$"加价 + 固定价 × (各乘法系数 − 1)</b></p>
+<p><b>示例：</b>等级提升 1 → 60 级，加急（×1.5），加购直播留证（+$25）<br>
+固定价 = 19 级 × $1.2 + 20 级 × $3.6 + 10 级 × $5.3 + 10 级 × $9.1 = $22.8 + $72 + $53 + $91 = <b>$238.8</b><br>
+最终价 = $238.8 + $25 + $238.8 × (1.5 − 1) = <b>$383.2</b><br>
+卖家到手 = $383.2 × 65% = <b>$249.1</b>（平台抽佣 35%）</p>
+<p class="sub">以上单价仅为示例，实际由卖家在价目表里填写；价格水平放到第③部分讨论。</p>
+</div>
+
+<h4 style="margin:16px 0 6px">③ 递送属性</h4>
+<div class="tbl"><table>
+<tr><th>属性</th><th>选项</th><th>说明</th></tr>
+<tr><td>交付方式</td><td>自己上号 / 陪打、上号代打、远程协助</td><td>3 个选项，按规则显示为下拉；不参与算价，卖家勾选支持哪几种</td></tr>
+<tr><td>期望完成时间</td><td>沿用现有档位（10 分钟 – 7 天）<b>+ 10 天、14 天</b></td><td><b>WoW 无限品类单独配置</b>，不影响暗黑4；买家在商品列表页选，卖家承诺时长超出的不出现在报价里。卖家侧上架时也选同一套档位：1–60 级标准交付按 14 天（卖家口径）</td></tr>
+</table></div>
+
+<h4 style="margin:16px 0 6px">④ "自定义 · 组合"tab 示例</h4>
+<div class="grid2">
+<div class="card"><b>组合服务：开服冲刺</b><br>等级提升 46 → 50 + 采矿 1 → 300<br><span class="sub">对应竞品"等级代练加购专业"；整单一个卖家接，不拆单；每项各有参考价，出价框上方显示总参考价</span></div>
+<div class="card"><b>自由描述：长尾需求</b><br>如"海加尔峰全通 5 次、只要陪打、欧服周末晚上"<br><span class="sub">无参考价，买家自己出价；超过代练限时无人接单自动退款</span></div>
+</div>
+<div class="note">金币不能放进组合（组合只能选代练模板），在页面上单独推荐金币类目。</div>
+
+<div class="ok"><b>前端原型：</b><code>WoW无限代练前端Demo.html</code> 覆盖 <b>买家端</b>（服务类型 tab → 模板 → 计算器 → 递送属性 → 获取报价弹窗、自定义 · 组合、开服前落地页）和 <b>卖家端上架</b>（三步：品牌品类 → 服务类型与图文 → 交付方式 + 价目表 + 保障，右侧计算器显示抽佣与到手）。两端用同一套模板结构，可直接对照检查功能是否够用。</div>
+</section>
+
+
+
+<!-- ============ PART 3 ============ -->
+<section id="p3-pricing">
+<h2><span class="no">③</span>卖家的定价方式与功能适配</h2>
+<h3>3.1 卖家的定价方式</h3>
+<p class="sub">来源：卖家（长期做 WoW 金币，有代练资源，已进 WoW 无限测试服）· 2026-09-18</p>
+<div class="tbl"><table>
+<tr><th style="width:120px">商品</th><th>卖家怎么定价</th></tr>
+<tr><td><b>等级代练</b></td><td><b>分段定价，各段单价不同。</b>实际订单<b>很少是 1–60 整段</b>——周期长、价格高，国内外都很少有人下单；主流是碎片式区间：37–40、46–50、56–60 这种。买家的典型场景是"任务线玩不动了，找人升几级到下一阶段自己接着玩"。<br>工时参考：1–60 全程 120–160 小时，开服抢怪的情况下实际约 2 周，交付按 14 天</td></tr>
+<tr><td><b>专业代练</b><br>（生活技能）</td><td>按熟练度区间定价，<b>不同专业价格不一样</b>。卖家反馈这是<b>目前订单量最大的两类之一</b>：交付周期短，买家不愿自己一点点磨熟练度。无限里生活技能新增属性收益（满级钓鱼 +8% 全属性），需求预计还会更大</td></tr>
+<tr><td><b>副本代练</b></td><td>按次数定价。升级阶段带做副本任务是刚需，满级五人本只刷首通装备、通常打一次</td></tr>
+<tr><td><b>团本代练</b></td><td>按次数定价；实际多以金团形式成交，找代练雇打手的少</td></tr>
+<tr><td><b>服务器</b></td><td>US / EU 无价差（都汉化、位面按语言优先分配）；<b>PvP 贵一点、交付久一点</b>；PvE 与 RP 相近，后期 RP 人少、略便宜略快</td></tr>
+<tr><td><b>交付时长</b></td><td>1–60 全程约 14 天；碎片式区间和专业的周期都短</td></tr>
+<tr><td><b>风险相关</b></td><td>无限要订阅、代练要上号，账号价值高；有工作室用脚本跑任务。卖家的原话是"网站功能基本都能满足需求，要研究的是价格和保证金这块，得有门槛和保障机制"</td></tr>
+</table></div>
+</section>
+
+<section id="p3-fit">
+<h3>3.2 现有功能能否满足</h3>
+<div class="tbl"><table>
+<tr><th style="width:200px">卖家的定价方式</th><th>现有功能怎么支持</th><th style="width:80px">结论</th></tr>
+<tr><td>分段定价，各段单价不同</td><td>区间型固定价 + 分段费率卡，卖家自己决定分几段、每段单价</td><td><span class="tag t-low">✅ 满足</span></td></tr>
+<tr><td>碎片式区间（37–40、46–50、56–60）</td><td>买家填任意起止等级，价格按落在各段的单价累加</td><td><span class="tag t-low">✅ 满足</span></td></tr>
+<tr><td>专业按熟练度区间定价</td><td>区间型固定价，技能 1 → 300 分段</td><td><span class="tag t-low">✅ 满足</span></td></tr>
+<tr><td>每个专业各有一套分段价</td><td><b>每个专业单独做一个模板</b>，都挂在"专业"这个大分类下，各自一套费率卡</td><td><span class="tag t-low">✅ 满足</span></td></tr>
+<tr><td>副本、团本按次数定价</td><td>按次数固定价，卖家逐个取值填单次价，买家选次数</td><td><span class="tag t-low">✅ 满足</span></td></tr>
+<tr><td>服务器规则产生价差</td><td>服务器组合作为计价属性，12 个取值卖家各自定价、各自决定接不接</td><td><span class="tag t-low">✅ 满足</span></td></tr>
+<tr><td>交付时长有长有短</td><td>档位 10 分钟 – 14 天，卖家上架时按商品选</td><td><span class="tag t-low">✅ 满足</span></td></tr>
+<tr><td>增值服务加价（直播留证、进度更新、封号包赔）</td><td>附加服务系数行，卖家勾选能提供的项并各自定价</td><td><span class="tag t-low">✅ 满足</span></td></tr>
+</table></div>
+<div class="ok"><b>结论：卖家现有的定价方式，现有功能都能装下，不需要为定价再开发新功能。</b>需要投入的是两件运营侧的事：一是把专业拆成多个模板、把等级分段的默认粒度配细；二是保证金门槛和保障机制（增值服务），这也是卖家自己点名要研究的部分。</div>
+</section>
+
+<!-- ============ PART 5 ============ -->
+<section id="p5-data">
+<h2><span class="no">⑤</span>上线后金币 / 代练需求变化预测</h2>
+<h3>5.1 数据与口径</h3>
+<div class="tbl"><table>
+<tr><th style="width:150px">数据</th><th>范围</th><th>用途</th></tr>
+<tr><td>iGV · 20 周年经典服金币</td><td>2024-11-22 – 2026-02-02，按天：买家数、卖家数、订单数、GMV、客单价</td><td>最接近的类比：全新 60 级服、从 1 级开始</td></tr>
+<tr><td>iGV · TBC 周年服金币</td><td>2026-01-14 – 2026-09-17，按天，同上字段</td><td>对照：有存量角色的资料片上线</td></tr>
+<tr><td>iGV · 两个品类的类目流量</td><td>2024-11-22 – 2026-09-18，按天：UV、新 UV、老 UV</td><td>需求的领先指标、新老客结构</td></tr>
+</table></div>
+<p class="sub">对齐方式：20 周年经典服以 2024-11-21 开服为 W0；TBC 周年服以 2026-02-05 正式上线为 W0（2026-01-14 预补丁为 W-3）。代练没有历史数据（品类尚未开放），本节代练部分为基于金币曲线和版本特性的推断，已在文中标注。</p>
+</section>
+
+<section id="p5-curve">
+<h3>5.2 两次开服的真实曲线</h3>
+<div class="card">
+<div style="display:flex;gap:18px;flex-wrap:wrap;font-size:13px;margin-bottom:6px">
+<span><span style="display:inline-block;width:22px;height:3px;background:var(--accent);vertical-align:middle"></span> 20 周年经典服（全新 60 级服）</span>
+<span><span style="display:inline-block;width:22px;height:3px;background:var(--blue);vertical-align:middle"></span> TBC 周年服（资料片上线）</span>
+</div>
+<svg viewBox="0 0 880 300" width="100%" style="font-size:11.5px" role="img">
+<line x1="52" x2="862" y1="258.0" y2="258.0" stroke="var(--line)"/><text x="45" y="262.0" text-anchor="end" style="fill:var(--muted)">0%</text>
+<line x1="52" x2="862" y1="198.0" y2="198.0" stroke="var(--line)"/><text x="45" y="202.0" text-anchor="end" style="fill:var(--muted)">27%</text>
+<line x1="52" x2="862" y1="138.0" y2="138.0" stroke="var(--line)"/><text x="45" y="142.0" text-anchor="end" style="fill:var(--muted)">55%</text>
+<line x1="52" x2="862" y1="78.0" y2="78.0" stroke="var(--line)"/><text x="45" y="82.0" text-anchor="end" style="fill:var(--muted)">82%</text>
+<line x1="52" x2="862" y1="18.0" y2="18.0" stroke="var(--line)"/><text x="45" y="22.0" text-anchor="end" style="fill:var(--muted)">110%</text>
+<text x="52.0" y="274" text-anchor="middle" style="fill:var(--muted)">W0</text>
+<text x="114.3" y="274" text-anchor="middle" style="fill:var(--muted)">W2</text>
+<text x="176.6" y="274" text-anchor="middle" style="fill:var(--muted)">W4</text>
+<text x="238.9" y="274" text-anchor="middle" style="fill:var(--muted)">W6</text>
+<text x="301.2" y="274" text-anchor="middle" style="fill:var(--muted)">W8</text>
+<text x="363.5" y="274" text-anchor="middle" style="fill:var(--muted)">W10</text>
+<text x="425.8" y="274" text-anchor="middle" style="fill:var(--muted)">W12</text>
+<text x="488.2" y="274" text-anchor="middle" style="fill:var(--muted)">W14</text>
+<text x="550.5" y="274" text-anchor="middle" style="fill:var(--muted)">W16</text>
+<text x="612.8" y="274" text-anchor="middle" style="fill:var(--muted)">W18</text>
+<text x="675.1" y="274" text-anchor="middle" style="fill:var(--muted)">W20</text>
+<text x="737.4" y="274" text-anchor="middle" style="fill:var(--muted)">W22</text>
+<text x="799.7" y="274" text-anchor="middle" style="fill:var(--muted)">W24</text>
+<text x="862.0" y="274" text-anchor="middle" style="fill:var(--muted)">W26</text>
+<polyline fill="none" stroke="var(--accent)" stroke-width="2.6" points="52.0,223.3 83.2,141.8 114.3,125.3 145.5,76.9 176.6,97.4 207.8,60.3 238.9,39.8 270.1,55.0 301.2,66.8 332.4,86.4 363.5,77.7 394.7,119.4 425.8,137.0 457.0,153.5 488.2,145.1 519.3,150.4 550.5,159.3 581.6,148.8 612.8,155.5 643.9,175.2 675.1,177.2 706.2,184.8 737.4,195.9 768.5,160.2 799.7,184.8 830.8,188.4 862.0,178.2"/>
+<circle cx="52.0" cy="223.3" r="2.2" fill="var(--accent)"/>
+<circle cx="83.2" cy="141.8" r="2.2" fill="var(--accent)"/>
+<circle cx="114.3" cy="125.3" r="2.2" fill="var(--accent)"/>
+<circle cx="145.5" cy="76.9" r="2.2" fill="var(--accent)"/>
+<circle cx="176.6" cy="97.4" r="2.2" fill="var(--accent)"/>
+<circle cx="207.8" cy="60.3" r="2.2" fill="var(--accent)"/>
+<circle cx="238.9" cy="39.8" r="2.2" fill="var(--accent)"/>
+<circle cx="270.1" cy="55.0" r="2.2" fill="var(--accent)"/>
+<circle cx="301.2" cy="66.8" r="2.2" fill="var(--accent)"/>
+<circle cx="332.4" cy="86.4" r="2.2" fill="var(--accent)"/>
+<circle cx="363.5" cy="77.7" r="2.2" fill="var(--accent)"/>
+<circle cx="394.7" cy="119.4" r="2.2" fill="var(--accent)"/>
+<circle cx="425.8" cy="137.0" r="2.2" fill="var(--accent)"/>
+<circle cx="457.0" cy="153.5" r="2.2" fill="var(--accent)"/>
+<circle cx="488.2" cy="145.1" r="2.2" fill="var(--accent)"/>
+<circle cx="519.3" cy="150.4" r="2.2" fill="var(--accent)"/>
+<circle cx="550.5" cy="159.3" r="2.2" fill="var(--accent)"/>
+<circle cx="581.6" cy="148.8" r="2.2" fill="var(--accent)"/>
+<circle cx="612.8" cy="155.5" r="2.2" fill="var(--accent)"/>
+<circle cx="643.9" cy="175.2" r="2.2" fill="var(--accent)"/>
+<circle cx="675.1" cy="177.2" r="2.2" fill="var(--accent)"/>
+<circle cx="706.2" cy="184.8" r="2.2" fill="var(--accent)"/>
+<circle cx="737.4" cy="195.9" r="2.2" fill="var(--accent)"/>
+<circle cx="768.5" cy="160.2" r="2.2" fill="var(--accent)"/>
+<circle cx="799.7" cy="184.8" r="2.2" fill="var(--accent)"/>
+<circle cx="830.8" cy="188.4" r="2.2" fill="var(--accent)"/>
+<circle cx="862.0" cy="178.2" r="2.2" fill="var(--accent)"/>
+<polyline fill="none" stroke="var(--blue)" stroke-width="2.6" points="52.0,102.2 83.2,47.6 114.3,39.8 145.5,111.3 176.6,125.4 207.8,163.1 238.9,169.1 270.1,163.9 301.2,177.1 332.4,191.6 363.5,198.8 394.7,192.3 425.8,190.4 457.0,194.5 488.2,179.5 519.3,195.3 550.5,188.5 581.6,200.9 612.8,202.1 643.9,217.3 675.1,218.1 706.2,219.1 737.4,226.8 768.5,226.9 799.7,220.1 830.8,226.1 862.0,227.4"/>
+<circle cx="52.0" cy="102.2" r="2.2" fill="var(--blue)"/>
+<circle cx="83.2" cy="47.6" r="2.2" fill="var(--blue)"/>
+<circle cx="114.3" cy="39.8" r="2.2" fill="var(--blue)"/>
+<circle cx="145.5" cy="111.3" r="2.2" fill="var(--blue)"/>
+<circle cx="176.6" cy="125.4" r="2.2" fill="var(--blue)"/>
+<circle cx="207.8" cy="163.1" r="2.2" fill="var(--blue)"/>
+<circle cx="238.9" cy="169.1" r="2.2" fill="var(--blue)"/>
+<circle cx="270.1" cy="163.9" r="2.2" fill="var(--blue)"/>
+<circle cx="301.2" cy="177.1" r="2.2" fill="var(--blue)"/>
+<circle cx="332.4" cy="191.6" r="2.2" fill="var(--blue)"/>
+<circle cx="363.5" cy="198.8" r="2.2" fill="var(--blue)"/>
+<circle cx="394.7" cy="192.3" r="2.2" fill="var(--blue)"/>
+<circle cx="425.8" cy="190.4" r="2.2" fill="var(--blue)"/>
+<circle cx="457.0" cy="194.5" r="2.2" fill="var(--blue)"/>
+<circle cx="488.2" cy="179.5" r="2.2" fill="var(--blue)"/>
+<circle cx="519.3" cy="195.3" r="2.2" fill="var(--blue)"/>
+<circle cx="550.5" cy="188.5" r="2.2" fill="var(--blue)"/>
+<circle cx="581.6" cy="200.9" r="2.2" fill="var(--blue)"/>
+<circle cx="612.8" cy="202.1" r="2.2" fill="var(--blue)"/>
+<circle cx="643.9" cy="217.3" r="2.2" fill="var(--blue)"/>
+<circle cx="675.1" cy="218.1" r="2.2" fill="var(--blue)"/>
+<circle cx="706.2" cy="219.1" r="2.2" fill="var(--blue)"/>
+<circle cx="737.4" cy="226.8" r="2.2" fill="var(--blue)"/>
+<circle cx="768.5" cy="226.9" r="2.2" fill="var(--blue)"/>
+<circle cx="799.7" cy="220.1" r="2.2" fill="var(--blue)"/>
+<circle cx="830.8" cy="226.1" r="2.2" fill="var(--blue)"/>
+<circle cx="862.0" cy="227.4" r="2.2" fill="var(--blue)"/>
+<text x="52" y="14" style="fill:var(--muted)">GMV 指数（各自峰值 = 100）</text>
+</svg>
+<div class="sub" style="margin-top:4px">金币周 GMV 指数，各自峰值 = 100</div>
+<svg viewBox="0 0 880 300" width="100%" style="font-size:11.5px" role="img">
+<line x1="52" x2="862" y1="258.0" y2="258.0" stroke="var(--line)"/><text x="45" y="262.0" text-anchor="end" style="fill:var(--muted)">0</text>
+<line x1="52" x2="862" y1="198.0" y2="198.0" stroke="var(--line)"/><text x="45" y="202.0" text-anchor="end" style="fill:var(--muted)">25</text>
+<line x1="52" x2="862" y1="138.0" y2="138.0" stroke="var(--line)"/><text x="45" y="142.0" text-anchor="end" style="fill:var(--muted)">50</text>
+<line x1="52" x2="862" y1="78.0" y2="78.0" stroke="var(--line)"/><text x="45" y="82.0" text-anchor="end" style="fill:var(--muted)">75</text>
+<line x1="52" x2="862" y1="18.0" y2="18.0" stroke="var(--line)"/><text x="45" y="22.0" text-anchor="end" style="fill:var(--muted)">100</text>
+<text x="52.0" y="274" text-anchor="middle" style="fill:var(--muted)">W0</text>
+<text x="114.3" y="274" text-anchor="middle" style="fill:var(--muted)">W2</text>
+<text x="176.6" y="274" text-anchor="middle" style="fill:var(--muted)">W4</text>
+<text x="238.9" y="274" text-anchor="middle" style="fill:var(--muted)">W6</text>
+<text x="301.2" y="274" text-anchor="middle" style="fill:var(--muted)">W8</text>
+<text x="363.5" y="274" text-anchor="middle" style="fill:var(--muted)">W10</text>
+<text x="425.8" y="274" text-anchor="middle" style="fill:var(--muted)">W12</text>
+<text x="488.2" y="274" text-anchor="middle" style="fill:var(--muted)">W14</text>
+<text x="550.5" y="274" text-anchor="middle" style="fill:var(--muted)">W16</text>
+<text x="612.8" y="274" text-anchor="middle" style="fill:var(--muted)">W18</text>
+<text x="675.1" y="274" text-anchor="middle" style="fill:var(--muted)">W20</text>
+<text x="737.4" y="274" text-anchor="middle" style="fill:var(--muted)">W22</text>
+<text x="799.7" y="274" text-anchor="middle" style="fill:var(--muted)">W24</text>
+<text x="862.0" y="274" text-anchor="middle" style="fill:var(--muted)">W26</text>
+<polyline fill="none" stroke="var(--accent)" stroke-width="2.6" points="52.0,189.5 83.2,194.9 114.3,183.8 145.5,165.8 176.6,163.6 207.8,156.2 238.9,162.3 270.1,160.7 301.2,157.8 332.4,166.7 363.5,165.4 394.7,179.4 425.8,180.8 457.0,187.4 488.2,179.4 519.3,183.7 550.5,181.2 581.6,174.6 612.8,185.0 643.9,188.0 675.1,192.3 706.2,198.7 737.4,190.3 768.5,182.1 799.7,188.3 830.8,186.3 862.0,180.3"/>
+<circle cx="52.0" cy="189.5" r="2.2" fill="var(--accent)"/>
+<circle cx="83.2" cy="194.9" r="2.2" fill="var(--accent)"/>
+<circle cx="114.3" cy="183.8" r="2.2" fill="var(--accent)"/>
+<circle cx="145.5" cy="165.8" r="2.2" fill="var(--accent)"/>
+<circle cx="176.6" cy="163.6" r="2.2" fill="var(--accent)"/>
+<circle cx="207.8" cy="156.2" r="2.2" fill="var(--accent)"/>
+<circle cx="238.9" cy="162.3" r="2.2" fill="var(--accent)"/>
+<circle cx="270.1" cy="160.7" r="2.2" fill="var(--accent)"/>
+<circle cx="301.2" cy="157.8" r="2.2" fill="var(--accent)"/>
+<circle cx="332.4" cy="166.7" r="2.2" fill="var(--accent)"/>
+<circle cx="363.5" cy="165.4" r="2.2" fill="var(--accent)"/>
+<circle cx="394.7" cy="179.4" r="2.2" fill="var(--accent)"/>
+<circle cx="425.8" cy="180.8" r="2.2" fill="var(--accent)"/>
+<circle cx="457.0" cy="187.4" r="2.2" fill="var(--accent)"/>
+<circle cx="488.2" cy="179.4" r="2.2" fill="var(--accent)"/>
+<circle cx="519.3" cy="183.7" r="2.2" fill="var(--accent)"/>
+<circle cx="550.5" cy="181.2" r="2.2" fill="var(--accent)"/>
+<circle cx="581.6" cy="174.6" r="2.2" fill="var(--accent)"/>
+<circle cx="612.8" cy="185.0" r="2.2" fill="var(--accent)"/>
+<circle cx="643.9" cy="188.0" r="2.2" fill="var(--accent)"/>
+<circle cx="675.1" cy="192.3" r="2.2" fill="var(--accent)"/>
+<circle cx="706.2" cy="198.7" r="2.2" fill="var(--accent)"/>
+<circle cx="737.4" cy="190.3" r="2.2" fill="var(--accent)"/>
+<circle cx="768.5" cy="182.1" r="2.2" fill="var(--accent)"/>
+<circle cx="799.7" cy="188.3" r="2.2" fill="var(--accent)"/>
+<circle cx="830.8" cy="186.3" r="2.2" fill="var(--accent)"/>
+<circle cx="862.0" cy="180.3" r="2.2" fill="var(--accent)"/>
+<polyline fill="none" stroke="var(--blue)" stroke-width="2.6" points="52.0,77.4 83.2,38.7 114.3,54.7 145.5,73.9 176.6,71.8 207.8,109.0 238.9,116.6 270.1,121.3 301.2,128.0 332.4,135.4 363.5,120.8 394.7,126.9 425.8,147.8 457.0,151.9 488.2,150.8 519.3,158.8 550.5,152.5 581.6,172.2 612.8,172.2 643.9,180.4 675.1,170.9 706.2,181.5 737.4,181.4 768.5,179.2 799.7,165.8 830.8,170.0 862.0,169.6"/>
+<circle cx="52.0" cy="77.4" r="2.2" fill="var(--blue)"/>
+<circle cx="83.2" cy="38.7" r="2.2" fill="var(--blue)"/>
+<circle cx="114.3" cy="54.7" r="2.2" fill="var(--blue)"/>
+<circle cx="145.5" cy="73.9" r="2.2" fill="var(--blue)"/>
+<circle cx="176.6" cy="71.8" r="2.2" fill="var(--blue)"/>
+<circle cx="207.8" cy="109.0" r="2.2" fill="var(--blue)"/>
+<circle cx="238.9" cy="116.6" r="2.2" fill="var(--blue)"/>
+<circle cx="270.1" cy="121.3" r="2.2" fill="var(--blue)"/>
+<circle cx="301.2" cy="128.0" r="2.2" fill="var(--blue)"/>
+<circle cx="332.4" cy="135.4" r="2.2" fill="var(--blue)"/>
+<circle cx="363.5" cy="120.8" r="2.2" fill="var(--blue)"/>
+<circle cx="394.7" cy="126.9" r="2.2" fill="var(--blue)"/>
+<circle cx="425.8" cy="147.8" r="2.2" fill="var(--blue)"/>
+<circle cx="457.0" cy="151.9" r="2.2" fill="var(--blue)"/>
+<circle cx="488.2" cy="150.8" r="2.2" fill="var(--blue)"/>
+<circle cx="519.3" cy="158.8" r="2.2" fill="var(--blue)"/>
+<circle cx="550.5" cy="152.5" r="2.2" fill="var(--blue)"/>
+<circle cx="581.6" cy="172.2" r="2.2" fill="var(--blue)"/>
+<circle cx="612.8" cy="172.2" r="2.2" fill="var(--blue)"/>
+<circle cx="643.9" cy="180.4" r="2.2" fill="var(--blue)"/>
+<circle cx="675.1" cy="170.9" r="2.2" fill="var(--blue)"/>
+<circle cx="706.2" cy="181.5" r="2.2" fill="var(--blue)"/>
+<circle cx="737.4" cy="181.4" r="2.2" fill="var(--blue)"/>
+<circle cx="768.5" cy="179.2" r="2.2" fill="var(--blue)"/>
+<circle cx="799.7" cy="165.8" r="2.2" fill="var(--blue)"/>
+<circle cx="830.8" cy="170.0" r="2.2" fill="var(--blue)"/>
+<circle cx="862.0" cy="169.6" r="2.2" fill="var(--blue)"/>
+<text x="52" y="14" style="fill:var(--muted)">客单价（美元）</text>
+</svg>
+<div class="sub" style="margin-top:4px">金币客单价（美元）</div>
+</div>
+
+<div class="grid2">
+<div>
+<p><b>20 周年经典服（fresh 60 级服）</b></p>
+<div class="tbl"><table>
+<tr><th>周</th><th>GMV</th><th>订单</th><th>客单价</th><th>日均卖家数</th></tr>
+<tr><td>W0 开服周</td><td>$4,110</td><td>144</td><td>$28.5</td><td>5.3</td></tr>
+<tr><td>W1</td><td>$13,778</td><td>524</td><td>$26.3</td><td>7.3</td></tr>
+<tr><td>W3</td><td>$21,485</td><td>559</td><td>$38.4</td><td>9.1</td></tr>
+<tr><td><b>W6 峰值</b></td><td><b>$25,877</b></td><td>649</td><td>$39.9</td><td>10.7</td></tr>
+<tr><td>W12</td><td>$14,354</td><td>446</td><td>$32.2</td><td>12.9</td></tr>
+<tr><td>W20</td><td>$9,580</td><td>350</td><td>$27.4</td><td>9.1</td></tr>
+</table></div>
+</div>
+<div>
+<p><b>TBC 周年服（资料片上线）</b></p>
+<div class="tbl"><table>
+<tr><th>周</th><th>GMV</th><th>订单</th><th>客单价</th><th>日均卖家数</th></tr>
+<tr><td>W-3 预补丁</td><td>$21,885</td><td>384</td><td>$57.0</td><td>8.3</td></tr>
+<tr><td>W0 上线周</td><td>$38,827</td><td>516</td><td>$75.3</td><td>13.0</td></tr>
+<tr><td><b>W1 峰值</b></td><td><b>$52,445</b></td><td>574</td><td>$91.4</td><td>15.4</td></tr>
+<tr><td>W2</td><td>$54,389</td><td>642</td><td>$84.7</td><td>13.7</td></tr>
+<tr><td>W8</td><td>$20,156</td><td>372</td><td>$54.2</td><td>9.0</td></tr>
+<tr><td>W20</td><td>$9,941</td><td>274</td><td>$36.3</td><td>7.0</td></tr>
+</table></div>
+</div>
+</div>
+
+<p class="sub">口径：GMV、订单为整周求和；客单价 = 当周 GMV ÷ 当周订单；日均卖家数 = 当周 7 天"当日有成交的卖家数"的平均值（该字段是每日快照，跨天无法去重相加，故取均值，非整数）。</p>
+<div class="warn"><b>版本切换的断崖</b><br>
+TBC 预补丁 2026-01-14 上线，20 周年经典服的金币需求两周内归零：<br>
+2026-01-05 ~ 01-11 <b>$20,913</b> → 01-12 ~ 01-18 <b>$4,979</b> → 01-19 ~ 01-25 <b>$161</b>（−99%）。<br>
+不是逐步衰减，是断崖。</div>
+</section>
+
+<section id="p5-rules">
+<h3>5.3 从数据得到的规律</h3>
+<div class="tbl"><table>
+<tr><th style="width:30px">#</th><th style="width:230px">规律</th><th>数据依据</th></tr>
+<tr><td>1</td><td><b>开服当周不是高峰</b></td><td>20 周年服 W0 只有峰值的 16%（$4,110 / $25,877）。金币需求要等一批人练到 40 级学骑术、到满级开始消耗才起来</td></tr>
+<tr><td>2</td><td><b>峰值在开服后第 5–8 周，高原期约 8 周</b></td><td>20 周年服 W6 见顶，W3–W10 都在峰值的 74%–100% 之间</td></tr>
+<tr><td>3</td><td><b>衰减节奏：W12 剩五成，W20 剩四成</b></td><td>20 周年服 W12 = 峰值 55%，W20 = 37%，W26 = 37%</td></tr>
+<tr><td>4</td><td><b>客单价和 GMV 同步走，不是反向</b></td><td>20 周年服客单价 $26 → $42（W5–W8）→ 回落 $27；TBC $57 → $91 → $36</td></tr>
+<tr><td>5</td><td><b>资料片开服比新 60 级服猛一倍，但衰减快一倍</b></td><td>TBC 峰值 $52.4k 是 20 周年服 $25.9k 的 2.0 倍，客单价 2.2 倍；但 TBC W8 已掉到峰值 43%、W26 只剩 14%，20 周年服 W26 还有 37%</td></tr>
+<tr><td>6</td><td><b>卖家供给会自动跟上，不是瓶颈</b></td><td>20 周年服卖家数 5.3 → 13.0 家，跟随需求同步增长</td></tr>
+<tr><td>7</td><td><b>12 月有明显节假日加成</b></td><td>20 周年服 2025 年 12 月 GMV $70,128，比 11 月的 $42,383 高 65%</td></tr>
+<tr><td>8</td><td><b>版本被替换 = 需求归零</b></td><td>见 5.2 断崖；旧版本在新版本预补丁上线后两周内 −99%</td></tr>
+<tr><td>9</td><td><b>老客为主，新客占三成</b></td><td>类目流量新客占比：开服次月 48%，之后稳定在 25%–30%</td></tr>
+</table></div>
+</section>
+
+<section id="p5-forecast">
+<h3>5.4 WoW 无限的需求预测</h3>
+<p class="sub">量级参照 20 周年经典服（同为全新 60 级服）。下表的指数以"预计峰值 = 100"表示，不给绝对金额。</p>
+<div class="card">
+<div style="display:flex;gap:18px;flex-wrap:wrap;font-size:13px;margin-bottom:6px">
+<span><span style="display:inline-block;width:22px;height:3px;background:var(--accent);vertical-align:middle"></span> 金币（预测）</span>
+<span><span style="display:inline-block;width:22px;height:3px;background:var(--blue);vertical-align:middle"></span> 代练（预测）</span>
+<span><span style="display:inline-block;width:22px;height:0;border-top:2px dashed var(--muted);vertical-align:middle"></span> 20 周年经典服金币实际曲线（对照）</span>
+</div>
+<svg viewBox="0 0 880 320" width="100%" style="font-size:11.5px" role="img">
+<line x1="52" x2="862" y1="278.0" y2="278.0" stroke="var(--line)"/><text x="45" y="282.0" text-anchor="end" style="fill:var(--muted)">0</text>
+<line x1="52" x2="862" y1="214.0" y2="214.0" stroke="var(--line)"/><text x="45" y="218.0" text-anchor="end" style="fill:var(--muted)">27</text>
+<line x1="52" x2="862" y1="150.0" y2="150.0" stroke="var(--line)"/><text x="45" y="154.0" text-anchor="end" style="fill:var(--muted)">55</text>
+<line x1="52" x2="862" y1="86.0" y2="86.0" stroke="var(--line)"/><text x="45" y="90.0" text-anchor="end" style="fill:var(--muted)">82</text>
+<line x1="52" x2="862" y1="22.0" y2="22.0" stroke="var(--line)"/><text x="45" y="26.0" text-anchor="end" style="fill:var(--muted)">110</text>
+<text x="52.0" y="294" text-anchor="middle" style="fill:var(--muted)">W0</text>
+<text x="114.3" y="294" text-anchor="middle" style="fill:var(--muted)">W2</text>
+<text x="176.6" y="294" text-anchor="middle" style="fill:var(--muted)">W4</text>
+<text x="238.9" y="294" text-anchor="middle" style="fill:var(--muted)">W6</text>
+<text x="301.2" y="294" text-anchor="middle" style="fill:var(--muted)">W8</text>
+<text x="363.5" y="294" text-anchor="middle" style="fill:var(--muted)">W10</text>
+<text x="425.8" y="294" text-anchor="middle" style="fill:var(--muted)">W12</text>
+<text x="488.2" y="294" text-anchor="middle" style="fill:var(--muted)">W14</text>
+<text x="550.5" y="294" text-anchor="middle" style="fill:var(--muted)">W16</text>
+<text x="612.8" y="294" text-anchor="middle" style="fill:var(--muted)">W18</text>
+<text x="675.1" y="294" text-anchor="middle" style="fill:var(--muted)">W20</text>
+<text x="737.4" y="294" text-anchor="middle" style="fill:var(--muted)">W22</text>
+<text x="799.7" y="294" text-anchor="middle" style="fill:var(--muted)">W24</text>
+<text x="862.0" y="294" text-anchor="middle" style="fill:var(--muted)">W26</text>
+<polyline fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-dasharray="4 4" opacity="0.65" points="52.0,241.0 83.2,154.1 114.3,136.4 145.5,84.8 176.6,106.7 207.8,67.1 238.9,45.3 270.1,61.5 301.2,74.0 332.4,95.0 363.5,85.7 394.7,130.2 425.8,148.9 457.0,166.6 488.2,157.6 519.3,163.3 550.5,172.7 581.6,161.5 612.8,168.6 643.9,189.7 675.1,191.8 706.2,200.0 737.4,211.8 768.5,173.6 799.7,199.9 830.8,203.8 862.0,192.9"/>
+<line x1="207.8" x2="207.8" y1="22" y2="278" stroke="var(--line)" stroke-dasharray="3 3"/>
+<text x="211.8" y="34" style="fill:var(--muted)">12/9 团本开放</text>
+<line x1="332.4" x2="332.4" y1="22" y2="278" stroke="var(--line)" stroke-dasharray="3 3"/>
+<text x="336.4" y="34" style="fill:var(--muted)">冬季 硬核</text>
+<polygon points="52.0,219.8 83.2,123.8 114.3,91.8 145.5,80.2 176.6,56.9 207.8,45.3 238.9,45.3 270.1,51.1 301.2,62.7 332.4,68.5 363.5,68.5 394.7,88.9 425.8,129.6 457.0,150.0 488.2,150.0 519.3,150.0 550.5,150.0 581.6,150.0 612.8,150.0 643.9,155.8 675.1,167.5 706.2,173.3 737.4,173.3 768.5,173.3 799.7,173.3 830.8,173.3 862.0,173.3 862.0,196.5 830.8,196.5 799.7,196.5 768.5,196.5 737.4,196.5 706.2,196.5 675.1,193.6 643.9,187.8 612.8,184.9 581.6,184.9 550.5,184.9 519.3,184.9 488.2,184.9 457.0,184.9 425.8,167.5 394.7,132.5 363.5,115.1 332.4,115.1 301.2,97.6 270.1,62.7 238.9,45.3 207.8,45.3 176.6,74.4 145.5,132.5 114.3,161.6 83.2,182.0 52.0,243.1" fill="var(--accent)" opacity="0.16"/>
+<polyline fill="none" stroke="var(--accent)" stroke-width="2.6" points="52.0,231.5 83.2,152.9 114.3,126.7 145.5,106.4 176.6,65.6 207.8,45.3 238.9,45.3 270.1,56.9 301.2,80.2 332.4,91.8 363.5,91.8 394.7,110.7 425.8,148.5 457.0,167.5 488.2,167.5 519.3,167.5 550.5,167.5 581.6,167.5 612.8,167.5 643.9,171.8 675.1,180.5 706.2,184.9 737.4,184.9 768.5,184.9 799.7,184.9 830.8,184.9 862.0,184.9"/>
+<polygon points="52.0,91.8 83.2,56.9 114.3,45.3 145.5,45.3 176.6,45.3 207.8,45.3 238.9,45.3 270.1,56.9 301.2,80.2 332.4,91.8 363.5,91.8 394.7,103.5 425.8,126.7 457.0,138.4 488.2,138.4 519.3,138.4 550.5,138.4 581.6,138.4 612.8,138.4 643.9,144.2 675.1,155.8 706.2,161.6 737.4,161.6 768.5,161.6 799.7,161.6 830.8,161.6 862.0,161.6 862.0,196.5 830.8,196.5 799.7,196.5 768.5,196.5 737.4,196.5 706.2,196.5 675.1,193.6 643.9,187.8 612.8,184.9 581.6,184.9 550.5,184.9 519.3,184.9 488.2,184.9 457.0,184.9 425.8,173.3 394.7,150.0 363.5,138.4 332.4,138.4 301.2,115.1 270.1,68.5 238.9,45.3 207.8,45.3 176.6,56.9 145.5,80.2 114.3,91.8 83.2,103.5 52.0,138.4" fill="var(--blue)" opacity="0.16"/>
+<polyline fill="none" stroke="var(--blue)" stroke-width="2.6" points="52.0,115.1 83.2,80.2 114.3,68.5 145.5,62.7 176.6,51.1 207.8,45.3 238.9,45.3 270.1,62.7 301.2,97.6 332.4,115.1 363.5,115.1 394.7,126.7 425.8,150.0 457.0,161.6 488.2,161.6 519.3,161.6 550.5,161.6 581.6,161.6 612.8,161.6 643.9,166.0 675.1,174.7 706.2,179.1 737.4,179.1 768.5,179.1 799.7,179.1 830.8,179.1 862.0,179.1"/>
+<text x="52" y="16" style="fill:var(--muted)">需求指数（预计峰值 = 100），阴影为预测区间</text>
+</svg>
+<div class="sub" style="margin-top:4px">横轴为开服后第 N 周（W0 = 11/5 – 11/11）。代练曲线在 W0 就有量、峰值比金币早；金币起点低、W4–W7 见顶。灰色虚线是 20 周年经典服金币的真实曲线，用来看预测偏离了多少。</div>
+</div>
+<div class="tbl"><table>
+<tr><th style="width:150px">阶段</th><th style="width:70px">金币</th><th style="width:70px">代练</th><th>依据与说明</th></tr>
+<tr><td><b>开服周</b><br>11/5 – 11/11</td><td>15–25</td><td>60–80</td><td>金币：规律 1，开服周没人有钱也没什么要买的，量最小但单价最高。<br>代练：<b>与金币相反</b>，所有人同时从 1 级起步，等级代练和专业代练的需求当周就到位（推断，依据卖家反馈"订单集中在专业和碎片式等级段"）</td></tr>
+<tr><td><b>第 2–4 周</b><br>11/12 – 12/2</td><td>50–80</td><td>80–100</td><td>金币：首批玩家到 40 级学骑术、专业需要材料，需求快速爬升（规律 1、2）。<br>代练：卡在中段任务线的买家开始下单碎片式区间；黑五叠加</td></tr>
+<tr><td><b>第 5–8 周</b><br>12/3 – 12/30</td><td><b>100</b></td><td><b>100</b></td><td>金币峰值区（规律 2）。叠加两件事：12/9 团本开放带来消耗品和金团需求；12 月节假日加成 +65%（规律 7）</td></tr>
+<tr><td><b>第 9–12 周</b><br>2027/1</td><td>70–90</td><td>60–80</td><td>高原期尾声（规律 2、3）。代练转向小号和后来者；硬核规则集上线会带来一波新的等级代练（官方路线图：冬季）</td></tr>
+<tr><td><b>第 13–20 周</b><br>2027/2 – 3</td><td>40–55</td><td>40–60</td><td>规律 3。春季补丁（2 个新团本 + 传说任务线）会带来一次小反弹</td></tr>
+<tr><td><b>第 21 周以后</b></td><td>35–45<br>长期</td><td>35–50<br>长期</td><td>规律 3 的长尾；<b>关键差异：无限不会被资料片替换</b>，不存在规律 8 的断崖，长尾比周年服稳定</td></tr>
+</table></div>
+<div class="ok"><b>结论：</b>金币的峰值在开服后第 5–8 周（正好和 12/9 团本开放、圣诞季重叠），代练的峰值比金币早 2–4 周。无限最大的价值不在峰值高度，而在<b>没有版本替换断崖</b>——周年服 14 个月归零，无限理论上是长期稳定的品类。</div>
+</section>
+
+<section id="p5-diff">
+<h3>5.5 和历史不一样的地方</h3>
+<div class="tbl"><table>
+<tr><th style="width:190px">差异</th><th style="width:90px">对曲线的影响</th><th>说明</th></tr>
+<tr><td>不会被资料片替换</td><td><span class="tag t-low">长尾更高</span></td><td>等级永远 60、只做横向更新，不存在预补丁归零的问题</td></tr>
+<tr><td>官方暂不上时光徽章</td><td><span class="tag t-low">利好</span></td><td>第三方金币没有官方价格压顶，单价空间比有徽章的版本大</td></tr>
+<tr><td>金团照常运作</td><td><span class="tag t-low">利好</span></td><td>团本拾取未改，买金币参加金团仍是刚需（见 1.4）</td></tr>
+<tr><td>副本杀怪经验被削弱</td><td><span class="tag t-mid">改变结构</span></td><td>等级代练变成做任务为主，工时更长、单价更高；"刷副本冲级"类商品没有了</td></tr>
+<tr><td>专业有属性收益</td><td><span class="tag t-low">利好</span></td><td>满级钓鱼 +8% 全属性，专业代练和专业材料的金币需求都会比历史版本高</td></tr>
+<tr><td>热度高于普通怀旧服</td><td><span class="tag t-low">量级上修</span></td><td>官方第三条产品线，覆盖怀旧服、正式服、私服三类人群</td></tr>
+<tr><td>取消服务器</td><td><span class="tag t-mid">结构变化</span></td><td>金币按 大区 × 规则 × 阵营 定价，库存集中，卖家更容易接单</td></tr>
+</table></div>
+</section>
+
+<section id="p5-monitor">
+<h3>5.6 上线后要盯的指标</h3>
+<ol>
+<li><b>每周金币 GMV、订单数、客单价、卖家数</b>——直接和 5.2 的两条曲线对照，看偏离方向</li>
+<li><b>类目 UV 和新客占比</b>——需求的领先指标，历史上新客占比稳定在 25%–30%</li>
+<li><b>代练的周订单数和客单价</b>——第一次有自己的数据，为下一个版本建基准</li>
+<li><b>12/9 团本开放当周</b>的金币和代练变化，用来验证"内容节点带来消耗"的判断</li>
+<li><b>时光徽章是否上线</b>——一旦上线，第三方金币价格会被官方价格压顶</li>
+</ol>
+</section>
+
+<!-- ============ SOURCES ============ -->
+<section id="src">
+<h2>资料来源</h2>
+<div class="src">
+<p><b>版本信息</b>：
+<a href="https://gameinformer.com/blizzcon-2026/2026/09/12/blizzard-announces-world-of-warcraft-forever-expanding-vanilla-wow-with">Game Informer</a> ·
+<a href="https://blizzardwatch.com/2026/09/13/world-warcraft-forevers-roadmap-gives-us-ann-idea-expect-rest-2026-summer-2027/">Blizzard Watch 路线图</a> ·
+<a href="https://www.mmo-champion.com/content/14512-BlizzCon-2026-World-of-Warcraft-Forever-Deep-Dive-Panel">MMO-Champion Deep Dive</a> ·
+<a href="https://classicwow.gg/forever/changes">classicwow.gg 改动汇总</a> ·
+<a href="https://warcraftforever.games/guides/faq">warcraftforever.games FAQ</a> ·
+<a href="https://www.icy-veins.com/wow-forever/wow-forever-subscription">Icy Veins 订阅说明</a> ·
+<a href="https://lfcarry.com/guides/wow-forever-beta">LFCarry Beta 指南</a> ·
+<a href="https://wow.gg/guides/wow-blizzcon-2026">wow.gg BlizzCon 汇总</a> ·
+<a href="https://wow.blizzard.cn/forever/">暴雪国服专题页</a> ·
+<a href="https://news.qq.com/rain/a/20260913A03KMM00">腾讯新闻 问题解答</a> ·
+<a href="https://news.qq.com/rain/a/20260914A077UX00">腾讯新闻 新模式新副本</a> ·
+<a href="https://news.qq.com/rain/a/20260913A03WA900">腾讯新闻 公布</a> ·
+<a href="https://news.17173.com/content/09132026/161621648.shtml">17173</a></p>
+<p><b>热度与反响</b>：
+<a href="https://www.shanethegamer.com/news/world-of-warcraft-forever-community-reactions/">ShaneTheGamer 社区反响</a> ·
+<a href="https://tagn.wordpress.com/2026/09/14/blizzcon-2026-monday-morning-reactions-featuring-actual-wow-classic-plus/">The Ancient Gaming Noob</a> ·
+<a href="https://www.notebookcheck.net/Blizzard-Files-Lawsuit-Against-World-of-Warcraft-Classic-Server-Turtle-WoW.1101325.0.html">Notebookcheck Turtle WoW 诉讼</a> ·
+<a href="https://www.forbes.com/sites/paultassi/2019/08/26/world-of-wacraft-classic-pulling-in-over-a-million-twitch-views-at-launch/">Forbes 2019 怀旧服 Twitch</a> ·
+<a href="https://www.pcgamesn.com/world-of-warcraft/classic-twitch">PCGamesN 5500 万小时</a> ·
+<a href="https://www.iggm.com/news/wow-tbc-classic-anniversary-economy-crisis-by-midsummer-fire-festival-bots-and-phase-3-server-population-increase">IGGM TBC 周年服经济</a></p>
+<p><b>代练产品与价格</b>：
+<a href="https://lfcarry.com/wow-forever">LFCarry WoW Forever</a> ·
+<a href="https://wowvendor.com/shop/wow-forever/product/wow-forever-level-boost/">WowVendor Forever Level Boost</a> ·
+<a href="https://wowvendor.com/shop/wow/">WowVendor WoW</a> ·
+<a href="https://metammo.com/wow-forever">METAMMO</a> ·
+<a href="https://www.epicnpc.com/forums/wow-classic-leveling-boosting-and-services.2837/">EpicNPC</a> ·
+<a href="https://timesaver.gg/blog/how-much-does-wow-classic-era-power-leveling-cost-2026">Timesaver Era 练级价格</a> ·
+<a href="https://timesaver.gg/blog/wow-midnight-boost-cost-price-guide">Timesaver 正式服价格</a> ·
+<a href="https://lfcarry.com/guides/wow-carry-services-guide">LFCarry 代练指南</a> ·
+<a href="https://kingboost.net/wow-classic-hardcore-20th-anniversary/hardcore-leveling-wow-classic-20th-ann/hardcore-classic-leveling-20th-ann/">Kingboost 硬核练级</a> ·
+<a href="https://www.eldorado.gg/wow-classic-boosting/b/92-4">Eldorado Classic 代练</a> ·
+<a href="https://www.eldorado.gg/wow-power-leveling/b/0-4">Eldorado WoW 代练</a> ·
+<a href="https://www.g2g.com/categories/wow-classic-era-boosting-service">G2G Classic 代练</a> ·
+<a href="https://www.playerauctions.com/wow-boosting/dungeons/mythic-carry/">PlayerAuctions</a> ·
+<a href="https://oblivion-marketplace.com/">Oblivion Marketplace</a></p>
+<p><b>竞品（WoW 无限）</b>：
+<a href="https://www.g2g.com/categories/wow-forever-boosting-service">G2G 代练</a> ·
+<a href="https://www.g2g.com/categories/wow-forever-gold">G2G 金币</a> ·
+<a href="https://www.eldorado.gg/wow-forever-boosting/b/479">Eldorado 代练</a> ·
+<a href="https://www.playerauctions.com/wow-forever-boosting/">PlayerAuctions 代练</a> ·
+<a href="https://www.iggm.com/wow-forever">IGGM</a> ·
+<a href="https://overgear.com/games/wow-forever">Overgear</a> ·
+<a href="https://overgear.com/games/wow-forever/powerleveling">Overgear 升级</a> ·
+<a href="https://overgear.com/games/wow-forever/raids">Overgear 团本</a> ·
+<a href="https://overgear.com/games/wow-forever/professions">Overgear 专业</a> ·
+<a href="https://overgear.com/games/wow-forever/pvp">Overgear PvP</a> ·
+<a href="https://boostroom.com/subcategory/wow-forever-pvp-boosting">BoostRoom</a> ·
+<a href="https://epiccarry.com/wow-forever/">Epiccarry</a> ·
+<a href="https://blazingboost.com/wow-forever-classic/leveling-boost">BlazingBoost</a> ·
+<a href="https://massivelyop.com/2026/09/14/world-of-warcraft-forever-aims-to-combat-dungeon-boosting-says-no-plans-for-wow-tokens/">Massively OP（副本经验与时光徽章）</a></p>
+<p><b>金币与经济</b>：
+<a href="https://www.playerauctions.com/market-price-tracker/wow-classic/">PlayerAuctions 金价追踪</a> ·
+<a href="https://timesaver.gg/blog/is-gdkp-banned-wow-classic-era-2026">Timesaver GDKP 政策</a> ·
+<a href="https://m.163.com/dy/article/KQMUFUM20546CD5F.html">网易 时光徽章金价</a> ·
+<a href="https://m.dailiantong.com/news/content_38938.html">代练通 TBC 金价暴跌</a></p>
+
+</div>
+</section>
+
+</main>
+</div>
+</body>
+</html>
