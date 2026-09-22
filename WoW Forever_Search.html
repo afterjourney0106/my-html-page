@@ -64,6 +64,32 @@ svg text{fill:var(--ink)}
 .src{font-size:12.5px;color:var(--muted)}
 .src a{color:var(--blue)}
 a{color:var(--blue)}
+.wf{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px;line-height:1.6;margin:10px 0}
+.wf-t{background:var(--bg);border-bottom:1px solid var(--line);padding:6px 11px;font-weight:600;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.wf-b{padding:11px 12px}
+.wf-g{display:grid;grid-template-columns:168px 1fr;gap:12px}
+.wf-p{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--bg)}
+.wf-p h5{margin:0 0 6px;font-size:12px;color:var(--muted);font-weight:600}
+.wf-r{display:flex;gap:7px;align-items:center;padding:5px 0;flex-wrap:wrap}
+.wf-r+.wf-r{border-top:1px dashed var(--line)}
+.wf-l{width:96px;flex:none;color:var(--muted)}
+.wf-ch{border:1px solid var(--line);border-radius:14px;padding:1px 9px;background:var(--bg);white-space:nowrap}
+.wf-ch.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.wf-in{border:1px solid var(--line);border-radius:5px;padding:2px 8px;background:var(--bg);color:var(--muted);min-width:70px}
+.wf-in.w{flex:1}
+.wf-off{display:grid;grid-template-columns:1fr 128px;gap:10px;border:1px solid var(--line);border-radius:7px;padding:7px 9px;margin:6px 0;background:var(--bg)}
+.wf-off b{display:block;font-weight:600}
+.wf-off .m{color:var(--muted);font-size:11.5px}
+.wf-off .pr{text-align:right;font-weight:700;color:var(--accent)}
+.wf-btn{background:var(--accent);color:#fff;border-radius:6px;padding:2px 11px;display:inline-block;font-size:11.5px}
+.wf-btn.g{background:var(--card);color:var(--muted);border:1px solid var(--line)}
+.wf-sum{border:1px solid var(--accent);border-radius:8px;padding:9px 10px;background:var(--accent-soft)}
+.wf-sum .big{font-size:19px;font-weight:700;color:var(--accent)}
+.flow{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:9px 0;font-size:12.5px}
+.flow i{font-style:normal;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:3px 9px}
+.flow i.k{border-color:var(--accent);color:var(--accent)}
+.flow u{text-decoration:none;color:var(--muted)}
+@media (max-width:860px){.wf-g{grid-template-columns:1fr}.wf-off{grid-template-columns:1fr}}
 @media (max-width:860px){
   .wrap{grid-template-columns:1fr}
   nav{display:none}
@@ -91,6 +117,14 @@ a{color:var(--blue)}
   <div class="grp">③ 定价与功能适配</div>
   <a href="#p3-pricing">卖家的定价方式</a>
   <a href="#p3-fit">现有功能能否满足</a>
+  <div class="grp">④ 竞品模式与流量</div>
+  <a href="#p4-model">六个竞品的来源与模式</a>
+  <a href="#p4-flow1">卖家挂商品</a>
+  <a href="#p4-flow2">买家发需求</a>
+  <a href="#p4-flow3">自营派单</a>
+  <a href="#p4-traffic">流量</a>
+  <a href="#p4-pool">流量池与可承接量</a>
+  <a href="#p4-lesson">对 iGV 的启示</a>
   <div class="grp">⑤ 需求变化预测</div>
   <a href="#p5-data">数据与口径</a>
   <a href="#p5-curve">两次开服的真实曲线</a>
@@ -104,7 +138,7 @@ a{color:var(--blue)}
 <main>
 <header class="hero">
   <h1>《魔兽世界：无限》（WoW: Forever）代练业务调研</h1>
-  <div class="sub">调研日期：2026-09-16 ｜ 修订：V1.3 ｜ 市场范围：欧洲 / 北美（不含中国大陆） ｜ 配置框架：iGV 代练落地方案（卖家挂商品 + 买家发需求）</div>
+  <div class="sub">调研日期：2026-09-16 ｜ 修订：V2.1 ｜ 市场范围：欧洲 / 北美（不含中国大陆） ｜ 配置框架：iGV 代练落地方案（卖家挂商品 + 买家发需求）</div>
 </header>
 
 
@@ -424,6 +458,235 @@ a{color:var(--blue)}
 <tr><td>增值服务加价（直播留证、进度更新、封号包赔）</td><td>附加服务系数行，卖家勾选能提供的项并各自定价</td><td><span class="tag t-low">✅ 满足</span></td></tr>
 </table></div>
 <div class="ok"><b>结论：卖家现有的定价方式，现有功能都能装下，不需要为定价再开发新功能。</b>需要投入的是两件运营侧的事：一是把专业拆成多个模板、把等级分段的默认粒度配细；二是保证金门槛和保障机制（增值服务），这也是卖家自己点名要研究的部分。</div>
+</section>
+
+<!-- ============ PART 4 ============ -->
+<section id="p4-model">
+<h2><span class="no">④</span>竞品的模式与流量</h2>
+<h3>4.1 六个竞品的来源与模式</h3>
+
+<div class="tbl"><table>
+<tr><th style="width:50px">排名</th><th style="width:120px">站点</th><th>落地页</th></tr>
+<tr><td>1</td><td><b>Overgear</b></td><td>overgear.com/games/wow</td></tr>
+<tr><td>2</td><td><b>WowVendor</b></td><td>wowvendor.com/shop/wow</td></tr>
+<tr><td>3</td><td><b>G2G</b></td><td>g2g.com/categories/wow-boosting-service</td></tr>
+<tr><td>4</td><td><b>Epiccarry</b></td><td>epiccarry.com/wow</td></tr>
+<tr><td>5</td><td><b>BlazingBoost</b></td><td>blazingboost.com/wow-boost</td></tr>
+<tr><td>9</td><td><b>Eldorado</b></td><td>eldorado.gg/wow-power-leveling</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th style="width:110px">站点</th><th style="width:110px">模式</th><th>代练怎么发起</th></tr>
+<tr><td><b>G2G</b></td><td>卖家挂商品<br><span class="tag t-new">C2C</span></td><td>卖家自己创建商品、自己定价、自己填交付时长和库存；买家在列表里比价挑卖家，下单前可私信；GamerProtect 托管，买家确认后放款</td></tr>
+<tr><td><b>Eldorado</b></td><td>买家发需求<br><span class="tag t-new">C2C</span></td><td>买家填需求表单发出请求，卖家收到通知后报价（只填价格与交付时长），买家比价、站内沟通后选一个成交；站外沟通不受 TradeShield 保护</td></tr>
+<tr><td><b>Overgear</b></td><td>自营派单<br><span class="tag t-hot">B2C</span></td><td>平台配置器一口价。条款页仍写"卖家须面试入驻、买家可挑卖家"，但商品页无卖家身份与评分；打手走申请表 → Discord 招聘 → KYC → Telegram 派单</td></tr>
+<tr><td><b>WowVendor</b></td><td>自营派单<br><span class="tag t-hot">B2C</span></td><td>自 2014 年起自营，覆盖 35+ 游戏，站内明示"自家玩家手工打，无第三方交易者"；下单后平台分配团队</td></tr>
+<tr><td><b>Epiccarry</b></td><td>自营派单<br><span class="tag t-hot">B2C</span></td><td>自有打手团队，无卖家层；没有合适商品时走"自定义订单"，联系客服下单</td></tr>
+<tr><td><b>BlazingBoost</b></td><td>自营派单<br><span class="tag t-hot">B2C</span></td><td>自有打手团队，无卖家层；配置器选完直接结账，付款后才进客服与打手的聊天</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th style="width:110px">站点</th><th style="width:150px">WoW 板块规模</th><th>价格区间</th></tr>
+<tr><td>G2G</td><td><b>3,185</b> 条商品 · <b>71</b> 个卖家（WoW Forever 类目）</td><td>1–60 级 $317–327；1–20 级 $33–38；1–30 级 $64</td></tr>
+<tr><td>Eldorado</td><td>报价制，无商品数；已开 WoW Forever 专类</td><td>由卖家逐单报价</td></tr>
+<tr><td>Overgear</td><td>平台一口价</td><td>全站 $0.01–750；WoW Forever 1–60 预售起价 $24.07</td></tr>
+<tr><td>WowVendor</td><td>平台一口价</td><td>升级起 $3.90；金币起 $16.91；大秘境起 $19.70；团本 $3.78–429.90；套餐最高 65% 折扣</td></tr>
+<tr><td>Epiccarry</td><td>平台一口价</td><td>团本 / 大秘境 / PvP / 升级 1–90 / 金币 / 地下堡 / 成就</td></tr>
+<tr><td>BlazingBoost</td><td>平台一口价</td><td>1–90 升级；代上号 / 自己玩分开定价</td></tr>
+</table></div>
+</section>
+
+<section id="p4-flow1">
+<h3>4.2 卖家挂商品（G2G）</h3>
+<div class="flow"><i>游戏页</i><u>→</u><i>代练类目</i><u>→</u><i class="k">商品列表（筛选 + 比价）</i><u>→</u><i>商品详情</i><u>→</u><i>私信卖家</i><u>→</u><i class="k">Buy Now</i><u>→</u><i>同意条款 + 给卖家留言</i><u>→</u><i>付款进托管</i><u>→</u><i>卖家交付</i><u>→</u><i>买家确认放款</i><u>→</u><i>互评</i></div>
+<div class="wf">
+<div class="wf-t"><span>商品列表页 · 线框还原</span><span>G2G · WoW Forever 代练类目</span></div>
+<div class="wf-b"><div class="wf-g">
+<div class="wf-p">
+<h5>筛选</h5>
+<div>品牌<br><span class="wf-ch on">WoW: Forever</span> <span class="wf-ch">3.2k 条</span></div>
+<div style="margin-top:7px">区服<br><span class="wf-ch on">US</span> <span class="wf-ch">EU</span> <span class="wf-ch">RU</span></div>
+<div style="margin-top:7px">预算<br><span class="wf-in">$0</span> – <span class="wf-in">$∞</span></div>
+<div style="margin-top:7px"><span class="wf-ch on">✓ 仅在线卖家</span></div>
+<div style="margin-top:7px">排序<br><span class="wf-ch on">推荐</span></div>
+</div>
+<div>
+<div class="wf-off"><div><b>WoW Forever 1–60 Leveling Boost</b><span class="m">🇺🇸 US ｜ CNLTeam · Lv174 · 已认证 ｜ 库存 99 ｜ 交付 1h</span></div><div><div class="pr">$317.40</div><span class="wf-btn">查看</span></div></div>
+<div class="wf-off"><div><b>WoW Forever 1–60 Power Leveling</b><span class="m">🇪🇺 EU ｜ BoostRoom · Lv168 · 已认证 ｜ 库存 50 ｜ 交付 1h</span></div><div><div class="pr">$328.00</div><span class="wf-btn">查看</span></div></div>
+<div class="wf-off"><div><b>WoW Forever 1–20 Leveling</b><span class="m">🇺🇸 US ｜ OpenLimits · Lv140 · 已认证 ｜ 库存 99 ｜ 交付 1h</span></div><div><div class="pr">$33.87</div><span class="wf-btn">查看</span></div></div>
+</div>
+</div></div>
+</div>
+<div class="tbl"><table>
+<tr><th style="width:150px">环节</th><th>做法</th></tr>
+<tr><td>商品行展示</td><td>标题、区服、卖家名 + 等级 + 认证标、最小起购、库存、交付速度、价格</td></tr>
+<tr><td>交付时长</td><td>卖家自填。实际列表中三条商品均填"1h"，不反映真实工时</td></tr>
+<tr><td>属性填写</td><td>下单时以"给卖家的留言"形式填，非结构化</td></tr>
+<tr><td>下单前沟通</td><td>支持，页面明确建议"下单前先看清商品并私信卖家"</td></tr>
+<tr><td>资金流</td><td>GamerProtect 托管，买家确认交付后放款；支持 200+ 种支付方式</td></tr>
+</table></div>
+</section>
+
+<section id="p4-flow2">
+<h3>4.3 买家发需求（Eldorado）</h3>
+<div class="flow"><i>Boosting 导航</i><u>→</u><i>选游戏</i><u>→</u><i>选服务类别</i><u>→</u><i class="k">填需求表单</i><u>→</u><i class="k">Send Request</i><u>→</u><i>卖家收到通知并报价</i><u>→</u><i>比价 + 站内聊</i><u>→</u><i>选一个付款</i><u>→</u><i>订单页沟通交付</i><u>→</u><i>Item Received</i><u>→</u><i>评价</i></div>
+<div class="wf">
+<div class="wf-t"><span>需求表单 + 报价列表 · 线框还原</span><span>Eldorado · WoW Forever 升级</span></div>
+<div class="wf-b"><div class="wf-g" style="grid-template-columns:1fr 1fr">
+<div class="wf-p">
+<h5>① 买家填需求</h5>
+<div class="wf-r"><span class="wf-l">当前等级</span><span class="wf-in">1</span><span class="wf-l" style="width:auto">目标等级</span><span class="wf-in">60</span></div>
+<div class="wf-r"><span class="wf-l">服务器</span><span class="wf-in w">选择 Realm</span></div>
+<div class="wf-r"><span class="wf-l">阵营</span><span class="wf-ch on">部落</span><span class="wf-ch">联盟</span></div>
+<div class="wf-r"><span class="wf-l">服务器类型</span><span class="wf-ch on">PvP-EU</span><span class="wf-ch">PvE-EU</span><span class="wf-ch">RP-EU</span></div>
+<div class="wf-r"><span class="wf-l">代练形式</span><span class="wf-ch on">单人</span><span class="wf-ch">双人</span><span class="wf-ch">直播 / 离线</span></div>
+<div style="margin-top:9px;text-align:right"><span class="wf-btn">发出请求 →</span></div>
+</div>
+<div class="wf-p">
+<h5>② 卖家报价（只填两项）</h5>
+<div class="wf-off" style="grid-template-columns:1fr 110px"><div><b>卖家 A</b><span class="m">评分 4.9 ｜ 312 单</span></div><div><div class="pr">$268</div><span class="m">10 天</span></div></div>
+<div class="wf-off" style="grid-template-columns:1fr 110px"><div><b>卖家 B</b><span class="m">评分 4.8 ｜ 87 单</span></div><div><div class="pr">$249</div><span class="m">14 天</span></div></div>
+<div class="wf-off" style="grid-template-columns:1fr 110px"><div><b>卖家 C</b><span class="m">评分 5.0 ｜ 1,204 单</span></div><div><div class="pr">$310</div><span class="m">7 天</span></div></div>
+</div>
+</div></div>
+</div>
+<div class="tbl"><table>
+<tr><th style="width:150px">环节</th><th>做法</th></tr>
+<tr><td>买家必填</td><td>当前等级、目标等级、服务器、阵营、服务器类型、代练形式（单人 / 双人 / 直播·离线）</td></tr>
+<tr><td>卖家报价字段</td><td>只有价格和交付时长两项，其余条件由买家表单锁定，三份报价严格可比</td></tr>
+<tr><td>卖家接单方式</td><td>订阅自己能做的服务类别，买家发单后收到通知再报价，不创建固定商品</td></tr>
+<tr><td>沟通</td><td>站内聊；站内明示"在 Eldorado 聊天之外进行的任何沟通都不受 TradeShield 保护"</td></tr>
+<tr><td>交付确认</td><td>订单页沟通 → Item Received → 互评</td></tr>
+</table></div>
+</section>
+
+<section id="p4-flow3">
+<h3>4.4 自营派单（Overgear、WowVendor、Epiccarry、BlazingBoost）</h3>
+<div class="flow"><i>游戏页</i><u>→</u><i>商品页</i><u>→</u><i class="k">配置器选项（实时算价）</i><u>→</u><i>加入购物车</i><u>→</u><i>付款</i><u>→</u><i class="k">平台分配打手</i><u>→</u><i>按约定时段开打</i><u>→</u><i>完成</i></div>
+<div class="wf">
+<div class="wf-t"><span>商品配置器 · 线框还原（字段为实测）</span><span>Overgear · WoW Forever 1–60 升级</span></div>
+<div class="wf-b"><div class="wf-g" style="grid-template-columns:1fr 210px">
+<div>
+<div class="wf-r"><span class="wf-l">大区</span><span class="wf-ch on">EU</span><span class="wf-ch">US</span></div>
+<div class="wf-r"><span class="wf-l">版本</span><span class="wf-ch on">正式服预售</span><span class="wf-ch">测试服升级</span></div>
+<div class="wf-r"><span class="wf-l">等级区间</span><span class="wf-in">1</span><span style="color:var(--muted)">———●————————●———</span><span class="wf-in">60</span></div>
+<div class="wf-r"><span class="wf-l">附加</span><span class="wf-ch">☐ 专业冲级 1–300</span></div>
+<div class="wf-r"><span class="wf-l">角色数量</span><span class="wf-ch on">1 个</span><span class="wf-ch">2 个（8 折）<b style="color:var(--accent)">+60%</b></span><span class="wf-ch">3 个（6 折）<b style="color:var(--accent)">+80%</b></span></div>
+<div class="wf-r"><span class="wf-l">加急档位</span><span class="wf-ch on">普通</span><span class="wf-ch">加急 <b style="color:var(--accent)">+30%</b></span><span class="wf-ch">特急 <b style="color:var(--accent)">+50%</b></span></div>
+<div class="wf-r"><span class="wf-l">交付方式</span><span class="wf-ch on">代上号</span><span class="wf-ch">远程 <b style="color:var(--accent)">+30%</b></span></div>
+<div class="wf-r"><span class="wf-l">增值服务</span><span class="wf-ch">🔴 全程直播 <b style="color:var(--accent)">+$11.46</b></span></div>
+</div>
+<div class="wf-sum">
+<div class="big">$24.07</div>
+<div class="m" style="color:var(--muted)">返现 1%</div>
+<div style="margin-top:7px;border-top:1px dashed var(--accent);padding-top:7px">⏱ 6 小时内开工<br>📅 时段灵活</div>
+<div style="margin-top:9px"><span class="wf-btn">加入购物车</span></div>
+<div style="margin-top:7px"><span class="wf-btn g">定制需求 →</span></div>
+</div>
+</div></div>
+</div>
+<div class="tbl"><table>
+<tr><th style="width:110px">站点</th><th>配置项</th><th style="width:180px">打手怎么来</th><th style="width:160px">售前入口</th></tr>
+<tr><td>Overgear</td><td>大区、版本、等级滑块、专业附加、角色数量、加急档、交付方式、直播</td><td>申请表 → Discord 招聘 → KYC → Telegram 派单</td><td>24/7 客服；"定制需求"2 分钟响应</td></tr>
+<tr><td>WowVendor</td><td>起始等级（1–90）、标准代打 / 自己玩；套餐捆绑折扣最高 65%；标称 1→90 五小时</td><td>自 2014 年自营，"无第三方交易者"</td><td>提交需求，几分钟回复</td></tr>
+<tr><td>Epiccarry</td><td>代上号 / 自己玩两种模式；无固定加价档，按复杂度和工时定价</td><td>自有打手</td><td>自定义订单走客服，响应约 2 分钟</td></tr>
+<tr><td>BlazingBoost</td><td>代上号 / 自己玩、服务器、加急优先级、附加服务打包折扣、VIP 等级折扣在算价时显示</td><td>自有打手，下单后指派</td><td>无强制售前沟通，付款后才进聊天</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th style="width:170px">加价项</th><th>Overgear 实测比例</th></tr>
+<tr><td>多角色</td><td>2 个角色总价 +60%（单价 8 折）、3 个 +80%（单价 6 折）</td></tr>
+<tr><td>加急</td><td>加急 +30%、特急 +50%</td></tr>
+<tr><td>交付方式</td><td>远程（自己玩）+30%</td></tr>
+<tr><td>增值服务</td><td>全程直播 +$11.46（定额）</td></tr>
+</table></div>
+</section>
+
+<section id="p4-traffic">
+<h3>4.5 流量</h3>
+<h4 style="margin:18px 0 4px;font-size:15px">4.5.1 六个站的全站流量</h4>
+<p class="sub">Similarweb 公开页面，2026-08 口径，均为估算值。</p>
+<div class="tbl"><table>
+<tr><th style="width:110px">站点</th><th style="width:90px">月访问</th><th style="width:70px">环比</th><th>最大来源渠道</th><th style="width:75px">美国占比</th><th style="width:90px">美国月访问</th><th style="width:90px">人均页数 / 时长</th></tr>
+<tr><td><b>Eldorado</b></td><td><b>1,540 万</b></td><td>+4.3%</td><td>直接访问 52.0%</td><td>26.8%</td><td><b>≈ 413 万</b></td><td>11.7 页 / 8:26</td></tr>
+<tr><td><b>G2G</b></td><td><b>670 万</b></td><td>−10.5%</td><td>直接访问 53.0%</td><td>20.4%</td><td>≈ 137 万</td><td>— / 6:31</td></tr>
+<tr><td><b>Overgear</b></td><td><b>83.4 万</b></td><td>+1.9%</td><td>自然搜索 48.5%</td><td>22.1%</td><td>≈ 18.4 万</td><td>4.8 页 / 2:27</td></tr>
+<tr><td><b>BlazingBoost</b></td><td><b>48.3 万</b></td><td>−4.2%</td><td>直接访问 46.7%</td><td>12.7%<br><span class="sub">土耳其 14.3% 居首</span></td><td>≈ 6.1 万</td><td>3.9 页 / 4:33</td></tr>
+<tr><td><b>Epiccarry</b></td><td><b>41.3 万</b></td><td><b>+54.8%</b></td><td>自然搜索 74.6%</td><td>31.3%</td><td>≈ 12.9 万</td><td>— / 1:08</td></tr>
+<tr><td><b>WowVendor</b></td><td><b>25.6 万</b></td><td>−14.4%</td><td>自然搜索 55.1%</td><td>36.2%</td><td>≈ 9.3 万</td><td>2.3 页 / 0:51</td></tr>
+</table></div>
+
+<h4 style="margin:22px 0 4px;font-size:15px">4.5.2 搜索需求盘子</h4>
+<p class="sub">Semrush Keyword Overview，美国库，2026-09-21。词族规模为 Keyword Variations 总量。</p>
+<div class="tbl"><table>
+<tr><th style="width:190px">关键词</th><th style="width:90px">美国月搜索</th><th style="width:60px">KD</th><th style="width:80px">CPC</th><th>所属词族规模</th></tr>
+<tr><td>wow boost</td><td>1,900</td><td>58</td><td>$3.47</td><td rowspan="2">8,705 个词 · <b>56.4K</b>/月</td></tr>
+<tr><td>wow boosting</td><td>1,000</td><td>53</td><td>$3.47</td></tr>
+<tr><td>wow boosting services</td><td>590</td><td>55</td><td>$3.09</td><td>154 个词 · 2.7K/月</td></tr>
+<tr><td>wow power leveling</td><td>390</td><td><b>27</b></td><td>$2.50</td><td>1,476 个词 · 4.9K/月</td></tr>
+<tr><td>buy wow boost</td><td>170</td><td>60</td><td>$3.37</td><td>378 个词 · 3.0K/月</td></tr>
+<tr><td><b>wow gold</b></td><td><b>5,400</b></td><td>51</td><td>$2.77</td><td>22,644 个词 · <b>127.2K</b>/月</td></tr>
+</table></div>
+<p>代练词族约 <b>6 万次/月</b>，金币词族 <b>12.7 万次/月</b>，金币是代练的 2.1 倍。德国盘子与美国同量级：<code>wow boost</code> 德国 1,900、<code>wow gold</code> 德国 2,400。</p>
+
+<h4 style="margin:22px 0 4px;font-size:15px">4.5.3 各站 WoW 板块的自然搜索流量（美国，月）</h4>
+<div class="tbl"><table>
+<tr><th style="width:130px">站点</th><th style="width:110px">WoW 代练</th><th style="width:110px">WoW 金币</th><th style="width:110px">合计</th><th>这个数低估了多少</th></tr>
+<tr><td><b>Overgear</b></td><td><b>≈ 2,610</b></td><td><b>6,082</b></td><td><b>≈ 8,690</b></td><td>基本准确，占该站全站美国自然搜索 60.7K 的 14%</td></tr>
+<tr><td><b>G2G</b></td><td>≈ 75</td><td>≈ 3,480</td><td>≈ 3,560</td><td>严重低估：品牌词占 39.8%、直接访问占 53%，均不在此口径内</td></tr>
+<tr><td><b>WowVendor</b></td><td>≈ 300</td><td>≈ 2,420</td><td>≈ 2,720</td><td>偏低：自然搜索占 55.1%</td></tr>
+<tr><td><b>BlazingBoost</b></td><td>≈ 1,400</td><td>0</td><td>≈ 1,400</td><td>严重低估：最大来源是直接访问（46.7%）</td></tr>
+<tr><td><b>Epiccarry</b></td><td>≈ 690</td><td>0</td><td>≈ 690</td><td>基本准确：自然搜索占 74.6%</td></tr>
+<tr><td><b>Eldorado</b></td><td>≈ 10</td><td>≈ 730</td><td>≈ 740</td><td>几乎不代表真实规模：品牌词占 48.6%、直接访问占 52%</td></tr>
+</table></div>
+<p class="sub">口径：搜索量 × 排名对应的点击率，按六个词加总后外推到词族，并以 Semrush 实测的 <code>overgear.com/games/wow/gold</code> 页面流量（6,082/月）为锚校准。只覆盖自然搜索，不含直接访问、社媒与广告。可信区间约 ±50%，用于比较量级与排序，不作精确值。</p>
+</section>
+
+<section id="p4-pool">
+<h3>4.6 流量池有多大，我们能承接多少</h3>
+<h4 style="margin:18px 0 4px;font-size:15px">4.6.1 池子</h4>
+<div class="tbl"><table>
+<tr><th style="width:150px">口径</th><th style="width:120px">WoW 代练</th><th style="width:120px">WoW 金币</th></tr>
+<tr><td>美国 · 自然搜索</td><td>≈ 8,700 次/月</td><td>≈ 19,000 次/月</td></tr>
+<tr><td>美国 · 全渠道</td><td>≈ 1.9 万次/月</td><td>≈ 4.2 万次/月</td></tr>
+<tr><td><b>欧美 · 全渠道</b></td><td><b>≈ 4 万次/月</b></td><td><b>≈ 9 万次/月</b></td></tr>
+</table></div>
+<p class="sub">自然搜索→全渠道按六站加权自然搜索占比 45% 换算；美国→欧美按 ×2.2 换算（美国占各站 12.7–36.2%，德国搜索量与美国持平）。</p>
+
+<h4 style="margin:22px 0 4px;font-size:15px">4.6.2 池子里有多少是抢不到的</h4>
+<div class="tbl"><table>
+<tr><th style="width:190px">壁垒</th><th>数据</th></tr>
+<tr><td>竞品的品牌与直达流量</td><td>Eldorado 品牌词占自然搜索 48.6%、直接访问 52%；G2G 39.8% / 53%。这部分是存量用户回访，不参与竞争</td></tr>
+<tr><td>代练头部词的排名门槛</td><td><code>wow boost</code> 等五词 KD 53–60，Semrush 提示需 141–204 个外链域；前 10 名被垂直自营站占满</td></tr>
+<tr><td>唯一低门槛入口</td><td><code>wow power leveling</code> KD 27，月搜 390，G2G 凭此排进第 7</td></tr>
+</table></div>
+
+<h4 style="margin:22px 0 4px;font-size:15px">4.6.3 我们能承接多少</h4>
+<div class="tbl"><table>
+<tr><th style="width:130px">路径</th><th>依据</th><th style="width:140px">可承接量</th></tr>
+<tr><td><b>站内导流</b><br><span class="tag t-low">主路径</span></td><td>iGV 自有 WoW 金币类目 UV：20 周年服开服次月 8,267/月，TBC 周年服峰值 13,477/月，当前 4,091/月。按 PlayerAuctions 站内结构，WoW 代练累计成交约为 WoW 金币的 9.7%</td><td><b>800–1,300 UV/月</b></td></tr>
+<tr><td><b>搜索拉新</b><br><span class="tag t-mid">次路径</span></td><td>头部词首发拿不到；现实目标为 <code>wow power leveling</code> 加长尾，12 个月内取品类搜索 1–3%</td><td>400–1,200 访问/月</td></tr>
+<tr><td colspan="2" style="text-align:right"><b>首发 3 个月合计</b></td><td><b>1,200–2,500 访问/月</b><br><span class="sub">占欧美代练池子 3–6%</span></td></tr>
+</table></div>
+<div class="ok"><b>结论：</b>WoW 代练在欧美是一个约 4 万访问/月的池子，只有金币的一半不到；其中近一半被竞品的品牌与直达流量锁死，代练头部词我们首发抢不到。我们的现实承接量是 <b>1,200–2,500 访问/月</b>，来源以站内金币用户交叉为主、长尾搜索为辅，对应欧美代练池子的 3–6%。</div>
+</section>
+<section id="p4-lesson">
+<h3>4.7 对 iGV 的启示</h3>
+<div class="tbl"><table>
+<tr><th style="width:190px">观察</th><th>结论</th><th style="width:120px">我们怎么办</th></tr>
+<tr><td><b>我们的模式一在六个竞品里没有对应</b></td><td>我们是中台定标品模板、卖家只填价格、买家算价后从覆盖该配置的卖家里选一个。Overgear 有配置器无卖家层，G2G 有卖家层无模板，两者都不是</td><td><span class="tag t-mid">无可直接对标</span></td></tr>
+<tr><td>Eldorado 跑通了"买家发需求 + 卖家报价"</td><td>这种发起方式在代练品类是成立的，且由头部站在跑</td><td><span class="tag t-low">模式二可上</span></td></tr>
+<tr><td>Eldorado 的报价只让卖家填价格和交付时长</td><td>报价字段越少越可比，其余条件由买家表单锁死</td><td><span class="tag t-low">已是现有设计</span></td></tr>
+<tr><td>G2G 商品行的交付时长普遍填"1h"</td><td>自由填写的交付时长会被卖家当排序工具用，失去信息量</td><td><span class="tag t-low">交付时长走平台档位</span></td></tr>
+<tr><td>Eldorado 把沟通锁在站内，站外沟通不受保障</td><td>防跳单写进保障条款比技术拦截有效</td><td><span class="tag t-mid">条款需补</span></td></tr>
+<tr><td>四个自营站的配置器都是"基础价 + 乘法系数 + 定额加项"</td><td>与我们的费率卡是同一套数学，模板结构不用改</td><td><span class="tag t-low">无需开发</span></td></tr>
+<tr><td>加急、远程、直播的加价比例稳定（+30% / +50% / 定额）</td><td>品类公认的溢价点，卖家会用，买家也认</td><td><span class="tag t-low">做成系数行</span></td></tr>
+<tr><td>Overgear 多角色阶梯：总价涨、单价降</td><td>2 个 +60%（8 折）、3 个 +80%（6 折），用于拉客单价</td><td><span class="tag t-mid">可做成系数</span></td></tr>
+<tr><td>代上号 / 自己玩是四家自营站的标配二选一</td><td>交付方式既是价格档也是风险话术</td><td><span class="tag t-low">已是现有设计</span></td></tr>
+<tr><td>四个自营站全部有售前入口，响应以分钟计</td><td>高客单非标品类，售前沟通是转化环节</td><td><span class="tag t-mid">售前要配人</span></td></tr>
+<tr><td>综合站的流量模型是存量复购 + 交叉购买，不靠品类搜索拉新</td><td>见 4.6：品牌与直达占竞品流量近一半，代练头部词首发抢不到</td><td><span class="tag t-mid">首发靠站内导流</span></td></tr>
+<tr><td><code>wow power leveling</code> KD 仅 27</td><td>综合站在代练侧唯一现实的搜索切入点</td><td><span class="tag t-low">首发就盯这个词</span></td></tr>
+<tr><td>金币搜索需求是代练的 2.1 倍，站内成交是 10 倍</td><td>金币是入口也是复购，代练更像金币用户的加购项</td><td><span class="tag t-low">金币先行、代练跟进</span></td></tr>
+<tr><td>德国搜索量与美国持平</td><td><code>wow boost</code> 德国 1,900、美国 1,900；<code>wow gold</code> 德国 2,400</td><td><span class="tag t-mid">德语内容要排期</span></td></tr>
+<tr><td>Epiccarry 环比 +54.8%，自然搜索占 74.6%</td><td>纯 SEO 驱动的垂直站仍在高速增长，搜索位有增量可抢</td><td><span class="tag t-mid">长尾内容值得投</span></td></tr>
+</table></div>
 </section>
 
 <!-- ============ PART 5 ============ -->
@@ -775,6 +1038,9 @@ TBC 预补丁 2026-01-14 上线，20 周年经典服的金币需求两周内归�
 <a href="https://www.g2g.com/categories/wow-classic-era-boosting-service">G2G Classic 代练</a> ·
 <a href="https://www.playerauctions.com/wow-boosting/dungeons/mythic-carry/">PlayerAuctions</a> ·
 <a href="https://oblivion-marketplace.com/">Oblivion Marketplace</a></p>
+<p><b>竞品筛选</b>：Google 美国（Maricopa County, AZ）搜索 <code>buy wow boost</code> 自然排名，2026-09-21。</p>
+<p><b>关键词与排名</b>：Semrush Keyword Overview（美国库，2026-09-21）：wow boost / wow boosting / wow boosting services / wow power leveling / buy wow boost / wow gold；Semrush Top Pages：overgear.com（美国库，2026-09-19）。点击率曲线取公开行业均值。</p>
+<p><b>竞品模式与流量</b>：<a href="https://info.overgear.com/about">Overgear 条款/关于</a> · <a href="https://help.overgear.com/en/articles/11117720-how-to-become-a-booster-at-overgear">Overgear 打手加入说明</a> · <a href="https://www.starterstory.com/video-games-boosting-services-marketplace">Overgear 创始人访谈</a> · <a href="https://support.eldorado.gg/en/articles/8408989-how-to-buy-boosting-services">Eldorado 买家下单流程</a> · <a href="https://support.eldorado.gg/en/articles/8408999-how-to-sell-boosting-services">Eldorado 卖家接单流程</a> · <a href="https://lfcarry.com/wow-forever/dwarf-shaman-leveling">LFCarry 种族职业落地页示例</a> · <a href="https://www.similarweb.com/website/eldorado.gg/">Similarweb Eldorado</a> · <a href="https://www.similarweb.com/website/g2g.com/">G2G</a> · <a href="https://www.similarweb.com/website/playerauctions.com/">PlayerAuctions</a> · <a href="https://www.similarweb.com/website/overgear.com/">Overgear</a> · <a href="https://www.similarweb.com/website/wowvendor.com/">WowVendor</a> · <a href="https://www.similarweb.com/website/blazingboost.com/">BlazingBoost</a> · <a href="https://www.similarweb.com/website/epiccarry.com/">Epiccarry</a> · <a href="https://www.similarweb.com/website/kingboost.net/">KingBoost</a> · <a href="https://www.similarweb.com/website/leprestore.com/">LepreStore</a> · <a href="https://www.similarweb.com/website/lfcarry.com/">LFCarry</a></p>
 <p><b>竞品（WoW 无限）</b>：
 <a href="https://www.g2g.com/categories/wow-forever-boosting-service">G2G 代练</a> ·
 <a href="https://www.g2g.com/categories/wow-forever-gold">G2G 金币</a> ·
