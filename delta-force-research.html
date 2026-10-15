@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delta Force 游戏调研报告 · IGV 业务拓展评估</title>
+<style>
+  :root{
+    --paper:#faf7f0;
+    --ink:#2b2620;
+    --ink-soft:#5c554a;
+    --red:#b3402a;
+    --red-soft:#f3e0da;
+    --green:#3d6b4f;
+    --green-soft:#e2ede6;
+    --amber:#9a6b1f;
+    --amber-soft:#f5ecd8;
+    --blue:#3a5a78;
+    --blue-soft:#e2eaf1;
+    --line:#d8d0c2;
+    --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Noto Serif SC","Songti SC","SimSun",serif;
+    line-height:1.85;
+    font-size:16px;
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:48px 28px 80px;}
+
+  /* ---------- header ---------- */
+  header{border-bottom:3px double var(--line);padding-bottom:28px;margin-bottom:36px;}
+  .kicker{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-bottom:14px;}
+  h1{font-size:34px;font-weight:700;letter-spacing:.02em;line-height:1.4;}
+  .subtitle{margin-top:10px;color:var(--ink-soft);font-size:15px;}
+  .meta{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft);}
+  .meta span{border:1px solid var(--line);padding:3px 10px;border-radius:3px;background:#fff;}
+
+  /* ---------- module label ---------- */
+  .module{margin-top:56px;}
+  .module-label{
+    display:inline-block;
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    background:var(--red);
+    color:#fff;
+    font-size:12px;
+    letter-spacing:.25em;
+    padding:5px 14px;
+    border-radius:2px;
+    margin-bottom:12px;
+  }
+  h2{font-size:25px;font-weight:700;margin-bottom:6px;}
+  .module-intro{color:var(--ink-soft);font-size:14.5px;margin-bottom:22px;}
+  h3{font-size:18px;font-weight:700;margin:30px 0 12px;padding-left:12px;border-left:4px solid var(--red);}
+  p{margin-bottom:14px;}
+  strong{font-weight:700;}
+
+  /* ---------- conclusion cards ---------- */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:20px 24px;
+    margin:18px 0;
+    box-shadow:0 1px 3px rgba(60,50,30,.06);
+  }
+  .card .tag{
+    display:inline-block;font-family:"Helvetica Neue",Arial,sans-serif;
+    font-size:11px;letter-spacing:.15em;padding:2px 10px;border-radius:2px;margin-bottom:10px;
+  }
+  .card.verdict{border-left:6px solid var(--green);background:var(--green-soft);}
+  .card.verdict .tag{background:var(--green);color:#fff;}
+  .card.risk{border-left:6px solid var(--red);background:var(--red-soft);}
+  .card.risk .tag{background:var(--red);color:#fff;}
+  .card.note{border-left:6px solid var(--amber);background:var(--amber-soft);}
+  .card.note .tag{background:var(--amber);color:#fff;}
+  .card.info{border-left:6px solid var(--blue);background:var(--blue-soft);}
+  .card.info .tag{background:var(--blue);color:#fff;}
+  .card p:last-child{margin-bottom:0;}
+
+  /* ---------- mechanism cards ---------- */
+  .mech-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .mech{
+    background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px 20px;
+  }
+  .mech .mid{
+    font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;font-weight:700;color:var(--red);letter-spacing:.15em;
+  }
+  .mech h4{font-size:16px;margin:6px 0 8px;}
+  .mech p{font-size:14px;color:var(--ink-soft);margin-bottom:8px;}
+  .mech .impact{font-size:13px;border-top:1px dashed var(--line);padding-top:8px;color:var(--ink);}
+  .mech .impact b{color:var(--red);}
+
+  /* ---------- flow steps ---------- */
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;counter-reset:none;}
+  .flow .st{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px 16px;position:relative;}
+  .flow .st .mid{font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;font-weight:700;color:var(--red);letter-spacing:.15em;}
+  .flow .st h4{font-size:15px;margin:4px 0 6px;}
+  .flow .st p{font-size:13.5px;color:var(--ink-soft);margin-bottom:0;line-height:1.7;}
+
+  /* ---------- persona cards ---------- */
+  .persona-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .persona{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px 20px;border-top:4px solid var(--blue);}
+  .persona h4{font-size:16px;margin-bottom:8px;}
+  .persona .row{font-size:14px;margin-bottom:6px;color:var(--ink-soft);}
+  .persona .row b{color:var(--ink);font-weight:700;}
+
+  /* ---------- trust cards ---------- */
+  .trust-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+  .trust{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px 20px;border-top:4px solid var(--amber);}
+  .trust h4{font-size:15.5px;margin-bottom:8px;}
+  .trust p{font-size:14px;color:var(--ink-soft);margin-bottom:8px;}
+  .trust .fix{font-size:13.5px;border-top:1px dashed var(--line);padding-top:8px;}
+  .trust .fix b{color:var(--green);}
+
+  /* ---------- tables ---------- */
+  table{width:100%;border-collapse:collapse;margin:18px 0;background:#fff;font-size:14.5px;}
+  th{background:#efe9dd;font-weight:700;text-align:left;padding:10px 12px;border:1px solid var(--line);white-space:nowrap;}
+  td{padding:10px 12px;border:1px solid var(--line);vertical-align:top;}
+  tr:nth-child(even) td{background:#fbf9f4;}
+  td.num{font-family:"Helvetica Neue",Arial,sans-serif;white-space:nowrap;}
+  .pri{display:inline-block;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;font-weight:700;padding:2px 9px;border-radius:2px;color:#fff;white-space:nowrap;}
+  .p0{background:var(--red);}
+  .p1{background:var(--amber);}
+  .p2{background:var(--blue);}
+  .px{background:#8a8477;}
+
+  /* ---------- appendix ---------- */
+  .appendix-label{background:var(--ink);}
+  dl{margin:16px 0;}
+  dt{font-weight:700;margin-top:14px;}
+  dd{margin-left:0;color:var(--ink-soft);font-size:14.5px;}
+
+  .footnote{margin-top:60px;border-top:3px double var(--line);padding-top:18px;font-size:12.5px;color:var(--ink-soft);font-family:"Helvetica Neue",Arial,sans-serif;line-height:1.7;}
+
+
+  /* ---------- left tabs ---------- */
+  .layout{display:grid;grid-template-columns:210px 1fr;gap:44px;align-items:start;}
+  nav.tabs{position:sticky;top:24px;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--line);padding-right:18px;}
+  .tab{all:unset;cursor:pointer;display:block;padding:10px 12px;border-radius:4px;border-left:3px solid transparent;transition:background .15s;}
+  .tab:hover{background:#f1ebdf;}
+  .tab .no{display:block;font-family:"Helvetica Neue",Arial,sans-serif;font-size:10.5px;letter-spacing:.22em;color:var(--ink-soft);}
+  .tab .tl{display:block;font-size:15px;font-weight:700;color:var(--ink);line-height:1.5;margin-top:2px;}
+  .tab[aria-selected="true"]{background:#fff;border-left-color:var(--red);box-shadow:0 1px 3px rgba(60,50,30,.08);}
+  .tab[aria-selected="true"] .no{color:var(--red);}
+  .tab.apx .no{color:#8a8477;}
+  .tab.apx[aria-selected="true"]{border-left-color:var(--ink);}
+  .tab.apx[aria-selected="true"] .no{color:var(--ink);}
+  .tab-sep{height:1px;background:var(--line);margin:8px 0;}
+  .content{min-width:0;}
+  .panel{scroll-margin-top:24px;}
+  .panel + .panel{margin-top:64px;padding-top:8px;border-top:1px dashed var(--line);}
+  .panel > .module:first-child{margin-top:0;}
+  .panel > .card:first-child{margin-top:0;}
+
+  @media (max-width:860px){
+    .layout{grid-template-columns:1fr;gap:20px;}
+    nav.tabs{position:sticky;top:0;z-index:5;background:var(--paper);flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);padding:8px 0;}
+    .panel{scroll-margin-top:84px;}
+    .tab{flex:0 0 auto;border-left:none;border-bottom:3px solid transparent;}
+    .tab[aria-selected="true"],.tab.apx[aria-selected="true"]{border-left:none;border-bottom-color:var(--red);}
+    .tab-sep{display:none;}
+    .mech-grid,.persona-grid,.trust-grid{grid-template-columns:1fr;}
+    .flow{grid-template-columns:1fr 1fr;}
+    h1{font-size:26px;}
+    .wrap{padding:32px 16px 60px;}
+    table{font-size:13px;display:block;overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">IGV Business Development Research</div>
+  <h1>Delta Force 游戏调研报告</h1>
+  <div class="subtitle">三层结构：游戏基本面 · 交易生态 · 玩家需求与风险 —— 面向 IGV.com 业务拓展决策</div>
+  <div class="meta">
+    <span>更新日期 2026-7-24</span>
+    <span>数据口径：SteamDB · Ahrefs · G2G 全站快照 · 卖家深访 · 玩家 1v1 深访</span>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="tabs" role="tablist" aria-label="报告章节">
+  <button class="tab " role="tab" aria-selected="true" data-panel="p0"><span class="no">SUMMARY</span><span class="tl">总结论</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="pa"><span class="no">MODULE A</span><span class="tl">第一层：游戏基本面</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="pb"><span class="no">MODULE B</span><span class="tl">第二层：交易生态与竞对铺货</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="pc"><span class="no">MODULE C</span><span class="tl">第三层：玩家需求与画像</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="pd"><span class="no">MODULE D</span><span class="tl">业务建议与品类优先级</span></button>
+  <div class="tab-sep"></div>
+  <button class="tab apx" role="tab" aria-selected="false" data-panel="px2"><span class="no">APPENDIX Ⅰ</span><span class="tl">术语表</span></button>
+  <button class="tab apx" role="tab" aria-selected="false" data-panel="px4"><span class="no">APPENDIX Ⅱ</span><span class="tl">调研问答（Q&amp;A）</span></button>
+</nav>
+<div class="content">
+
+<section class="panel" id="p0" role="tabpanel">
+<!-- ======================== 总结论 ======================== -->
+<div class="card verdict">
+  <span class="tag">总结论</span>
+  <p><strong>值得做（Go）：需求由游戏机制制造，规模已被平台成交验证。</strong>Delta Force 是腾讯天美 Team Jade 研发的免费战术射击游戏，交易需求 90% 以上集中在撤离模式「烽火地带」。死亡掉装备、高难图战备值门槛、官方不向玩家出售哈夫币，三者叠加让金币成为结构性刚需。顶级 3×3 安全箱绑定赛季任务链，每两个月清零一次，代练因此按赛季周期复购。非中国区第三方市场约 <strong>30–60 万 SGD/月</strong>，G2G 单站约 214–296 单/天。游戏处于成熟稳态期，Steam 峰值 24.7 万，月波动约 6%。</p>
+  <p><strong>核心前提：</strong>决定成败的是交付体验与账号安全，不是价格。卖家侧，哈夫币只能通过“撞车 + 拍卖行代售”交付，单笔耗时 5–20 分钟，常分段到账，客诉多。玩家侧，7 位深访玩家中有 5 位把价格列为首要考量，4 位提到递送安全、盗号或封号风险，其中 2 位明确拒绝上号代练。IGV 入场的取信手段应是托管式交付（时效承诺 + 赔付保障）和不交号的 self-play 带打。</p>
+</div>
+</section>
+
+<section class="panel" id="pa" role="tabpanel">
+<!-- ======================== MODULE A ======================== -->
+<div class="module">
+  <div class="module-label">MODULE A</div>
+  <h2>第一层：游戏基本面</h2>
+  <div class="module-intro">回答“值不值得做”：产品、模式、经济机制、用户规模、地区分布。</div>
+
+  <h3>A-1 产品与模式定位</h3>
+  <table>
+    <tbody><tr><th>项目</th><th>内容</th><th>备注</th></tr>
+    <tr><td>研发运营</td><td>腾讯天美 Team Jade（《使命召唤手游》团队）</td><td>越南由 Garena 独立发行</td></tr>
+    <tr><td>类型 / 收费</td><td>战术射击 · 免费游玩 + 内购</td><td>内购以皮肤、通行证等外观为主</td></tr>
+    <tr><td>可玩平台</td><td>PC（Steam / Epic / 官方启动器）· PS5 / Xbox Series X|S · iOS / Android</td><td>—</td></tr>
+    <tr><td>国服上线</td><td>2024.09 全端公测</td><td>—</td></tr>
+    <tr><td>国际服上线</td><td>2024.12 PC → 2025.04 手游 → 2025.08 主机</td><td>—</td></tr>
+    <tr><td>赛季节奏</td><td>约 2 个月一季</td><td>调研时点为 S10「Meltdown」（2026-06-30 全平台开启）。新赛季直接替代旧赛季：账号与仓库资产保留，赛季任务、通行证、排位、顶级安全箱清零</td></tr>
+  </tbody></table>
+
+  <p>游戏共三个模式，交易需求几乎全部来自烽火地带：</p>
+  <table>
+    <tbody><tr><th>模式</th><th>玩法</th><th>死亡代价</th><th>衍生交易需求</th></tr>
+    <tr><td><strong>烽火地带</strong><br>OPERATIONS · 撤离</td><td>3 人小队（可单排）入图，与 NPC、Boss 及其他玩家小队同图；搜刮物资、做任务，活着走到撤离点才能把东西带回</td><td>身上装备物资全部掉落，仅安全箱内保留</td><td><strong>金币 · 代练 · 账号 · 物品</strong>（全部核心品类）</td></tr>
+    <tr><td>全面战场<br>WARFARE · 大战场</td><td>类《战地》的大规模攻防 / 占点，死后重生，装备靠武器等级解锁</td><td>无资产损失</td><td>段位代练 · 皮肤充值（两条薄需求）</td></tr>
+    <tr><td>黑鹰坠落<br>CAMPAIGN · PVE</td><td>剧情向战役，单人 / 合作通关</td><td>无</td><td>基本无</td></tr>
+  </tbody></table>
+
+  <p>烽火地带一局的完整流程：</p>
+  <div class="flow">
+    <div class="st"><div class="mid">STEP 1</div><h4>备装</h4><p>枪、甲、弹、药全部用哈夫币自费购置，官方免费“制式券”可兜底。</p></div>
+    <div class="st"><div class="mid">STEP 2</div><h4>选图 · 交费</h4><p>常规 / 机密 / 绝密三档；机密以上验战备值并收入场费，死亡即损失。</p></div>
+    <div class="st"><div class="mid">STEP 3</div><h4>局内 20–40 分钟</h4><p>搜物资、做任务、开钥匙房；全程不开枪只捡东西（跑刀）也是主流打法。</p></div>
+    <div class="st"><div class="mid">STEP 4</div><h4>两种结局</h4><p>撤离成功：全部带回仓库。死亡：全部掉落、他人可捡，仅安全箱保留。</p></div>
+  </div>
+  <div class="card info">
+    <span class="tag">一句话规则</span>
+    <p><strong>谁死谁掉、谁捡归谁、撤离才算保住。</strong>这不是两队 PK 分胜负，而是个体生存与资产博弈。全面战场是“免费的爽游”，烽火地带是“带着本金进赌场”，机制与需求分析全部围绕后者。</p>
+  </div>
+
+  <h3>A-2 核心交易机制</h3>
+  <div class="mech-grid">
+    <div class="mech">
+      <div class="mid">M-01</div>
+      <h4>死亡惩罚：一切需求的源头</h4>
+      <p>装备即资产、资产即战力。一次死亡损失几万到上百万哈夫币，连败即“破产”，体验断崖式下跌。</p>
+      <div class="impact"><b>业务含义：</b>快速回血是买币的第一触发场景；怕死不敢单进催生护航代练需求。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-02</div>
+      <h4>战备值门槛：进场券制造的需求</h4>
+      <p>常规图无门槛；机密图约 11–19 万 + 入场费；绝密图约 45–78 万 + 入场费（门槛 = 携带装备总价值，随赛季浮动）。玩家为省钱已发展出整套“卡战备”攻略。</p>
+      <div class="impact"><b>业务含义：</b>冲高难图前先凑几十万币，是买币的第二触发场景。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-03</div>
+      <h4>安全箱：代练需求的发动机</h4>
+      <p>局内“死了也不掉”的保底格。默认 1×2 起步，顶级 3×3 绑定约上百个赛季任务的任务链，且每赛季清零、下季重做。</p>
+      <div class="impact"><b>业务含义：</b>官方每 2 个月刷新一次的<b>复购型代练刚需</b>。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-04</div>
+      <h4>交易行与三币体系</h4>
+      <p>哈夫币是唯一硬通货，官方不向玩家直售；三角币（充值获得）只能买皮肤与通行证。游戏内交易行流动性好，出售抽 5% 手续费，玩家缺币不缺物。</p>
+      <div class="impact"><b>业务含义：</b>金币做大；物品主要充当交付载体，独立需求待验证（见 C-3）。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-05</div>
+      <h4>赛季节奏：需求的日历</h4>
+      <p>约 2 个月一季，带来新任务链（含安全箱）、新通行证、新图与新干员，物价重新洗牌。</p>
+      <div class="impact"><b>业务含义：</b>赛季初是全品类需求高峰，运营按赛季日历排兵。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">M-06</div>
+      <h4>局外成长：账号价值的来源</h4>
+      <p>等级、部门声望、特勤处制造设施、仓库容量、干员与皮肤，长线积累全部沉淀在账号里，价值可按哈夫币量化。受访玩家也把“资产跨赛季累积、不像塔科夫清档”列为留存理由。</p>
+      <div class="impact"><b>业务含义：</b>账号是可定价的“数字资产包”，换号成本催生买号。</div>
+    </div>
+  </div>
+
+  <h3>A-3 用户规模与热度</h3>
+  <table>
+    <tbody><tr><th>指标</th><th>数值</th><th>口径/备注</th></tr>
+    <tr><td>Steam 同时在线峰值</td><td class="num">24.7 万（2025-09）</td><td>SteamDB，唯一可精确追踪的端</td></tr>
+    <tr><td>Steam 近 30 天日峰 / 均值</td><td class="num">14 万 / 6.9 万</td><td>月波动约 6%，无衰减也无爆发斜率</td></tr>
+    <tr><td>国服双端 DAU</td><td class="num">峰值超 1,200 万</td><td>媒体口径，仅国服 PC + 手机，不含国际服与主机</td></tr>
+    <tr><td>手游全球上线</td><td>曾登顶 169 个国家和地区下载榜</td><td>Epic / 主机 / 手游无公开精确数据，全平台总数无法合计</td></tr>
+    <tr><td>游戏名头词搜索</td><td class="num">40.3 万次/月</td><td>Ahrefs 全球，含下载、攻略、资讯，用于判断玩家分布</td></tr>
+    <tr><td>购买意图搜索</td><td class="num">≈ 1.2 万次/月</td><td>26 词实拉，约 400 次/天，仅为头词的 3%</td></tr>
+    <tr><td>account / boosting 搜索增速</td><td class="num">+79% / +48%</td><td>近 12 个月</td></tr>
+    <tr><td>top up（印尼本地词族）</td><td class="num">7.7K/月 · +80%</td><td>最大且增长最快的充值词族</td></tr>
+  </tbody></table>
+  <div class="card note">
+    <span class="tag">搜索数据读法</span>
+    <p>1.2 万次/月的购买搜索即便按 5% 的高转化计算，也只有约 20 单/天，而 G2G 单站实际日成交 214–296 单。<strong>业务解读：谷歌只是需求入口的一小部分，主战场在交易平台站内。</strong>哈夫币在国际服名为 Tekniq Alloy，其购买词族（buy delta force tekniq alloy 等）是最大的单一交易词族。Google Trends 全年平稳，12 个月里唯一的脉冲是 2025-08 主机上线。</p>
+  </div>
+
+  <h3>A-4 地区与市场分布</h3>
+  <table>
+    <tbody><tr><th>优先级</th><th>市场</th><th>主打品类</th><th>依据</th></tr>
+    <tr><td><span class="pri p0">第一</span></td><td>印尼 · 马来西亚 · 菲律宾</td><td>充值 → 金币</td><td>top up 分国：印尼 44%、马来 18%、菲律宾 7%，移动端占 88%；充值词族最大且 +80%，SEO 几无竞争（KD≈0）</td></tr>
+    <tr><td><span class="pri p0">第一</span></td><td>越南</td><td>全品类（区服待定）</td><td>头词 3.2 万/月，玩家盘全球第二；Garena 独立发行（PC + 手游），“code delta force”兑换码词族超 9K/月</td></tr>
+    <tr><td><span class="pri p1">第二</span></td><td>美国 · 英国 · 德国 · 加拿大</td><td>金币 · 账号 · 代练</td><td>头词美国 15.3 万（37%）；boosting 分国美 44%、英 13%、加 11%、德 6%，桌面端占 67%；G2G 主场，需正面竞争</td></tr>
+    <tr><td><span class="pri p2">第三</span></td><td>泰国 · 俄罗斯 · 巴西 · 西语区</td><td>观察</td><td>泰 / 俄有 alloy 词信号；巴西（2.0 万）、西班牙（1.8 万）玩家盘大，但交易词库未建</td></tr>
+  </tbody></table>
+  <div class="card risk">
+    <span class="tag">待实测</span>
+    <p>越南版由 Garena 独立发行，<strong>是否为独立服务器与独立经济尚未确认</strong>。若独立，需要单独组织越南的金币与账号供给，上全品类前必须先验证区服归属。</p>
+  </div>
+</div>
+</section>
+
+<section class="panel" id="pb" role="tabpanel">
+<!-- ======================== MODULE B ======================== -->
+<div class="module">
+  <div class="module-label">MODULE B</div>
+  <h2>第二层：交易生态与竞对铺货</h2>
+  <div class="module-intro">回答“能做什么品类、盘子多大”：竞对成交、规模推算、卖家格局与供给真相。</div>
+
+  <h3>B-1 品类真实排序（G2G 全站 4,573 条 offer 快照）</h3>
+  <table>
+    <tbody><tr><th>品类</th><th>累计成交</th><th>说明</th></tr>
+    <tr><td><strong>金币</strong>（含物品类马甲单 3,143）</td><td class="num"><strong>≈ 22,212 单</strong></td><td>近 70%，绝对主导</td></tr>
+    <tr><td>账号</td><td class="num">4,285 单</td><td>1,536 条 offer、124 个卖家，铺货最分散</td></tr>
+    <tr><td>充值（三角币）</td><td class="num">2,514 单</td><td>203 条 offer、24 个卖家</td></tr>
+    <tr><td>护航带打（挂在物品类目）</td><td class="num">768+ 单</td><td>代练需求的可见部分</td></tr>
+    <tr><td>纯物品（特勤材料 / 曼德尔砖 / 收藏品）</td><td class="num">约 350–800 单</td><td>独立成交量小</td></tr>
+    <tr><td>安全箱任务 / 段位等代练</td><td>盲区</td><td>G2G 代练类目不披露 sold（1,533 条 offer、16 个卖家）</td></tr>
+  </tbody></table>
+  <div class="card note">
+    <span class="tag">数据清洗</span>
+    <p>G2G 类目字段严重失真：物品类目 4,746 个 sold 中，66%（3,143）实为金币马甲单，另有 768 单为护航挂靠。<strong>规模估算必须先做标题重分类，</strong>否则会高估物品、低估金币。</p>
+  </div>
+
+  <h3>B-2 全站统计明细（category × server）</h3>
+  <table>
+    <tbody><tr><th>类目</th><th>Server</th><th>Offers</th><th>Sold 合计</th><th>卖家数</th></tr>
+    <tr><td>金币</td><td>Tactical Turmoil</td><td class="num">37</td><td class="num">17,247</td><td class="num">37</td></tr>
+    <tr><td>金币</td><td>Havoc Warfare</td><td class="num">33</td><td class="num">1,822</td><td class="num">33</td></tr>
+    <tr><td>物品</td><td>Tactical Turmoil</td><td class="num">838</td><td class="num">2,763</td><td class="num">47</td></tr>
+    <tr><td>物品</td><td>Havoc Warfare</td><td class="num">393</td><td class="num">1,983</td><td class="num">34</td></tr>
+    <tr><td>账号</td><td>—</td><td class="num">1,536</td><td class="num">4,285</td><td class="num">124</td></tr>
+    <tr><td>充值</td><td>—</td><td class="num">203</td><td class="num">2,514</td><td class="num">24</td></tr>
+    <tr><td>代练</td><td>TT 648 / HW 885</td><td class="num">1,533</td><td>不可得</td><td class="num">16</td></tr>
+    <tr><td><strong>合计</strong></td><td>不含代练</td><td class="num"><strong>3,040</strong></td><td class="num"><strong>30,614</strong></td><td>—</td></tr>
+  </tbody></table>
+
+  <h3>B-3 市场规模推算</h3>
+  <table>
+    <tbody><tr><th>指标</th><th>数值</th><th>口径</th></tr>
+    <tr><td>G2G 日成交</td><td class="num">≈ 214–296 单/天</td><td>头部卖家实报校准</td></tr>
+    <tr><td>G2G 月 GMV</td><td class="num">≈ 17–23 万 SGD</td><td>约 $12.6–17.4 万</td></tr>
+    <tr><td>单均</td><td class="num">$19–24 / 单</td><td>卖家实报</td></tr>
+    <tr><td><strong>非中国区第三方市场</strong></td><td class="num"><strong>≈ 30–60 万 SGD/月</strong></td><td>约 $22–45 万，年化 $270–540 万</td></tr>
+  </tbody></table>
+  <div class="card info">
+    <span class="tag">推算链</span>
+    <p>G2G 最大卖家 Player 实报 6/1–6/28 成交 <strong>5,557 单</strong>：tekniq 4,876 单（均 $19）+ 其他 681 单（均 $24），合计约 $10.9 万。其平台占比 G2G : Eldorado ≈ 7 : 3，折合 G2G 日均约 139 单、月 GMV 约 $8.2 万。快照显示 Player 占 G2G 全站份额 47%（全品类）至 65%（金币），据此反推 G2G 全站规模。再计入 Eldorado、PlayerAuctions、专业代练站、B2C 充值站与私域，按 G2G 占三方市场四至六成折算出全市场区间。</p>
+    <p><strong>待收敛：</strong>小额下单验证 sold 计数口径 + 14 天差分快照。</p>
+  </div>
+
+  <h3>B-4 卖家格局</h3>
+  <table>
+    <tbody><tr><th>卖家系</th><th>代表卖家</th><th>特点</th></tr>
+    <tr><td>打金系</td><td>Player · HellenWong · futureNP</td><td>Player 份额全站 47%、金币 65%；金币与物品 CR3 均为 91%。<strong>HellenWong 跨四类目、5 万关注，招商首选</strong></td></tr>
+    <tr><td>充值系</td><td>CNLTeam 等 3 家</td><td>B2C 折扣站同时在营，价格竞争激烈</td></tr>
+    <tr><td>代练系</td><td>BoostRoom 等</td><td>成交量不披露，单个工作室单量小且波动大</td></tr>
+  </tbody></table>
+  <p>核心卖家 8–10 家覆盖九成货源，供给高度集中：锁定 3–5 家头部即可覆盖主体需求。</p>
+
+  <h3>B-5 卖家深访：供给真相（3 位卖家 · 金币 / 代练 / 充值 · 2026-07）</h3>
+  <p>哈夫币不能直接转账，同队掉落物互相不可见，只能走“撞车 + 拍卖行代售”的多步骤交付：</p>
+  <div class="flow">
+    <div class="st"><div class="mid">STEP 1</div><h4>组队撞车</h4><p>“车头”与买家组队，“车尾”携带物资，两队同时进场，以大概率匹配进同一地图。</p></div>
+    <div class="st"><div class="mid">STEP 2</div><h4>交接物资</h4><p>车尾把物资丢给买家，全队护送买家活着撤离。</p></div>
+    <div class="st"><div class="mid">STEP 3</div><h4>拍卖行代售</h4><p>买家将物资按指定价格挂拍卖行，由游戏内其他玩家或供货商回购，到账时间不一。</p></div>
+    <div class="st"><div class="mid">STEP 4</div><h4>分段到账</h4><p>单笔 8–20M、耗时 5–20 分钟，常分周一 / 周二 / 周三各发一部分。</p></div>
+  </div>
+  <div class="mech-grid">
+    <div class="mech">
+      <div class="mid">SELLER · 金币</div>
+      <h4>需大于求，痛点全在交付</h4>
+      <p>买家为快速回血、凑战备值门槛而买币，当前需大于求、币价上涨。交付每一步都有风险，即使物资交割完成，拍卖行代售环节仍常引发客诉。卖家已在用“我们承担手续费”“保险服务”当卖点。</p>
+      <div class="impact"><b>突破点：</b>托管 + 时效承诺 + 赔付保障；SKU 层面区分“一次性交付档”与“分批档”并差异定价。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">SELLER · 代练</div>
+      <h4>3×3 安全箱最好卖，因为价格高</h4>
+      <p>受访卖家做代练约一年，几乎全品项承接；最好卖的是 3×3 安全箱任务与“进图找红”。客户是有钱没时间、有心没技术的玩家。订单波动大（有月约 10 单、有月为零），全球接单、英语沟通。</p>
+      <div class="impact"><b>突破点：</b>3×3 做标准 SKU、按赛季日历上新；聚合多家工作室保证承接；透明化成交与评价。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">SELLER · 充值</div>
+      <h4>老玩家买外观，动机只有省钱</h4>
+      <p>三角币买家以老玩家为主，消费在通行证、干员 / 武器皮肤、外观捆绑与活动道具，买的是外观与便利，不是战力。与账号、金币客群仅部分重叠。</p>
+      <div class="impact"><b>突破点：</b>不打正面价格战，从礼品卡、金币 + 充值组合、东南亚本地支付切入。</div>
+    </div>
+    <div class="mech">
+      <div class="mid">GAP · 本轮盲区</div>
+      <h4>账号、物品、货源结构未展开</h4>
+      <p>账号与道具两品类多数卖家未作答；金币货源结构（自产 vs 收散人）与封号率未展开。</p>
+      <div class="impact"><b>下一步：</b>列入下一轮深访与神秘顾客实测，顺带验证 G2G sold 计数口径。</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="panel" id="pc" role="tabpanel">
+<!-- ======================== MODULE C ======================== -->
+<div class="module">
+  <div class="module-label">MODULE C</div>
+  <h2>第三层：玩家需求与画像</h2>
+  <div class="module-intro">回答“怎么做”：玩家为什么买、买什么、凭什么信任平台。数据来自 2026-07-07 至 07-22 的 Discord 1v1 深访。</div>
+
+  <h3>C-1 调研执行与样本</h3>
+  <table>
+    <tbody><tr><th>环节</th><th>人数</th><th>说明</th></tr>
+    <tr><td>1v1 私信触达</td><td class="num">36</td><td>官方玩家社群 34 人（Delta Force Game 主群 32、Delta Force France 2）；第三方交易群 2 人（CNLGAMING、IGGM）</td></tr>
+    <tr><td>回复</td><td class="num">15（42%）</td><td>第三方交易群 2 人均未回复</td></tr>
+    <tr><td>完成深访</td><td class="num">7（19%）</td><td>另有 3 人回复后说明已退坑或不消费（见 C-5）</td></tr>
+  </tbody></table>
+  <p>触达对象按其群内公开发言标注需求信号：<strong>充值 top up 18 人、金币 coins 9 人、物品 items 5 人、代练 boosting 1 人</strong>，未标注 3 人。7 位深访玩家中 4 位自述游玩 1 年以上，另有 1 位累计 4,000+ 小时，周时长从 3–5 小时到每天都玩不等，整体是留存型、已深度投入的玩家。</p>
+  <div class="card note">
+    <span class="tag">渠道修正有效</span>
+    <p>前期在 Discord、EpicNPC、Facebook 私域发公开调研贴普遍被撤回或删除。改为社群融入 + 1v1 私信后，拿到了首批有效样本。<strong>官方玩家社群是主要可触达池</strong>（Delta Force Game 主群 76.4 万成员、在线约 10.5 万），第三方交易群成员目前零回复。</p>
+  </div>
+
+  <h3>C-2 消费动机：撤离刺激与资产累积</h3>
+  <p>受访玩家留在这款游戏的理由高度一致：<strong>撤离成功的心跳刺激、战斗与搜刮战利品的快感</strong>（4 人提及）；其次是街机化、上手门槛低（2 人），以及资产跨赛季累积、不像塔科夫那样清档（1 人）。这解释了两条消费线：一是“想留住、想收集”，玩家会为稀有的大红道具和外观皮肤付费；二是“想赢、怕死”，玩家在撤离连败时需要强力队友或补给。一位受访者直言，只有在游戏里持续失败、或特别想要某样东西时才会出手购买——<strong>金币与带打是情境触发型消费，收藏与皮肤是持续型消费。</strong></p>
+
+  <h3>C-3 想买什么：品类需求与成交数据对照</h3>
+  <table>
+    <tbody><tr><th>品类</th><th>提及（7 人）</th><th>首选</th><th>玩家侧要点</th><th>成交数据对照（G2G）</th></tr>
+    <tr><td><strong>物品</strong>（大红收藏）</td><td class="num">5</td><td class="num"><strong>4</strong></td><td>收集全部大红道具，按稀有度与收藏价值排序（如 Tears of the Ocean、Dark Star）</td><td>纯物品约 350–800 单，声量明显高于成交</td></tr>
+    <tr><td>代练 / 陪玩</td><td class="num">4</td><td class="num">1</td><td>撤离连败想要强力队友；冲最高段位；每赛季 3×3 安全箱。<strong>2 人明确拒绝上号代练</strong></td><td>sold 不披露；卖家称客单与毛利最高</td></tr>
+    <tr><td>充值（三角币）</td><td class="num">3</td><td class="num">2</td><td>刀皮等皮肤不充值很难获得（皮肤共 4 人提及）；心理价位为官方价 70–80% 以下</td><td>2,514 单</td></tr>
+    <tr><td>金币（哈夫币）</td><td class="num">2</td><td class="num">0</td><td>均排在末位；有人表示“很少的哈夫币也能玩下去”</td><td><strong>22,212 单（近 70%）</strong></td></tr>
+    <tr><td>账号</td><td class="num">0</td><td class="num">0</td><td>无人提及</td><td>4,285 单（第二）</td></tr>
+  </tbody></table>
+  <div class="card risk">
+    <span class="tag">玩家声量与成交量错位</span>
+    <p>深访玩家更看重收藏与外观，金币与账号几乎无人主动提起；而 G2G 成交以金币为主、账号第二。原因在样本结构：受访者是已投入一年以上的留存玩家，不是买号的新入坑者，也不是撤离连败中急需回血的重度买币者。<strong>按口径优先级（行为数据 &gt; 卖家口径 &gt; 玩家口径），品类规模排序仍以成交数据为准；</strong>玩家访谈的增量价值在于两点：① 物品（大红收藏）的需求被低估，值得从观察位升为试点；② 代练的交付形态必须从“上号代打”转向“组队带打”。</p>
+  </div>
+  <div class="card info">
+    <span class="tag">IGV 购买意愿</span>
+    <p>7 位深访玩家中，<strong>3 位表示会在 IGV 购买，3 位表示部分品类会，1 位表示在持续失败或特别想要时会买</strong>，无人明确拒绝。拒绝的部分全部指向上号代练。</p>
+  </div>
+
+  <h3>C-4 买家画像</h3>
+  <div class="persona-grid">
+    <div class="persona">
+      <h4>① 大红收藏党</h4>
+      <div class="row"><b>消费：</b>稀有大红道具，追求收齐全套</div>
+      <div class="row"><b>特征：</b>按稀有度与收藏价值排序；资产跨赛季累积是留存理由；对皮肤兴趣不强</div>
+      <div class="row"><b>切入：</b>物品标准化图片库 + 稀有度分级 SKU；展示历史成交与评价</div>
+    </div>
+    <div class="persona">
+      <h4>② 外观充值党</h4>
+      <div class="row"><b>消费：</b>三角币买刀皮、干员 / 武器皮肤、通行证</div>
+      <div class="row"><b>特征：</b>有 Midasbuy 购买经验，以官方价 70–80% 以下作为转向第三方的门槛</div>
+      <div class="row"><b>切入：</b>只上有明确折扣的档位；礼品卡 + 本地支付 + 组合包</div>
+    </div>
+    <div class="persona">
+      <h4>③ 冲段求带党</h4>
+      <div class="row"><b>消费：</b>陪玩 / 教练服务、强力队友，其次是皮肤与金币</div>
+      <div class="row"><b>痛点：</b>撤离模式连续失败，还没冲到最高段位</div>
+      <div class="row"><b>切入：</b>self-play 组队带打；看重支付方式与价格</div>
+    </div>
+    <div class="persona">
+      <h4>④ 赛季任务党</h4>
+      <div class="row"><b>消费：</b>每赛季的 3×3 安全箱任务链，兼收大红</div>
+      <div class="row"><b>顾虑：</b>拒绝交号；选陪玩看语言匹配、队友不开挂（以免连坐封号）、价格合理</div>
+      <div class="row"><b>切入：</b>3×3 安全箱带打标准 SKU，按赛季日历上新，按语言匹配队友</div>
+    </div>
+  </div>
+
+  <h3>C-5 信任壁垒与化解方案</h3>
+  <div class="trust-grid">
+    <div class="trust">
+      <h4>T-01 上号代练的封号恐惧</h4>
+      <p>2 位受访者明确拒绝代练：交出或共享账号风险高，同局被其他玩家举报即可能封号。连陪玩也要求队友不开挂，以免连坐。</p>
+      <div class="fix"><b>化解：</b>默认上架 self-play 组队带打；队友资质与“无外挂承诺”；上号代练单列并做风险披露。</div>
+    </div>
+    <div class="trust">
+      <h4>T-02 递送安全与盗号</h4>
+      <p>2 位受访者把“递送过程是否安全、会不会被盗号”列为前两位考量，另有 1 位看重递送完成速度。</p>
+      <div class="fix"><b>化解：</b>撞车交付本身无需账密，可作为卖点明示；配合托管、时效承诺与赔付保障。</div>
+    </div>
+    <div class="trust">
+      <h4>T-03 价格锚定 Midasbuy</h4>
+      <p>2 位有购买经历的受访者都在 Midasbuy 买过三角币（Midasbuy 为腾讯官方充值站），转向第三方的心理门槛是官方价的 70–80% 以下。</p>
+      <div class="fix"><b>化解：</b>达不到明确折扣的档位不主推；用礼品卡、组合包、本地支付创造差异。</div>
+    </div>
+    <div class="trust">
+      <h4>T-04 平台信誉、成交与支付</h4>
+      <p>平台信誉、卖家历史成交与评价、可用支付方式各被提及。卖家侧同样指出 G2G 不披露代练成交量，买家无从判断卖家可靠度。</p>
+      <div class="fix"><b>化解：</b>商品页展示真实成交量与评价；覆盖主力市场的本地支付方式。</div>
+    </div>
+  </div>
+  <p>流失信号：3 位回复者说明了不再消费的原因，分别是“一直死、打不过，已退坑”“现实太忙没时间玩”“只想纯粹玩游戏，不做任何充值购买”。第一条直接印证 M-01：<strong>死亡惩罚既是买币与带打的触发点，也是流失点</strong>——第三方补给与带打在这个时刻承接的，是官方留不住的玩家。</p>
+
+  <h3>C-6 对 IGV 原型的反馈</h3>
+  <table>
+    <tbody><tr><th>反馈</th><th>人数</th><th>落地动作</th></tr>
+    <tr><td>功能与整体设计没有问题</td><td class="num">3</td><td>交易流程保持现有框架</td></tr>
+    <tr><td>视觉风格偏旧（原话“why does it look from the 90's”），建议参考 Midasbuy 的 Delta Force 页面：图文突出、重点清晰；或更未来化</td><td class="num">2</td><td>游戏专区视觉翻新，向游戏官方商城的风格靠拢</td></tr>
+    <tr><td>物品应有标准化图片，省去卖家上传，挑选更方便</td><td class="num">1</td><td>建立物品标准图库，与物品试点同步</td></tr>
+  </tbody></table>
+</div>
+</section>
+
+<section class="panel" id="pd" role="tabpanel">
+<!-- ======================== MODULE D ======================== -->
+<div class="module">
+  <div class="module-label">MODULE D</div>
+  <h2>业务建议与品类优先级</h2>
+  <div class="module-intro">面向上线决策的行动清单。</div>
+
+  <table>
+    <tbody><tr><th>优先级</th><th>品类</th><th>交付方式</th><th>理由</th><th>关键控制点</th></tr>
+    <tr>
+      <td><span class="pri p0">P0</span></td>
+      <td>金币（哈夫币 / Tekniq Alloy）</td>
+      <td>撞车交付 + 拍卖行代售（平台托管）</td>
+      <td>G2G 成交近 70%；卖家称需大于求、币价上涨；交付无需账密</td>
+      <td>锁定 3–5 家头部货源（CR3 91%）；区分一次性 / 分批档并差异定价；时效承诺 + 赔付</td>
+    </tr>
+    <tr>
+      <td><span class="pri p1">P1</span></td>
+      <td>账号</td>
+      <td>账密交割</td>
+      <td>G2G 第二大品类 4,285 单；account 搜索 +79%；本轮玩家样本未覆盖买号人群</td>
+      <td>属性字段：等级、部门声望、特勤处、仓库资产（哈夫币估值）、干员与皮肤；下一轮补访买号玩家</td>
+    </tr>
+    <tr>
+      <td><span class="pri p1">P1</span></td>
+      <td>代练（组队带打优先）</td>
+      <td>self-play 组队带打；上号代练次之</td>
+      <td>卖家口径客单与毛利最高，3×3 安全箱按赛季复购；玩家拒绝交号</td>
+      <td>3×3 安全箱标准 SKU、按赛季日历上新；按语言匹配；队友无外挂承诺</td>
+    </tr>
+    <tr>
+      <td><span class="pri p2">P2</span></td>
+      <td>充值（三角币）</td>
+      <td>UID 直充 / 礼品卡</td>
+      <td>皮肤需求真实，但动机只有省钱；心理价位官方 70–80% 以下，以 Midasbuy 为锚；B2C 折扣站已成红海</td>
+      <td>不打价格战；礼品卡 + 金币组合 + 东南亚本地支付；定位利润补充与流量承接</td>
+    </tr>
+    <tr>
+      <td><span class="pri p2">P2 试点</span></td>
+      <td>物品（大红收藏）</td>
+      <td>撞车交付</td>
+      <td>原列观察位；玩家深访 7 人中 4 人首选、5 人提及，升为试点；但 G2G 独立成交仅约 350–800 单</td>
+      <td>标准化物品图库、按稀有度分级；小范围试点，以真实成交决定是否扩大</td>
+    </tr>
+  </tbody></table>
+
+  <div class="card verdict">
+    <span class="tag">切入策略</span>
+    <p><strong>第一阶段（小步启动）：</strong>以金币为引流品类，在 Tier 1（印尼 · 马来 · 菲律宾）启动。先锁定 3–5 家头部货源，跑通托管式交付 SOP（时效承诺 + 赔付保障），直击“撞车交付”痛点；同步上线 3×3 安全箱组队带打标准 SKU，并完成游戏专区视觉翻新。<strong>第二阶段（数据达标后扩张）：</strong>用 14 天差分快照与神秘顾客下单验证规模区间和交付口径，达标后向 Tier 2（美 · 英 · 德 · 加）扩金币、账号、代练；物品以大红收藏试点；越南在区服确认后上全品类。招商侧可直接触达 HellenWong 等跨类目头部卖家。</p>
+  </div>
+
+  <div class="card risk">
+    <span class="tag">风险红线</span>
+    <p>① 不在任何物料中做“零封号 / 绝对安全”承诺；② 上号代练不作为代练的默认交付形态；③ 分批交付必须在 SKU 层面标明，不得按一次性交付售卖；④ 越南区服归属确认前，不组织越南供给；⑤ 玩家深访仅 7 人且偏留存型玩家，品类规模排序以成交数据为准，下一轮须补访买号玩家与金币重度买家。</p>
+  </div>
+</div>
+</section>
+
+
+<section class="panel" id="px2" role="tabpanel">
+<!-- ======================== APPENDIX 2 ======================== -->
+<div class="module">
+  <div class="module-label appendix-label">APPENDIX Ⅰ</div>
+  <h2>术语表</h2>
+  <dl>
+    <dt>哈夫币 / Tekniq Alloy</dt><dd>烽火地带的唯一硬通货，用于购买装备、交入场费；国际服名为 Tekniq Alloy。官方不向玩家直售，即本报告的“金币”品类。</dd>
+    <dt>三角币 / Delta Coins</dt><dd>充值货币，只能购买皮肤、通行证等外观与便利内容，即本报告的“充值”品类。</dd>
+    <dt>烽火地带（Operations）</dt><dd>撤离模式：带装备入图、搜刮、活着撤离才能带回；死亡掉落身上全部物资。</dd>
+    <dt>战备值</dt><dd>携带装备的总价值（哈夫币计），机密 / 绝密图以此设门槛。</dd>
+    <dt>安全箱（3×3）</dt><dd>局内死亡不掉落的保底格；顶级 3×3 绑定赛季任务链，每赛季清零重做。</dd>
+    <dt>撞车交付</dt><dd>卖家小队与买家同时进图、匹配进同一地图后丢物资给买家，再经拍卖行代售变现的金币交付方式；全程无需账号密码。</dd>
+    <dt>大红 / Red Items</dt><dd>游戏内最高稀有度的道具，具有收藏价值，是本轮深访中被首选最多的需求。</dd>
+    <dt>跑刀</dt><dd>全程不开枪、只搜刮物资的低成本打法，常用于新手与回血。</dd>
+    <dt>马甲单</dt><dd>挂在物品类目、实际售卖金币的商品，导致 G2G 类目统计失真。</dd>
+    <dt>Self-play 组队带打 / 陪玩</dt><dd>买家用自己的账号与代练者组队完成目标，不交出账号；与“上号代打（piloted）”相对。</dd>
+  </dl>
+</div>
+</section>
+
+
+<section class="panel" id="px4" role="tabpanel">
+<!-- ======================== APPENDIX 4 ======================== -->
+<div class="module">
+  <div class="module-label appendix-label">APPENDIX Ⅱ</div>
+  <h2>调研问答（Q&amp;A）</h2>
+  <div class="module-intro">对六个关键问题逐一作答，依据来自正文三层的交叉验证。</div>
+
+  <h3>Q1 这款游戏有没有交易需求？</h3>
+  <p><strong>有，且四层证据互证。</strong>机制层：死亡掉装备 + 高难图门槛 + 官方不卖币，需求是设计的必然产物。平台层：G2G 全站累计成交 3 万+ 单，当前约 214–296 单/天。供给层：头部卖家 6 月实报 5,557 单，并称需大于求、价格上涨。玩家层：7 位深访玩家无人明确拒绝在第三方购买。</p>
+
+  <h3>Q2 玩家的需求是什么？</h3>
+  <p>四类核心需求加一类收藏需求：<strong>哈夫币</strong>用于快速回血、凑战备值门槛；<strong>现成账号</strong>用于跳过上百小时积累、封号后快速回归；<strong>三角币充值</strong>用于更便宜地买皮肤与通行证；<strong>代练</strong>用于 3×3 安全箱、护航带打与冲段，玩家更倾向不交号的组队带打；<strong>大红收藏</strong>是深访中被首选最多的需求。</p>
+
+  <h3>Q3 需求背后的原因是什么？</h3>
+  <p>全部由游戏机制制造：死亡归零 + 战备值门槛，币即战力，而官方不卖币，缺口只能由第三方补；赛季任务链每两个月清零，代练需求周期性复购；长线积累全部沉淀在账号，买号等于买时间；官方定价固定无折扣，第三方充值有省钱空间；资产跨赛季累积，稀有道具产生收藏价值。</p>
+
+  <h3>Q4 对应哪些品类、优先级如何？</h3>
+  <p><strong>金币 &gt; 账号 &gt; 代练 &gt; 充值</strong>，物品（大红收藏）列试点。成交排序依据 G2G 累计售出（22,212 / 4,285 / 不披露 / 2,514）；代练客单与毛利最高，卖家与玩家两侧均验证了需求，但交付形态需改为组队带打；充值动机只有省钱且价格门槛高，放在代练之后。</p>
+
+  <h3>Q5 值不值得做？</h3>
+  <p><strong>值得（Go）。</strong>非中国区第三方市场约 30–60 万 SGD/月且在增长（account 搜索 +79%、boosting +48%、卖家称需大于求）；游戏处于成熟稳态期、非衰退。前置条件：交付与账号安全是成败手；代练规模盲区、越南区服归属、买号玩家画像需尽快补验。</p>
+
+  <h3>Q6 在哪个市场做？</h3>
+  <p><strong>Tier 1：印尼 · 马来 · 菲律宾</strong>（充值 + 金币切入）与<strong>越南</strong>（玩家盘全球第二，区服确认后上全品类）；<strong>Tier 2：美 · 英 · 德 · 加</strong>（金币、账号、代练的高客单市场）。</p>
+</div>
+</section>
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<div class="footnote">
+  iGV 新业务拓展 · 《Delta Force》游戏调研报告
+</div>
+
+</div>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  var panels=tabs.map(function(t){return document.getElementById(t.dataset.panel);});
+  var nav=document.querySelector('nav.tabs'), lock=0;
+  function setActive(id){
+    tabs.forEach(function(x){
+      var on=x.dataset.panel===id;
+      x.setAttribute('aria-selected',on?'true':'false');
+      if(on&&nav.scrollWidth>nav.clientWidth){x.scrollIntoView({block:'nearest',inline:'center'});}
+    });
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){
+    var el=document.getElementById(t.dataset.panel);
+    setActive(t.dataset.panel); lock=Date.now()+900;
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+    try{history.replaceState(null,'','#'+t.dataset.panel);}catch(e){}
+  });});
+  function spy(){
+    if(Date.now()<lock) return;
+    var line=window.innerHeight*0.3, cur=panels[0].id;
+    panels.forEach(function(p){ if(p.getBoundingClientRect().top<=line) cur=p.id; });
+    if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4) cur=panels[panels.length-1].id;
+    setActive(cur);
+  }
+  var tick=false;
+  window.addEventListener('scroll',function(){ if(!tick){tick=true;requestAnimationFrame(function(){tick=false;spy();});} },{passive:true});
+  window.addEventListener('resize',spy);
+  var h=location.hash.slice(1);
+  if(h&&document.getElementById(h)){ document.getElementById(h).scrollIntoView(); }
+  spy();
+})();
+</script>
+</body></html>
