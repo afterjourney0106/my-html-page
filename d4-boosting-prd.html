@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D4 代练业务需求文档 · iGV</title>
+<style>
+  :root{
+    --orange:#f1652a;--orange-d:#d9531c;--orange-soft:#fdeee7;
+    --ink:#1f2329;--ink-soft:#5c6470;--dim:#9aa3af;
+    --line:#e8eaed;--bg:#f4f5f7;--card:#ffffff;--paper:#f7f8fa;
+    --red:#d64545;--red-soft:#fdecec;
+    --green:#12855a;--green-soft:#e7f4ee;
+    --amber:#b8791b;--amber-soft:#fbf1dc;
+    --blue:#2f6fe0;--blue-soft:#eaf1fc;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font:14.5px/1.75 var(--sans);-webkit-font-smoothing:antialiased;}
+  a{color:var(--orange-d);}
+
+  /* top bar */
+  .topbar{position:sticky;top:0;z-index:30;height:60px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 24px;}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px;color:var(--ink);}
+  .logo i{font-style:normal;width:30px;height:30px;border-radius:8px;background:var(--orange);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;}
+  .logo small{font-weight:600;font-size:12px;color:var(--dim);margin-left:2px;}
+  .topbar .doc{margin-left:12px;padding-left:14px;border-left:1px solid var(--line);font-size:13.5px;color:var(--ink-soft);}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:28px 24px 64px;}
+
+  /* header */
+  header{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin-bottom:22px;}
+  .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:6px;}
+  h1{font-size:26px;font-weight:800;line-height:1.35;}
+  .subtitle{margin-top:6px;color:var(--ink-soft);font-size:14px;}
+  .meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;font-size:12.5px;color:var(--ink-soft);}
+  .meta span{background:var(--paper);border:1px solid var(--line);padding:3px 10px;border-radius:999px;}
+
+  /* layout + left nav */
+  .layout{display:grid;grid-template-columns:232px 1fr;gap:22px;align-items:start;}
+  nav.tabs{position:sticky;top:80px;max-height:calc(100vh - 100px);overflow-y:auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:2px;scrollbar-width:thin;scrollbar-color:#d5d9df transparent;}
+  nav.tabs::-webkit-scrollbar{width:6px;}
+  nav.tabs::-webkit-scrollbar-thumb{background:#d5d9df;border-radius:3px;}
+  .tab{all:unset;cursor:pointer;display:block;padding:8px 12px;border-radius:9px;}
+  .tab:hover{background:var(--paper);}
+  .tab .no{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--dim);}
+  .tab .tl{display:block;font-size:14px;font-weight:600;color:var(--ink);line-height:1.45;}
+  .tab[aria-selected="true"]{background:var(--orange-soft);}
+  .tab[aria-selected="true"] .no{color:var(--orange);}
+  .tab[aria-selected="true"] .tl{color:var(--orange-d);}
+  .tab-sep{height:1px;background:var(--line);margin:6px 8px;flex:none;}
+  .content{min-width:0;}
+  .panel{scroll-margin-top:80px;}
+  .panel + .panel{margin-top:22px;}
+
+  /* section card */
+  .module{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 28px;}
+  .panel > .card + .module{margin-top:16px;}
+  .module-label{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;background:var(--orange-soft);color:var(--orange-d);padding:2px 10px;border-radius:999px;margin-bottom:8px;}
+  .appendix-label{background:#eef0f3;color:var(--ink-soft);}
+  h2{font-size:20px;font-weight:800;margin-bottom:4px;}
+  .module-intro{color:var(--ink-soft);font-size:13.5px;margin-bottom:16px;}
+  h3{font-size:15.5px;font-weight:700;margin:24px 0 10px;display:flex;align-items:center;gap:8px;}
+  h3::before{content:"";width:4px;height:15px;border-radius:2px;background:var(--orange);}
+  p{margin-bottom:10px;}
+  strong{font-weight:700;}
+
+  /* callouts */
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0;}
+  .card .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 10px;border-radius:999px;margin-bottom:6px;}
+  .card p:last-child{margin-bottom:0;}
+  .card.verdict{background:var(--green-soft);border-color:#cfe8dc;}
+  .card.verdict .tag{background:var(--green);color:#fff;}
+  .card.risk{background:var(--red-soft);border-color:#f6d0d0;}
+  .card.risk .tag{background:var(--red);color:#fff;}
+  .card.note{background:var(--amber-soft);border-color:#f0dfb8;}
+  .card.note .tag{background:var(--amber);color:#fff;}
+  .card.info{background:var(--blue-soft);border-color:#cfdef7;}
+  .card.info .tag{background:var(--blue);color:#fff;}
+  .panel > .card:first-child{margin-top:0;}
+
+  /* grids */
+  .mech-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  .mech{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .mech .mid{font-size:11.5px;font-weight:700;color:var(--orange-d);letter-spacing:.04em;}
+  .mech h4{font-size:15px;margin:4px 0 6px;}
+  .mech p{font-size:13.5px;color:var(--ink-soft);margin-bottom:0;}
+  .mech .impact{font-size:13px;border-top:1px dashed var(--line);padding-top:8px;margin-top:8px;}
+
+  /* tables */
+  table{width:100%;border-collapse:separate;border-spacing:0;margin:10px 0 14px;font-size:13.5px;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  th{background:var(--paper);font-weight:700;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--ink-soft);font-size:12.5px;}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  tbody tr:hover td{background:#fcfcfd;}
+
+  .footnote{margin-top:28px;text-align:center;font-size:12.5px;color:var(--dim);}
+
+  @media (max-width:900px){
+    .layout{grid-template-columns:1fr;}
+    nav.tabs{position:sticky;top:60px;z-index:20;max-height:none;flex-direction:row;overflow-x:auto;overflow-y:hidden;border-radius:12px;}
+    .tab{flex:0 0 auto;}
+    .tab-sep{display:none;}
+    .mech-grid{grid-template-columns:1fr;}
+    .wrap{padding:16px 12px 48px;}
+    .module,header{padding:18px 16px;}
+    table{display:block;overflow-x:auto;}
+    .panel{scroll-margin-top:130px;}
+  }
+</style>
+<style>
+  .s{display:inline-block;font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;font-weight:700;padding:1px 8px;border-radius:2px;color:#fff;white-space:nowrap;}
+  .s.ok{background:var(--green);}
+  .s.tbd{background:var(--amber);}
+  .s.sug{background:var(--blue);}
+  .s.later{background:#8a8477;}
+  .s.todo{background:var(--red);}
+  .s.done{background:var(--blue);}
+  ol.rules,ul.rules{margin:8px 0 14px 22px;font-size:15px;}
+  ol.rules li,ul.rules li{margin-bottom:6px;}
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0;}
+  .flow.five{grid-template-columns:repeat(5,1fr);}
+  .flow .st{background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px 14px;}
+  .flow .st .mid{font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;font-weight:700;color:var(--red);letter-spacing:.15em;}
+  .flow .st h4{font-size:15px;margin:4px 0 6px;}
+  .flow .st p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.7;}
+  td.c{text-align:center;}
+  @media (max-width:860px){.flow,.flow.five{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="logo"><i>iG</i>iGV<small>.com</small></div><div class="doc">D4 代练业务需求文档</div></div>
+<div class="wrap">
+
+<header>
+  <div class="kicker">IGV Product Requirements · Boosting</div>
+  <h1>D4 代练业务需求文档</h1>
+  <div class="subtitle">以 Diablo 4 为首个品牌，覆盖买家前台、买家个人中心、卖家上架、卖家中心与平台租户后台</div>
+  <div class="meta">
+    <span>更新日期 2026-10-15</span>
+    <span>范围：Game / GamePal &amp; Boosting · Diablo 4</span>
+    <span>配套：D4 代练 Demo 原型</span>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="tabs" role="tablist" aria-label="章节">
+  <button class="tab " role="tab" aria-selected="true" data-panel="p0"><span class="no">OVERVIEW</span><span class="tl">文档概览</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="pd"><span class="no">DECISIONS</span><span class="tl">决策总表</span></button>
+  <div class="tab-sep"></div>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m1"><span class="no">01</span><span class="tl">业务模式与流程</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m2"><span class="no">02</span><span class="tl">商品结构与定价</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m3"><span class="no">03</span><span class="tl">买家前台 · 代练页</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m4"><span class="no">04</span><span class="tl">买家前台 · Custom</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m5"><span class="no">05</span><span class="tl">买家个人中心</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m6"><span class="no">06</span><span class="tl">卖家上架</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m7"><span class="no">07</span><span class="tl">卖家中心</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m8"><span class="no">08</span><span class="tl">租户后台 · Custom 落地</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m9"><span class="no">09</span><span class="tl">递送时长 · 库存 · 产能</span></button>
+  <button class="tab " role="tab" aria-selected="false" data-panel="m10"><span class="no">10</span><span class="tl">售后与规则</span></button>
+</nav>
+<div class="content">
+
+<!-- ================= OVERVIEW ================= -->
+<section class="panel" id="p0" role="tabpanel">
+<div class="card verdict">
+  <span class="tag">一句话</span>
+  <p><strong>标准化商品为主、Custom 为补充的 C2C 代练业务。</strong>卖家按小类模板上架标准化代练商品并填写费率卡，买家选好属性后看到同规格的在架卖家，价格由各卖家费率卡自动算出，直接下单；标准化商品覆盖不到的组合或特殊诉求，走 Custom：买家自己出价发布并付款，卖家在 Request List 接单。所有代练订单与其他品类订单在同一订单中心流转，复用现有支付、风控、托管、交付、结算与售后。</p>
+</div>
+
+<div class="module">
+  <div class="module-label">OVERVIEW</div>
+  <h2>文档概览</h2>
+  <div class="module-intro">目标、范围、角色与优先级原则。</div>
+
+  <h3>范围</h3>
+  <table>
+    <tbody><tr><th>项</th><th>内容</th></tr>
+    <tr><td>首个品牌</td><td>Diablo 4（S14 苏醒赛季），市场 EU / NA</td></tr>
+    <tr><td>品类</td><td>升级 · 副本 · Boss 代打 · 剧情解锁 · 配 Build · Custom（共 6 个大类）</td></tr>
+    <tr><td>涉及端</td><td>买家前台（代练页、Custom）· 买家个人中心 · 卖家上架 · 卖家中心 · 平台租户后台</td></tr>
+    <tr><td>不在本期</td><td>批量上架、退款惩罚规则、产能权重、递送时长区间 / 价格梯度、Custom 方案 B（选场景）</td></tr>
+  </tbody></table>
+
+  <h3>优先级原则：标准化优先于 Custom</h3>
+  <div class="mech-grid">
+    <div class="mech"><div class="mid">供给侧</div><h4>启动期标准化商品响应更快</h4><p>标准化商品是卖家预先上架、可搜索 / 浏览 / 直接下单的存量商品，买家进来就有价格、能立即买。启动阶段卖家少，Custom 需求发出去可能没人接，体验是空的。</p></div>
+    <div class="mech"><div class="mid">需求侧</div><h4>高频诉求标准化商品都能接住</h4><p>练级、刷 Boss、刷副本等高频诉求用标准化商品选一下就能买，决策成本低、转化快；标准化覆盖不了的组合诉求是长尾，占比小。</p></div>
+    <div class="mech"><div class="mid">平台可控</div><h4>质量、合规、SEO 与运营都可控</h4><p>运营配置品类 / 属性，卖家在框架内上架，价格、合规、质量、SEO 可控，热销数据也便于回流运营；Custom 是自由描述，结构松散、难做 SEO，平台掌控力弱。</p></div>
+    <div class="mech"><div class="mid">竞品</div><h4>竞品普遍标准化优先</h4><p>谷歌关键词前十的竞品中，除 G2G、U7BUY 用通用模板外，其余几乎都是标准化优先；C2C 竞品没有做标准化，这是 IGV 该抢的差异化位置，Custom 是 C2C 顺带能做的补充。</p></div>
+  </div>
+  <h3>竞品依据：标准化 vs 自定义</h3>
+  <table>
+    <tbody><tr><th>模式</th><th>竞品</th><th>标准化</th><th>自定义</th><th>优先</th></tr>
+    <tr><td rowspan="7">B2C</td><td>Overgear</td><td>有</td><td>有</td><td>标准化</td></tr>
+    <tr><td>MMOEXP</td><td>有</td><td>有</td><td>标准化</td></tr>
+    <tr><td>IGGM</td><td>有</td><td>无</td><td>标准化</td></tr>
+    <tr><td>AOEAH</td><td>有</td><td>无</td><td>标准化</td></tr>
+    <tr><td>POECurrency</td><td>有</td><td>无</td><td>标准化</td></tr>
+    <tr><td>EpicCarry</td><td>有</td><td>无</td><td>标准化</td></tr>
+    <tr><td>Skycoach</td><td>有</td><td>无</td><td>标准化</td></tr>
+    <tr><td rowspan="3">C2C</td><td>Eldorado</td><td>无</td><td>有</td><td>自定义</td></tr>
+    <tr><td>G2G</td><td>无</td><td>无</td><td>—（通用模板）</td></tr>
+    <tr><td>U7BUY</td><td>无</td><td>无</td><td>—（通用模板）</td></tr>
+  </tbody></table>
+  <p>7 家 B2C 全部做了标准化且以标准化为主；3 家 C2C 没有一家做标准化。C2C 里的标准化是空位，也是 IGV 的差异化位置。</p>
+  <div class="card info"><span class="tag">依赖关系</span><p>Custom 本身依赖标准化：A / C 两种方式都是把标准化小类当积木拼，标准化的品类、属性与建议价是 Custom 实现的前提。</p></div>
+</div>
+</section>
+
+<!-- ================= DECISIONS ================= -->
+<section class="panel" id="pd" role="tabpanel">
+<div class="module">
+  <div class="module-label">DECISIONS</div>
+  <h2>决策总表</h2>
+  <div class="module-intro"><span class="s ok">已定</span> 可直接开发　<span class="s sug">建议</span> 本文给出建议、待确认　<span class="s tbd">待定</span> 需拍板　<span class="s later">后续</span> 本期不做　<span class="s todo">待办</span> 需推进的事项　<span class="s done">已完成</span> 已有结果</div>
+  <table>
+    <tbody><tr><th>议题</th><th>结论</th><th>状态</th></tr>
+    <tr><td>标准化 vs Custom</td><td>标准化优先，Custom 作补充</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>递送方式与价格</td><td>递送方式（组队陪同 / 上号代打）不影响价格</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>递送方式在前台的位置</td><td>作为「递送方式」前置展示，不作为关键属性（见 03）</td><td class="c"><span class="s sug">建议</span></td></tr>
+    <tr><td>递送时长</td><td>固定值，展示为参考、非承诺；区间 / 价格梯度有需求再调整</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>库存</td><td>卖家自主填写，与现有一致；真实接单能力由平台自运转规则控制</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>产能权重方案</td><td>暂不考虑，自运转规则可覆盖，后续有需求再优化</td><td class="c"><span class="s later">后续</span></td></tr>
+    <tr><td>等级段</td><td>卖家自定义等级段，必须首尾闭合，否则报错（不是平台定好段让卖家填价）</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>商品属性</td><td>按所选小类加载对应属性</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>批量上架 / 批量编辑</td><td>本期不做，维持单个上架（理由见 06）</td><td class="c"><span class="s later">后续</span></td></tr>
+    <tr><td>Custom 发起方式</td><td>A（组合需求）+ C（描述需求）；B（选场景）不做</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>Custom A 字段顺序</td><td>赛季 → 平台 → 组合服务 → 填写报价 → 组合建议报价 → 代练需求备注 / 要求 → 期望完成时间 → 报价有效期</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>Custom A 建议报价</td><td>某服务没有卖家报价则不展示该服务建议价；组合中有任一服务无建议价，则不展示组合建议报价</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>Custom 文案</td><td>需让买家理解：既可组合购买，也可自定义描述；组合需求给推荐价</td><td class="c"><span class="s todo">待办</span></td></tr>
+    <tr><td>卖家 Request List</td><td>需求被任一卖家接单后，不再出现在 Request List</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>卖家订单功能按钮</td><td>与其他品类订单合并、一致，合并后几乎没有区别</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>买家 My Request</td><td>只展示需求信息与状态；被接单后订单进入 My Order，退款、评价都在 My Order；未被接单可主动取消</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>买家代练订单</td><td>与其他品类订单放在一起，没有区别</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>订单属性详情</td><td>仍点 Attributes detail 弹窗；组合包 / Custom 多组合时按商品名分组展示属性，共用属性不重复</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>订单递送信息展示</td><td>方案一（整体 + View all）与方案二（按模块切分）二选一</td><td class="c"><span class="s tbd">待定</span></td></tr>
+    <tr><td>订单详情页 / 展开</td><td>需要订单详情页或可下拉展开，参考竞品</td><td class="c"><span class="s later">后续</span></td></tr>
+    <tr><td>卖家 My Listings 详情</td><td>提供入口查看商品的具体属性与描述信息</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>费率卡（计算器）的呈现</td><td>不作为关键属性；在商品详情的「价格设置」模块单独展示（见 07）</td><td class="c"><span class="s sug">建议</span></td></tr>
+    <tr><td>代练退款单惩罚规则</td><td>暂时用规则过滤掉，后续根据实际情况再启用</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>Custom 后台落地</td><td>不新增需求列表：下单即正式订单，挂代练自营账号；过风控后订单所属卖家可修改为接单卖家；金额 = $1 单位商品 × 数量</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>$1 单位商品的换算与非整数</td><td>与此前绑定设计规则对齐后确定</td><td class="c"><span class="s tbd">待定</span></td></tr>
+    <tr><td>计算器说明入口</td><td>此前的计算器没有了解入口，测试环境入口也已关闭，需恢复</td><td class="c"><span class="s todo">待办</span></td></tr>
+    <tr><td>卖家沟通（上架流程）</td><td>首轮一对一访谈已完成：给出意见的 4 位卖家都认为页面清楚、上手不复杂；建议属性配置能随赛季调整（见 06）</td><td class="c"><span class="s done">已完成</span></td></tr>
+    <tr><td>属性随赛季调整</td><td>小类属性与枚举值由平台运营配置，可随赛季内容更新</td><td class="c"><span class="s ok">已定</span></td></tr>
+  </tbody></table>
+</div>
+</section>
+
+<!-- ================= 01 ================= -->
+<section class="panel" id="m1" role="tabpanel">
+<div class="module">
+  <div class="module-label">01</div>
+  <h2>业务模式与流程</h2>
+  <div class="module-intro">两条交易链路：标准化商品（主）与 Custom（补充）。</div>
+
+  <h3>1.1 标准化商品</h3>
+  <div class="flow five">
+    <div class="st"><div class="mid">卖家</div><h4>上架</h4><p>选品类 / 小类 → 填详情与服务范围 → 设递送方式、递送时长、费率卡、库存 → 发布。</p></div>
+    <div class="st"><div class="mid">买家</div><h4>配置</h4><p>代练页选品类 / 小类，填属性，选递送方式。</p></div>
+    <div class="st"><div class="mid">买家</div><h4>对比卖家</h4><p>看到同规格在架卖家，价格由各自费率卡算出；可先聊天。</p></div>
+    <div class="st"><div class="mid">买家</div><h4>下单付款</h4><p>立即购买 → 结算 → 款项托管。</p></div>
+    <div class="st"><div class="mid">双方</div><h4>交付结算</h4><p>卖家交付 → 买家确认收货（或超时自动确认）→ 放款。</p></div>
+  </div>
+
+  <h3>1.2 Custom</h3>
+  <div class="flow five">
+    <div class="st"><div class="mid">买家</div><h4>发布需求</h4><p>A 组合服务或 C 描述需求，自己出价，设期望完成时间与有效期。</p></div>
+    <div class="st"><div class="mid">买家</div><h4>发布即付款</h4><p>生成正式订单，过支付风控，款项托管。</p></div>
+    <div class="st"><div class="mid">卖家</div><h4>接单</h4><p>需求出现在 Request List；第一个确认接单的卖家锁单，需求从列表消失。</p></div>
+    <div class="st"><div class="mid">卖家</div><h4>交付</h4><p>组队陪同或上号代打，走现有递送与验收。</p></div>
+    <div class="st"><div class="mid">平台</div><h4>结算</h4><p>买家确认或超时自动确认 → 放款给接单卖家。</p></div>
+  </div>
+  <div class="card note"><span class="tag">未接单分支</span><p>买家在 My Requests 主动取消，或超过报价有效期无人接单 → 订单「交易已取消」并原路全额退款。</p></div>
+</div>
+</section>
+
+<!-- ================= 02 ================= -->
+<section class="panel" id="m2" role="tabpanel">
+<div class="module">
+  <div class="module-label">02</div>
+  <h2>商品结构与定价</h2>
+  <div class="module-intro">品类与小类、属性角色、定价公式与费率卡。</div>
+
+  <h3>2.1 品类与小类</h3>
+  <table>
+    <tbody><tr><th>大类</th><th>小类</th><th>base 形态</th></tr>
+    <tr><td>升级 Leveling</td><td>Power Leveling · Paragon Leveling · Season Rank · Leveling Bundle（组合包）</td><td>分段线性（卖家自定义等级段）</td></tr>
+    <tr><td>副本 Dungeons</td><td>Pit Push · Nightmare Dungeons · Helltide Farm · Infernal Hordes · Kurast Undercity</td><td>按次固定（单价 × 次数）</td></tr>
+    <tr><td>Boss 代打</td><td>Uber / Lair Boss · Keys / Summon Mats · Boss Bundle（组合包）</td><td>按次固定</td></tr>
+    <tr><td>剧情解锁 Story &amp; Unlocks</td><td>Campaign · Altars of Lilith · Map &amp; Waypoints · Torment Difficulty · Renown · Unlock Bundle（组合包）</td><td>固定值 + 多选加购</td></tr>
+    <tr><td>配 Build</td><td>Full Build · Masterworking · Build Check</td><td>档位固定</td></tr>
+    <tr><td>Custom</td><td>Custom Request（A 组合需求 / C 描述需求）</td><td>无费率卡，买家出价</td></tr>
+  </tbody></table>
+
+  <h3>2.2 属性的四种角色</h3>
+  <table>
+    <tbody><tr><th>角色</th><th>作用</th><th>例子</th></tr>
+    <tr><td>计价</td><td>参与算价：base / 增量 / 系数 / 数量</td><td>等级区间、巅峰、职业、难度、区服模式、加急、次数</td></tr>
+    <tr><td>交付 / 风险</td><td>决定账号安全档，<strong>不影响价格</strong></td><td>递送方式：组队陪同（不交号）/ 上号代打</td></tr>
+    <tr><td>匹配</td><td>只用于匹配与筛选</td><td>平台（PC / PS / Xbox）、时段、目标 Build</td></tr>
+    <tr><td>描述</td><td>结构化兜不住的细节，不计价</td><td>订单备注、需求要求</td></tr>
+  </tbody></table>
+
+  <h3>2.3 定价公式与费率卡</h3>
+  <div class="card info"><span class="tag">通用公式</span><p><strong>最终价 = ( base + Σ增量 ) × 系数 [ × 数量 ]</strong>。卖家只填 base 与增量，系数用平台默认即可开卖，也可覆盖。递送方式系数恒为 ×1.0。</p></div>
+  <table>
+    <tbody><tr><th>小类形态</th><th>卖家填写</th><th>示例</th></tr>
+    <tr><td>分段线性（升级）</td><td>自定义等级段与段单价；巅峰 / 职业增量；系数</td><td>1–50 $0.20/级 · 50–65 $0.45/级 · 65–70 $0.90/级；硬核 ×1.3；加急 ×1.5</td></tr>
+    <tr><td>按次固定（副本 / Boss）</td><td>单次价；Boss / 难度增量；系数</td><td>单杀 $4.00；杜瑞尔 +$1；痛苦 8 +$6；× 次数</td></tr>
+    <tr><td>固定值 + 多选加购（剧情解锁）</td><td>主体服务价；各加购项价格</td><td>主线 $12；全祭坛 +$8；全地图 +$6</td></tr>
+    <tr><td>档位固定（配 Build）</td><td>各完成度档价；职业增量</td><td>基础可玩 $35 · 进阶 $75 · 毕业 $140</td></tr>
+    <tr><td>组合包</td><td>组成卡各自闭合，共用属性系数，再加捆绑折扣</td><td>Power Leveling + Paragon 两张分段卡 + 捆绑折扣</td></tr>
+  </tbody></table>
+  <p>建议价：对每个“小类 + 属性组合”，按在架卖家费率卡输出区间与中位数，用于上架时的价格参考与 Custom 的组合建议报价。详细规则与算价器见《D4 代练商品结构与定价规则》。</p>
+</div>
+</section>
+
+<!-- ================= 03 ================= -->
+<section class="panel" id="m3" role="tabpanel">
+<div class="module">
+  <div class="module-label">03</div>
+  <h2>买家前台 · 代练页</h2>
+  <div class="module-intro">Diablo 4 → Boosting 页：选品类、配置、选递送方式、对比卖家、下单。</div>
+
+  <h3>3.1 页面结构</h3>
+  <table>
+    <tbody><tr><th>区域</th><th>内容</th></tr>
+    <tr><td>页头</td><td>面包屑 Home › Diablo 4 › Boosting；同品牌切换 Boosting / Accounts / Items / Top-Up；信任条：iGV 担保、Trustpilot 评分、标准化即买、不交号优先</td></tr>
+    <tr><td>品类 Tab</td><td>6 个大类；大类下小类 pill（组合包带“省 X%”标签）</td></tr>
+    <tr><td>配置区</td><td>按小类加载属性：等级区间滑块 + 数字输入、职业、巅峰目标、赛季 / 模式、平台、订单备注（可选）</td></tr>
+    <tr><td>右侧卡</td><td>递送方式（组队陪同 · 最安全 / 上号代打）；主按钮「$X 起 · 查看卖家」；「没找到想要的？发布自定义需求」</td></tr>
+    <tr><td>货服打通</td><td>同目标也可直接买：装备 / 材料 → Items，成品号 → Accounts，金币 → Gold</td></tr>
+  </tbody></table>
+
+  <h3>3.2 卖家列表</h3>
+  <ul class="rules">
+    <li>顶部可折叠的「请求详情」：品类、小类、递送方式、平台、备注。</li>
+    <li>列表为同规格所有在架卖家，按价格升序，最低价标 LOWEST；每行展示卖家名、保证金认证、好评率与评价数、在线状态、递送时长、价格、Chat、Buy Now、卖家说明（可展开）。</li>
+    <li>价格 = 该卖家费率卡按买家所选属性算出的结果。</li>
+    <li>底部兜底：「没有满意的？发布自定义需求，自己出价，卖家来接」。</li>
+  </ul>
+
+  <h3>3.3 递送方式的展示位置</h3>
+  <div class="card verdict"><span class="tag">建议 · 前置展示，不作关键属性</span>
+    <p>递送方式作为配置流程里一个独立的必选项前置展示（与属性并列、在查看卖家之前选定），不进入关键属性，也不参与计价。理由：① 它不影响价格，放进属性会和计价属性混在一起；② 它决定账号安全档，买家需要在看价格前先做选择；③ 卖家支持的递送方式不同，选定后可用于过滤卖家列表；④ 关键属性用于 SEO 与商品结构，递送方式不属于“服务内容”。</p>
+    <p>订单侧：递送方式写入订单「递送信息」，与备注、递送属性信息一起展示给卖家。</p>
+  </div>
+
+  <h3>3.4 递送方式不影响价格的依据</h3>
+  <table>
+    <tbody><tr><th>来源</th><th>结果</th></tr>
+    <tr><td>竞品核对（6 家）</td><td>Overgear、Skycoach、BoostingFactory、Boosteria、BoostHive、U7BUY 均<strong>不按递送方式区分价格</strong>；U7BUY 上的卖家在通用描述里列出多种递送方式并注明价格不变</td></tr>
+    <tr><td>卖家访谈（4 位）</td><td>3 位认为有区别（组队陪同更贵），1 位认为不影响；但多位卖家提到实际几乎都是组队，欧美买家普遍排斥给号、上号代打很少见</td></tr>
+  </tbody></table>
+  <div class="card note"><span class="tag">影响</span><p>本期递送方式不影响价格，与竞品一致；由于实际订单绝大多数是组队陪同，前台默认选中「组队陪同」。卖家对组队更贵的感受，可在费率卡定价里自行体现；若后续上号代打占比上升、卖家集中反馈需要差价，再评估开放按递送方式设置差价。</p></div>
+</div>
+</section>
+
+<!-- ================= 04 ================= -->
+<section class="panel" id="m4" role="tabpanel">
+<div class="module">
+  <div class="module-label">04</div>
+  <h2>买家前台 · Custom</h2>
+  <div class="module-intro">代练页最后一个大类。两种发起方式，最终落到同一套“组合明细”数据，出价、发布、接单逻辑一致。</div>
+
+  <h3>4.1 两种方式</h3>
+  <div class="mech-grid">
+    <div class="mech"><div class="mid">A · 组合需求</div><h4>自由度较高</h4><p>从标准品类里逐个添加服务并配置，也可一键带入常用组合（如“赛季开荒一条龙”）。结构化，可给组合建议报价。</p></div>
+    <div class="mech"><div class="mid">C · 描述需求</div><h4>自由度较高</h4><p>买家用一句话描述，系统识别成结构化服务供确认；需要组织语言，识别结果可能不匹配，提示可切回 A 调整或写进备注。</p></div>
+  </div>
+  <div class="card note"><span class="tag">方案 B 不做</span><p>选场景（平台预置场景 + 填空）对平台要求高，不一定贴合买家诉求。</p></div>
+
+  <h3>4.2 字段与顺序（A；C 以“描述需求”替换“组合服务”）</h3>
+  <table>
+    <tbody><tr><th>#</th><th>字段</th><th>规则</th></tr>
+    <tr><td>1</td><td>赛季 / 模式</td><td>必选</td></tr>
+    <tr><td>2</td><td>平台</td><td>必选：PC / PS4/5 / Xbox</td></tr>
+    <tr><td>3</td><td>组合服务</td><td>至少 1 个服务；每个服务展示其配置项与单项建议价；可移除</td></tr>
+    <tr><td>4</td><td>你的报价</td><td>必填，美元；有组合建议报价时默认填入建议价中位数 × 0.92，可修改</td></tr>
+    <tr><td>5</td><td>组合建议报价</td><td>见 4.3 规则；仅作出价参考</td></tr>
+    <tr><td>6</td><td>代练需求备注 / 要求</td><td>可选，自由文本</td></tr>
+    <tr><td>7</td><td>期望完成时间</td><td>数值 + 单位（小时 / 天）</td></tr>
+    <tr><td>8</td><td>报价有效期</td><td>24 小时 / 3 天（默认）/ 7 天；到期无人接单自动取消并退款</td></tr>
+  </tbody></table>
+  <p>递送方式在右侧卡选择，规则同标准化商品。主按钮为「发布需求并付款」。</p>
+
+  <h3>4.3 建议报价规则</h3>
+  <ol class="rules">
+    <li>单项建议价 = 该服务在架卖家建议价区间；该服务没有任何卖家报价时，显示“暂无卖家报价 · 不展示建议价”。</li>
+    <li>组合建议报价 = 各服务单项建议价加总；组合中只要有 1 个服务没有建议价，就不展示组合建议报价，并提示“有服务暂无卖家报价，请自行出价”。</li>
+    <li>C 方式在识别结果确认后，按同样规则展示建议价。</li>
+  </ol>
+
+  <h3>4.4 文案方向</h3>
+  <table>
+    <tbody><tr><th>位置</th><th>EN</th><th>中文</th></tr>
+    <tr><td>标题</td><td>Custom request · combine services or describe it</td><td>自定义需求 · 组合购买或自由描述</td></tr>
+    <tr><td>说明</td><td>Combine several standard services into one request (we suggest a price when sellers have listed them), or describe what you need in one sentence. You set the price; sellers take the job.</td><td>把多个标准服务组合成一个需求（有卖家报价时给出组合建议价），或用一句话描述你的需求。由你出价，卖家接单。</td></tr>
+    <tr><td>切换</td><td>A · Combine services / C · Describe it</td><td>A · 组合需求 / C · 描述需求</td></tr>
+    <tr><td>发布后</td><td>Request published &amp; paid — payment is held in escrow…</td><td>需求已发布，已付款；接单前可在「我的需求」取消并全额退款</td></tr>
+  </tbody></table>
+  <p>文案仍需结合买家理解再斟酌，重点是让买家知道“可组合购买，也可自定义描述”。</p>
+</div>
+</section>
+
+<!-- ================= 05 ================= -->
+<section class="panel" id="m5" role="tabpanel">
+<div class="module">
+  <div class="module-label">05</div>
+  <h2>买家个人中心</h2>
+  <div class="module-intro">My Requests 只管需求；所有订单操作都在 My Orders。</div>
+
+  <h3>5.1 My Requests（我的需求）</h3>
+  <table>
+    <tbody><tr><th>状态</th><th>展示</th><th>操作</th></tr>
+    <tr><td>等待卖家接单</td><td>需求编号、发布时间、需求有效期至、属性 chips（赛季、平台、递送方式、各服务）、需求要求 / 备注、出价（已付款）、期望完成时间</td><td>取消需求 → 交易已取消，原路全额退款</td></tr>
+    <tr><td>卖家已接单</td><td>同上，另展示对应订单号</td><td>查看订单 → 跳转 My Orders 对应订单</td></tr>
+    <tr><td>已取消 · 已退款</td><td>同上</td><td>重新发布</td></tr>
+  </tbody></table>
+  <p>Tab：全部 / 等待接单 / 已接单 / 已取消。My Requests 只承载 Custom 需求；标准化商品直接下单，不产生需求。</p>
+
+  <h3>5.2 My Orders（我的订单）</h3>
+  <ul class="rules">
+    <li>代练订单与其他品类订单放在一起，没有区别；Tab 沿用：待付款 / 待交付 / 待收货 / 待评价 / 已完成 / 退款售后 / 全部。</li>
+    <li>操作按状态沿用现有：待交付（申请退款、订单详情）、待收货（申请退款、订单详情、确认收货）、待评价（评价）、已完成（再次购买）、退款售后（退款详情）。</li>
+    <li>Custom 订单被接单后在这里出现，退款、评价等操作都在这里进行。</li>
+  </ul>
+</div>
+</section>
+
+<!-- ================= 06 ================= -->
+<section class="panel" id="m6" role="tabpanel">
+<div class="module">
+  <div class="module-label">06</div>
+  <h2>卖家上架</h2>
+  <div class="module-intro">单个上架，三步完成；小类决定第三步加载的费率卡模板。</div>
+
+  <h3>6.1 三步流程</h3>
+  <div class="flow" style="grid-template-columns:repeat(3,1fr)">
+    <div class="st"><div class="mid">STEP 1</div><h4>商品类型</h4><p>Boosting · Diablo 4 · 大类 / 小类；展示佣金（15%）。</p></div>
+    <div class="st"><div class="mid">STEP 2</div><h4>商品详情</h4><p>标题（≤144 字）、商品图（图 &lt;5MB、视频 &lt;20MB）、商品描述；服务范围：勾选可服务的属性值（赛季模式、职业、平台等，按小类不同）。</p></div>
+    <div class="st"><div class="mid">STEP 3</div><h4>交易、递送与定价</h4><p>递送方式、递送时长、费率卡与实时预览、库存、质保期、上架有效期。</p></div>
+  </div>
+
+  <h3>6.2 卖家访谈反馈</h3>
+  <table>
+    <tbody><tr><th>卖家</th><th>对上架流程的看法</th></tr>
+    <tr><td>Gold Store</td><td>页面全面，操作不复杂；属性配置可以根据赛季内容再调整</td></tr>
+    <tr><td>Mr Zhou</td><td>比较方便；页面不能弄得太复杂，简单明了就行</td></tr>
+    <tr><td>zbyjq</td><td>不复杂，很轻松上手</td></tr>
+    <tr><td>soyga</td><td>没有问题，设计得很好</td></tr>
+  </tbody></table>
+  <div class="card verdict"><span class="tag">结论</span><p>现有三步上架流程卖家能看懂、会用，维持单个上架。新增需求：<strong>小类属性与枚举值由平台运营配置，可随赛季内容更新</strong>（如新 Boss、新难度、新活动），卖家上架时自动加载当季属性。</p></div>
+
+  <h3>6.3 第三步字段规则</h3>
+  <table>
+    <tbody><tr><th>字段</th><th>规则</th></tr>
+    <tr><td>递送方式 *</td><td>多选：组队陪同（不交号）/ 上号代打；只决定账号安全档，不影响价格</td></tr>
+    <tr><td>递送时长 *</td><td>固定值：数值 + 单位（分钟 / 小时 / 天）；向买家展示为参考，不作超时判罚依据</td></tr>
+    <tr><td>费率卡 *</td><td>按小类加载模板。升级类：卖家自定义等级段（可增删段，可一键套用平台推荐分段），<strong>必须从起点连续覆盖到上限、无缺口无重叠</strong>，否则报错不可发布；组合包的每张组成卡都需闭合</td></tr>
+    <tr><td>属性系数</td><td>对 Step 2 勾选的每个属性值设系数（加价或乘数），平台给默认值</td></tr>
+    <tr><td>实时预览</td><td>卖家选一组属性即时看到算价结果与市场价格带对比</td></tr>
+    <tr><td>库存 *</td><td>总库存（必填）、库存报警值、最低购买、最大购买；与现有商品一致，卖家自述，不作真实管控</td></tr>
+    <tr><td>质保期 *</td><td>7 / 15 / 30 天；质保期越长排名越高，收益在质保期结束后释放</td></tr>
+    <tr><td>上架有效期 *</td><td>30 / 60 天；期内无成交或未更新将暂时下架</td></tr>
+  </tbody></table>
+
+  <h3>6.4 批量上架：本期不做</h3>
+  <table>
+    <tbody><tr><th>问题</th><th>说明</th></tr>
+    <tr><td>表结构</td><td>各代练小类至少有 2–3 个不通用属性；合到一个 sheet 列数过多、大量空格，只能拆多 sheet</td></tr>
+    <tr><td>投入产出倒挂</td><td>现有批量适配“多行 × 少参数”，代练是“少行 × 多参数”；D4 目前 6 个小类的代练商品约 20 个，批量省力有限，出错和理解成本更高</td></tr>
+    <tr><td>失去实时反馈</td><td>单个上架从 Step 2 到 Step 3 能帮卖家理解要填哪些属性、价格参数与属性的关系，并实时预览算价；批量表格里这些都丢失，填错要等错误报告逐个往返修改</td></tr>
+    <tr><td>技术不确定</td><td>多 sheet 需单独命名；新增小类时模板是自动新增还是重做，方案不可确认</td></tr>
+  </tbody></table>
+  <div class="card note"><span class="tag">结论</span><p>批量功能投入产出比低，模板实现与现有改动较大，卖家填写理解成本比单个上架高太多，本期维持单个上架。</p></div>
+</div>
+</section>
+
+<!-- ================= 07 ================= -->
+<section class="panel" id="m7" role="tabpanel">
+<div class="module">
+  <div class="module-label">07</div>
+  <h2>卖家中心</h2>
+  <div class="module-intro">Request List 接 Custom 需求；My Orders 与其他品类合并；My Listings 可查看商品详情。</div>
+
+  <h3>7.1 Request List（需求列表）</h3>
+  <ul class="rules">
+    <li>只展示未被接单的 Custom 需求；<strong>被任一卖家接单后不再出现在列表</strong>，侧栏计数同步减少。</li>
+    <li>卡片：发布时间、订单号、聊一聊、状态（可接单 / 即将过期）；商品名 + 属性详情；递送信息（代练限时、递送方式、需求要求、备注）；买家报价；报价有效期剩余时间；操作「接单」「聊一聊」。</li>
+    <li>接单前不展示账号等递送属性明细，接单后才可见。</li>
+    <li>点「接单」弹确认窗：成交价、按商品分组的属性、限时、要求与备注；确认后订单进入 My Orders，开始计时。</li>
+  </ul>
+
+  <h3>7.2 My Orders（我的订单）</h3>
+  <ul class="rules">
+    <li>代练订单与其他品类订单合并，功能按钮一致；Tab：待发货 / 待买家收货 / 确认收货 / 已完成 / 退款售后 / 全部。</li>
+    <li>卡片：时间、订单号、买家、订单状态、事件日志；商品 + 属性详情；递送信息；金额；备注（交付进度、临期提醒、争议原因）；操作按状态（发货、退款详情等）。</li>
+  </ul>
+
+  <h3>7.3 订单信息展示</h3>
+  <table>
+    <tbody><tr><th>模块</th><th>规则</th><th>状态</th></tr>
+    <tr><td>属性详情</td><td>点 Attributes detail 弹窗；普通订单平铺属性；组合包 / Custom 带入多个组合时，按每个标品的商品名分组，组下展示对应属性，共用属性（赛季、平台、职业等）置顶且不重复</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>递送信息内容</td><td>递送方式（名称）+ 备注 + 递送属性信息（账号等，接单后可见），另含交付时限与需求要求</td><td class="c"><span class="s ok">已定</span></td></tr>
+    <tr><td>递送信息展示方式</td><td>方案一：整体为一个模块，超出高度后点 View all 看全部；方案二：要求、备注各自摘要两行就地展开，递送属性单独一块 View all</td><td class="c"><span class="s tbd">待定</span></td></tr>
+    <tr><td>订单详情</td><td>增加订单详情页或订单可下拉展开，参考竞品</td><td class="c"><span class="s later">后续</span></td></tr>
+  </tbody></table>
+
+  <h3>7.4 My Listings（我的在售）</h3>
+  <ul class="rules">
+    <li>列表：商品名、品类 · 小类、起价、库存、递送时长、状态、操作（查看详情 / 编辑）。</li>
+    <li>查看详情：关键属性 / 服务范围 → 价格设置（费率卡）→ 交易与递送（递送时长、库存）→ 商品描述。</li>
+  </ul>
+  <div class="card verdict"><span class="tag">建议 · 费率卡不作关键属性</span><p>费率卡（计算器参数）是卖家的定价规则，不是服务内容，不放进关键属性；在商品详情里作为独立的「价格设置」模块展示。订单侧只展示买家所选属性值与成交价，不展示费率卡本身。</p></div>
+</div>
+</section>
+
+<!-- ================= 08 ================= -->
+<section class="panel" id="m8" role="tabpanel">
+<div class="module">
+  <div class="module-label">08</div>
+  <h2>租户后台 · Custom 需求落地</h2>
+  <div class="module-intro">不新增需求列表、不新增字段、不新增状态、不新增 Tab；Custom 需求从下单那一刻就是一笔正式订单。</div>
+
+  <h3>8.1 落地方式</h3>
+  <ol class="rules">
+    <li><strong>预置商品：</strong>Custom 的商品信息用计算器提前配置好，由代练自营账号预先上架单位商品，价格统一 $1.00。</li>
+    <li><strong>下单：</strong>买家出价 $10 → 下单到自营单位商品，数量 = 10，订单金额 = 10 × $1 = $10，生成订单号 + 母单号。</li>
+    <li><strong>未接单期间：</strong>卖家店铺 / 卖家 ID / 卖家邮箱三列填代练自营账号（代练自营 · 90000000001 · boosting.self@igv.com）。</li>
+    <li><strong>接单：</strong>订单过风控后，订单所属卖家可修改；第一个接单的卖家锁单，三列改写为实际卖家，佣金按品类“代练”重算。</li>
+    <li><strong>交付与结算：</strong>走现有递送 / 争议 / 验号流程，买家确认或超时自动确认后放款，进结算单。</li>
+  </ol>
+
+  <h3>8.2 状态映射（沿用订单列表现有四种）</h3>
+  <table>
+    <tbody><tr><th>环节</th><th>订单状态</th><th>卖家三列</th><th>递送状态</th><th>资金</th><th>买家侧</th></tr>
+    <tr><td>提交需求</td><td>待支付</td><td>代练自营</td><td>—</td><td>未收款</td><td>待支付</td></tr>
+    <tr><td>支付</td><td>未完成（风控审核中）</td><td>代练自营</td><td>—</td><td>已收款 · 风控中</td><td>支付确认中</td></tr>
+    <tr><td>待接单</td><td>未完成（等待接单）</td><td>代练自营</td><td>—</td><td>托管中</td><td>等待卖家接单</td></tr>
+    <tr><td>卖家接单</td><td>未完成（已接单）</td><td>改写 → 实际卖家</td><td>待发货</td><td>托管中</td><td>卖家已接单</td></tr>
+    <tr><td>交付 / 验收</td><td>未完成（交付中）</td><td>实际卖家</td><td>已发货</td><td>托管中</td><td>代练进行中</td></tr>
+    <tr><td>完成 / 结算</td><td>已完成</td><td>实际卖家</td><td>已完成</td><td>放款 / 结算</td><td>已完成</td></tr>
+  </tbody></table>
+  <p>订单列表中 Custom 订单以底色区分，品类为 Game / GamePal &amp; Boosting / Custom。</p>
+
+  <h3>8.3 取消分支（统一为“交易已取消”）</h3>
+  <ol class="rules">
+    <li>未支付超时 → 自动取消（无退款）。</li>
+    <li>支付风控拒绝 → 取消 + 原路退款。</li>
+    <li>超过报价有效期无人接单 → 自动取消 + 全额退款。</li>
+    <li>买家在 My Requests 主动取消（未接单）→ 取消 + 全额退款。</li>
+  </ol>
+  <p>以上情况卖家三列仍为代练自营；退款手续费按已定规则由平台承担。</p>
+
+  <div class="card risk"><span class="tag">待定 · $1 单位商品的金额精度</span><p>① 币种换算：单位商品定价 1.00 USD，买家按 EUR / GBP 等本币支付，换算后难以正好落在整数美元；② 总金额非整数：数量只能是整数，$52.50、€48.37 这类出价无法用 1.00 × N 精确编码，计算器算出的组合报价也常带小数；③ 牵连优惠改价尾数、退款金额与结算佣金取整。需对照此前的绑定设计规则确定：出价强制取整、调低单位商品单价（如 $0.01），或沿用现有换算规则。</p></div>
+</div>
+</section>
+
+<!-- ================= 09 ================= -->
+<section class="panel" id="m9" role="tabpanel">
+<div class="module">
+  <div class="module-label">09</div>
+  <h2>递送时长 · 库存 · 接单产能</h2>
+  <div class="module-intro">三个字段的定位，以及真实接单能力如何控制。</div>
+
+  <h3>9.1 递送时长</h3>
+  <ul class="rules">
+    <li>本期采用<strong>固定值</strong>：卖家为商品填一个时长，买家在卖家列表与详情看到这个值。</li>
+    <li>定位为参考、非承诺，不作超时判罚依据；Custom 的时间约束由买家填写的期望完成时间承担。</li>
+    <li>备选形态保留为后续演进：区间（最早 ~ 最晚，卖家沟通中更倾向）与按下单金额的阶梯固定值（卖家认为对买家不友好，且价格随赛季波动需频繁修改）。</li>
+  </ul>
+
+  <div class="card info"><span class="tag">卖家访谈</span><p>卖家普遍认为严格限制递送时间意义不大：实际耗时受买家影响（有组队客户刷到一半去睡觉、第二天继续）；递送时间本就是预计值，卖家会按买家要求放大，分得太细反而麻烦；也有卖家认为可按订单大小给不同时长，但买家并不很关心。这些反馈支持本期用固定值。</p></div>
+
+  <h3>9.2 库存</h3>
+  <ul class="rules">
+    <li>卖家自主填写，与现有商品一致；卖家普遍填充足库存而非真实库存，库存数字不作真实管控。</li>
+    <li>访谈中卖家表示库存“让卖家自己看情况填即可”，或不清楚如何设计、但自有打手资源充足，与本方案一致。</li>
+  </ul>
+
+  <h3>9.3 接单产能</h3>
+  <ul class="rules">
+    <li>沿用平台现有「卖家接单自运转规则」：按近 30 天业务与卖家表现动态约束在手订单量，未完成代练订单数达阈值即关闭曝光。代练作为新品牌品类接入，一单一计。</li>
+    <li>产能权重方案（按递送时长区分长短单、按权重占用产能）暂不考虑，后续有需求再优化。</li>
+  </ul>
+</div>
+</section>
+
+<!-- ================= 10 ================= -->
+<section class="panel" id="m10" role="tabpanel">
+<div class="module">
+  <div class="module-label">10</div>
+  <h2>售后与规则</h2>
+  <div class="module-intro">复用现有售后体系，本期不启用代练专属惩罚。</div>
+  <table>
+    <tbody><tr><th>规则</th><th>内容</th></tr>
+    <tr><td>退款与争议</td><td>沿用现有订单的退款、争议、仲裁与验号流程；买家在 My Orders 发起，卖家在 My Orders 提交凭证</td></tr>
+    <tr><td>代练退款单惩罚</td><td>暂时用规则过滤掉，不对卖家罚款；接单确认窗不再提示罚款，后续根据实际情况再启用</td></tr>
+    <tr><td>质保期</td><td>卖家上架时选择 7 / 15 / 30 天，收益在质保期结束后释放</td></tr>
+  </tbody></table>
+</div>
+</section>
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<div class="footnote">
+  iGV 新业务拓展 · D4 代练业务需求文档
+</div>
+</div>
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  var panels=tabs.map(function(t){return document.getElementById(t.dataset.panel);});
+  var nav=document.querySelector('nav.tabs'), lock=0;
+  function setActive(id){
+    tabs.forEach(function(x){
+      var on=x.dataset.panel===id;
+      x.setAttribute('aria-selected',on?'true':'false');
+      if(on){
+        if(nav.scrollWidth>nav.clientWidth+1){nav.scrollLeft=x.offsetLeft-(nav.clientWidth-x.offsetWidth)/2;}
+        else if(nav.scrollHeight>nav.clientHeight+1){var top=x.offsetTop,bot=top+x.offsetHeight;if(top<nav.scrollTop+8)nav.scrollTop=top-8;else if(bot>nav.scrollTop+nav.clientHeight-8)nav.scrollTop=bot-nav.clientHeight+8;}
+      }
+    });
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){
+    var el=document.getElementById(t.dataset.panel);
+    setActive(t.dataset.panel); lock=Date.now()+900;
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+    try{history.replaceState(null,'','#'+t.dataset.panel);}catch(e){}
+  });});
+  function spy(){
+    if(Date.now()<lock) return;
+    var line=window.innerHeight*0.3, cur=panels[0].id;
+    panels.forEach(function(p){ if(p.getBoundingClientRect().top<=line) cur=p.id; });
+    if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4) cur=panels[panels.length-1].id;
+    setActive(cur);
+  }
+  var tick=false;
+  window.addEventListener('scroll',function(){ if(!tick){tick=true;requestAnimationFrame(function(){tick=false;spy();});} },{passive:true});
+  window.addEventListener('resize',spy);
+  var h=location.hash.slice(1);
+  if(h&&document.getElementById(h)){ document.getElementById(h).scrollIntoView(); }
+  spy();
+})();
+</script>
+</body></html>
