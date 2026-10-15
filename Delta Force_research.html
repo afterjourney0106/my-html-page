@@ -149,14 +149,15 @@
   .tab.apx[aria-selected="true"] .no{color:var(--ink);}
   .tab-sep{height:1px;background:var(--line);margin:8px 0;}
   .content{min-width:0;}
-  .panel{display:none;}
-  .panel.active{display:block;}
+  .panel{scroll-margin-top:24px;}
+  .panel + .panel{margin-top:64px;padding-top:8px;border-top:1px dashed var(--line);}
   .panel > .module:first-child{margin-top:0;}
   .panel > .card:first-child{margin-top:0;}
 
   @media (max-width:860px){
     .layout{grid-template-columns:1fr;gap:20px;}
-    nav.tabs{position:static;flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);padding:0 0 8px;}
+    nav.tabs{position:sticky;top:0;z-index:5;background:var(--paper);flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);padding:8px 0;}
+    .panel{scroll-margin-top:84px;}
     .tab{flex:0 0 auto;border-left:none;border-bottom:3px solid transparent;}
     .tab[aria-selected="true"],.tab.apx[aria-selected="true"]{border-left:none;border-bottom-color:var(--red);}
     .tab-sep{display:none;}
@@ -194,7 +195,7 @@
 </nav>
 <div class="content">
 
-<section class="panel active" id="p0" role="tabpanel">
+<section class="panel" id="p0" role="tabpanel">
 <!-- ======================== 总结论 ======================== -->
 <div class="card verdict">
   <span class="tag">总结论</span>
@@ -629,19 +630,35 @@
 </div>
 <script>
 (function(){
-  var tabs=document.querySelectorAll('.tab'),panels=document.querySelectorAll('.panel');
-  function show(id){
-    tabs.forEach(function(x){x.setAttribute('aria-selected',x.dataset.panel===id?'true':'false');});
-    panels.forEach(function(p){p.classList.toggle('active',p.id===id);});
+  var tabs=[].slice.call(document.querySelectorAll('.tab'));
+  var panels=tabs.map(function(t){return document.getElementById(t.dataset.panel);});
+  var nav=document.querySelector('nav.tabs'), lock=0;
+  function setActive(id){
+    tabs.forEach(function(x){
+      var on=x.dataset.panel===id;
+      x.setAttribute('aria-selected',on?'true':'false');
+      if(on&&nav.scrollWidth>nav.clientWidth){x.scrollIntoView({block:'nearest',inline:'center'});}
+    });
   }
   tabs.forEach(function(t){t.addEventListener('click',function(){
-    show(t.dataset.panel);
-    var top=document.querySelector('.layout').getBoundingClientRect().top+window.scrollY-16;
-    if(window.scrollY>top) window.scrollTo({top:top,behavior:'smooth'});
+    var el=document.getElementById(t.dataset.panel);
+    setActive(t.dataset.panel); lock=Date.now()+900;
+    el.scrollIntoView({behavior:'smooth',block:'start'});
     try{history.replaceState(null,'','#'+t.dataset.panel);}catch(e){}
   });});
+  function spy(){
+    if(Date.now()<lock) return;
+    var line=window.innerHeight*0.3, cur=panels[0].id;
+    panels.forEach(function(p){ if(p.getBoundingClientRect().top<=line) cur=p.id; });
+    if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4) cur=panels[panels.length-1].id;
+    setActive(cur);
+  }
+  var tick=false;
+  window.addEventListener('scroll',function(){ if(!tick){tick=true;requestAnimationFrame(function(){tick=false;spy();});} },{passive:true});
+  window.addEventListener('resize',spy);
   var h=location.hash.slice(1);
-  if(h&&document.getElementById(h)&&document.getElementById(h).classList.contains('panel')) show(h);
+  if(h&&document.getElementById(h)){ document.getElementById(h).scrollIntoView(); }
+  spy();
 })();
 </script>
 </body></html>
