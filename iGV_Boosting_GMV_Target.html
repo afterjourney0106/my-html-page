@@ -1,9 +1,6 @@
 <!doctype html>
-<html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>代练业务流水预估</title>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>代练业务方案</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -107,377 +104,181 @@ a{color:var(--blue)}
   .phase{grid-template-columns:minmax(0,1fr);gap:8px}
 }
 @media (prefers-reduced-motion:no-preference){.chart rect.bar{transition:height .25s,y .25s}}
+
+.pri{display:inline-block;min-width:30px;text-align:center;font-family:var(--mono);font-size:12px;font-weight:600;border-radius:6px;padding:1px 6px}
+.pri.p0{background:var(--accent);color:var(--paper)}
+.pri.p1{background:var(--accent-soft);color:var(--accent)}
+.pri.p2{background:var(--soft);color:var(--muted)}
+.pri.px{color:var(--muted)}
+.eq{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-family:var(--mono);font-size:15px;margin:10px 0 4px}
+.eq .box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-align:center}
+.eq .box b{display:block;font-size:22px}
+.eq .box span{font-family:var(--sans);font-size:12px;color:var(--muted)}
+.eq .op{color:var(--muted);font-size:20px}
+.steps{margin:8px 0;padding-left:20px}
+.steps li{margin:6px 0}
+td.grp{color:var(--muted);font-size:12px;white-space:nowrap}
+tr.tot td{font-weight:700;background:var(--soft)}
+.xref{font-size:12.5px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin:8px 0 0}
+
+.wrap{max-width:1760px}
+@media (min-width:901px){.wrap{grid-template-columns:200px minmax(0,1fr);gap:32px}}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+p{max-width:110ch}
+.lead{max-width:110ch}
+table{font-size:13px}
+th,td{padding:8px 10px}
+th{white-space:normal}
+.gname{white-space:nowrap}
+.gname small{display:block;font-weight:400;font-size:11.5px;color:var(--muted);margin-top:2px}
+td.lg{font-family:var(--mono);font-size:12px;line-height:1.7}
+.legend2{display:flex;flex-wrap:wrap;gap:16px;font-size:12.5px;color:var(--muted);margin:6px 0}
+nav.toc a .tn{font-family:var(--mono);color:var(--accent);margin-right:6px;font-size:12px}
+dl.def{display:grid;grid-template-columns:180px minmax(0,1fr);gap:6px 16px;margin:10px 0 16px;font-size:13.5px}
+dl.def dt{font-weight:700}
+dl.def dd{margin:0;color:var(--ink)}
+.formula{font-family:var(--mono);font-size:13px;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:10px 14px;margin:8px 0 14px;line-height:1.9}
+.ex{font-family:var(--mono);font-size:12.5px;background:var(--soft);border-radius:8px;padding:10px 14px;margin:8px 0 14px;line-height:1.9}
+h3 .mtag{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400;margin-left:10px}
+tr.sub td{background:var(--soft);font-weight:700}
+details.fold{margin:14px 0;border:1px solid var(--line);border-radius:10px;padding:0 14px;background:var(--paper)}
+details.fold>summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:15px}
+details.fold[open]>summary{border-bottom:1px solid var(--line);margin-bottom:10px}
+details.fold .mtag{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400;margin-left:10px}
+@media (max-width:900px){dl.def{grid-template-columns:minmax(0,1fr)}}
 </style>
-</head>
-<body>
-
-
-<div class="wrap">
-<nav class="toc" aria-label="目录">
-  <div class="brand">代练业务流水预估</div>
-  <div class="ver">V3.1 · 2026-10-20 · 开服前版</div>
-  <ol>
-    <li><a href="#s0">结论</a></li>
-    <li><a href="#s1">竞品对标</a></li>
-    <li><a href="#s2">目标拆解</a></li>
-    <li><a href="#s3">流水路径</a></li>
-    <li><a href="#s4">流量需求</a></li>
-    <li><a href="#s5">iGV 基础与历史经验</a></li>
-    <li><a href="#s6">Dofus 竞争格局</a></li>
-    <li><a href="#s7">供给要求</a></li>
-    <li><a href="#s8">工作方案</a></li>
-    <li><a href="#s9">风险与监控</a></li>
-    <li><a href="#s10">数据与来源</a></li>
-  </ol>
-</nav>
-
-<main>
-<header class="hero">
-  <div class="eyebrow">iGV · 代练业务（GamePal &amp; Boosting）· 2026-11 上线</div>
-  <h1>代练业务流水预估与工作方案</h1>
-  <div class="meta"><span>口径：流水（GMV，含退款）＋平台收入（佣金 35%，扣退款）</span><span>时间窗：2026-11 至 2027-10（M1–M12）</span><span>市场：欧美</span><span>对标：Overgear 及 B2C 代练站</span></div>
-</header>
-
-<!-- 0 -->
-<section id="s0">
-  <h2><span class="no">00</span>结论</h2>
-  <div class="callout"><strong>目标：</strong>上线 3 个月后（2027-01，M3）代练月流水达到 $30 万，约为 Overgear 代练月流水（约 $100 万）的 30%，与 WowVendor、Epiccarry 的代练体量处于同一区间。</div>
-  <div class="kpis">
-    <div class="kpi"><div class="k">M3 月流水</div><div class="v">$30 万</div><div class="s">2027-01</div></div>
-    <div class="kpi"><div class="k">M3 月订单</div><div class="v" id="k-ord"></div><div class="s">综合单均 <span id="k-aov"></span></div></div>
-    <div class="kpi"><div class="k">M3 代练月 UV</div><div class="v" id="k-uv"></div><div class="s">综合转化约 5%</div></div>
-    <div class="kpi"><div class="k">M3 月平台收入</div><div class="v" id="k-rev"></div><div class="s">佣金 35%，退款 10%</div></div>
-  </div>
-  <ul class="find">
-    <li><b class="i">1</b><div><b>市场够大，Overgear 一家代练月流水约 $100 万。</b>计数法：2026-10-16 17:30 至 10-20 09:54（约 88 小时）全站代练计数新增 1,820 单，约 494 单/天 × 单均 $65 ≈ $96 万/月；流量法：9 月访问 90.7 万 × 代练流量 60% × 转化 3% × $65 ≈ $106 万/月。</div></li>
-    <li><b class="i">2</b><div><b>WoW 全系是第一大盘，但不照搬 Overgear 的结构。</b>Overgear 近 88 小时新增代练中 WoW 正式服占 72%，这是它多年 SEO 与老客积累的结果，且采样期 D4、PoE 不在赛季。iGV 按"市场需求 × 自身能力"分配：WoW 全系 40%、赛季与新作热点 23%、竞技类 15%、常驻品牌（含 Dofus）22%。</div></li>
-    <li><b class="i">3</b><div><b>$30 万需要每月约 <span id="f-uv"></span> 代练 UV。</b>2024 年代练类目最高月为 1.66 万 UV。iGV 2026-04 至 09 金币、账号、物品类目 UV 按品牌加总每月 19–35 万（同一访客跨类目会重复计），站内约能导出 2.8 万；其余靠约 24 个重点品牌 × 14 种语言代练页的自然搜索、付费广告、KOL 合作者与卖家引流补齐。</div></li>
-    <li><b class="i">4</b><div><b>两条路径。</b>激进路径 M3 达到 $30 万，前提是 12 月前代练页全部上线、前 3 个月接受付费广告按平台收入亏损换量、每个重点游戏由 2–3 个大卖家或大型工作室覆盖主流服务；任一条不满足，按稳健路径 M6（2027-04）达到 $30 万。</div></li>
-    <li><b class="i">5</b><div><b>历史数据提供经验。</b>2024 年代练订单/UV 4.1%、退款/GMV 21.2%，同期金币、账号订单/UV 分别为 24.9%、17.5%，转化率是代练最需要补的环节；目标综合单均 $57，高于 2024 年代练实际，与竞品价格水平接近。</div></li>
-  </ul>
-</section>
-
-<!-- 1 -->
-<section id="s1">
-  <h2><span class="no">01</span>竞品对标</h2>
-  <p class="lead">四家头部 B2C 代练站均为自营打手、非卖家平台。Overgear 的计数可直接推算单量；其余三家用"访问量 × 代练流量占比 × 转化率 × 单均"估算，代练流量占比由网站结构判断。</p>
-  <h3>Overgear：两种方法互相校验</h3>
-  <div class="tbl"><table>
-    <tr><th>方法</th><th>算式</th><th class="n">代练月订单</th><th class="n">代练月流水</th></tr>
-    <tr><td>计数法</td><td>2026-10-16 17:30 至 10-20 09:54（约 88 小时）全站代练计数新增 1,820 单 ≈ 494 单/天；× 单均 $65</td><td class="n">≥ 1.48 万</td><td class="n">≥ $96 万</td></tr>
-    <tr class="hl"><td>流量法</td><td>2026-09 访问 90.7 万 × 代练流量 60% × 转化 3% × 单均 $65</td><td class="n">1.63 万</td><td class="n">$106 万</td></tr>
-  </table></div>
-  <p class="note">计数只覆盖页面显示计数的游戏，真实单量不低于计数法结果。同期金币计数新增 757 单（约 206 单/天），代练约占订单七成。Overgear 站点地图 6,201 个游戏页中金币、通货页不到 1%，但金币订单约占 1/3：商品页占比不能直接当作流量占比。</p>
-
-  <h3>三家 B2C 代练站估算</h3>
-  <div class="tbl"><table>
-    <tr><th>站点</th><th class="n">月访问（最新可得）</th><th>网站结构</th><th class="n">代练流量占比</th><th class="n">转化</th><th class="n">单均</th><th class="n">代练月流水</th></tr>
-    <tr><td>BlazingBoost</td><td class="n">48.3 万（2026-08）</td><td>4,657 个页面，以代练与陪练为主，另有少量通货类服务；访问来源土耳其 14% 居首、美国 12.7%；停留 4:33、3.94 页/访问；停留时长约为 Overgear（2:04、4.33 页/访问）的 2 倍</td><td class="n">75–80%</td><td class="n">3–3.5%</td><td class="n">$65</td><td class="n">$73–85 万</td></tr>
-    <tr><td>Epiccarry</td><td class="n">41.3 万（2026-06）</td><td>5,057 个商品页，通货约 2%，WoW 金币在热门位；环比 +54.8%，自然搜索 74.6%；停留 1:08</td><td class="n">65–75%</td><td class="n">2–3%</td><td class="n">$65</td><td class="n">$38–56 万</td></tr>
-    <tr><td>WowVendor</td><td class="n">25.6 万（2026-08）</td><td>32 个商品站点地图 + 15 个博客站点地图，内容量大；金币在主导航；停留 0:51、2.3 页/访问</td><td class="n">40–50%</td><td class="n">2–3%</td><td class="n">$60</td><td class="n">$14–21 万</td></tr>
-  </table></div>
-  <p class="note">Similarweb 公开页面对这三家尚未更新到 9 月（BlazingBoost、WowVendor 最新为 8 月，Epiccarry 为 6 月），按最新可得月份计算。Epiccarry 自称 13 年累计 70 万单（含金币），月均约 4,500 单；按其近期增长，当前每月 0.6–0.9 万单代练可以对上。G2G、Eldorado 等 C2C 平台不公开代练成交、也无法拆出代练流量，未做估算。</p>
-
-  <h3>Overgear 各游戏代练新增（2026-10-16 17:30 至 10-20 09:54，约 88 小时）</h3>
-  <div class="tbl"><table>
-    <tr><th>游戏</th><th class="n">累计代练单（10-20）</th><th class="n">88 小时新增</th><th>说明</th></tr>
-    <tr class="hl"><td>WoW 正式服</td><td class="n">545,986</td><td class="n">+1,304</td><td>约 354 单/天，占全站新增 72%</td></tr>
-    <tr><td>Aion 2</td><td class="n">265</td><td class="n">+67</td><td>新作</td></tr>
-    <tr><td>Destiny 2</td><td class="n">51,420</td><td class="n">+66</td><td>赛季制</td></tr>
-    <tr><td>ARC Raiders</td><td class="n">5,230</td><td class="n">+49</td><td>新作，约一年累计 5,000+</td></tr>
-    <tr><td>Diablo 4</td><td class="n">49,421</td><td class="n">+39</td><td>赛季间隙</td></tr>
-    <tr><td>TBC Anniversary</td><td class="n">35,089</td><td class="n">+28</td><td></td></tr>
-    <tr><td>EA FC 27</td><td class="n">1,467</td><td class="n">+18</td><td>9 月底发售</td></tr>
-    <tr><td>WoW Forever</td><td class="n">269</td><td class="n">+9</td><td>未开服，预售</td></tr>
-    <tr><td>PoE / PoE 2 / CoD / Tarkov</td><td class="n">11,303 / 6,319 / 14,245 / 9,838</td><td class="n">+0 / +6 / +2 / +8</td><td>不在赛季或新作窗口</td></tr>
-  </table></div>
-  <p class="note">最近 24 小时（10-19 09:53 至 10-20 09:54）全站新增 506 单，WoW 正式服 263 单，占 52%；随采样天数增加，WoW 的占比在回落。</p>
-
-  <h3>铺货重点：各站商品页按游戏分布</h3>
-  <div class="tbl"><table>
-    <tr><th>站点</th><th class="n">WoW 全系</th><th class="n">Destiny 2</th><th class="n">Diablo 4</th><th class="n">PoE 1+2</th><th class="n">CoD</th></tr>
-    <tr><td>Overgear（6,201 页）</td><td class="n">25%</td><td class="n">22%</td><td class="n">8%</td><td class="n">8%</td><td class="n">9%</td></tr>
-    <tr><td>Epiccarry（5,057 页）</td><td class="n">44%</td><td class="n">21%</td><td class="n">6%</td><td class="n">8%</td><td class="n">3%</td></tr>
-    <tr><td>BlazingBoost（4,657 页）</td><td class="n">29%</td><td class="n">24%</td><td class="n">3%</td><td class="n">2%</td><td class="n">5%</td></tr>
-  </table></div>
-  <p class="note">商品页数量反映铺货重点，不代表销量：Overgear WoW 商品页占 25%，订单却近八成。四家共同的重点是 WoW、Destiny 2、D4、PoE。</p>
-</section>
-
-<!-- 2 -->
-<section id="s2">
-  <h2><span class="no">02</span>目标拆解（M3 = 2027-01）</h2>
-  <p class="lead">按品牌组分配 $30 万：竞品数据说明市场需求，iGV 现有买家盘、语言和卖家资源决定能拿到多少。常驻品牌包含 Dofus。</p>
-  <div class="tbl"><table id="tgtTbl"></table></div>
-  <p class="note">单均：WoW 参考 Overgear 价格（碎片等级 $24 起、团本约 $380、TBC 58–70 级 $87）；竞技类参考 2024 年 iGV 实际（Valorant $40、LoL $34）并略上调；Dofus 参考 2024 年 iGV 实际 $92。综合单均约 $57，与竞品 $60–65 的水平接近。转化率目标 5%，Dofus 6%；2024 年代练实际为 4.1%。</p>
-</section>
-
-<!-- 3 -->
-<section id="s3">
-  <h2><span class="no">03</span>流水路径</h2>
-  <p class="lead">首发即上线 WoW Forever、WoW 正式服、TBC 周年服与 Dofus，12 月、1 月两批配置完其余重点品牌。激进路径 M3 达到 $30 万；稳健路径 M6 达到 $30 万，WoW Forever 开服爆发按七成计、其余品牌组半年爬坡。</p>
-  <div class="panel">
-    <div class="seg" role="group" aria-label="路径">
-      <button type="button" id="bt-a" data-p="a" aria-pressed="true">激进路径</button>
-      <button type="button" id="bt-b" data-p="b" aria-pressed="false">稳健路径</button>
-    </div>
-    <div class="out" id="pathKpi"></div>
-  </div>
-  <div class="chart"><svg id="chPath" viewBox="0 0 760 320" role="img" aria-label="月流水路径，按品牌组堆叠"></svg><div class="legend" id="lgPath"></div></div>
-  <div class="tbl"><table id="pathTbl"></table></div>
-</section>
-
-<!-- 4 -->
-<section id="s4">
-  <h2><span class="no">04</span>流量需求</h2>
-  <p class="lead">M3 激进路径需要的代练类目 UV 按渠道拆分。</p>
-  <div class="tbl"><table>
-    <tr><th>渠道</th><th class="n">M3 月 UV</th><th>依据</th><th>前提</th></tr>
-    <tr><td>站内导流</td><td class="n">28,000</td><td>2026-04 至 09 金币、账号、物品类目 UV 按品牌加总每月 19–35 万；2024 年各品牌点进代练页比例 2–15%</td><td>金币、账号、物品页与下单完成页放代练入口</td></tr>
-    <tr><td>老客召回</td><td class="n">8,000</td><td>WoW 有效邮箱 6,556；其他品牌老客按同样方式导出</td><td>按买家语言发送，分层触达</td></tr>
-    <tr><td>自然搜索</td><td class="n">30,000</td><td>约 24 个重点品牌 × 14 种语言代练页；Epiccarry 74.6%、Overgear 约 52% 的流量来自自然搜索</td><td>12 月前全部上线；SEO 通常 3–6 个月见效，是最大缺口</td></tr>
-    <tr><td>付费广告</td><td class="n">22,000</td><td>CPC 约 $2.8（Semrush：wow boost $3.47、wow power leveling $2.50），月预算约 $6.2 万</td><td>集中在开服、赛季、新作窗口</td></tr>
-    <tr><td>KOL 合作者</td><td class="n">12,000</td><td>YouTube、Twitch、Reddit、Discord 上的游戏创作者</td><td>按订单分成的合作机制</td></tr>
-    <tr><td>卖家引流</td><td class="n">5,000</td><td>C2C 卖家把自有客户导到 iGV 店铺</td><td>卖家引流订单佣金优惠</td></tr>
-    <tr class="hl"><td><b>合计</b></td><td class="n"><b>105,000</b></td><td colspan="2">2024 年代练类目最高月 1.66 万 UV 的约 6 倍</td></tr>
-  </table></div>
-  <p class="note">"约 24 个重点品牌" = 首发 4 个 + 第二批 8 个 + 第三批 12 个，见第 8 节。</p>
-  <div class="callout"><strong>付费广告的账：</strong>每次点击带来流水约 5% × $57 ≈ $2.85，与 CPC $2.8 基本持平；按平台收入算每 $1 广告费回收约 $0.32。付费只用于开服、赛季和新作窗口抢量，不作长期主力；激进路径意味着前 3 个月接受这部分亏损。</div>
-  <h3>流量反推</h3>
-  <div class="panel">
-    <div class="ctrls">
-      <div class="ctrl"><label for="tg">月流水目标 <output id="tgO"></output></label><input type="range" id="tg" min="50000" max="600000" step="10000" value="300000"></div>
-      <div class="ctrl"><label for="tc">综合转化率 <output id="tcO"></output></label><input type="range" id="tc" min="0.02" max="0.1" step="0.005" value="0.05"></div>
-      <div class="ctrl"><label for="ta">综合单均 <output id="taO"></output></label><input type="range" id="ta" min="25" max="100" step="1" value="57"></div>
-    </div>
-    <div class="out" id="tgOut"></div>
-  </div>
-</section>
-
-<!-- 5 -->
-<section id="s5">
-  <h2><span class="no">05</span>iGV 基础与历史经验</h2>
-  <h3>现有买家盘（2026-04 至 09 月均）</h3>
-  <div class="tbl"><table>
-    <tr><th>品牌</th><th class="n">金币+账号+物品 月 GMV</th><th class="n">月买家</th><th class="n">非代练类目月 UV</th><th class="n">2024 点进代练页比例</th><th class="n">2024 代练转化</th></tr>
-    <tr><td>Dofus（含 Dofus Touch）</td><td class="n">$477.7k</td><td class="n">4,500</td><td class="n">31,800</td><td class="n">6.6%</td><td class="n">~0.4%</td></tr>
-    <tr><td>Fortnite</td><td class="n">$104.4k</td><td class="n">1,365</td><td class="n">29,740</td><td class="n">2.4%</td><td class="n">~3.1%</td></tr>
-    <tr><td>Valorant</td><td class="n">$72.5k</td><td class="n">2,306</td><td class="n">16,840</td><td class="n">5.2%</td><td class="n">~3.4%</td></tr>
-    <tr><td>WoW 正式服 + TBC 周年服</td><td class="n">$65.9k</td><td class="n">967</td><td class="n">5,400</td><td class="n">7.1%</td><td class="n">~0.6%</td></tr>
-    <tr><td>EA FC</td><td class="n">$44.0k</td><td class="n">900</td><td class="n">8,370</td><td class="n">2.6%</td><td class="n">低</td></tr>
-    <tr><td>League of Legends</td><td class="n">$31.1k</td><td class="n">1,043</td><td class="n">6,070</td><td class="n">7.5%</td><td class="n">~4.7%</td></tr>
-    <tr><td>Clash of Clans</td><td class="n">$28.4k</td><td class="n">468</td><td class="n">7,170</td><td class="n">6.8%</td><td class="n">低</td></tr>
-    <tr><td>Diablo 4 / PoE 2</td><td class="n">$10.2k（PoE 2）</td><td class="n">—</td><td class="n">1,940（D4）</td><td class="n">12.6%（D4）</td><td class="n">—</td></tr>
-  </table></div>
-  <p class="note">"点进代练页比例" = 2024-04 至 11 代练页 UV ÷ 同品牌其他品类 UV；"代练转化" = 代练订单 ÷ 代练页 UV。</p>
-
-  <h3>历史经验（2024-01 至 11）</h3>
-  <div class="kpis">
-    <div class="kpi"><div class="k">代练 订单 / UV</div><div class="v">4.1%</div><div class="s">目标 5%</div></div>
-    <div class="kpi"><div class="k">金币 订单 / UV</div><div class="v">24.9%</div><div class="s">对照</div></div>
-    <div class="kpi"><div class="k">账号 订单 / UV</div><div class="v">17.5%</div><div class="s">对照</div></div>
-    <div class="kpi"><div class="k">代练 退款 / GMV</div><div class="v" style="color:var(--bad)">21.2%</div><div class="s">目标 ≤ 10%</div></div>
-  </div>
-  <div class="tbl"><table>
-    <tr><th>2023-07 至 2024-09 分品牌</th><th class="n">客单价</th><th class="n">退款率</th></tr>
-    <tr><td>Call of Duty</td><td class="n">$27</td><td class="n">25%</td></tr>
-    <tr><td>Valorant</td><td class="n">$40</td><td class="n">17%</td></tr>
-    <tr><td>Fortnite</td><td class="n">$25</td><td class="n">29%</td></tr>
-    <tr><td>League of Legends</td><td class="n">$34</td><td class="n">17%</td></tr>
-    <tr><td>Dofus</td><td class="n">$92</td><td class="n">16%</td></tr>
-    <tr><td>WoW 正式服 / Classic 系</td><td class="n">$20 / $53</td><td class="n">30% / 67%</td></tr>
-  </table></div>
-
-  <h3>WoW 老客</h3>
-  <p>2024-11-21 至 2026-10-15 WoW 各版本买家 9,843 人，有效邮箱去重 6,556 人：6 个月内且 5 单以上 920 人、6 个月内其余 1,387 人、6–24 个月 4,249 人。有效邮箱中法语区 60%、德语区 20%、西语区 6%、英语区 7%；代练页按 14 种语言配置，法语、德语优先校对。</p>
-</section>
-
-<!-- 6 -->
-<section id="s6">
-  <h2><span class="no">06</span>Dofus 竞争格局</h2>
-  <div class="tbl"><table>
-    <tr><th>维度</th><th>Dofus</th><th>WoW 全系</th></tr>
-    <tr><td>竞品代练</td><td>Overgear、BlazingBoost、Epiccarry、WowVendor 均未覆盖；G2G 代练搜索 0 条；Eldorado 只有金币；仅 igitems 有需求发布页</td><td>四家 B2C 均以 WoW 为第一品类；G2G WoW Forever 代练一个月从 3,185 条增至 10,362 条</td></tr>
-    <tr><td>需求现状</td><td>主要在游戏内完成：法语区"带本人"（passeur）Discord 社区同时在线上千人，多以 kamas 付费</td><td>现金付给代练站</td></tr>
-    <tr><td>玩家规模</td><td>法语区为主，Dofus 3 新服预注册数日内超过 17.5 万</td><td>全球级</td></tr>
-    <tr><td>竞争难度</td><td>低，现金代练几乎无竞争对手</td><td>高，头部词难度 53–60</td></tr>
-    <tr><td>iGV 基础</td><td>金币月均 $40.9 万，全站第一；2024 年代练客单价 $92、退款率 16%，均为主力品牌最好</td><td>金币买家盘中等；2024 年代练退款高</td></tr>
-  </table></div>
-  <p>Dofus 归入常驻品牌。iGV 在 Dofus 拥有全站最大的金币买家盘和法语资源，现金代练市场又几乎没有竞争对手，可以先发占位：首发即上线带本、任务、等级、成就等服务，邀请现有 kamas 卖家和带本团队入驻，在金币页与下单完成页做交叉推荐，把游戏内以 kamas 完成的带本需求转为平台订单。M3 目标 $2.5 万。</p>
-</section>
-
-<!-- 7 -->
-<section id="s7">
-  <h2><span class="no">07</span>供给要求</h2>
-  <p class="lead">C2C 下供给要求是覆盖与承接，不是卖家家数：每个重点游戏的主流服务类型、大区与阵营都有人接；每个重点游戏由 2–3 个大卖家或大型工作室覆盖，保证比价与备份。</p>
-  <div class="tbl"><table id="supTbl"></table></div>
-  <p class="note">头部卖家按"游戏 × 服务类型"的日承载能力待访谈补充（如 WoW 正式服大秘境与团本、WoW Forever 等级与专业分别询问）。</p>
-</section>
-
-<!-- 8 -->
-<section id="s8">
-  <h2><span class="no">08</span>工作方案</h2>
-  <div class="tbl"><table>
-    <tr><th>批次</th><th>上线</th><th>品牌</th></tr>
-    <tr class="hl"><td>首发</td><td>11 月上半月</td><td>WoW Forever、WoW 正式服、TBC 周年服、Dofus（含 Dofus Touch）</td></tr>
-    <tr><td>第二批</td><td>12 月</td><td>Valorant、LoL、Fortnite；EA FC、Diablo 4、PoE 2、Call of Duty、Destiny 2</td></tr>
-    <tr><td>第三批</td><td>2027-01</td><td>PoE、Tarkov、Marvel Rivals、ARC Raiders、Overwatch 2、Apex、CS2、Lost Ark、Albion、OSRS、FFXIV、Aion 2 等</td></tr>
-  </table></div>
-  <div class="timeline">
-    <div class="phase"><div class="when">10/20 – 11/4<span>首发准备</span></div><div>
-      <ul>
-        <li>WoW Forever：主流工作室上架等级、副本、专业、PvP 模板；碎片式等级段、11 个专业单独定价；交付时效按平台档位</li>
-        <li>WoW 正式服、TBC 周年服：大秘境、团本、等级、PvP 标准商品同步上架</li>
-        <li>Dofus：邀请 kamas 卖家与带本团队上架带本、任务、等级、成就服务</li>
-        <li>多语言：代练页 14 种语言同步，法语、德语优先校对</li>
-        <li>站内导流：WoW、Dofus 金币页、下单完成页、个人中心放代练入口</li>
-        <li>老客：WoW 高价值买家分层触达，11/4、11/6、11/12 EDM 按语言发送</li>
-        <li>第二批：卖家招商、模板配置、SEO 页面同步启动</li>
-      </ul>
-      <div class="kpi-line">验收：WoW Forever SKU ≥ 50；14 种语言页面上线；入口可点击；日报可出</div></div></div>
-    <div class="phase"><div class="when">11/5 – 11/30<span>首发</span></div><div>
-      <ul>
-        <li>付费广告集中投 WoW Forever 开服两周</li>
-        <li>售前分钟级响应；纠纷当天处理，退款率按周复盘</li>
-        <li>每日对照 Overgear 计数与 iGV 单量</li>
-        <li>第二批品牌模板、卖家、页面就位；KOL 合作者签约</li>
-      </ul>
-      <div class="kpi-line">目标：11 月流水约 $9.5 万（激进）/ $5.75 万（稳健）</div></div></div>
-    <div class="phase"><div class="when">12 月<span>第二批上线</span></div><div>
-      <ul>
-        <li>竞技类与赛季型品牌上线，落地页与 SEO 内容新建</li>
-        <li>WoW Forever 团本 12/9 上线；节日组合包</li>
-        <li>开服后修订版报告：用真实数据替换假设</li>
-      </ul>
-      <div class="kpi-line">目标：12 月流水约 $19.5 万（激进）/ $11.4 万（稳健）</div></div></div>
-    <div class="phase"><div class="when">2027-01<span>第三批上线</span></div><div>
-      <ul>
-        <li>其余重点品牌配置完成</li>
-        <li>热点日历定时追踪上线：发售、赛季、版本更新提前一个月备货、上页面、投放</li>
-      </ul>
-      <div class="kpi-line">目标：1 月流水 $30 万（激进）/ $18.4 万（稳健）</div></div></div>
-    <div class="phase"><div class="when">2027-02 起<span>放量</span></div><div>
-      <ul>
-        <li>每季度 1–2 个热点，按热点日历轮流冲高</li>
-        <li>自然搜索进入稳定期后逐步降低付费占比</li>
-        <li>转化、退款连续三个月不达标的品牌调整或下线</li>
-      </ul>
-      <div class="kpi-line">目标：激进路径 $31–36 万/月；稳健路径 4 月达到 $30 万</div></div></div>
-  </div>
-</section>
-
-<!-- 9 -->
-<section id="s9">
-  <h2><span class="no">09</span>风险与监控</h2>
-  <div class="tbl"><table>
-    <tr><th>风险</th><th>影响</th><th>应对</th></tr>
-    <tr><td>SEO 见效慢</td><td>自然搜索 3 万 UV 缺口</td><td>12 月前页面全部上线；缺口由付费和 KOL 合作者临时补；按稳健路径调整时间点</td></tr>
-    <tr><td>付费广告亏损</td><td>平台收入</td><td>只投开服、赛季、新作窗口；按品牌回本率周度调整</td></tr>
-    <tr><td>WoW 代练纠纷与退款（历史 30–67%）</td><td>WoW 退款率</td><td>默认推"自己上号 / 陪打"；代上号加封号包赔；卖家保证金</td></tr>
-    <tr><td>热点没押中</td><td>热点线</td><td>每个热点准备两个候选品牌</td></tr>
-    <tr><td>Dofus 部分需求在游戏内以 kamas 完成</td><td>Dofus 转化</td><td>邀请带本团队入驻；金币页与下单完成页交叉推荐</td></tr>
-    <tr><td>卖家跳单到站外</td><td>订单数</td><td>站内沟通与担保交易写入保障条款</td></tr>
-  </table></div>
-  <h3>每周监控</h3>
-  <div class="tbl"><table>
-    <tr><th>指标</th><th>M3 目标（激进）</th></tr>
-    <tr><td>代练类目 UV（分渠道）</td><td class="n">≈ 10.5 万/月</td></tr>
-    <tr><td>综合转化 / 综合单均</td><td class="n">≥ 5% / ≈ $57</td></tr>
-    <tr><td>代练订单</td><td class="n">≈ 5,300/月，≈ 177/天</td></tr>
-    <tr><td>退款 / GMV</td><td class="n">≤ 10%</td></tr>
-    <tr><td>Overgear 代练计数日增量（全站、WoW 正式服）</td><td class="n">市场基准；iGV 单量 ÷ Overgear 单量</td></tr>
-  </table></div>
-</section>
-
-<!-- 10 -->
-<section id="s10">
-  <h2><span class="no">10</span>数据与来源</h2>
-  <h3>待补数据</h3>
-  <div class="tbl"><table>
-    <tr><th>数据</th><th>用在哪</th></tr>
-    <tr><td>Overgear 7 日计数差值（每日任务自动积累）</td><td>竞品周销量排名、市场基准</td></tr>
-    <tr><td>头部卖家按游戏 × 服务类型的日承载能力</td><td>供给要求</td></tr>
-  </table></div>
-  <h3>来源</h3>
-  <ul class="src-list">
-    <li>iGV 后台导出：代练品类 GMV 与售后月表；代练分品牌 GMV、订单、退款（2023-07 至 2024-09）；各品牌各品类 GMV、订单、买家（2024-01 至 2026-09）；各品牌各品类类目 UV（2024-01 至 2026-09）；WoW 各版本买家（2024-11-21 至 2026-10-15）</li>
-    <li>Overgear 商品详情页计数，2026-10-16、10-19、10-20 浏览器读取，明细见 D 盘《Overgear各游戏代练计数.csv》；Overgear、Epiccarry、BlazingBoost 站点地图（2026-10-20 读取），WowVendor 站点地图索引</li>
-    <li>Similarweb 访问量与来源（Overgear 2026-09；BlazingBoost、WowVendor 2026-08；Epiccarry 2026-06）：<a href="https://www.similarweb.com/website/overgear.com/" target="_blank" rel="noopener">Overgear</a> · <a href="https://www.similarweb.com/website/blazingboost.com/" target="_blank" rel="noopener">BlazingBoost</a> · <a href="https://www.similarweb.com/website/epiccarry.com/" target="_blank" rel="noopener">Epiccarry</a> · <a href="https://www.similarweb.com/website/wowvendor.com/" target="_blank" rel="noopener">WowVendor</a></li>
-    <li>竞品官网：<a href="https://www.blazingboost.com/" target="_blank" rel="noopener">BlazingBoost</a> · <a href="https://epiccarry.com/" target="_blank" rel="noopener">Epiccarry</a> · <a href="https://wowvendor.com/" target="_blank" rel="noopener">WowVendor</a> · <a href="https://overgear.com/games/wow-forever" target="_blank" rel="noopener">Overgear WoW Forever</a></li>
-    <li>Dofus：<a href="https://igitems.com/dofus-services" target="_blank" rel="noopener">igitems Dofus Boosting</a> · <a href="https://disboard.org/server/725311857920835614" target="_blank" rel="noopener">法语区带本 Discord 社区</a> · <a href="https://guidactik.com/dofus/plus-de-175-000-inscriptions-pour-les-nouveaux-serveurs-dofus-3-0-unity/" target="_blank" rel="noopener">Dofus 3 新服预注册</a>；G2G、Eldorado 站内搜索（2026-10-20）</li>
-    <li>《WoW 无限代练调研》V2.1（2026-09-16）：Semrush 美国库搜索词（2026-09-21）</li>
-  </ul>
-</section>
-</main>
+</head><body><div class="wrap">
+<nav class="toc" aria-label="目录"><div class="brand">代练业务方案</div><div class="ver">V2 · 2026-10-21</div><ol><li><a href="#p1"><span class="tn">01</span>GMV 总目标</a></li><li><a href="#p2"><span class="tn">02</span>目标拆解</a></li><li><a href="#p3"><span class="tn">03</span>供应侧</a></li><li><a href="#p4"><span class="tn">04</span>流量侧</a></li><li><a href="#p5"><span class="tn">05</span>竞品流水预估</a></li><li><a href="#p6"><span class="tn">06</span>历史数据参考</a></li></ol></nav>
+<main><header class="hero"><div class="eyebrow">iGV · 代练业务（GamePal &amp; Boosting）· 2026-11 上线</div>
+<h1>代练业务方案</h1>
+<div class="meta"><span>目标：2026-11 $9.5 万 · 2026-12 $19.5 万 · 2027-01 $30 万</span><span>市场：欧美</span><span>配套：《代练业务数据支持》</span></div></header><section id="p1">
+<h2><span class="no">01</span>GMV 总目标</h2>
+<div class="eq">
+ <div class="box"><b>52,105</b><span>UV</span></div><div class="op">×</div>
+ <div class="box"><b>5.6%</b><span>转化</span></div><div class="op">+</div>
+ <div class="box"><b>197</b><span>复购用户</span></div><div class="op">=</div>
+ <div class="box"><b>3,117</b><span>转化用户</span></div><div class="op">×</div>
+ <div class="box"><b>1.45</b><span>人均订单</span></div><div class="op">×</div>
+ <div class="box"><b>$67</b><span>单均</span></div><div class="op">=</div>
+ <div class="box" style="border-color:var(--accent)"><b style="color:var(--accent)">$30 万</b><span>2027-01 流水</span></div>
 </div>
-
-<script>
-const ML=['11月','12月','1月','2月','3月','4月','5月','6月','7月','8月','9月','10月'];
-const G=[
- {k:'wf',name:'WoW Forever',c:'--c2',aov:60,cvr:0.05,a:[50,45,40,35,33,31,30,30,31,29,29,29]},
- {k:'wr',name:'WoW 正式服 + TBC',c:'--c6',aov:65,cvr:0.05,a:[30,55,80,84,86,88,90,92,94,96,96,98]},
- {k:'hot',name:'赛季与新作热点',c:'--c4',aov:55,cvr:0.05,a:[0,35,70,75,80,76,80,85,80,85,90,85]},
- {k:'cmp',name:'竞技类',c:'--c3',aov:40,cvr:0.05,a:[0,25,45,48,50,52,54,55,56,58,60,60]},
- {k:'dof',name:'常驻：Dofus',c:'--c1',aov:90,cvr:0.06,a:[15,18,25,25,25,25,25,25,25,25,25,25]},
- {k:'oth',name:'常驻：其他品牌',c:'--c5',aov:55,cvr:0.05,a:[0,17,40,45,48,50,52,54,56,58,60,62]}];
-const RB=[0.5,0.55,0.6,0.7,0.82,0.97,1,1,1,1,1,1];
-G.forEach(g=>{g.a=g.a.map(v=>v*1000);g.b=g.a.map((v,i)=>g.k==='wf'?v*0.7:v*RB[i]);});
-const REF=0.10,COMM=0.35;
-const $k=v=>Math.abs(v)>=1e6?'$'+(v/1e6).toFixed(2)+'M':Math.abs(v)>=1000?'$'+(v/1000).toFixed(Math.abs(v)>=100000?0:1)+'k':'$'+Math.round(v);
-const $w=v=>'$'+(v/10000).toFixed(v>=100000?1:2).replace(/\.?0+$/,'')+' 万';
-const fmt=v=>Math.round(v).toLocaleString('en-US');
-const tot=(p,i)=>G.reduce((s,g)=>s+g[p][i],0);
-
-/* M3 拆解 */
-(function(){const i=2;let O=0,U=0,T=0;
- let h='<tr><th>品牌组</th><th>包含</th><th class="n">M3 月流水</th><th class="n">占比</th><th class="n">单均</th><th class="n">月订单</th><th class="n">日订单</th><th class="n">转化</th><th class="n">所需月 UV</th></tr>';
- const inc={wf:'WoW Forever',wr:'WoW 正式服、TBC 周年服',hot:'D4、PoE 2、CoD、EA FC、Destiny 2 等按赛季与发售轮动',cmp:'Valorant、LoL、Fortnite、CS2、OW2',oth:'PoE、Tarkov、Marvel Rivals、ARC Raiders、Lost Ark、Albion、OSRS、FFXIV、Apex、Aion 2 等',dof:'Dofus、Dofus Touch'};
- G.forEach(g=>{const v=g.a[i],o=v/g.aov,u=o/g.cvr;O+=o;U+=u;T+=v;
-  h+=`<tr><td>${g.name}</td><td>${inc[g.k]}</td><td class="n">${$k(v)}</td><td class="n">${(v/300000*100).toFixed(0)}%</td><td class="n">$${g.aov}</td><td class="n">${fmt(o)}</td><td class="n">${fmt(o/30)}</td><td class="n">${(g.cvr*100).toFixed(0)}%</td><td class="n">${fmt(u)}</td></tr>`;});
- h+=`<tr class="hl"><td><b>合计</b></td><td></td><td class="n"><b>${$k(T)}</b></td><td class="n">100%</td><td class="n">$${(T/O).toFixed(0)}</td><td class="n">${fmt(O)}</td><td class="n">${fmt(O/30)}</td><td class="n">${(O/U*100).toFixed(1)}%</td><td class="n">${fmt(U)}</td></tr>`;
- document.getElementById('tgtTbl').innerHTML=h;
- document.getElementById('k-ord').textContent=fmt(O);document.getElementById('k-aov').textContent='$'+(T/O).toFixed(0);
- document.getElementById('k-uv').textContent=(U/10000).toFixed(1)+' 万';document.getElementById('f-uv').textContent=(Math.round(U/5000)/2).toFixed(1)+' 万';
- document.getElementById('k-rev').textContent=$w(T*(1-REF)*COMM);
- let s='<tr><th>品牌组</th><th class="n">M3 日订单</th><th>覆盖要求</th></tr>';
- const cov={wf:'等级（碎片段）、副本、专业、PvP；12/9 起团本；美服、欧服 × 普通、PvP、RP × 双阵营',wr:'正式服大秘境、团本、等级、PvP；TBC 等级、团本',hot:'各游戏当季赛季内容、等级、通货相关服务',cmp:'段位、定级赛、陪玩',oth:'各游戏主流服务',dof:'带本、任务、等级、成就；法语服务优先'};
- G.forEach(g=>{s+=`<tr><td>${g.name}</td><td class="n">${fmt(g.a[i]/g.aov/30)}</td><td>${cov[g.k]}；至少 2–3 个卖家</td></tr>`;});
- s+=`<tr class="hl"><td><b>合计</b></td><td class="n"><b>${fmt(O/30)}</b></td><td></td></tr>`;
- document.getElementById('supTbl').innerHTML=s;})();
-
-/* 图表工具 */
-function axis(W,H,pad,ymax,ticks,fmtY,labels){let g='';const ih=H-pad.t-pad.b;
- ticks.forEach(t=>{const y=pad.t+ih-(t/ymax)*ih;g+=`<line x1="${pad.l}" x2="${W-pad.r}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pad.l-6}" y="${y+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="var(--mono)">${fmtY(t)}</text>`});
- const bw=(W-pad.l-pad.r)/labels.length;labels.forEach((l,i)=>{g+=`<text x="${pad.l+bw*i+bw/2}" y="${H-pad.b+16}" text-anchor="middle" font-size="11" fill="var(--muted)">${l}</text>`});return {g,bw,ih};}
-function nice(max,n=4){const raw=max/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),st=[1,2,2.5,5,10].map(x=>x*mag).find(x=>x>=raw);const top=Math.ceil(max/st)*st;const t=[];for(let v=0;v<=top+1e-9;v+=st)t.push(v);return {t,top};}
-function stack(id,labels,series,totals,fmtY,line,lineLabel){const svg=document.getElementById(id),W=760,H=+svg.getAttribute('viewBox').split(' ')[3],pad={l:56,r:12,t:18,b:30};
- const T=nice(Math.max(line||0,...totals)*1.05);const ax=axis(W,H,pad,T.top,T.t,fmtY,labels);let g=ax.g;
- labels.forEach((l,i)=>{let acc=0;series.forEach(([vals,c,name])=>{const h=vals[i]/T.top*ax.ih;g+=`<rect class="bar" x="${pad.l+ax.bw*i+ax.bw*0.15}" y="${pad.t+ax.ih-acc-h}" width="${ax.bw*0.7}" height="${Math.max(h,0)}" fill="var(${c})"><title>${l} ${name} ${fmtY(vals[i])}</title></rect>`;acc+=h;});
-  g+=`<text x="${pad.l+ax.bw*i+ax.bw/2}" y="${pad.t+ax.ih-acc-5}" text-anchor="middle" font-size="10.5" fill="var(--ink)" font-family="var(--mono)">${fmtY(totals[i])}</text>`});
- if(line){const y=pad.t+ax.ih-line/T.top*ax.ih;g+=`<line x1="${pad.l}" x2="${W-pad.r}" y1="${y}" y2="${y}" stroke="var(--muted)" stroke-dasharray="5 4"/><text x="${pad.l+6}" y="${y-5}" font-size="11" fill="var(--muted)">${lineLabel}</text>`;}
- svg.innerHTML=g;}
-const legend=(id,arr)=>document.getElementById(id).innerHTML=arr.map(([c,l])=>`<span><i style="background:var(${c})"></i>${l}</span>`).join('');
-
-/* 路径 */
-let PATH='a';
-function renderPath(){const p=PATH,T=ML.map((_,i)=>tot(p,i));
- stack('chPath',ML,G.map(g=>[g[p],g.c,g.name]),T,$k,300000,'目标 $30 万');legend('lgPath',G.map(g=>[g.c,g.name]));
- const reach=T.findIndex(v=>v>=299000);const sum12=T.reduce((a,b)=>a+b,0);
- const k=[['M1 月流水',T[0],'11 月'],['M3 月流水',T[2],'2027-01'],['M6 月流水',T[5],'2027-04'],['达到 $30 万',reach,''],['M12 月流水',T[11],'2027-10'],['12 个月累计流水',sum12,''],['12 个月累计平台收入',sum12*(1-REF)*COMM,'佣金 35% · 退款 10%'],['WoW 全系 12 个月',G[0][p].concat(G[1][p]).reduce((a,b)=>a+b,0),'']];
- document.getElementById('pathKpi').innerHTML=k.map(([a,v,s],i)=>`<div class="kpi"><div class="k">${a}</div><div class="v">${i==3?(v<0?'未达到':'M'+(v+1)):$k(v)}</div><div class="s">${i==3&&v>=0?ML[v]:s}</div></div>`).join('');
- let h='<tr><th>品牌组</th>'+ML.map(m=>`<th class="n">${m}</th>`).join('')+'<th class="n">合计</th></tr>';
- G.forEach(g=>{h+=`<tr><td>${g.name}</td>`+g[p].map(v=>`<td class="n">${$k(v)}</td>`).join('')+`<td class="n">${$k(g[p].reduce((a,b)=>a+b,0))}</td></tr>`;});
- h+='<tr class="hl"><td><b>合计</b></td>'+T.map(v=>`<td class="n"><b>${$k(v)}</b></td>`).join('')+`<td class="n"><b>${$k(sum12)}</b></td></tr>`;
- h+='<tr><td>平台收入</td>'+T.map(v=>`<td class="n">${$k(v*(1-REF)*COMM)}</td>`).join('')+`<td class="n">${$k(sum12*(1-REF)*COMM)}</td></tr>`;
- document.getElementById('pathTbl').innerHTML=h;}
-document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{PATH=b.dataset.p;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));renderPath();}));
-renderPath();
-
-/* 流量反推 */
-const tg=document.getElementById('tg'),tc=document.getElementById('tc'),ta=document.getElementById('ta');
-function tgt(){const t=+tg.value,c=+tc.value,a=+ta.value;document.getElementById('tgO').textContent='$'+fmt(t);document.getElementById('tcO').textContent=(c*100).toFixed(1)+'%';document.getElementById('taO').textContent='$'+a;const o=t/a,uv=o/c;
- document.getElementById('tgOut').innerHTML=`<div class="kpi"><div class="k">所需月订单</div><div class="v">${fmt(o)}</div></div><div class="kpi"><div class="k">所需代练月 UV</div><div class="v">${fmt(uv)}</div></div><div class="kpi"><div class="k">对比 Overgear 代练单量</div><div class="v">${(o/15000*100).toFixed(0)}%</div></div><div class="kpi"><div class="k">对比 2024 代练最高月 UV</div><div class="v">${(uv/16600).toFixed(1)}×</div></div>`;}
-[tg,tc,ta].forEach(e=>e.addEventListener('input',tgt));tgt();
-</script>
-
-</body>
-</html>
+<div class="legend2"><span><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">黄</span> 需求数据 × 拍板参数</span><span><span style="color:var(--bad);font-weight:700">红</span> 缺口，KOL 与社群合作补足</span></div>
+<div class="tbl"><table>
+<tr><th>指标</th><th class="n">2027-01</th><th class="n">2026-12</th><th class="n">2026-11</th></tr>
+<tr class="sub"><td>目标流水</td><td class="n">$30 万</td><td class="n">$19.50 万</td><td class="n">$9.50 万</td></tr>
+<tr><td>有依据流水</td><td class="n">$13.20 万</td><td class="n">$7.81 万</td><td class="n">$4.65 万</td></tr>
+<tr><td><span style="color:var(--bad);font-weight:700">缺口</span></td><td class="n"><span style="color:var(--bad);font-weight:700">$16.80 万</span></td><td class="n"><span style="color:var(--bad);font-weight:700">$11.69 万</span></td><td class="n"><span style="color:var(--bad);font-weight:700">$4.85 万</span></td></tr>
+<tr class="sub"><td>UV</td><td></td><td></td><td></td></tr>
+<tr><td>　站内导流</td><td class="n">5,929</td><td class="n">5,856</td><td class="n">2,293</td></tr>
+<tr><td>　自然搜索</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">13,397</span></td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">6,249</span></td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">1,991</span></td></tr>
+<tr><td>　付费投放</td><td class="n">2,874</td><td class="n">1,627</td><td class="n">967</td></tr>
+<tr><td><span style="color:var(--bad);font-weight:700">　KOL 与社群合作（缺口）</span></td><td class="n"><span style="color:var(--bad);font-weight:700">29,905</span></td><td class="n"><span style="color:var(--bad);font-weight:700">26,246</span></td><td class="n"><span style="color:var(--bad);font-weight:700">6,606</span></td></tr>
+<tr class="tot"><td>　合计</td><td class="n">52,105</td><td class="n">39,977</td><td class="n">11,858</td></tr>
+<tr class="sub"><td>转化与订单</td><td></td><td></td><td></td></tr>
+<tr><td>　转化率</td><td class="n">5.5%</td><td class="n">5.0%</td><td class="n">4.5%</td></tr>
+<tr><td>　新转化用户</td><td class="n">2,920</td><td class="n">2,053</td><td class="n">560</td></tr>
+<tr><td>　复购用户</td><td class="n">197</td><td class="n">70</td><td class="n">0</td></tr>
+<tr><td>　转化用户</td><td class="n">3,117</td><td class="n">2,123</td><td class="n">560</td></tr>
+<tr><td>　人均订单</td><td class="n">1.45</td><td class="n">1.45</td><td class="n">1.45</td></tr>
+<tr><td>　订单</td><td class="n">4,506</td><td class="n">3,069</td><td class="n">810</td></tr>
+<tr><td>　单均</td><td class="n">$67</td><td class="n">$64</td><td class="n">$117</td></tr>
+<tr class="sub"><td>收入</td><td></td><td></td><td></td></tr>
+<tr><td>　退款率上限</td><td class="n">≤ 6%</td><td class="n">≤ 8%</td><td class="n">≤ 10%</td></tr>
+<tr><td>　平台收入（流水 × (1 − 退款率) × 35%）</td><td class="n">$9.87 万</td><td class="n">$6.28 万</td><td class="n">$2.99 万</td></tr>
+</table></div>
+</section><section id="p2">
+<h2><span class="no">02</span>目标拆解</h2>
+<div class="legend2"><span><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">黄</span> 需求数据 × 拍板参数</span><span><span style="color:var(--bad);font-weight:700">红</span> 缺口，KOL 与社群合作补足</span></div>
+<h3>2027-01<span class="mtag">目标 $30 万</span></h3>
+<div class="tbl"><table>
+<tr><th>游戏</th><th class="n">流水</th><th class="n">UV</th><th class="n">转化用户</th><th class="n">订单</th><th class="n">转化</th><th class="n">单均</th><th>拆解逻辑</th><th>节点</th></tr>
+<tr><td class="gname"><b>WoW Forever</b><small>（WoW 全系）</small></td><td class="n"><b>$10.41 万</b></td><td class="n">5,587</td><td class="n">326</td><td class="n">471</td><td class="n">5.5%</td><td class="n">$221</td><td class="lg">站内 206 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">1,100</span> + 付费 539 + KOL <span style="color:var(--bad);font-weight:700">3,743</span><br>= UV 5,587 × 5.5% = 307 人 + 复购 19 人<br>= 326 人 × 1.45 单 = 471 单 × $221 = <b>$10.41 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $6.58 万</span><span class="note">（WoW 全系 $16.06 万 × Forever 64.8%）</span></td><td class="note">11 月初上线</td></tr><tr><td class="gname"><b>WoW 正式服</b><small>（WoW 全系）</small></td><td class="n"><b>$5.65 万</b></td><td class="n">14,683</td><td class="n">868</td><td class="n">1,256</td><td class="n">5.5%</td><td class="n">$45</td><td class="lg">站内 326 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">7,830</span> + 付费 143 + KOL <span style="color:var(--bad);font-weight:700">6,383</span><br>= UV 14,683 × 5.5% = 808 人 + 复购 61 人<br>= 868 人 × 1.45 单 = 1,256 单 × $45 = <b>$5.65 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $2.28 万</span><span class="note">（WoW 全系 $16.06 万 × 正式服 35.2%）</span></td><td class="note">12/1 12.1.7 · 1/26 第 3 赛季</td></tr><tr><td class="gname"><b>Diablo 4</b><small>（赛季与新作）</small></td><td class="n"><b>$7,836</b></td><td class="n">1,696</td><td class="n">99</td><td class="n">142</td><td class="n">5.5%</td><td class="n">$55</td><td class="lg">站内 103 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">529</span> + 付费 76 + KOL <span style="color:var(--bad);font-weight:700">989</span><br>= UV 1,696 × 5.5% = 93 人 + 复购 5 人<br>= 99 人 × 1.45 单 = 142 单 × $55 = <b>$7,836</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $4,323</span><span class="note">（缺口按有依据流水占比分摊）</span></td><td class="note">12 月中 第 16 赛季</td></tr><tr><td class="gname"><b>Call of Duty</b><small>（赛季与新作）</small></td><td class="n"><b>$6,459</b></td><td class="n">1,874</td><td class="n">112</td><td class="n">161</td><td class="n">5.5%</td><td class="n">$40</td><td class="lg">站内 118 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">375</span> + 付费 261 + KOL <span style="color:var(--bad);font-weight:700">1,120</span><br>= UV 1,874 × 5.5% = 103 人 + 复购 9 人<br>= 112 人 × 1.45 单 = 161 单 × $40 = <b>$6,459</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $3,563</span><span class="note">（缺口按有依据流水占比分摊）</span></td><td class="note">11/6 MW4 第 1 赛季</td></tr><tr><td class="gname"><b>EA FC 27</b><small>（赛季与新作）</small></td><td class="n"><b>$5,681</b></td><td class="n">1,459</td><td class="n">87</td><td class="n">126</td><td class="n">5.5%</td><td class="n">$45</td><td class="lg">站内 480 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">72</span> + 付费 31 + KOL <span style="color:var(--bad);font-weight:700">876</span><br>= UV 1,459 × 5.5% = 80 人 + 复购 7 人<br>= 87 人 × 1.45 单 = 126 单 × $45 = <b>$5,681</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $3,134</span><span class="note">（缺口按有依据流水占比分摊）</span></td><td class="note">1 月中 TOTY</td></tr><tr><td class="gname"><b>Aion 2</b><small>（赛季与新作）</small></td><td class="n"><b>$4,612</b></td><td class="n">1,927</td><td class="n">106</td><td class="n">154</td><td class="n">5.5%</td><td class="n">$30</td><td class="lg">站内 23 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">12</span> + 付费 0 + KOL <span style="color:var(--bad);font-weight:700">1,892</span><br>= UV 1,927 × 5.5% = 106 人 + 复购 0 人<br>= 106 人 × 1.45 单 = 154 单 × $30 = <b>$4,612</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $4,513</span><span class="note">（目标 = Overgear 17.08 单/天 × 30 × 30% × $30）</span></td><td class="note">10/5 全球服</td></tr><tr><td class="gname"><b>Path of Exile 2</b><small>（赛季与新作）</small></td><td class="n"><b>$4,465</b></td><td class="n">953</td><td class="n">56</td><td class="n">81</td><td class="n">5.5%</td><td class="n">$55</td><td class="lg">站内 97 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">293</span> + 付费 0 + KOL <span style="color:var(--bad);font-weight:700">563</span><br>= UV 953 × 5.5% = 52 人 + 复购 4 人<br>= 56 人 × 1.45 单 = 81 单 × $55 = <b>$4,465</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $2,463</span><span class="note">（缺口按有依据流水占比分摊）</span></td><td class="note">12/11 1.0</td></tr><tr><td class="gname"><b>ARC Raiders</b><small>（赛季与新作）</small></td><td class="n"><b>$2,354</b></td><td class="n">1,153</td><td class="n">65</td><td class="n">94</td><td class="n">5.5%</td><td class="n">$25</td><td class="lg">站内 55 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">176</span> + 付费 0 + KOL <span style="color:var(--bad);font-weight:700">923</span><br>= UV 1,153 × 5.5% = 63 人 + 复购 2 人<br>= 65 人 × 1.45 单 = 94 单 × $25 = <b>$2,354</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $1,834</span><span class="note">（目标 = Overgear 10.46 单/天 × 30 × 30% × $25）</span></td><td class="note">无官方日期</td></tr><tr><td class="gname"><b>Valorant</b><small>（竞技）</small></td><td class="n"><b>$2.75 万</b></td><td class="n">7,349</td><td class="n">422</td><td class="n">610</td><td class="n">5.5%</td><td class="n">$45</td><td class="lg">站内 895 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">1,232</span> + 付费 986 + KOL <span style="color:var(--bad);font-weight:700">4,236</span><br>= UV 7,349 × 5.5% = 404 人 + 复购 18 人<br>= 422 人 × 1.45 单 = 610 单 × $45 = <b>$2.75 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $1.52 万</span><span class="note">（缺口按有依据流水占比分摊）</span></td><td class="note">1/6 V27 段位重置</td></tr><tr><td class="gname"><b>League of Legends</b><small>（竞技）</small></td><td class="n"><b>$1.81 万</b></td><td class="n">5,478</td><td class="n">312</td><td class="n">452</td><td class="n">5.5%</td><td class="n">$40</td><td class="lg">站内 335 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">1,395</span> + 付费 614 + KOL <span style="color:var(--bad);font-weight:700">3,135</span><br>= UV 5,478 × 5.5% = 301 人 + 复购 11 人<br>= 312 人 × 1.45 单 = 452 单 × $40 = <b>$1.81 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $9,969</span><span class="note">（缺口按有依据流水占比分摊）</span></td><td class="note">1 月初 新赛季</td></tr><tr><td class="gname"><b>Fortnite</b><small>（竞技）</small></td><td class="n"><b>$1.19 万</b></td><td class="n">4,519</td><td class="n">274</td><td class="n">396</td><td class="n">5.5%</td><td class="n">$30</td><td class="lg">站内 1,577 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">110</span> + 付费 87 + KOL <span style="color:var(--bad);font-weight:700">2,745</span><br>= UV 4,519 × 5.5% = 249 人 + 复购 25 人<br>= 274 人 × 1.45 单 = 396 单 × $30 = <b>$1.19 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $6,547</span><span class="note">（缺口按有依据流水占比分摊）</span></td><td class="note">11/28 第 8 章</td></tr><tr><td class="gname"><b>Dofus</b><small>（常驻）</small></td><td class="n"><b>$5.06 万</b></td><td class="n">5,426</td><td class="n">389</td><td class="n">562</td><td class="n">6.5%</td><td class="n">$90</td><td class="lg">站内 1,713 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">274</span> + 付费 138 + KOL <span style="color:var(--bad);font-weight:700">3,300</span><br>= UV 5,426 × 6.5% = 353 人 + 复购 36 人<br>= 389 人 × 1.45 单 = 562 单 × $90 = <b>$5.06 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $2.79 万</span><span class="note">（缺口按有依据流水占比分摊）</span></td><td class="note">11–12 月 3.8 版本</td></tr><tr class="tot"><td>合计</td><td class="n">$30 万</td><td class="n">52,105</td><td class="n">3,117</td><td class="n">4,506</td><td class="n">5.6%</td><td class="n">$67</td><td class="lg">有依据 $13.20 万 + <span style="color:var(--bad);font-weight:700">缺口 $16.80 万</span></td><td></td></tr>
+</table></div><details class="fold"><summary>2026-12<span class="mtag">目标 $19.50 万</span></summary>
+<div class="tbl"><table>
+<tr><th>游戏</th><th class="n">流水</th><th class="n">UV</th><th class="n">转化用户</th><th class="n">订单</th><th class="n">转化</th><th class="n">单均</th><th>拆解逻辑</th><th>节点</th></tr>
+<tr><td class="gname"><b>WoW Forever</b><small>（WoW 全系）</small></td><td class="n"><b>$5.68 万</b></td><td class="n">3,419</td><td class="n">192</td><td class="n">277</td><td class="n">5.0%</td><td class="n">$205</td><td class="lg">站内 333 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">532</span> + 付费 417 + KOL <span style="color:var(--bad);font-weight:700">2,137</span><br>= UV 3,419 × 5.0% = 171 人 + 复购 21 人<br>= 192 人 × 1.45 单 = 277 单 × $205 = <b>$5.68 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $3.17 万</span><span class="note">（目标 = 1 月目标 $10.41 万 × 需求比 0.77 × 爬坡 0.70）</span></td><td class="note">11 月初上线</td></tr><tr><td class="gname"><b>WoW 正式服</b><small>（WoW 全系）</small></td><td class="n"><b>$3.37 万</b></td><td class="n">9,957</td><td class="n">518</td><td class="n">749</td><td class="n">5.0%</td><td class="n">$45</td><td class="lg">站内 126 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">4,141</span> + 付费 121 + KOL <span style="color:var(--bad);font-weight:700">5,568</span><br>= UV 9,957 × 5.0% = 498 人 + 复购 20 人<br>= 518 人 × 1.45 单 = 749 单 × $45 = <b>$3.37 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $1.81 万</span><span class="note">（目标 = 1 月目标 $5.65 万 × 需求比 0.85 × 爬坡 0.70）</span></td><td class="note">12/1 12.1.7 · 1/26 第 3 赛季</td></tr><tr><td class="gname"><b>Diablo 4</b><small>（赛季与新作）</small></td><td class="n"><b>$7,365</b></td><td class="n">1,853</td><td class="n">93</td><td class="n">134</td><td class="n">5.0%</td><td class="n">$55</td><td class="lg">站内 103 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">282</span> + 付费 0 + KOL <span style="color:var(--bad);font-weight:700">1,468</span><br>= UV 1,853 × 5.0% = 93 人 + 复购 0 人<br>= 93 人 × 1.45 单 = 134 单 × $55 = <b>$7,365</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $5,835</span><span class="note">（目标 = 1 月目标 $7,836 × 需求比 1.33 × 爬坡 0.70）</span></td><td class="note">12 月中 第 16 赛季</td></tr><tr><td class="gname"><b>Call of Duty</b><small>（赛季与新作）</small></td><td class="n"><b>$5,691</b></td><td class="n">1,969</td><td class="n">98</td><td class="n">142</td><td class="n">5.0%</td><td class="n">$40</td><td class="lg">站内 118 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">188</span> + 付费 326 + KOL <span style="color:var(--bad);font-weight:700">1,337</span><br>= UV 1,969 × 5.0% = 98 人 + 复购 0 人<br>= 98 人 × 1.45 单 = 142 单 × $40 = <b>$5,691</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $3,866</span><span class="note">（目标 = 1 月目标 $6,459 × 需求比 1.25 × 爬坡 0.70）</span></td><td class="note">11/6 MW4 第 1 赛季</td></tr><tr><td class="gname"><b>Path of Exile 2</b><small>（赛季与新作）</small></td><td class="n"><b>$4,721</b></td><td class="n">1,188</td><td class="n">59</td><td class="n">86</td><td class="n">5.0%</td><td class="n">$55</td><td class="lg">站内 97 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">176</span> + 付费 0 + KOL <span style="color:var(--bad);font-weight:700">915</span><br>= UV 1,188 × 5.0% = 59 人 + 复购 0 人<br>= 59 人 × 1.45 单 = 86 单 × $55 = <b>$4,721</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $3,637</span><span class="note">（目标 = 1 月目标 $4,465 × 需求比 1.50 × 爬坡 0.70）</span></td><td class="note">12/11 1.0</td></tr><tr><td class="gname"><b>Aion 2</b><small>（赛季与新作）</small></td><td class="n"><b>$3,251</b></td><td class="n">1,499</td><td class="n">75</td><td class="n">108</td><td class="n">5.0%</td><td class="n">$30</td><td class="lg">站内 23 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">5</span> + 付费 0 + KOL <span style="color:var(--bad);font-weight:700">1,472</span><br>= UV 1,499 × 5.0% = 75 人 + 复购 0 人<br>= 75 人 × 1.45 单 = 108 单 × $30 = <b>$3,251</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $3,191</span><span class="note">（目标 = 1 月目标 $4,612 × 需求比 1.00 × 爬坡 0.70）</span></td><td class="note">10/5 全球服</td></tr><tr><td class="gname"><b>EA FC 27</b><small>（赛季与新作）</small></td><td class="n"><b>$2,670</b></td><td class="n">821</td><td class="n">41</td><td class="n">59</td><td class="n">5.0%</td><td class="n">$45</td><td class="lg">站内 480 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">19</span> + 付费 21 + KOL <span style="color:var(--bad);font-weight:700">301</span><br>= UV 821 × 5.0% = 41 人 + 复购 0 人<br>= 41 人 × 1.45 单 = 59 单 × $45 = <b>$2,670</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $980</span><span class="note">（目标 = 1 月目标 $5,681 × 需求比 0.67 × 爬坡 0.70）</span></td><td class="note">1 月中 TOTY</td></tr><tr><td class="gname"><b>ARC Raiders</b><small>（赛季与新作）</small></td><td class="n"><b>$1,659</b></td><td class="n">918</td><td class="n">46</td><td class="n">66</td><td class="n">5.0%</td><td class="n">$25</td><td class="lg">站内 55 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">70</span> + 付费 0 + KOL <span style="color:var(--bad);font-weight:700">793</span><br>= UV 918 × 5.0% = 46 人 + 复购 0 人<br>= 46 人 × 1.45 单 = 66 单 × $25 = <b>$1,659</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $1,433</span><span class="note">（目标 = 1 月目标 $2,354 × 需求比 1.00 × 爬坡 0.70）</span></td><td class="note">无官方日期</td></tr><tr><td class="gname"><b>Fortnite</b><small>（竞技）</small></td><td class="n"><b>$1.67 万</b></td><td class="n">7,716</td><td class="n">386</td><td class="n">558</td><td class="n">5.0%</td><td class="n">$30</td><td class="lg">站内 1,577 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">88</span> + 付费 174 + KOL <span style="color:var(--bad);font-weight:700">5,877</span><br>= UV 7,716 × 5.0% = 386 人 + 复购 0 人<br>= 386 人 × 1.45 单 = 558 单 × $30 = <b>$1.67 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $1.27 万</span><span class="note">（目标 = 1 月目标 $1.19 万 × 需求比 2.00 × 爬坡 0.70）</span></td><td class="note">11/28 第 8 章</td></tr><tr><td class="gname"><b>Valorant</b><small>（竞技）</small></td><td class="n"><b>$9,683</b></td><td class="n">2,977</td><td class="n">149</td><td class="n">215</td><td class="n">5.0%</td><td class="n">$45</td><td class="lg">站内 895 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">246</span> + 付费 185 + KOL <span style="color:var(--bad);font-weight:700">1,650</span><br>= UV 2,977 × 5.0% = 149 人 + 复购 0 人<br>= 149 人 × 1.45 单 = 215 单 × $45 = <b>$9,683</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $5,367</span><span class="note">（目标 = 1 月目标 $2.75 万 × 需求比 0.50 × 爬坡 0.70）</span></td><td class="note">1/6 V27 段位重置</td></tr><tr><td class="gname"><b>League of Legends</b><small>（竞技）</small></td><td class="n"><b>$6,369</b></td><td class="n">2,203</td><td class="n">110</td><td class="n">159</td><td class="n">5.0%</td><td class="n">$40</td><td class="lg">站内 335 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">279</span> + 付费 204 + KOL <span style="color:var(--bad);font-weight:700">1,385</span><br>= UV 2,203 × 5.0% = 110 人 + 复购 0 人<br>= 110 人 × 1.45 单 = 159 单 × $40 = <b>$6,369</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $4,003</span><span class="note">（目标 = 1 月目标 $1.81 万 × 需求比 0.50 × 爬坡 0.70）</span></td><td class="note">1 月初 新赛季</td></tr><tr><td class="gname"><b>Dofus</b><small>（常驻）</small></td><td class="n"><b>$4.64 万</b></td><td class="n">5,458</td><td class="n">356</td><td class="n">515</td><td class="n">6.0%</td><td class="n">$90</td><td class="lg">站内 1,713 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">223</span> + 付费 179 + KOL <span style="color:var(--bad);font-weight:700">3,343</span><br>= UV 5,458 × 6.0% = 328 人 + 复购 29 人<br>= 356 人 × 1.45 单 = 515 单 × $90 = <b>$4.64 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $2.61 万</span><span class="note">（目标 = 1 月目标 $5.06 万 × 需求比 1.30 × 爬坡 0.70）</span></td><td class="note">11–12 月 3.8 版本</td></tr><tr class="tot"><td>合计</td><td class="n">$19.50 万</td><td class="n">39,977</td><td class="n">2,123</td><td class="n">3,069</td><td class="n">5.1%</td><td class="n">$64</td><td class="lg">有依据 $7.81 万 + <span style="color:var(--bad);font-weight:700">缺口 $11.69 万</span></td><td></td></tr>
+</table></div></details><details class="fold"><summary>2026-11<span class="mtag">目标 $9.50 万</span></summary>
+<div class="tbl"><table>
+<tr><th>游戏</th><th class="n">流水</th><th class="n">UV</th><th class="n">转化用户</th><th class="n">订单</th><th class="n">转化</th><th class="n">单均</th><th>拆解逻辑</th><th>节点</th></tr>
+<tr><td class="gname"><b>WoW Forever</b><small>（WoW 全系）</small></td><td class="n"><b>$5.95 万</b></td><td class="n">3,587</td><td class="n">161</td><td class="n">233</td><td class="n">4.5%</td><td class="n">$255</td><td class="lg">站内 454 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">416</span> + 付费 816 + KOL <span style="color:var(--bad);font-weight:700">1,902</span><br>= UV 3,587 × 4.5% = 161 人 + 复购 0 人<br>= 161 人 × 1.45 单 = 233 单 × $255 = <b>$5.95 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $3.15 万</span><span class="note">（目标 = 1 月目标 $10.41 万 × 需求比 1.51 × 爬坡 0.38）</span></td><td class="note">11 月初上线</td></tr><tr><td class="gname"><b>WoW 正式服</b><small>（WoW 全系）</small></td><td class="n"><b>$1.64 万</b></td><td class="n">5,603</td><td class="n">252</td><td class="n">364</td><td class="n">4.5%</td><td class="n">$45</td><td class="lg">站内 126 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">1,506</span> + 付费 14 + KOL <span style="color:var(--bad);font-weight:700">3,956</span><br>= UV 5,603 × 4.5% = 252 人 + 复购 0 人<br>= 252 人 × 1.45 单 = 364 单 × $45 = <b>$1.64 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $1.16 万</span><span class="note">（目标 = 1 月目标 $5.65 万 × 需求比 0.77 × 爬坡 0.38）</span></td><td class="note">12/1 12.1.7 · 1/26 第 3 赛季</td></tr><tr><td class="gname"><b>Dofus</b><small>（常驻）</small></td><td class="n"><b>$1.91 万</b></td><td class="n">2,668</td><td class="n">147</td><td class="n">212</td><td class="n">5.5%</td><td class="n">$90</td><td class="lg">站内 1,713 + 搜索 <span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">69</span> + 付费 138 + KOL <span style="color:var(--bad);font-weight:700">748</span><br>= UV 2,668 × 5.5% = 147 人 + 复购 0 人<br>= 147 人 × 1.45 单 = 212 单 × $90 = <b>$1.91 万</b><br><span style="color:var(--bad);font-weight:700">其中缺口 $5,354</span><span class="note">（目标 = 1 月目标 $5.06 万 × 需求比 1.00 × 爬坡 0.38）</span></td><td class="note">11–12 月 3.8 版本</td></tr><tr class="tot"><td>合计</td><td class="n">$9.50 万</td><td class="n">11,858</td><td class="n">560</td><td class="n">810</td><td class="n">4.7%</td><td class="n">$117</td><td class="lg">有依据 $4.65 万 + <span style="color:var(--bad);font-weight:700">缺口 $4.85 万</span></td><td></td></tr>
+</table></div><p class="note">未上线：Path of Exile 2、Diablo 4、Call of Duty、Aion 2、EA FC 27、ARC Raiders、Valorant、League of Legends、Fortnite（12 月上线）。</p></details>
+<p class="xref">定义、来源与算法见《数据支持》第 01–05 节。</p>
+</section><section id="p3">
+<h2><span class="no">03</span>行动计划 · 供应侧</h2>
+<div class="legend2"><span><span class="pri p0">1–4</span> P0 冲量</span><span><span class="pri p1">5–8</span> P1 上架核心服务</span><span><span class="pri p2">9+</span> P2 维护</span><span>按当月目标流水排名</span></div>
+<h3>2027-01</h3>
+<div class="tbl"><table>
+<tr><th class="n">名次</th><th>游戏</th><th class="n">目标流水</th><th class="n">目标订单</th><th class="n">转化</th><th class="n">峰值日单</th><th class="n">卖家 大 + 小</th><th class="n">退款率</th><th class="n">开始响应</th></tr>
+<tr><td class="n"><span class="pri p0">1</span></td><td class="gname"><b>WoW Forever</b><small>（WoW 全系）</small></td><td class="n">$10.41 万</td><td class="n">471</td><td class="n">5.5%</td><td class="n">22.8</td><td class="n">1 + 2</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p0">2</span></td><td class="gname"><b>WoW 正式服</b><small>（WoW 全系）</small></td><td class="n">$5.65 万</td><td class="n">1,256</td><td class="n">5.5%</td><td class="n">60.8</td><td class="n">3 + 5</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p0">3</span></td><td class="gname"><b>Dofus</b><small>（常驻）</small></td><td class="n">$5.06 万</td><td class="n">562</td><td class="n">6.5%</td><td class="n">27.2</td><td class="n">2 + 3</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p0">4</span></td><td class="gname"><b>Valorant</b><small>（竞技）</small></td><td class="n">$2.75 万</td><td class="n">610</td><td class="n">5.5%</td><td class="n">29.5</td><td class="n">2 + 3</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p1">5</span></td><td class="gname"><b>League of Legends</b><small>（竞技）</small></td><td class="n">$1.81 万</td><td class="n">452</td><td class="n">5.5%</td><td class="n">21.9</td><td class="n">1 + 2</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p1">6</span></td><td class="gname"><b>Fortnite</b><small>（竞技）</small></td><td class="n">$1.19 万</td><td class="n">396</td><td class="n">5.5%</td><td class="n">19.1</td><td class="n">1 + 2</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p1">7</span></td><td class="gname"><b>Diablo 4</b><small>（赛季与新作）</small></td><td class="n">$7,836</td><td class="n">142</td><td class="n">5.5%</td><td class="n">6.9</td><td class="n">1 + 2</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p1">8</span></td><td class="gname"><b>Call of Duty</b><small>（赛季与新作）</small></td><td class="n">$6,459</td><td class="n">161</td><td class="n">5.5%</td><td class="n">7.8</td><td class="n">1 + 2</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p2">9</span></td><td class="gname"><b>EA FC 27</b><small>（赛季与新作）</small></td><td class="n">$5,681</td><td class="n">126</td><td class="n">5.5%</td><td class="n">6.1</td><td class="n">1 + 2</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p2">10</span></td><td class="gname"><b>Aion 2</b><small>（赛季与新作）</small></td><td class="n">$4,612</td><td class="n">154</td><td class="n">5.5%</td><td class="n">7.4</td><td class="n">1 + 2</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p2">11</span></td><td class="gname"><b>Path of Exile 2</b><small>（赛季与新作）</small></td><td class="n">$4,465</td><td class="n">81</td><td class="n">5.5%</td><td class="n">3.9</td><td class="n">1 + 2</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr><td class="n"><span class="pri p2">12</span></td><td class="gname"><b>ARC Raiders</b><small>（赛季与新作）</small></td><td class="n">$2,354</td><td class="n">94</td><td class="n">5.5%</td><td class="n">4.6</td><td class="n">1 + 2</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr><tr class="tot"><td></td><td>合计</td><td class="n">$30 万</td><td class="n">4,506</td><td class="n">5.6%</td><td class="n">218</td><td class="n">16 + 29</td><td class="n">≤ 6%</td><td class="n">≤ 30 分钟</td></tr>
+</table></div><details class="fold"><summary>2026-12</summary>
+<div class="tbl"><table>
+<tr><th class="n">名次</th><th>游戏</th><th class="n">目标流水</th><th class="n">目标订单</th><th class="n">转化</th><th class="n">峰值日单</th><th class="n">卖家 大 + 小</th><th class="n">退款率</th><th class="n">开始响应</th></tr>
+<tr><td class="n"><span class="pri p0">1</span></td><td class="gname"><b>WoW Forever</b><small>（WoW 全系）</small></td><td class="n">$5.68 万</td><td class="n">277</td><td class="n">5.0%</td><td class="n">13.4</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p0">2</span></td><td class="gname"><b>Dofus</b><small>（常驻）</small></td><td class="n">$4.64 万</td><td class="n">515</td><td class="n">6.0%</td><td class="n">24.9</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p0">3</span></td><td class="gname"><b>WoW 正式服</b><small>（WoW 全系）</small></td><td class="n">$3.37 万</td><td class="n">749</td><td class="n">5.0%</td><td class="n">36.2</td><td class="n">2 + 3</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p0">4</span></td><td class="gname"><b>Fortnite</b><small>（竞技）</small></td><td class="n">$1.67 万</td><td class="n">558</td><td class="n">5.0%</td><td class="n">27.0</td><td class="n">2 + 3</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p1">5</span></td><td class="gname"><b>Valorant</b><small>（竞技）</small></td><td class="n">$9,683</td><td class="n">215</td><td class="n">5.0%</td><td class="n">10.4</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p1">6</span></td><td class="gname"><b>Diablo 4</b><small>（赛季与新作）</small></td><td class="n">$7,365</td><td class="n">134</td><td class="n">5.0%</td><td class="n">6.5</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p1">7</span></td><td class="gname"><b>League of Legends</b><small>（竞技）</small></td><td class="n">$6,369</td><td class="n">159</td><td class="n">5.0%</td><td class="n">7.7</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p1">8</span></td><td class="gname"><b>Call of Duty</b><small>（赛季与新作）</small></td><td class="n">$5,691</td><td class="n">142</td><td class="n">5.0%</td><td class="n">6.9</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p2">9</span></td><td class="gname"><b>Path of Exile 2</b><small>（赛季与新作）</small></td><td class="n">$4,721</td><td class="n">86</td><td class="n">5.0%</td><td class="n">4.2</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p2">10</span></td><td class="gname"><b>Aion 2</b><small>（赛季与新作）</small></td><td class="n">$3,251</td><td class="n">108</td><td class="n">5.0%</td><td class="n">5.2</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p2">11</span></td><td class="gname"><b>EA FC 27</b><small>（赛季与新作）</small></td><td class="n">$2,670</td><td class="n">59</td><td class="n">5.0%</td><td class="n">2.9</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr><td class="n"><span class="pri p2">12</span></td><td class="gname"><b>ARC Raiders</b><small>（赛季与新作）</small></td><td class="n">$1,659</td><td class="n">66</td><td class="n">5.0%</td><td class="n">3.2</td><td class="n">1 + 2</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr><tr class="tot"><td></td><td>合计</td><td class="n">$19.50 万</td><td class="n">3,069</td><td class="n">5.1%</td><td class="n">149</td><td class="n">14 + 26</td><td class="n">≤ 8%</td><td class="n">≤ 45 分钟</td></tr>
+</table></div></details><details class="fold"><summary>2026-11</summary>
+<div class="tbl"><table>
+<tr><th class="n">名次</th><th>游戏</th><th class="n">目标流水</th><th class="n">目标订单</th><th class="n">转化</th><th class="n">峰值日单</th><th class="n">卖家 大 + 小</th><th class="n">退款率</th><th class="n">开始响应</th></tr>
+<tr><td class="n"><span class="pri p0">1</span></td><td class="gname"><b>WoW Forever</b><small>（WoW 全系）</small></td><td class="n">$5.95 万</td><td class="n">233</td><td class="n">4.5%</td><td class="n">11.7</td><td class="n">1 + 2</td><td class="n">≤ 10%</td><td class="n">≤ 60 分钟</td></tr><tr><td class="n"><span class="pri p0">2</span></td><td class="gname"><b>Dofus</b><small>（常驻）</small></td><td class="n">$1.91 万</td><td class="n">212</td><td class="n">5.5%</td><td class="n">10.6</td><td class="n">1 + 2</td><td class="n">≤ 10%</td><td class="n">≤ 60 分钟</td></tr><tr><td class="n"><span class="pri p0">3</span></td><td class="gname"><b>WoW 正式服</b><small>（WoW 全系）</small></td><td class="n">$1.64 万</td><td class="n">364</td><td class="n">4.5%</td><td class="n">18.2</td><td class="n">1 + 2</td><td class="n">≤ 10%</td><td class="n">≤ 60 分钟</td></tr><tr class="tot"><td></td><td>合计</td><td class="n">$9.50 万</td><td class="n">810</td><td class="n">4.7%</td><td class="n">40</td><td class="n">3 + 6</td><td class="n">≤ 10%</td><td class="n">≤ 60 分钟</td></tr>
+</table></div></details>
+<h3>具体动作</h3>
+<div class="tbl"><table>
+<tr><th>类别</th><th>动作</th><th>内容</th><th>时间</th></tr>
+<tr><td rowspan="4"><b>卖家运营</b></td><td>拓展卖家</td><td>一是从 G2G、Eldorado、PlayerAuctions 等竞品和 Discord 服务器、EpicNPC 论坛等社群社区拓展卖家；二是从现有其他品类卖家定向邀请和拓展</td><td>当月 P0、P1 游戏优先</td></tr>
+<tr><td>Seller 中心招募公告</td><td>常驻，按当月 P0、P1 游戏持续更新服务清单</td><td>常驻</td></tr>
+<tr><td>服务类目覆盖</td><td>用现有商品模板，覆盖竞品服务类目的 80%</td><td>游戏上线前</td></tr>
+<tr><td>服务与售后</td><td>关注开始响应时长与退款率，按上表目标每周复盘</td><td>每周</td></tr>
+<tr><td rowspan="5"><b>产品优化</b></td><td>开始代练按钮</td><td>卖家接单后点击"开始代练"，记录开始响应时长</td><td>11 月</td></tr>
+<tr><td>进度回报</td><td>卖家在订单内回报进度，买家可见</td><td>11 月</td></tr>
+<tr><td>部分完成退款</td><td>按已完成进度部分退款</td><td>12 月</td></tr>
+<tr><td>卖家产能自运转</td><td>复用并修改现有金币卖家自运营接单规则</td><td>12 月</td></tr>
+<tr><td>排期预约</td><td>买家下单时预约代练时间；排期确定后卖家可直接点"开始代练"</td><td>12 月</td></tr>
+</table></div>
+<p class="xref">卖家数、退款率、开始响应目标的依据见《数据支持》第 06 节。</p>
+</section><section id="p4">
+<h2><span class="no">04</span>行动计划 · 流量侧</h2>
+<div class="legend2"><span>名次同供应侧</span><span><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">黄</span> 需求数据 × 拍板获取率</span><span><span style="color:var(--bad);font-weight:700">红</span> 缺口</span></div>
+<h3>2027-01</h3>
+<div class="tbl"><table>
+<tr><th class="n">名次</th><th>游戏</th><th class="n">总 UV</th><th class="n">站内导流</th><th class="n">自然搜索</th><th class="n">付费投放</th><th>投放站点</th><th class="n">KOL 与社群</th></tr>
+<tr><td class="n"><span class="pri p0">1</span></td><td class="gname"><b>WoW Forever</b><small>（WoW 全系）</small></td><td class="n"><b>5,587</b></td><td class="n">206</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">1,100</span></td><td class="n">539</td><td>英、德、美</td><td class="n"><span style="color:var(--bad);font-weight:700">3,743</span></td></tr><tr><td class="n"><span class="pri p0">2</span></td><td class="gname"><b>WoW 正式服</b><small>（WoW 全系）</small></td><td class="n"><b>14,683</b></td><td class="n">326</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">7,830</span></td><td class="n">143</td><td>意、西</td><td class="n"><span style="color:var(--bad);font-weight:700">6,383</span></td></tr><tr><td class="n"><span class="pri p0">3</span></td><td class="gname"><b>Dofus</b><small>（常驻）</small></td><td class="n"><b>5,426</b></td><td class="n">1,713</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">274</span></td><td class="n">138</td><td>法</td><td class="n"><span style="color:var(--bad);font-weight:700">3,300</span></td></tr><tr><td class="n"><span class="pri p0">4</span></td><td class="gname"><b>Valorant</b><small>（竞技）</small></td><td class="n"><b>7,349</b></td><td class="n">895</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">1,232</span></td><td class="n">986</td><td>英、法、德、意、西、美</td><td class="n"><span style="color:var(--bad);font-weight:700">4,236</span></td></tr><tr><td class="n"><span class="pri p1">5</span></td><td class="gname"><b>League of Legends</b><small>（竞技）</small></td><td class="n"><b>5,478</b></td><td class="n">335</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">1,395</span></td><td class="n">614</td><td>法、德、意、西</td><td class="n"><span style="color:var(--bad);font-weight:700">3,135</span></td></tr><tr><td class="n"><span class="pri p1">6</span></td><td class="gname"><b>Fortnite</b><small>（竞技）</small></td><td class="n"><b>4,519</b></td><td class="n">1,577</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">110</span></td><td class="n">87</td><td>英、德、美</td><td class="n"><span style="color:var(--bad);font-weight:700">2,745</span></td></tr><tr><td class="n"><span class="pri p1">7</span></td><td class="gname"><b>Diablo 4</b><small>（赛季与新作）</small></td><td class="n"><b>1,696</b></td><td class="n">103</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">529</span></td><td class="n">76</td><td>英、德</td><td class="n"><span style="color:var(--bad);font-weight:700">989</span></td></tr><tr><td class="n"><span class="pri p1">8</span></td><td class="gname"><b>Call of Duty</b><small>（赛季与新作）</small></td><td class="n"><b>1,874</b></td><td class="n">118</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">375</span></td><td class="n">261</td><td>德、美</td><td class="n"><span style="color:var(--bad);font-weight:700">1,120</span></td></tr><tr><td class="n"><span class="pri p2">9</span></td><td class="gname"><b>EA FC 27</b><small>（赛季与新作）</small></td><td class="n"><b>1,459</b></td><td class="n">480</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">72</span></td><td class="n">31</td><td>美</td><td class="n"><span style="color:var(--bad);font-weight:700">876</span></td></tr><tr><td class="n"><span class="pri p2">10</span></td><td class="gname"><b>Aion 2</b><small>（赛季与新作）</small></td><td class="n"><b>1,927</b></td><td class="n">23</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">12</span></td><td class="n">0</td><td>不投</td><td class="n"><span style="color:var(--bad);font-weight:700">1,892</span></td></tr><tr><td class="n"><span class="pri p2">11</span></td><td class="gname"><b>Path of Exile 2</b><small>（赛季与新作）</small></td><td class="n"><b>953</b></td><td class="n">97</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">293</span></td><td class="n">0</td><td>不投</td><td class="n"><span style="color:var(--bad);font-weight:700">563</span></td></tr><tr><td class="n"><span class="pri p2">12</span></td><td class="gname"><b>ARC Raiders</b><small>（赛季与新作）</small></td><td class="n"><b>1,153</b></td><td class="n">55</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">176</span></td><td class="n">0</td><td>不投</td><td class="n"><span style="color:var(--bad);font-weight:700">923</span></td></tr><tr class="tot"><td></td><td>合计</td><td class="n">52,105</td><td class="n">5,929</td><td class="n">13,397</td><td class="n">2,874</td><td></td><td class="n"><span style="color:var(--bad);font-weight:700">29,905</span></td></tr>
+</table></div><details class="fold"><summary>2026-12</summary>
+<div class="tbl"><table>
+<tr><th class="n">名次</th><th>游戏</th><th class="n">总 UV</th><th class="n">站内导流</th><th class="n">自然搜索</th><th class="n">付费投放</th><th>投放站点</th><th class="n">KOL 与社群</th></tr>
+<tr><td class="n"><span class="pri p0">1</span></td><td class="gname"><b>WoW Forever</b><small>（WoW 全系）</small></td><td class="n"><b>3,419</b></td><td class="n">333</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">532</span></td><td class="n">417</td><td>英、德、美</td><td class="n"><span style="color:var(--bad);font-weight:700">2,137</span></td></tr><tr><td class="n"><span class="pri p0">2</span></td><td class="gname"><b>Dofus</b><small>（常驻）</small></td><td class="n"><b>5,458</b></td><td class="n">1,713</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">223</span></td><td class="n">179</td><td>法</td><td class="n"><span style="color:var(--bad);font-weight:700">3,343</span></td></tr><tr><td class="n"><span class="pri p0">3</span></td><td class="gname"><b>WoW 正式服</b><small>（WoW 全系）</small></td><td class="n"><b>9,957</b></td><td class="n">126</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">4,141</span></td><td class="n">121</td><td>意、西</td><td class="n"><span style="color:var(--bad);font-weight:700">5,568</span></td></tr><tr><td class="n"><span class="pri p0">4</span></td><td class="gname"><b>Fortnite</b><small>（竞技）</small></td><td class="n"><b>7,716</b></td><td class="n">1,577</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">88</span></td><td class="n">174</td><td>英、德、美</td><td class="n"><span style="color:var(--bad);font-weight:700">5,877</span></td></tr><tr><td class="n"><span class="pri p1">5</span></td><td class="gname"><b>Valorant</b><small>（竞技）</small></td><td class="n"><b>2,977</b></td><td class="n">895</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">246</span></td><td class="n">185</td><td>英、法、德、意、西</td><td class="n"><span style="color:var(--bad);font-weight:700">1,650</span></td></tr><tr><td class="n"><span class="pri p1">6</span></td><td class="gname"><b>Diablo 4</b><small>（赛季与新作）</small></td><td class="n"><b>1,853</b></td><td class="n">103</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">282</span></td><td class="n">0</td><td>不投</td><td class="n"><span style="color:var(--bad);font-weight:700">1,468</span></td></tr><tr><td class="n"><span class="pri p1">7</span></td><td class="gname"><b>League of Legends</b><small>（竞技）</small></td><td class="n"><b>2,203</b></td><td class="n">335</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">279</span></td><td class="n">204</td><td>德、意、西</td><td class="n"><span style="color:var(--bad);font-weight:700">1,385</span></td></tr><tr><td class="n"><span class="pri p1">8</span></td><td class="gname"><b>Call of Duty</b><small>（赛季与新作）</small></td><td class="n"><b>1,969</b></td><td class="n">118</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">188</span></td><td class="n">326</td><td>德、美</td><td class="n"><span style="color:var(--bad);font-weight:700">1,337</span></td></tr><tr><td class="n"><span class="pri p2">9</span></td><td class="gname"><b>Path of Exile 2</b><small>（赛季与新作）</small></td><td class="n"><b>1,188</b></td><td class="n">97</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">176</span></td><td class="n">0</td><td>不投</td><td class="n"><span style="color:var(--bad);font-weight:700">915</span></td></tr><tr><td class="n"><span class="pri p2">10</span></td><td class="gname"><b>Aion 2</b><small>（赛季与新作）</small></td><td class="n"><b>1,499</b></td><td class="n">23</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">5</span></td><td class="n">0</td><td>不投</td><td class="n"><span style="color:var(--bad);font-weight:700">1,472</span></td></tr><tr><td class="n"><span class="pri p2">11</span></td><td class="gname"><b>EA FC 27</b><small>（赛季与新作）</small></td><td class="n"><b>821</b></td><td class="n">480</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">19</span></td><td class="n">21</td><td>美</td><td class="n"><span style="color:var(--bad);font-weight:700">301</span></td></tr><tr><td class="n"><span class="pri p2">12</span></td><td class="gname"><b>ARC Raiders</b><small>（赛季与新作）</small></td><td class="n"><b>918</b></td><td class="n">55</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">70</span></td><td class="n">0</td><td>不投</td><td class="n"><span style="color:var(--bad);font-weight:700">793</span></td></tr><tr class="tot"><td></td><td>合计</td><td class="n">39,977</td><td class="n">5,856</td><td class="n">6,249</td><td class="n">1,627</td><td></td><td class="n"><span style="color:var(--bad);font-weight:700">26,246</span></td></tr>
+</table></div></details><details class="fold"><summary>2026-11</summary>
+<div class="tbl"><table>
+<tr><th class="n">名次</th><th>游戏</th><th class="n">总 UV</th><th class="n">站内导流</th><th class="n">自然搜索</th><th class="n">付费投放</th><th>投放站点</th><th class="n">KOL 与社群</th></tr>
+<tr><td class="n"><span class="pri p0">1</span></td><td class="gname"><b>WoW Forever</b><small>（WoW 全系）</small></td><td class="n"><b>3,587</b></td><td class="n">454</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">416</span></td><td class="n">816</td><td>英、德、美</td><td class="n"><span style="color:var(--bad);font-weight:700">1,902</span></td></tr><tr><td class="n"><span class="pri p0">2</span></td><td class="gname"><b>Dofus</b><small>（常驻）</small></td><td class="n"><b>2,668</b></td><td class="n">1,713</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">69</span></td><td class="n">138</td><td>法</td><td class="n"><span style="color:var(--bad);font-weight:700">748</span></td></tr><tr><td class="n"><span class="pri p0">3</span></td><td class="gname"><b>WoW 正式服</b><small>（WoW 全系）</small></td><td class="n"><b>5,603</b></td><td class="n">126</td><td class="n"><span style="background:color-mix(in srgb,var(--warn) 22%,transparent);padding:0 3px;border-radius:3px">1,506</span></td><td class="n">14</td><td>意</td><td class="n"><span style="color:var(--bad);font-weight:700">3,956</span></td></tr><tr class="tot"><td></td><td>合计</td><td class="n">11,858</td><td class="n">2,293</td><td class="n">1,991</td><td class="n">967</td><td></td><td class="n"><span style="color:var(--bad);font-weight:700">6,606</span></td></tr>
+</table></div></details>
+<h3>具体动作</h3>
+<div class="tbl"><table>
+<tr><th>动作</th><th>内容</th><th>时间</th></tr>
+<tr><td rowspan="2">站内入口</td><td>列表页：12 个游戏的金币、账号、物品列表页加代练 banner，或在代练 tab 加"NEW"等明显提醒</td><td>11 月</td></tr>
+<tr><td>下单完成页：加"是否需要最资深的代练服务"等推荐语超链，按游戏跳转对应代练页</td><td>11 月</td></tr>
+<tr><td>老客召回</td><td>以 WoW Forever 为例：WoW 历史买家邮箱，上线当周发 EDM</td><td>11 月</td></tr>
+<tr><td>长尾词</td><td>选取方法：从副本名、难度、大秘境等种子词扩展，只留含 boost、carry、buy 的购买意图词，与已有词去重，KD ≤ 30 或暂无难度数据的优先。<br>对比（美国月搜索）：常规词 wow boost 2,000、KD 68，很难排上去；长尾词 wow heroic raid carry 200、KD 18，voidspire heroic carry 100、暂无难度数据，更容易拿到排名，搜索的人目标明确。<br>需要罗尉之协助。</td><td>11 月起，版本前 2–4 周</td></tr>
+<tr><td>付费投放</td><td>只投上表站点，节点前 1 周开投。需要罗尉之协助。</td><td>按节点</td></tr>
+<tr><td>KOL 合作</td><td>YouTube、Twitch、Reddit，按订单分成</td><td>11 月起</td></tr>
+<tr><td>Discord 群组合作</td><td>WoW、Aion 2、ARC Raiders 公会与 Discord 社群，专属折扣码</td><td>12 月起</td></tr>
+</table></div>
+<p class="xref">各渠道 UV 算法见《数据支持》第 03、04 节。</p>
+</section><section id="p5">
+<h2><span class="no">05</span>竞品流水预估</h2>
+<div class="tbl"><table>
+<tr><th>竞品</th><th>方法</th><th class="n">9 月流量（月访问）</th><th class="n">代练流量占比</th><th class="n">转化率</th><th class="n">月单量</th><th class="n">单均</th><th class="n">月流水</th></tr>
+<tr><td><b>Overgear</b></td><td>计数法 + 流量法</td><td class="n">90.7 万</td><td class="n">60%</td><td class="n">3%</td><td class="n">1.48–1.63 万</td><td class="n">$65</td><td class="n">$96–106 万</td></tr><tr><td><b>BlazingBoost</b></td><td>流量法</td><td class="n">48.3 万<br><span class="note">（8 月）</span></td><td class="n">75–80%</td><td class="n">3–3.5%</td><td class="n">1.09–1.35 万</td><td class="n">$65</td><td class="n">$71–88 万</td></tr><tr><td><b>Epiccarry</b></td><td>流量法</td><td class="n">41.3 万<br><span class="note">（6 月）</span></td><td class="n">65–75%</td><td class="n">2–3%</td><td class="n">0.54–0.93 万</td><td class="n">$65</td><td class="n">$35–60 万</td></tr><tr><td><b>WowVendor</b></td><td>流量法</td><td class="n">25.6 万<br><span class="note">（8 月）</span></td><td class="n">40–50%</td><td class="n">2–3%</td><td class="n">0.20–0.38 万</td><td class="n">$60</td><td class="n">$12–23 万</td></tr>
+</table></div>
+<p class="xref">计算过程见《数据支持》第 07 节。</p>
+</section><section id="p6">
+<h2><span class="no">06</span>历史数据参考（2023-08 至 2024-09）</h2>
+<div class="kpis">
+<div class="kpi"><div class="k">代练流水</div><div class="v">$14.57 万</div></div>
+<div class="kpi"><div class="k">订单</div><div class="v">5,102</div></div>
+<div class="kpi"><div class="k">次月 / 3 个月复购</div><div class="v">27.3% / 30.2%</div></div>
+<div class="kpi"><div class="k">人均订单</div><div class="v">1.45</div></div>
+</div>
+<div class="tbl"><table>
+<tr><th>品牌</th><th class="n">GMV</th><th class="n">代练页 UV</th><th class="n">订单</th><th class="n">转化</th><th class="n">客单价</th><th class="n">退款率</th><th>特殊设计</th></tr>
+<tr><td><b>CoD</b></td><td class="n">$37,366</td><td class="n">6,409</td><td class="n">1,372</td><td class="n">21.4%</td><td class="n">$27</td><td class="n">26%</td><td>独立专页</td></tr><tr><td><b>Valorant</b></td><td class="n">$25,600</td><td class="n">15,763</td><td class="n">643</td><td class="n">4.1%</td><td class="n">$40</td><td class="n">18%</td><td>独立专页</td></tr><tr><td><b>Fortnite</b></td><td class="n">$19,201</td><td class="n">13,184</td><td class="n">773</td><td class="n">5.9%</td><td class="n">$25</td><td class="n">29%</td><td>无</td></tr><tr><td><b>LoL</b></td><td class="n">$16,881</td><td class="n">9,609</td><td class="n">489</td><td class="n">5.1%</td><td class="n">$34</td><td class="n">16%</td><td>独立专页</td></tr><tr><td><b>Dofus</b></td><td class="n">$3,859</td><td class="n">11,600</td><td class="n">42</td><td class="n">0.4%</td><td class="n">$92</td><td class="n">17%</td><td>无</td></tr><tr><td><b>Diablo 4</b></td><td class="n">$3,542</td><td class="n">1,799</td><td class="n">176</td><td class="n">9.8%</td><td class="n">$20</td><td class="n">22%</td><td>独立品牌</td></tr><tr><td><b>WoW Classic 系</b></td><td class="n">$2,066</td><td class="n">5,828</td><td class="n">39</td><td class="n">0.7%</td><td class="n">$53</td><td class="n">67%</td><td>独立专页</td></tr><tr><td><b>WoW 正式服</b></td><td class="n">$1,616</td><td class="n">1,720</td><td class="n">79</td><td class="n">4.6%</td><td class="n">$20</td><td class="n">32%</td><td>独立专页</td></tr><tr><td><b>Escape from Tarkov</b></td><td class="n">$1,407</td><td class="n">525</td><td class="n">47</td><td class="n">9.0%</td><td class="n">$30</td><td class="n">6%</td><td>无</td></tr><tr><td><b>Pokemon Go</b></td><td class="n">$1,017</td><td class="n">1,507</td><td class="n">54</td><td class="n">3.6%</td><td class="n">$19</td><td class="n">20%</td><td>独立品牌</td></tr><tr><td><b>GTA V</b></td><td class="n">$563</td><td class="n">3,533</td><td class="n">77</td><td class="n">2.2%</td><td class="n">$7</td><td class="n">70%</td><td>无</td></tr><tr><td><b>EA FC</b></td><td class="n">$431</td><td class="n">5,386</td><td class="n">15</td><td class="n">0.3%</td><td class="n">$29</td><td class="n">—</td><td>无</td></tr><tr><td><b>Destiny 2</b></td><td class="n">$0</td><td class="n">1,376</td><td class="n">0</td><td class="n">0.0%</td><td class="n">—</td><td class="n">—</td><td>独立专页</td></tr>
+</table></div>
+<p class="xref">各列定义与来源见《数据支持》第 05、08 节。</p>
+</section></main></div></body></html>
