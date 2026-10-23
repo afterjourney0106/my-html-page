@@ -1,0 +1,240 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>代练业务流水目标方案 · 补充</title><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&family=JetBrains+Mono:wght@400;600&display=swap"><style>
+/* Layout: 左侧目录 + 单栏正文（读报告），模型区为可操作面板；窄屏目录收起为顶部横条 */
+:root{
+  --bg:#f6f7f9; --paper:#ffffff; --ink:#1c2230; --muted:#5b6475; --line:#dfe3ea; --soft:#eef1f5;
+  --accent:#a8641a; --accent-soft:#f6ead9; --blue:#2f5d8a; --blue-soft:#e3ecf5;
+  --good:#2e7d4f; --warn:#b26a00; --bad:#b3362c;
+  --c1:#2f5d8a; --c2:#a8641a; --c3:#5c8f6e; --c4:#8a5a9c; --c5:#9aa3b2; --c6:#c98e4a;
+  --serif:"Noto Serif SC","Songti SC",serif; --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif; --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151c; --paper:#1a1f29; --ink:#e6e9ef; --muted:#9aa3b4; --line:#2c3341; --soft:#222937;
+  --accent:#e0a25a; --accent-soft:#3a2c1b; --blue:#7fb0e0; --blue-soft:#1f2c3b;
+  --good:#6cc28f; --warn:#e3a543; --bad:#ef7d72;
+  --c1:#7fb0e0; --c2:#e0a25a; --c3:#86c29a; --c4:#c39ad3; --c5:#6f798a; --c6:#d9b07c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151c; --paper:#1a1f29; --ink:#e6e9ef; --muted:#9aa3b4; --line:#2c3341; --soft:#222937;
+  --accent:#e0a25a; --accent-soft:#3a2c1b; --blue:#7fb0e0; --blue-soft:#1f2c3b;
+  --good:#6cc28f; --warn:#e3a543; --bad:#ef7d72;
+  --c1:#7fb0e0; --c2:#e0a25a; --c3:#86c29a; --c4:#c39ad3; --c5:#6f798a; --c6:#d9b07c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75}
+.wrap{display:grid;grid-template-columns:220px minmax(0,1fr);gap:40px;max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 80px}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;font-size:13px}
+nav.toc .brand{font-family:var(--serif);font-weight:900;font-size:17px;line-height:1.3;margin-bottom:4px}
+nav.toc .ver{color:var(--muted);font-size:12px;margin-bottom:18px}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px;counter-reset:s}
+nav.toc a{display:block;color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:6px;border-left:2px solid transparent}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--ink);background:var(--soft);outline:none}
+main{min-width:0}
+header.hero{padding-bottom:28px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:700}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,4vw,40px);line-height:1.25;margin:8px 0 12px;text-wrap:balance}
+.meta{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 18px}
+section{padding-top:44px}
+h2{font-family:var(--serif);font-weight:900;font-size:24px;line-height:1.35;margin:0 0 6px;text-wrap:balance;display:flex;gap:12px;align-items:baseline}
+h2 .no{font-family:var(--mono);font-size:14px;color:var(--accent);font-weight:600}
+.lead{color:var(--muted);margin:0 0 20px;max-width:72ch}
+h3{font-size:16px;margin:28px 0 10px}
+p{margin:0 0 12px;max-width:76ch}
+.num,td.n,th.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.callout{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:16px 0}
+.callout strong{color:var(--accent)}
+.note{font-size:13px;color:var(--muted)}
+.tbl{overflow-x:auto;margin:12px 0 8px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--soft);font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.hl td{background:var(--blue-soft)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.kpi .k{font-size:12px;color:var(--muted)}
+.kpi .v{font-family:var(--mono);font-size:24px;font-weight:600;margin-top:2px;white-space:nowrap}
+.kpi .s{font-size:12px;color:var(--muted)}
+.find{display:grid;gap:10px;margin:14px 0;padding:0;list-style:none}
+.find li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+.find li b.i{font-family:var(--mono);color:var(--accent)}
+.pill{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:999px;font-weight:700;white-space:nowrap}
+.pill.good{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 16%,transparent);color:var(--bad)}
+.pill.blue{background:var(--blue-soft);color:var(--blue)}
+.chart{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 14px 8px;margin:12px 0}
+.chart svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted);margin:6px 4px 4px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.seg button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--muted);padding:6px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.ctrls{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px 20px}
+.ctrl{min-width:0}
+.ctrl label{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.ctrl label output{font-family:var(--mono);color:var(--accent);font-weight:600}
+.ctrl input[type=range]{width:100%;accent-color:var(--accent)}
+.ctrl .src{font-size:11.5px;color:var(--muted);line-height:1.4}
+.grp{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:700;margin:16px 0 6px;grid-column:1/-1;border-top:1px dashed var(--line);padding-top:12px}
+.grp:first-child{border-top:0;padding-top:0;margin-top:0}
+.out{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0 4px}
+.timeline{display:grid;gap:14px;margin:12px 0}
+.phase{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px}
+.phase .when{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:600}
+.phase .when span{display:block;font-family:var(--sans);color:var(--ink);font-weight:700;font-size:15px;margin-top:2px}
+.phase ul{margin:0;padding-left:18px}
+.phase li{margin:3px 0}
+.phase .kpi-line{font-size:13px;color:var(--muted);margin-top:8px;border-top:1px dashed var(--line);padding-top:8px}
+a{color:var(--blue)}
+.src-list{font-size:13px;color:var(--muted);padding-left:18px}
+.src-list li{margin:4px 0}
+@media (max-width:900px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0}
+  nav.toc{position:static;margin-bottom:16px}
+  nav.toc ol{display:flex;flex-wrap:wrap;gap:4px}
+  nav.toc a{border:1px solid var(--line);padding:3px 10px}
+  .kpis,.out{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phase{grid-template-columns:minmax(0,1fr);gap:8px}
+}
+@media (prefers-reduced-motion:no-preference){.chart rect.bar{transition:height .25s,y .25s}}
+
+.pri{display:inline-block;min-width:30px;text-align:center;font-family:var(--mono);font-size:12px;font-weight:600;border-radius:6px;padding:1px 6px}
+.pri.p0{background:var(--accent);color:var(--paper)}
+.pri.p1{background:var(--accent-soft);color:var(--accent)}
+.pri.p2{background:var(--soft);color:var(--muted)}
+.pri.px{color:var(--muted)}
+.eq{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-family:var(--mono);font-size:15px;margin:10px 0 4px}
+.eq .box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-align:center}
+.eq .box b{display:block;font-size:22px}
+.eq .box span{font-family:var(--sans);font-size:12px;color:var(--muted)}
+.eq .op{color:var(--muted);font-size:20px}
+.steps{margin:8px 0;padding-left:20px}
+.steps li{margin:6px 0}
+td.grp{color:var(--muted);font-size:12px;white-space:nowrap}
+tr.tot td{font-weight:700;background:var(--soft)}
+.xref{font-size:12.5px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px;margin:8px 0 0}
+
+.wrap2{max-width:1280px;margin:0 auto;padding:28px 24px 80px}
+table{font-size:13px} th,td{padding:8px 10px;vertical-align:top} th{white-space:normal}
+.tabs{position:sticky;top:0;z-index:5;display:flex;gap:8px;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
+.tabs button{font:inherit;font-weight:700;padding:8px 18px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--ink);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.panel2[hidden]{display:none}
+.formula{font-family:var(--mono);font-size:13px;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:10px 14px;margin:8px 0 14px;line-height:1.9}
+.ex{font-family:var(--mono);font-size:12.5px;background:var(--soft);border-radius:8px;padding:10px 14px;margin:8px 0 14px;line-height:1.9}
+dl.def{display:grid;grid-template-columns:140px minmax(0,1fr);gap:6px 16px;font-size:13.5px} dl.def dt{font-weight:700} dl.def dd{margin:0}
+td ol{margin:0;padding-left:18px}
+table.txt td,table.txt th{white-space:normal;text-align:left;font-family:var(--sans)}
+table.txt td:first-child{white-space:nowrap;font-weight:700}
+.tbl table{width:100%} section{margin-top:28px}
+@media (max-width:700px){dl.def{grid-template-columns:minmax(0,1fr)}.wrap2{padding:16px}}
+</style></head><body><div class="wrap2">
+<header class="hero"><div class="eyebrow">iGV · 代练业务（GamePal &amp; Boosting）</div><h1>代练业务流水目标方案 · 补充</h1>
+<div class="meta"><span>Net GMV 与毛利</span><span>市场费用与净利润</span><span>竞品对比与买家选择理由</span><span>数据截至 2026-10-23</span></div></header>
+<div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="a">汇报内容</button><button role="tab" aria-selected="false" data-t="b">数据支撑</button></div>
+<div class="panel2" id="a"><section>
+<h2><span class="no">01</span>Net GMV 与毛利</h2>
+<div class="formula">Net GMV = 完成递送 GMV − 完成递送的退款<br>　　　　= GMV × 完成递送率 − GMV × 完成递送率 × 递送完成后退款率<br>毛利 = Net GMV × 35%（佣金率）</div>
+<div class="tbl"><table class=""><tr><th>指标</th><th class=n>2027-01</th><th class=n>2026-12</th><th class=n>2026-11</th></tr><tr><td>GMV</td><td class=n>$30.00 万</td><td class=n>$19.50 万</td><td class=n>$9.50 万</td></tr><tr><td>金额退款率上限</td><td class=n>≤ 10%</td><td class=n>≤ 11%</td><td class=n>≤ 12%</td></tr><tr><td>订单退款率上限</td><td class=n>≤ 8%</td><td class=n>≤ 9%</td><td class=n>≤ 10%</td></tr><tr><td>完成递送率</td><td class=n>91.6%</td><td class=n>90.8%</td><td class=n>89.9%</td></tr><tr><td>完成递送 GMV</td><td class=n>$27.48 万</td><td class=n>$17.70 万</td><td class=n>$8.54 万</td></tr><tr><td>递送完成后退款率</td><td class=n>1.75%</td><td class=n>1.94%</td><td class=n>2.14%</td></tr><tr><td>完成递送的退款</td><td class=n>$4,800</td><td class=n>$3,432</td><td class=n>$1,824</td></tr><tr class="tot"><td>Net GMV</td><td class=n>$27.00 万</td><td class=n>$17.36 万</td><td class=n>$8.36 万</td></tr><tr class="tot"><td>毛利</td><td class=n>$9.45 万</td><td class=n>$6.07 万</td><td class=n>$2.93 万</td></tr></table></div>
+<h3>目标依据</h3>
+<ul>
+<li><b>以账号为基准：</b>代练与账号都有较长的售后问题产生期，且订单金额越高越容易产生售后；2024 年两者金额退款率接近（代练 21.2%、账号 22.2%）。</li>
+<li><b>1 月金额退款率 ≤ 10%：</b>代练 2024 年 21.2% × 账号降幅 0.44 = 9.3%；账号近 6 个月 9.7%。</li>
+<li><b>1 月订单退款率 ≤ 8%：</b>代练 2024 年 20.4% × 账号降幅 0.38 = 7.8%。</li>
+<li><b>完成递送率：</b>1 − 递送前退款率；递送前退款率 = 金额退款率上限 × 84%（2024 年代练退款中递送前占 84%），1 月 = 10% × 84% = 8.4%，完成递送率 91.6%。</li>
+<li><b>递送完成后退款率：</b>递送后退款金额（金额退款率上限 × 16%）÷ 完成递送 GMV，1 月 = 1.6% ÷ 91.6% = 1.75%；代练 2024 年为 3.6%，近期三品类 2.0%。</li>
+<li><b>11、12 月放宽：</b>新业务爬坡，每月收紧 1 个百分点。</li>
+</ul>
+</section><section>
+<h2><span class="no">02</span>市场费用与净利润</h2>
+<div class="formula">净利润 = 毛利 − 市场费用；市场费用 = SEO + SEM + KOL 合作</div>
+<div class="tbl"><table class=""><tr><th>指标</th><th class=n>2027-01</th><th class=n>2026-12</th><th class=n>2026-11</th><th class=n>三个月累计</th></tr><tr><td>毛利</td><td class=n>$9.45 万</td><td class=n>$6.07 万</td><td class=n>$2.93 万</td><td class=n>$18.45 万</td></tr><tr><td>SEM</td><td class=n>$3,047</td><td class=n>$1,555</td><td class=n>$1,253</td><td class=n>$5,855</td></tr><tr><td>SEO</td><td class=n>$1.70 万</td><td class=n>$1.70 万</td><td class=n>$6,390</td><td class=n>$4.05 万</td></tr><tr><td>KOL 合作</td><td class=n>$2.60 万</td><td class=n>$1.96 万</td><td class=n>$6,940</td><td class=n>$5.26 万</td></tr><tr class="tot"><td>市场费用</td><td class=n>$4.61 万</td><td class=n>$3.82 万</td><td class=n>$1.46 万</td><td class=n>$9.89 万</td></tr><tr class="tot"><td>净利润</td><td class=n>$4.84 万</td><td class=n>$2.25 万</td><td class=n>$1.47 万</td><td class=n>$8.56 万</td></tr></table></div>
+<h3>费用与 UV 对应</h3>
+<div class="tbl"><table class=" txt"><tr><th>渠道</th><th class=n>对应 UV</th><th class=n>费用标准</th></tr><tr><td>SEM</td><td class=n>付费投放 UV</td><td class=n>付费 UV × 各国 CPC</td></tr><tr><td>SEO</td><td class=n>自然搜索 UV</td><td class=n>P0 游戏每月 $2,130，其余游戏每月 $1,065</td></tr><tr><td>KOL 合作</td><td class=n>KOL 与社群 UV（缺口）</td><td class=n>推广码分成 70% + 按播放付费 20% + 固定费用植入 10%</td></tr></table></div>
+<div class="tbl"><table class=""><tr><th>每个 UV</th><th class=n>2027-01</th><th class=n>2026-12</th><th class=n>2026-11</th></tr><tr><td>带来的毛利</td><td class=n>$1.81</td><td class=n>$1.52</td><td class=n>$2.47</td></tr><tr><td>SEM 成本</td><td class=n>$1.06</td><td class=n>$0.96</td><td class=n>$1.29</td></tr><tr><td>KOL 成本</td><td class=n>$0.87</td><td class=n>$0.75</td><td class=n>$1.05</td></tr></table></div>
+</section><section>
+<h2><span class="no">03</span>竞品对比与买家选择理由</h2>
+<div class="tbl"><table class=" txt"><tr><th>方面</th><th class=n>iGV</th><th class=n>Eldorado（C2C）</th><th class=n>G2G（C2C）</th><th class=n>Overgear（B2C）</th></tr><tr><td>怎么买代练</td><td class=n><b>标准化商品 + 自由组合，所见即所得；可按需求发布自定义订单</b>（组合与自定义即将上线）</td><td class=n>先选简单的服务结构，再发需求，与卖家协商细节和价格</td><td class=n>无标准化商品，需花大量时间挑选卖家与商品；最低价商品多需先私聊确认价格</td><td class=n>只有标准化商品</td></tr><tr><td>纠纷出结果</td><td class=n><b>≤ 48 小时</b></td><td class=n>最长 3 天</td><td class=n>卖家 48 小时内回应，之后可升级平台；平台处理时长未公开</td><td class=n>仲裁 7–14 个工作日</td></tr><tr><td>退款去向</td><td class=n><b>原路退回</b></td><td class=n>默认退站内余额并扣原支付手续费；原路退回需联系客服</td><td class=n>买家自选站内余额或原路退回（银行最长 14 天）</td><td class=n>默认退站内余额；原路退回需另申请，最长 12 + 14 个工作日</td></tr><tr><td>在线客服</td><td class=n><b>7×24 真人在线客服</b></td><td class=n>7×24 在线聊天，复杂问题真人加入</td><td class=n>官方帮助中心为提交工单</td><td class=n>7×24 真人客服</td></tr><tr><td>Trustpilot</td><td class=n><b>4.7 分 · 57,402 条</b></td><td class=n>4.4 分 · 281,472 条</td><td class=n>3.9 分 · 58,231 条</td><td class=n>4.9 分 · 37,189 条</td></tr></table></div>
+<h3>同款服务价格：WoW Forever 等级代练</h3>
+<div class="tbl"><table class=""><tr><th>服务 · 价格档</th><th class=n>iGV（卖家 A）</th><th class=n>G2G</th><th class=n>Eldorado</th><th class=n>Overgear</th></tr><tr><td><b>1–20</b> 标准价</td><td class=n><b>$30</b></td><td class=n>$33.40</td><td class=n>协商定价</td><td class=n>$77.31</td></tr><tr><td><b>1–20</b> 最低价</td><td class=n>$23</td><td class=n><b>$15.11</b></td><td class=n>$30</td><td class=n>$77.31</td></tr><tr><td><b>1–30</b> 标准价</td><td class=n>$65</td><td class=n><b>$64.14</b></td><td class=n>协商定价</td><td class=n>$99.72</td></tr><tr><td><b>1–30</b> 最低价</td><td class=n>$50</td><td class=n><b>$28.60</b></td><td class=n>$45</td><td class=n>$99.72</td></tr></table></div>
+<p class="note">G2G 标准价为 CNLTeam（卖家等级 174），最低价为 MMorder（卖家等级 153），均为 EU 服。</p>
+<h3>买家选择我们的理由</h3>
+<div class="tbl"><table><tr><th>对比 B2C（Overgear）</th><th>对比 C2C（Eldorado、G2G）</th></tr>
+<tr><td><ol>
+<li><b>价格更低：</b>WoW Forever 1–20 标准价便宜 61%、1–30 便宜 35%</li>
+<li><b>不止标准化商品：</b>可自由组合、发布自定义需求</li>
+<li><b>纠纷处理快、原路退回：</b>48 小时出结果；Overgear 仲裁 7–14 个工作日、默认退站内余额</li></ol></td>
+<td><ol>
+<li><b>所见即所得、省时间：</b>标准化商品直接下单，无需与卖家协商（Eldorado）或在大量非标商品中挑选问价（G2G）；有特殊需求也可发自定义订单</li>
+<li><b>纠纷处理快、原路退回、客服随时在：</b>48 小时出结果；Eldorado 最长 3 天且默认退余额扣手续费；G2G 官方为工单</li>
+<li><b>评价更好：</b>Trustpilot 4.7，高于 Eldorado 4.4、G2G 3.9</li></ol></td></tr></table></div>
+<h3>短板与应对</h3>
+<div class="tbl"><table class=" txt"><tr><th>短板</th><th class=n>应对</th></tr><tr><td>开工速度不如 Overgear（15–30 分钟）</td><td class=n>"开始代练"按钮 + 响应时长目标，1 月 ≤ 30 分钟</td></tr><tr><td>最低价高于 G2G</td><td class=n>拓展卖家，引入大卖家竞争定价</td></tr><tr><td>组合下单、自定义需求尚未上线</td><td class=n>先以标准化商品覆盖竞品 80% 的服务类目</td></tr></table></div>
+</section></div>
+<div class="panel2" id="b" hidden><section>
+<h2><span class="no">01</span>Net GMV 与毛利 · 数据支撑</h2>
+<h3>名词定义</h3>
+<dl class="def">
+<dt>GMV</dt><dd>代练类目支付金额（美元），含风控订单与之后退款的订单；与 BI、数据库口径一致。</dd>
+<dt>完成递送率</dt><dd>完成递送 GMV ÷ GMV。风控关闭、递送前取消或退款的订单计为未递送。</dd>
+<dt>完成递送 GMV</dt><dd>GMV × 完成递送率。</dd><dt>递送完成后退款率</dt><dd>订单递送状态为"自动签收、买家签收、已发货"后发生的退款金额 ÷ 完成递送 GMV。</dd><dt>完成递送的退款</dt><dd>完成递送 GMV × 递送完成后退款率。</dd>
+<dt>金额退款率</dt><dd>退款金额 ÷ GMV。</dd><dt>订单退款率</dt><dd>退款订单数 ÷ 订单数。</dd>
+</dl>
+<h3>计算过程</h3>
+<div class="tbl"><table class=" txt"><tr><th>月份</th><th class=n>① 完成递送率</th><th class=n>② 完成递送 GMV = GMV × ①</th><th class=n>③ 递送完成后退款率</th><th class=n>④ 完成递送的退款 = ② × ③</th><th class=n>Net GMV = ② − ④</th><th class=n>毛利 = Net GMV × 35%</th></tr><tr><td>2027-01</td><td class=n>1 − 10% × 84% = 91.6%</td><td class=n>$30.00 万 × 91.6% = $27.48 万</td><td class=n>10% × 16% ÷ 91.6% = 1.75%</td><td class=n>$27.48 万 × 1.75% = $4,800</td><td class=n><b>$27.00 万</b></td><td class=n>$9.45 万</td></tr><tr><td>2026-12</td><td class=n>1 − 11% × 84% = 90.8%</td><td class=n>$19.50 万 × 90.8% = $17.70 万</td><td class=n>11% × 16% ÷ 90.8% = 1.94%</td><td class=n>$17.70 万 × 1.94% = $3,432</td><td class=n><b>$17.36 万</b></td><td class=n>$6.07 万</td></tr><tr><td>2026-11</td><td class=n>1 − 12% × 84% = 89.9%</td><td class=n>$9.50 万 × 89.9% = $8.54 万</td><td class=n>12% × 16% ÷ 89.9% = 2.14%</td><td class=n>$8.54 万 × 2.14% = $1,824</td><td class=n><b>$8.36 万</b></td><td class=n>$2.93 万</td></tr></table></div>
+<h3>各品类完成递送率与递送完成后退款率（GMV 含风控订单）</h3>
+<div class="tbl"><table class=""><tr><th>品类</th><th class=n>时期</th><th class=n>GMV</th><th class=n>完成递送率</th><th class=n>风控关闭</th><th class=n>递送前退款</th><th class=n>其他未递送</th><th class=n>递送完成后退款率</th><th class=n>Net GMV 占比</th></tr><tr class="tot"><td>代练</td><td class=n>2024-01 至 11</td><td class=n>$11.82 万</td><td class=n>80.9%</td><td class=n>3.3%</td><td class=n>14.8%</td><td class=n>1.0%</td><td class=n>3.6%</td><td class=n>78.0%</td></tr><tr><td>账号</td><td class=n>2024-01 至 11</td><td class=n>$742.6 万</td><td class=n>86.0%</td><td class=n>6.4%</td><td class=n>6.6%</td><td class=n>1.1%</td><td class=n>11.2%</td><td class=n>76.4%</td></tr><tr><td></td><td class=n>2026-04 至 09</td><td class=n>$216.0 万</td><td class=n>95.3%</td><td class=n>0.20%</td><td class=n>4.5%</td><td class=n>—</td><td class=n>5.0%</td><td class=n>90.5%</td></tr><tr><td>金币</td><td class=n>2024-01 至 11</td><td class=n>$545.3 万</td><td class=n>87.7%</td><td class=n>3.8%</td><td class=n>7.9%</td><td class=n>0.7%</td><td class=n>1.3%</td><td class=n>86.5%</td></tr><tr><td></td><td class=n>2026-04 至 09</td><td class=n>$340.2 万</td><td class=n>96.6%</td><td class=n>0.04%</td><td class=n>3.4%</td><td class=n>—</td><td class=n>0.2%</td><td class=n>96.4%</td></tr><tr><td>物品</td><td class=n>2024-01 至 11</td><td class=n>$105.8 万</td><td class=n>88.0%</td><td class=n>5.0%</td><td class=n>6.5%</td><td class=n>0.5%</td><td class=n>1.8%</td><td class=n>86.5%</td></tr><tr><td></td><td class=n>2026-04 至 09</td><td class=n>$33.3 万</td><td class=n>94.5%</td><td class=n>0.05%</td><td class=n>5.5%</td><td class=n>—</td><td class=n>0.2%</td><td class=n>94.3%</td></tr><tr><td>三品类合计</td><td class=n>2024-01 至 11</td><td class=n>$1,393.7 万</td><td class=n>86.8%</td><td class=n>5.3%</td><td class=n>7.1%</td><td class=n>0.9%</td><td class=n>6.6%</td><td class=n>81.1%</td></tr><tr><td></td><td class=n>2026-04 至 09</td><td class=n>$589.4 万</td><td class=n>96.0%</td><td class=n>0.10%</td><td class=n>3.9%</td><td class=n>—</td><td class=n>2.0%</td><td class=n>94.1%</td></tr></table></div>
+<ul class="note"><li>完成递送率、风控关闭、递送前退款、其他未递送均占 GMV；递送完成后退款率 = 递送后退款金额 ÷ 完成递送 GMV（如代练 2024 年 2.9% ÷ 80.9% = 3.6%）。</li><li>2024 年完成递送率为完成递送 GMV 实际值；近期无完成递送 GMV 导出，按"1 − 风控关闭 − 递送前退款"估算，可能偏高约 1 个百分点。</li>
+<li>BI 校验：2024-01 至 11 代练 BI 已递送 3,421 单、导出 3,422 单；BI 订单完成率 82.4%（按单数，需递送 4,151 单），导出按金额 80.9%。</li>
+<li>近 6 个月三品类风控关闭占 GMV 0.10%（2024 年 5.27%），不单独扣除。</li></ul>
+<h3>递送前、递送后退款的拆分（84 : 16）</h3>
+<p>2024-01 至 11 代练剔除风控订单后：GMV $114,258，递送前退款 15.3%、递送后退款 3.0%，比例约 84 : 16。按"退款时间晚于递送时间"复算结果一致。</p>
+<div class="tbl"><table class=" txt"><tr><th>退款原因</th><th class=n>递送前（718 单，$2.14 万）</th><th class=n>递送后（128 单，$0.34 万）</th></tr><tr><td>没收到（Not received）</td><td class=n>42%</td><td class=n>34%</td></tr><tr><td>原因为空</td><td class=n>27%</td><td class=n>37%</td></tr><tr><td>买错 / 不想要 / 不需要了</td><td class=n>29%</td><td class=n>16%</td></tr></table></div>
+<p class="note">BI 准时递送率（2024-01 至 11）：代练 28.0%、金币 49.8%、物品 57.6%、账号 91.6%。</p>
+<h3>退款率目标推算</h3>
+<div class="tbl"><table class=""><tr><th>品类</th><th class=n>金额退款率 2024 → 近期</th><th class=n>降到原来的</th><th class=n>订单退款率 2024 → 近期</th><th class=n>降到原来的</th></tr><tr><td>账号</td><td class=n>22.2% → 9.7%</td><td class=n>0.44</td><td class=n>11.2% → 4.3%</td><td class=n>0.38</td></tr><tr><td>金币</td><td class=n>12.0% → 3.7%</td><td class=n>0.31</td><td class=n>10.1% → 2.6%</td><td class=n>0.26</td></tr><tr><td>物品</td><td class=n>12.4% → 5.8%</td><td class=n>0.47</td><td class=n>7.4% → 4.1%</td><td class=n>0.55</td></tr><tr class="tot"><td>代练推算（× 账号降幅）</td><td class=n>21.2% × 0.44 = 9.3%</td><td class=n></td><td class=n>20.4% × 0.38 = 7.8%</td><td class=n></td></tr></table></div>
+<p class="note">2024 年为全年数据（《2024 售后明细》），近期为 2026-04 至 09（近期三品类退款率）。</p>
+<h3>为什么以账号为基准</h3>
+<div class="tbl"><table class=" txt"><tr><th>品类</th><th class=n>主要质保天数</th><th class=n>支付→退款 中位数</th><th class=n>90% 的单在几天内</th><th class=n>支付 3 天后才退款</th></tr><tr><td>代练</td><td class=n>15、30、7 天</td><td class=n>2.1 天</td><td class=n>6.7 天</td><td class=n>31%</td></tr><tr><td>账号</td><td class=n>7、14 天</td><td class=n>2.1 天</td><td class=n>8.1 天</td><td class=n>37%</td></tr><tr><td>物品</td><td class=n>3、7 天</td><td class=n>1.8 天</td><td class=n>5.5 天</td><td class=n>23%</td></tr><tr><td>金币</td><td class=n>3 天</td><td class=n>0.7 天</td><td class=n>3.9 天</td><td class=n>15%</td></tr></table></div>
+<div class="tbl"><table class=""><tr><th>品类</th><th class=n>订单售后率</th><th class=n>金额售后率</th><th class=n>金额 ÷ 订单</th></tr><tr><td>账号 2024</td><td class=n>24.9%</td><td class=n>32.9%</td><td class=n>1.32</td></tr><tr><td>账号 近 6 月</td><td class=n>18.4%</td><td class=n>24.1%</td><td class=n>1.31</td></tr><tr><td>金币 近 6 月</td><td class=n>5.3%</td><td class=n>4.9%</td><td class=n>0.92</td></tr><tr><td>物品 近 6 月</td><td class=n>8.6%</td><td class=n>7.4%</td><td class=n>0.86</td></tr><tr><td>代练 2024</td><td class=n>27.2%</td><td class=n>25.8%</td><td class=n>0.95</td></tr></table></div>
+<p class="note">代练 2024 年客单价 $28，未出现"金额越高越易售后"；方案单均 $67（1 月），高价单占比上升，作为风险监控：金额退款率超过订单退款率 1.5 倍时按游戏、服务排查。</p>
+<h3>代练 2024 年分月退款率</h3>
+<div class="tbl"><table class=""><tr><th>月份</th><th class=n>订单</th><th class=n>订单退款率</th><th class=n>金额退款率</th></tr><tr><td>2024-01</td><td class=n>855</td><td class=n>16.3%</td><td class=n>11.2%</td></tr><tr><td>2024-02</td><td class=n>809</td><td class=n>21.8%</td><td class=n>24.3%</td></tr><tr><td>2024-03</td><td class=n>732</td><td class=n>19.0%</td><td class=n>21.7%</td></tr><tr><td>2024-04</td><td class=n>473</td><td class=n>27.9%</td><td class=n>31.9%</td></tr><tr><td>2024-05</td><td class=n>353</td><td class=n>24.4%</td><td class=n>21.2%</td></tr><tr><td>2024-06</td><td class=n>278</td><td class=n>27.0%</td><td class=n>32.1%</td></tr><tr><td>2024-07</td><td class=n>165</td><td class=n>23.0%</td><td class=n>19.6%</td></tr><tr><td>2024-08</td><td class=n>194</td><td class=n>18.6%</td><td class=n>18.4%</td></tr><tr><td>2024-09</td><td class=n>136</td><td class=n>14.7%</td><td class=n>17.4%</td></tr><tr><td>2024-10</td><td class=n>106</td><td class=n>9.4%</td><td class=n>16.6%</td></tr><tr><td>2024-11</td><td class=n>113</td><td class=n>8.8%</td><td class=n>11.0%</td></tr><tr class="tot"><td>2024-01 至 11</td><td class=n>4,214</td><td class=n>20.4%</td><td class=n>21.2%</td></tr></table></div>
+<h3>数据来源</h3>
+<ul class="note"><li>订单导出（按支付月份、品类：支付 GMV、完成递送 GMV），2024-01 至 11</li><li>《退款明细 2024》：订单递送状态、订单风险状态、退款原因</li><li>BI 递送率导出（需递送、已递送订单），2024-01 至 11</li><li>《2024 售后明细》《近期三品类售后明细》：金额 / 订单退款率与售后率</li><li>近期三品类流水（2026-04 至 09）、近 6 个月退款明细</li></ul>
+</section><section>
+<h2><span class="no">02</span>市场费用与净利润 · 数据支撑</h2>
+<h3>SEO 费用标准</h3>
+<div class="tbl"><table class=" txt"><tr><th>档位</th><th class=n>外链（三个月合计）</th><th class=n>原创文章</th><th class=n>每月费用</th></tr><tr><td>P0</td><td class=n>6 条高权重 + 10 条低权重</td><td class=n>每月 4 篇</td><td class=n>(6×$423 + 10×$216) ÷ 3 + 4×$141 = $2,130</td></tr><tr><td>其余游戏</td><td class=n>3 条高权重 + 5 条低权重</td><td class=n>每月 2 篇</td><td class=n>(3×$423 + 5×$216) ÷ 3 + 2×$141 = $1,065</td></tr></table></div>
+<div class="tbl"><table class=" txt"><tr><th>投入</th><th class=n>单价</th><th class=n>定义</th><th class=n>预期效果</th></tr><tr><td>原创文章</td><td class=n>$141 / 篇</td><td class=n>每篇对准 1 组长尾词（月搜索 ≥ 200、KD ≤ 10）</td><td class=n>发布 3 个月内该组词进前 10</td></tr><tr><td>低权重外链</td><td class=n>$216 / 条</td><td class=n>外链网站权重 20–49</td><td class=n>计 1 个外链来源网站</td></tr><tr><td>高权重外链</td><td class=n>$423 / 条</td><td class=n>外链网站权重 ≥ 50</td><td class=n>计 2 个外链来源网站（单价比 423 ÷ 216 ≈ 2）</td></tr></table></div>
+<div class="tbl"><table class=""><tr><th>KD</th><th class=n>0</th><th class=n>10</th><th class=n>20</th><th class=n>30</th><th class=n>40</th><th class=n>50</th></tr><tr><td>进前 10 需要的外链来源网站</td><td class=n>0</td><td class=n>10</td><td class=n>22</td><td class=n>36</td><td class=n>56</td><td class=n>84</td></tr></table></div>
+<p class="note">来源：Ahrefs 官方 KD 与外链来源网站对照。P0 三个月合计 6×2 + 10 = 22 个，对应 KD 20；外包上线后按月追踪外链来源网站数与目标词排名，未达标调整数量。</p>
+<h3>KOL 合作费用标准</h3>
+<div class="tbl"><table class=" txt"><tr><th>方式</th><th class=n>占 KOL UV</th><th class=n>成本</th><th class=n>依据</th></tr><tr><td>A 推广码按成交分成</td><td class=n>70%</td><td class=n>KOL 带来的 GMV × 15%（分成 10% + 买家折扣 5%）</td><td class=n>G2G：平台利润的 20%；Skycoach：代练成交额 30%（B2C 毛利高）</td></tr><tr><td>B 按播放量付费</td><td class=n>20%</td><td class=n>每个 UV $0.4</td><td class=n>Skycoach：长视频每 1,000 次播放 $2；按 0.5% 观看者点进</td></tr><tr><td>C 固定费用植入</td><td class=n>10%</td><td class=n>每个 UV $2.0</td><td class=n>YouTube 游戏植入每千次播放约 $10；按 0.5% 点进</td></tr></table></div>
+<div class="tbl"><table class=""><tr><th>KOL 费用</th><th class=n>2027-01</th><th class=n>2026-12</th><th class=n>2026-11</th></tr><tr><td>A 推广码分成</td><td class=n>$1.76 万</td><td class=n>$1.23 万</td><td class=n>$5,090</td></tr><tr><td>B 按播放付费</td><td class=n>$2,392</td><td class=n>$2,100</td><td class=n>$528</td></tr><tr><td>C 固定费用植入</td><td class=n>$5,981</td><td class=n>$5,249</td><td class=n>$1,321</td></tr><tr class="tot"><td>合计</td><td class=n>$2.60 万</td><td class=n>$1.96 万</td><td class=n>$6,940</td></tr></table></div>
+<h3>SEM 费用</h3>
+<p>付费 UV × 各国 Ahrefs CPC；仅在 CPC ≤ 当月转化率 × 单均 ÷ 2 的国家投放。</p>
+<h3>2027-01 分游戏</h3><div class="tbl"><table class=""><tr><th>名次 · 游戏</th><th class=n>优先级</th><th class=n>付费 UV</th><th class=n>SEM</th><th class=n>SEO</th><th class=n>KOL UV</th><th class=n>KOL 费用</th><th class=n>毛利</th></tr><tr><td>1 · WoW Forever</td><td class=n>P0</td><td class=n>539</td><td class=n>$739</td><td class=n>$2,130</td><td class=n>3,743</td><td class=n>$7,953</td><td class=n>$3.28 万</td></tr><tr><td>2 · WoW 正式服</td><td class=n>P0</td><td class=n>143</td><td class=n>$150</td><td class=n>$2,130</td><td class=n>6,383</td><td class=n>$4,185</td><td class=n>$1.78 万</td></tr><tr><td>3 · Dofus</td><td class=n>P0</td><td class=n>138</td><td class=n>$120</td><td class=n>$2,130</td><td class=n>3,300</td><td class=n>$3,855</td><td class=n>$1.59 万</td></tr><tr><td>4 · Valorant</td><td class=n>P0</td><td class=n>986</td><td class=n>$1,089</td><td class=n>$2,130</td><td class=n>4,236</td><td class=n>$2,778</td><td class=n>$8,654</td></tr><tr><td>5 · League of Legends</td><td class=n>P1</td><td class=n>614</td><td class=n>$594</td><td class=n>$1,065</td><td class=n>3,135</td><td class=n>$1,924</td><td class=n>$5,692</td></tr><tr><td>6 · Fortnite</td><td class=n>P1</td><td class=n>87</td><td class=n>$46</td><td class=n>$1,065</td><td class=n>2,745</td><td class=n>$1,456</td><td class=n>$3,738</td></tr><tr><td>7 · Diablo 4</td><td class=n>P1</td><td class=n>76</td><td class=n>$105</td><td class=n>$1,065</td><td class=n>989</td><td class=n>$731</td><td class=n>$2,468</td></tr><tr><td>8 · Call of Duty</td><td class=n>P1</td><td class=n>261</td><td class=n>$183</td><td class=n>$1,065</td><td class=n>1,120</td><td class=n>$688</td><td class=n>$2,035</td></tr><tr><td>9 · EA FC 27</td><td class=n>P2</td><td class=n>31</td><td class=n>$22</td><td class=n>$1,065</td><td class=n>876</td><td class=n>$574</td><td class=n>$1,790</td></tr><tr><td>10 · Aion 2</td><td class=n>P2</td><td class=n>0</td><td class=n>$0</td><td class=n>$1,065</td><td class=n>1,892</td><td class=n>$1,004</td><td class=n>$1,453</td></tr><tr><td>11 · Path of Exile 2</td><td class=n>P2</td><td class=n>0</td><td class=n>$0</td><td class=n>$1,065</td><td class=n>563</td><td class=n>$416</td><td class=n>$1,407</td></tr><tr><td>12 · ARC Raiders</td><td class=n>P2</td><td class=n>0</td><td class=n>$0</td><td class=n>$1,065</td><td class=n>923</td><td class=n>$451</td><td class=n>$742</td></tr><tr class="tot"><td>合计</td><td class=n></td><td class=n>2,874</td><td class=n>$3,047</td><td class=n>$1.70 万</td><td class=n>29,905</td><td class=n>$2.60 万</td><td class=n>$9.45 万</td></tr></table></div><h3>2026-12 分游戏</h3><div class="tbl"><table class=""><tr><th>名次 · 游戏</th><th class=n>优先级</th><th class=n>付费 UV</th><th class=n>SEM</th><th class=n>SEO</th><th class=n>KOL UV</th><th class=n>KOL 费用</th><th class=n>毛利</th></tr><tr><td>1 · WoW Forever</td><td class=n>P0</td><td class=n>417</td><td class=n>$572</td><td class=n>$2,130</td><td class=n>2,137</td><td class=n>$3,924</td><td class=n>$1.77 万</td></tr><tr><td>2 · Dofus</td><td class=n>P0</td><td class=n>179</td><td class=n>$156</td><td class=n>$2,130</td><td class=n>3,343</td><td class=n>$3,676</td><td class=n>$1.44 万</td></tr><tr><td>3 · WoW 正式服</td><td class=n>P0</td><td class=n>121</td><td class=n>$127</td><td class=n>$2,130</td><td class=n>5,568</td><td class=n>$3,461</td><td class=n>$1.05 万</td></tr><tr><td>4 · Fortnite</td><td class=n>P0</td><td class=n>174</td><td class=n>$92</td><td class=n>$2,130</td><td class=n>5,877</td><td class=n>$2,984</td><td class=n>$5,212</td></tr><tr><td>5 · Valorant</td><td class=n>P1</td><td class=n>185</td><td class=n>$172</td><td class=n>$1,065</td><td class=n>1,650</td><td class=n>$1,026</td><td class=n>$3,016</td></tr><tr><td>6 · Diablo 4</td><td class=n>P1</td><td class=n>0</td><td class=n>$0</td><td class=n>$1,065</td><td class=n>1,468</td><td class=n>$1,024</td><td class=n>$2,294</td></tr><tr><td>7 · League of Legends</td><td class=n>P1</td><td class=n>204</td><td class=n>$193</td><td class=n>$1,065</td><td class=n>1,385</td><td class=n>$808</td><td class=n>$1,984</td></tr><tr><td>8 · Call of Duty</td><td class=n>P1</td><td class=n>326</td><td class=n>$228</td><td class=n>$1,065</td><td class=n>1,337</td><td class=n>$780</td><td class=n>$1,773</td></tr><tr><td>9 · Path of Exile 2</td><td class=n>P2</td><td class=n>0</td><td class=n>$0</td><td class=n>$1,065</td><td class=n>915</td><td class=n>$638</td><td class=n>$1,471</td></tr><tr><td>10 · Aion 2</td><td class=n>P2</td><td class=n>0</td><td class=n>$0</td><td class=n>$1,065</td><td class=n>1,472</td><td class=n>$747</td><td class=n>$1,013</td></tr><tr><td>11 · EA FC 27</td><td class=n>P2</td><td class=n>21</td><td class=n>$15</td><td class=n>$1,065</td><td class=n>301</td><td class=n>$187</td><td class=n>$832</td></tr><tr><td>12 · ARC Raiders</td><td class=n>P2</td><td class=n>0</td><td class=n>$0</td><td class=n>$1,065</td><td class=n>793</td><td class=n>$372</td><td class=n>$517</td></tr><tr class="tot"><td>合计</td><td class=n></td><td class=n>1,627</td><td class=n>$1,555</td><td class=n>$1.70 万</td><td class=n>26,246</td><td class=n>$1.96 万</td><td class=n>$6.07 万</td></tr></table></div><h3>2026-11 分游戏</h3><div class="tbl"><table class=""><tr><th>名次 · 游戏</th><th class=n>优先级</th><th class=n>付费 UV</th><th class=n>SEM</th><th class=n>SEO</th><th class=n>KOL UV</th><th class=n>KOL 费用</th><th class=n>毛利</th></tr><tr><td>1 · WoW Forever</td><td class=n>P0</td><td class=n>816</td><td class=n>$1,119</td><td class=n>$2,130</td><td class=n>1,902</td><td class=n>$3,845</td><td class=n>$1.83 万</td></tr><tr><td>2 · Dofus</td><td class=n>P0</td><td class=n>138</td><td class=n>$120</td><td class=n>$2,130</td><td class=n>748</td><td class=n>$772</td><td class=n>$5,880</td></tr><tr><td>3 · WoW 正式服</td><td class=n>P0</td><td class=n>14</td><td class=n>$14</td><td class=n>$2,130</td><td class=n>3,956</td><td class=n>$2,324</td><td class=n>$5,052</td></tr><tr class="tot"><td>合计</td><td class=n></td><td class=n>967</td><td class=n>$1,253</td><td class=n>$6,390</td><td class=n>6,606</td><td class=n>$6,940</td><td class=n>$2.93 万</td></tr></table></div>
+<ul class="note"><li>SEO 从游戏上线当月开始计费；站内导流、老客召回为自有资源，不计费用；卖家招募、EDM 工具、人力成本未计入。</li>
+<li>毛利按第 01 部分金额退款率 12% / 11% / 10% 计算；分游戏毛利 = 该游戏 GMV × (1 − 金额退款率) × 35%。</li></ul>
+</section><section>
+<h2><span class="no">03</span>竞品对比 · 数据支撑</h2>
+<h3>价格明细（WoW Forever，2026-10-23）</h3>
+<div class="tbl"><table class=" txt"><tr><th>平台</th><th class=n>1–20 标准价</th><th class=n>1–20 最低价</th><th class=n>1–30 标准价</th><th class=n>1–30 最低价</th><th class=n>来源</th></tr><tr><td>iGV</td><td class=n>$30</td><td class=n>$23</td><td class=n>$65</td><td class=n>$50</td><td class=n>卖家 A 报价；1–30 最低价 $50 为卖家 A 给出，1–20 最低价按同比例（−23.1%）推算</td></tr><tr><td>G2G</td><td class=n>$33.40</td><td class=n>$15.11</td><td class=n>$64.14</td><td class=n>$28.60</td><td class=n>标准价：CNLTeam（卖家等级 174，EU 服）；最低价：MMorder（卖家等级 153，EU 服）</td></tr><tr><td>Eldorado</td><td class=n>—</td><td class=n>$30</td><td class=n>—</td><td class=n>$45</td><td class=n>协商定价，无标价；实测 3 个有回复报价取最低</td></tr><tr><td>Overgear</td><td class=n>$77.31</td><td class=n>$77.31</td><td class=n>$99.72</td><td class=n>$99.72</td><td class=n>官网固定价：EU 服、代练员登录操作、普通速度</td></tr></table></div>
+<p class="note">卖家 B 参考：PlayerAuctions 挂价 1–20 $35、1–30 $91；PA 代练佣金 9.99% + $0.99，按 iGV 35% 佣金反算 1–20 $46.94、1–30 $124.49。</p>
+<h3>政策来源</h3>
+<ul class="note">
+<li>Eldorado：<a href="https://support.eldorado.gg/en/articles/8409020-refund-and-return-policy">Refund and return policy</a>；<a href="https://support.eldorado.gg/en/articles/8409016-order-dispute-how-does-it-work">Order dispute</a>；<a href="https://www.eldorado.gg/contact-us">Contact Us</a>；<a href="https://www.eldorado.gg/wow-power-leveling/b/0-4">WoW Boosting</a></li>
+<li>G2G：<a href="https://help.g2g.com/en/articles/10000057-how-does-g2g-handle-refunds-returns-and-cancellations-smoothly">Refunds, Returns &amp; Cancellations</a>（2026-09-16 更新）；<a href="https://support.g2g.com/support/solutions/articles/5000860312-visit-help-center">Visit Help Center（提交工单）</a>；<a href="https://www.g2g.com/categories/wow-forever-boosting-service">WoW Forever Boosting</a></li>
+<li>Overgear：<a href="https://info.overgear.com/legal/refund-policy">Refund Policy</a>；<a href="https://info.overgear.com/guarantees">Guarantees</a>；<a href="https://overgear.com/games/wow-forever/powerleveling">WoW Forever Power Leveling</a>；<a href="https://overgear.com/">首页（7×24 真人客服）</a></li>
+<li>Trustpilot：<a href="https://uk.trustpilot.com/review/igv.com">iGV</a>、<a href="https://www.trustpilot.com/review/eldorado.gg">Eldorado</a>、<a href="https://www.trustpilot.com/review/www.g2g.com">G2G</a>、<a href="https://uk.trustpilot.com/review/overgear.com">Overgear</a>（2026-10-23）</li>
+<li>iGV：纠纷 ≤ 48 小时出结果、原路退回、7×24 真人在线客服（iGV 客服规则）</li>
+</ul>
+</section></div>
+</div><script>
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));document.querySelectorAll('.panel2').forEach(p=>p.hidden=p.id!==b.dataset.t);window.scrollTo(0,0)});
+</script></body></html>
