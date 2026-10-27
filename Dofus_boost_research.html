@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dofus 代练调研</title>
+<style>
+:root{
+  --bg:#f6f7f9; --paper:#ffffff; --ink:#1c2230; --muted:#5b6475; --line:#dfe3ea; --soft:#eef1f5;
+  --accent:#a8641a; --accent-soft:#f6ead9; --blue:#2f5d8a; --blue-soft:#e3ecf5;
+  --good:#2e7d4f; --warn:#b26a00; --bad:#b3362c;
+  --serif:"Noto Serif SC","Songti SC",serif; --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif; --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151c; --paper:#1a1f29; --ink:#e6e9ef; --muted:#9aa3b4; --line:#2c3341; --soft:#222937;
+  --accent:#e0a25a; --accent-soft:#3a2c1b; --blue:#7fb0e0; --blue-soft:#1f2c3b;
+  --good:#6cc28f; --warn:#e3a543; --bad:#ef7d72; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151c; --paper:#1a1f29; --ink:#e6e9ef; --muted:#9aa3b4; --line:#2c3341; --soft:#222937;
+  --accent:#e0a25a; --accent-soft:#3a2c1b; --blue:#7fb0e0; --blue-soft:#1f2c3b;
+  --good:#6cc28f; --warn:#e3a543; --bad:#ef7d72; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75}
+.wrap{display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;max-width:1200px;margin:0 auto;padding:32px 16px 80px}
+nav.toc{position:sticky;top:24px;align-self:start;font-size:13px}
+nav.toc .brand{font-family:var(--serif);font-weight:900;font-size:17px;line-height:1.3;margin-bottom:4px}
+nav.toc .ver{color:var(--muted);font-size:12px;margin-bottom:18px}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+nav.toc a{display:block;color:var(--muted);text-decoration:none;padding:5px 10px;border-radius:6px}
+nav.toc a:hover{color:var(--ink);background:var(--soft)}
+nav.toc .tn{font-family:var(--mono);color:var(--accent);margin-right:8px}
+main{min-width:0}
+header.hero{padding-bottom:24px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:700}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(26px,4vw,36px);line-height:1.25;margin:8px 0 12px}
+.meta{color:var(--muted);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 18px}
+section{padding-top:40px}
+h2{font-family:var(--serif);font-weight:900;font-size:22px;line-height:1.35;margin:0 0 8px;display:flex;gap:12px;align-items:baseline}
+h2 .no{font-family:var(--mono);font-size:14px;color:var(--accent);font-weight:600}
+h3{font-size:16px;margin:24px 0 8px}
+p{margin:0 0 12px;max-width:80ch}
+ul{margin:0 0 12px;padding-left:20px;max-width:84ch}
+li{margin:3px 0}
+.callout{background:var(--accent-soft);border-radius:10px;padding:16px 20px;margin:16px 0}
+.callout strong{color:var(--accent)}
+.note{font-size:13px;color:var(--muted)}
+.tbl{overflow-x:auto;margin:12px 0 8px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--soft);font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n,th.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font-size:12px;padding:0 8px;border-radius:999px;background:var(--blue-soft);color:var(--blue);white-space:nowrap;margin:1px 2px 1px 0}
+.tag.a{background:var(--accent-soft);color:var(--accent)}
+.tag.g{background:color-mix(in srgb,var(--good) 15%,transparent);color:var(--good)}
+.tag.r{background:color-mix(in srgb,var(--bad) 13%,transparent);color:var(--bad)}
+.src{font-size:13px;color:var(--muted)}
+.src a{color:var(--blue)}
+.wide td:nth-child(3){min-width:220px}.wide td:nth-child(2){min-width:110px}.wide td.n:not(:first-child){white-space:normal;min-width:150px}.wide td:first-child{width:32px}
+.wide2 td:nth-child(3){min-width:420px}.wide2 td:first-child{min-width:120px}
+ol.src{padding-left:24px;max-width:90ch}
+footer{margin-top:48px;font-size:12px;color:var(--muted)}
+@media (max-width:860px){.wrap{grid-template-columns:1fr;gap:16px}nav.toc{position:static}nav.toc ol{display:flex;flex-wrap:wrap}}
+</style>
+</head>
+<body><div class="wrap">
+<nav class="toc" aria-label="目录"><div class="brand">Dofus 代练调研</div><div class="ver">V2 · 2026-10-27</div><ol>
+<li><a href="#s1"><span class="tn">01</span>结论</a></li>
+<li><a href="#s2"><span class="tn">02</span>版本与服务器</a></li>
+<li><a href="#s3"><span class="tn">03</span>竞品现状</a></li>
+<li><a href="#s4"><span class="tn">04</span>可做内容</a></li>
+<li><a href="#s5"><span class="tn">05</span>需求与痛点</a></li>
+<li><a href="#s6"><span class="tn">06</span>计价结构与属性值</a></li>
+<li><a href="#s7"><span class="tn">07</span>一期落地建议</a></li>
+<li><a href="#s8"><span class="tn">08</span>来源</a></li>
+</ol></nav>
+<main>
+<header class="hero"><div class="eyebrow">iGV · 代练业务（GamePal &amp; Boosting）· Dofus</div>
+<h1>Dofus 代练调研：可做内容、需求痛点与计价属性</h1>
+<div class="meta"><span>范围：Dofus 3（Unity）+ Dofus Rétro（1.29），不含 Touch</span><span>数据：G2G 1,440 条在售报价（2026-10-27 抓取）、Halles des Douze 玩家互助平台、Eldorado / PlayerAuctions、高价值用户访谈</span><span>汇率：1 € ≈ $1.12</span></div>
+</header>
+
+<section id="s1">
+<h2><span class="no">01</span>结论</h2>
+<div class="callout"><strong>Dofus 代练 = 小额、一次性、多数不用交号的"玩家帮玩家"服务。</strong>真实需求很大，但几乎都在游戏内用 Kamas 成交；欧美 C2C 平台基本没人做，是空白也是难点。</div>
+<ul>
+<li><b>竞品空白：</b>G2G 是唯一在卖 Dofus PC 代练的大平台，只有 5 个卖家，展示的完成单数全为 0，评价最多 4 条；Eldorado 只卖 Kamas，PlayerAuctions 只剩 Dofus Touch 代练。</li>
+<li><b>真实需求在玩家互助平台：</b>法语区 Halles des Douze 按 Kamas 撮合地下城护送、Ocre 包、职业包、升级等，头部服务器累计成交约 1.2 万笔（Hell Mina 11,983、Draconiros 10,697、Tylezia 7,559）。</li>
+<li><b>可做 9 类内容</b>，其中护送地下城/成就、Dofus Ocre、职业、阵营等级、小额求助都能做成不交号的组队陪同，正好对应访谈里"不愿共享账号"的诉求。</li>
+<li><b>定价天花板 = 游戏内 Kamas 价 × Kamas 欧元价。</b>游戏内大部分服务折合 €2–€55；G2G 同类服务标价是它的 1.5–10 倍，所以卖不动。这和访谈里"€400–1000 的装备卖不掉"是同一个问题。</li>
+<li><b>价格主要由 8 个属性决定：</b>版本、服务器类型（单号/多号）、具体服务器、等级区间/目标、成就/难度、角色数、材料由谁出、时效。</li>
+<li><b>节点：</b>新职业 Bellaphone 和 3.8 版本预计 2026 年底上线，届时"新职业从零练"需求会集中出现。</li>
+</ul>
+<p class="note">对代练流水方案的影响：方案里 Dofus 客单价按 $90 计（来自 2024 年 42 单的历史数据）。本次调研看到的主流服务价格在 €5–€55，建议核对一下这个客单价。</p>
+</section>
+
+<section id="s2">
+<h2><span class="no">02</span>版本与服务器（所有定价的前提）</h2>
+<div class="tbl"><table>
+<tr><th>版本</th><th>服务器（类型）</th><th class="n">Kamas 最低价 €/M</th><th>代练相关特点</th></tr>
+<tr><td><b>Dofus 3</b><br><span class="note">Unity 3.7，满级 200</span></td><td>Classique（多号）：Imagiro、Tal Kasha、Salar、Hell Mina、Tylezia、Rafal、Brial、Orukam<br>Monocompte（单号）：Dakal、Kourial、Mikhal、Draconiros<br>Épique（史诗）：Ombre（G2G 写作 Shadow）</td><td class="n">多号：Salar 0.37 · Orukam 0.37<br>Brial 0.39 · Tylezia 0.43<br>Imagiro 0.43 · Rafal 0.44<br>Tal Kasha 0.45 · Hell Mina 0.60<br>单号：Kourial 0.63 · Mikhal 0.65<br>Draconiros 0.65 · Dakal 0.65<br>史诗：Shadow 0.84</td><td>玩家最多、在卖服务最多。成就、Ocre、职业、养殖、Songes infinis 都是这个版本的内容。2026 按双月赛季更新，年底 3.8 版本，新职业 Bellaphone 预计同期上线。</td></tr>
+<tr><td><b>Dofus Rétro</b><br><span class="note">1.29</span></td><td>Monocompte（单号）：Boune<br>Classique（多号）：Allisteria、Fallanster（Legacy）</td><td class="n">Boune 2.74<br>Allisteria 1.05<br>Fallanster 0.44</td><td>老玩家和回归玩家为主，新人门槛高。单号服 Kamas 价格是多号服的 2.6 倍，同一服务在单号服明显更贵。3 月开的季节服为期 3 个月，已经结束。</td></tr>
+<tr><td><b>Temporis</b></td><td>Mahturj、Handar、Tarad、Bogan、Railzeur、Budshu</td><td class="n">—</td><td>限时服，G2G 只有按小时代打。不建议做标准品。</td></tr>
+</table></div>
+<p class="note">单号（monocompte）= 一个玩家同时只能登录一个账号，无法一人开多号组队，所以升级和刷本更慢，代练更贵。Dofus 3 的单号服 Kamas 价同样比多号服高（0.63–0.65 vs 0.37–0.60 €/M）。"单号/双号"就是访谈里用户说的"价格取决于服务器"。</p>
+</section>
+
+<section id="s3">
+<h2><span class="no">03</span>竞品现状</h2>
+<div class="tbl"><table>
+<tr><th>平台</th><th>Dofus 代练</th><th>规模</th><th>结论</th></tr>
+<tr><td><b>G2G</b></td><td>有（Dofus 3 + Rétro + Temporis）</td><td>5 个卖家、858 个商品、1,440 条报价；Dofusgold 占 672 条。展示的完成单数全为 0，评价最多 4 条</td><td>货架有，成交几乎看不到。品类只有升级、职业、阵营、按小时代打四种</td></tr>
+<tr><td><b>Eldorado</b></td><td>无（只卖 Kamas，8 个卖家）</td><td>—</td><td>没做代练</td></tr>
+<tr><td><b>PlayerAuctions</b></td><td>无（Dofus PC 代练页已下线，只剩 Touch）</td><td>—</td><td>没做代练</td></tr>
+<tr><td><b>Halles des Douze</b></td><td>有，玩家自建，<b>用 Kamas 计价</b></td><td>13 个 Dofus 3 服务器；Hell Mina 有 8 个护送玩家，累计 11,983 笔</td><td><b>需求真实存在的证据</b>；品类最全：地下城护送、职业包、升级、Ocre 包、养殖包、Songes infinis 包。只有 Dofus 3，没有 Rétro</td></tr>
+</table></div>
+<p>Rétro 的互助目前主要在 Discord、论坛和游戏内的护送玩家之间进行，没有成型平台。</p>
+</section>
+
+<section id="s4">
+<h2><span class="no">04</span>可做内容</h2>
+<p class="note">游戏内价格按 G2G 当前 Kamas 最低价换算：Hell Mina 0.60 €/M、Draconiros 0.65 €/M。G2G 价格为在售标价。</p>
+<div class="tbl"><table class="wide">
+<tr><th>#</th><th>服务</th><th>做什么</th><th>交付</th><th>游戏内价（Kamas → €）</th><th>G2G 标价</th><th>访谈对应</th></tr>
+<tr><td class="n">1</td><td><b>升级 Leveling</b><br><span class="note">含新职业/小号从零练</span></td><td>把角色从 A 级练到 B 级，常附赠智慧卷轴、Kamas、7 天订阅</td><td><span class="tag">上号</span><span class="tag">组队</span></td><td>Hell Mina 50→200：23M ≈ €14<br>50→150：7M ≈ €4<br>199→200：6–6.5M ≈ €4</td><td class="n">D3 1→100：€20–27（个别 €53）<br>D3 1→200：€48–100<br>Rétro 1→150：€31–79<br>Boune 分段：50→60 €15，198→199 €48</td><td>Leveling、职业代练、grade 练级</td></tr>
+<tr><td class="n">2</td><td><b>地下城护送 + 成就</b></td><td>带买家角色通关指定地下城，或拿指定成就（Duo、Statue、Versatile、Spécial、Compagnon 等，可组合）</td><td><span class="tag g">组队·不交号</span></td><td>与护送玩家议价；Hell Mina 按 1–50 / 51–100 / 101–150 / 151–190 级分 4 档，另有 45 个任务战斗</td><td class="n">无</td><td>副本打不过、任务卡关</td></tr>
+<tr><td class="n">3</td><td><b>Dofus 任务 / 掉落</b></td><td>D3：Dofus Ocre（任务需捕捉 338 个魂：51 个首领 + 286 个 archimonstre + 1）。Rétro：Émeraude、Pourpre、Turquoise、Vulbis 等靠掉落，代刷</td><td><span class="tag g">交魂石·不交号</span><span class="tag">上号</span></td><td>Ocre 全包：Hell Mina 80M ≈ €48；Draconiros 65–85M ≈ €42–55<br>archimonstre 包 50–70M ≈ €33–42<br>首领包 10–25M ≈ €6–15</td><td class="n">无</td><td>Dofus Ocre 等特定任务</td></tr>
+<tr><td class="n">4</td><td><b>职业 Métiers</b></td><td>把采集/制造职业练到 200</td><td><span class="tag">上号</span><span class="tag a">需押金</span></td><td>Hell Mina：猎人 3.4–4.7M ≈ €2–3；炼金 20M ≈ €12；伐木 40M ≈ €24；珠宝/鞋匠 50M ≈ €30；饲养员 60M ≈ €36；façonneur 65–80M ≈ €39–48</td><td class="n">€20–40，最高 €90</td><td>Métiers</td></tr>
+<tr><td class="n">5</td><td><b>锻造 Forgemagie</b></td><td>给装备洗属性或加 PA/PM（exo），材料（符文）可由买家或卖家出</td><td><span class="tag g">交易装备·不交号</span><span class="tag a">需押金</span></td><td>*mage 职业包：2–2.5M + 5M 押金；单件 FM 一般按"手工费 + 符文成本"议价</td><td class="n">无</td><td>Forgemagie</td></tr>
+<tr><td class="n">6</td><td><b>阵营 / PvP</b></td><td>阵营等级、Grade（天使 Bonta / 恶魔 Brâkmar）。Rétro 的 Grade 1→10 需要 17,500 荣誉点，只能打敌对阵营玩家获得；高 Grade 加经验、掉落、采集倍率，有翅膀</td><td><span class="tag">上号</span></td><td>—</td><td class="n">Orukam 阵营 5→10：€79–85<br>Grade 1→5：€35</td><td>PvP 等级、grade（ange, démon）</td></tr>
+<tr><td class="n">7</td><td><b>资源 / 刷掉落</b></td><td>大量采集、指定资源掉落、Songes infinis 掉落</td><td><span class="tag g">交易·不交号</span></td><td>Vulbis 资源掉落 9M ≈ €5<br>Bribe 70–120M ≈ €42–72<br>Parangon 掉落 9–10M ≈ €6</td><td class="n">无</td><td>大量资源采集、找稀有资源</td></tr>
+<tr><td class="n">8</td><td><b>养殖 Élevage</b></td><td>坐骑繁殖、养殖成就</td><td><span class="tag">上号</span><span class="tag a">需押金</span></td><td>Pack émeraude：50 万 + 10 万押金</td><td class="n">无</td><td>—</td></tr>
+<tr><td class="n">9</td><td><b>按小时代打 / 自定义</b></td><td>买家指定任意内容，按小时或天包时；或一次性小需求自定义报价</td><td><span class="tag">上号</span><span class="tag g">组队</span></td><td>—</td><td class="n">€3.3–3.6/小时<br>24 小时 €38–42<br>一周（每天 5 小时）€55–60</td><td>玩家帮玩家、一次性求助</td></tr>
+</table></div>
+<ul>
+<li><b>G2G 只有 1、4、6、9 四类</b>，2、3、5、7、8 是空白，恰好是访谈里玩家提到的内容。</li>
+<li>G2G 标价普遍高于游戏内价：同为 FR 服的猎人职业 €24 对 €2–3、伐木 €39 对 €24。卖家定价没有参考 Kamas。</li>
+<li>D3 升级价格低、交付快（多为 2–3 小时），说明卖家有成熟的高效练级方法，升级本身不是稀缺服务。</li>
+</ul>
+</section>
+
+<section id="s5">
+<h2><span class="no">05</span>用户需求与痛点</h2>
+<div class="tbl"><table>
+<tr><th>用户</th><th>需求</th><th>痛点</th><th>对应服务</th></tr>
+<tr><td><b>时间少的回归老玩家</b>（Rétro 为主）</td><td>快速追上进度：升级、职业、阵营</td><td>单号服不能多开，进度慢；资源被成熟团队控制</td><td>1 升级、4 职业、6 阵营、9 包时</td></tr>
+<tr><td><b>卡关的新人 / 中段玩家</b></td><td>一次性解决具体问题：某个任务、某个副本、某种稀有资源</td><td>Rétro 新人门槛高；组不到队；热门区域被"PvP 脱战"等规则边缘手段封锁</td><td>2 护送、3 Dofus、7 资源、9 自定义</td></tr>
+<tr><td><b>追求毕业的玩家</b>（D3 为主）</td><td>Dofus Ocre、成就、FM 出极品装备</td><td>Ocre 要抓 338 个魂；FM 失败成本高</td><td>3 Ocre 包、2 成就、5 FM</td></tr>
+<tr><td><b>重视账号安全的玩家</b></td><td>不交账号也能获得帮助</td><td>不愿共享账号密码（访谈 1 人明确拒绝）；上号可能被封号；Ankama Shield 登录验证需要买家配合</td><td>优先做组队陪同、游戏内交易交付的服务（2、3、5、7）</td></tr>
+<tr><td><b>价格敏感的玩家</b></td><td>小额付费</td><td>€400–1000 的装备卖不动；欧元价远高于游戏内 Kamas 价就不买</td><td>单价 €5–55 的标准品，用游戏内价锚定</td></tr>
+</table></div>
+</section>
+
+<section id="s6">
+<h2><span class="no">06</span>计价结构与属性值</h2>
+<p>沿用暗黑 4 的计价顺序：<b>先用区间型或按次数定基础价，再叠加增值系数</b>（乘系数或加定额，卖家上架时自选）。账号属性和完成方式不参与算价。</p>
+
+<h3>6.1 按服务拆</h3>
+<div class="tbl"><table>
+<tr><th>服务</th><th>基础价（定价方式：属性）</th><th>增值系数</th></tr>
+<tr><td><b>升级</b> Leveling</td><td>区间型：角色等级 Niveau 1→200</td><td>服务器类型、具体服务器、加速服务、附赠</td></tr>
+<tr><td><b>地下城护送</b> Passage de donjon</td><td>按次数：地下城 Donjon（或按 1–50 / 51–100 / 101–150 / 151–190 分档）</td><td>成就 Succès（+定额）、角色数、服务器类型</td></tr>
+<tr><td><b>Dofus Ocre</b></td><td>按次数：包类型，次数固定 1（相当于一口价）</td><td>服务器类型、角色数</td></tr>
+<tr><td><b>生活职业</b> Métier</td><td>区间型：职业等级 Niveau de métier 1→200</td><td>生活职业名、材料由谁出、服务器类型</td></tr>
+<tr><td><b>锻造</b> Forgemagie</td><td>按次数：锻造目标（Exo PA / PM 等），次数 = 件数</td><td>材料由谁出、服务器类型</td></tr>
+<tr><td><b>阵营 / Grade</b></td><td>区间型：Grade 1→10</td><td>服务器类型、加速服务</td></tr>
+<tr><td><b>资源 / 掉落</b> Ressources</td><td>按次数：资源种类，次数 = 数量</td><td>服务器类型</td></tr>
+<tr><td><b>按小时代打</b></td><td>按次数：时长，次数 = 小时数</td><td>—</td></tr>
+<tr><td><b>自定义</b></td><td>没有费率卡，买家出价</td><td>—</td></tr>
+</table></div>
+
+<h3>6.2 属性值与游戏内名称</h3>
+<p class="note">"职业"在 Dofus 里有两个词：<b>Classe</b> 是角色职业（Iop、Crâ…），<b>Métier</b> 是生活职业（猎人、锻造师…），模板里要分开命名。来源编号见本节末尾。</p>
+<div class="tbl"><table class="wide2">
+<tr><th>属性（游戏内名称）</th><th>类型</th><th>属性值</th><th>来源</th></tr>
+
+<tr><td><b>角色等级</b><br>Niveau</td><td><span class="tag a">基础价</span><br>区间型</td><td>Dofus 3：1–200，200 以上为 Oméga 等级（Halles 有"PL Oméga"商品）<br>Rétro：1–200<br>建议分段：1–50 / 50–100 / 100–150 / 150–199 / 199–200（Halles 的升级商品就按 50→100、50→150、50→199、50→200、199→200 分）</td><td class="n">[1][2]</td></tr>
+
+<tr><td><b>地下城</b><br>Donjon</td><td><span class="tag a">基础价</span><br>按次数</td><td>分档：Donjon 1 à 50（15 个）/ 51 à 100（21 个）/ 101 à 150（27 个）/ 151 à 190（22 个）<br>200 级按区域（Zone）：<br>· Abysses：Aquadôme de Merkator、Palais de Dantinéa、Temple de Koutoulou、Vaisseau du Capitaine Meno<br>· Anomalies temporelles：Abysses du temps、Atelier de Noximilien、Aurore Pourpre、Brâkmar、Caverne d'Aguabrial、Horloge de Xélor、Ingloriom、Marché de Kelba、Palais de Bonta、Tour Minérale、Village des Flaqueux<br>· Cauchemar：Bataille de l'Aurore Pourpre<br>· Crocuzko：Sanctuaire de Torkélonia<br>· Dimensions：Autel de la Déchireuse、Breuil du Vénérable、Défi du Chaloeil、Oeil de Vortex、Palais du roi Nidas、Temple de Gargandyas、Trône de la Cour Sombre<br>· Eliocalypse：Arbre de mort、Fers de la Tyrannie、Sentence de la Balance、Tempête de l'Eliocalypse、Trône de sang<br>· Frigost：Belvédère d'Ilyzaelle、Brasserie du roi Dazak、Comte Harebourg、Double Boss、Forgefroide de Missiz Frizz、Laboratoire de Nileza、Salons privés de Klime、Transporteur de Sylargh、Ventre de la Baleine<br>· Pandamonium：Rituel de Kabahal<br>· Saharach：Chambre de Tal Kasha<br>· Sidimote：Manoir des Katrepat<br>· Tour de la fratrie：Tour de Bethel、Tour de Solar<br>· Valonia：Caverne de Cire Momore、Chambre des maléfices<br>· Wukin et Wukang：Mémoire d'Orukam、Souvenir d'Imagiro<br>另有任务战斗 Combat de quête（45 个）<br><span class="note">以上为 Dofus 3（Hell Mina 服在售）。Rétro 地下城清单没有现成平台可参考，需卖家或顾问补充。</span></td><td class="n">[1]</td></tr>
+
+<tr><td><b>Ocre 包类型</b></td><td><span class="tag a">基础价</span><br>按次数</td><td>Pack complet（全包）/ Pack archimonstre（archimonstre 包）/ Pack boss de donjon（首领包）<br>相关名词：任务 L'éternelle moisson（19 步）、魂 Âme（共 338 个：51 个首领 + 286 个 archimonstre + Kralamoure Géant）、魂石 Pierre d'âme、技能 Capture d'âmes</td><td class="n">[1][3]</td></tr>
+
+<tr><td><b>生活职业等级</b><br>Niveau de métier</td><td><span class="tag a">基础价</span><br>区间型</td><td>Dofus 3：1–200<br>Rétro：1–100</td><td class="n">[4][5]</td></tr>
+
+<tr><td><b>锻造目标</b><br>Forgemagie</td><td><span class="tag a">基础价</span><br>按次数</td><td>Exo PA / Exo PM / Exo PO / Exo Invo（给装备加原本没有的属性）、Over（属性超过上限）、Jet parfait（JP，满属性）<br>相关符文：Rune Ga Pa、Ga Pme、Po、Invo；Rune de Transcendance</td><td class="n">[6]</td></tr>
+
+<tr><td><b>Grade</b></td><td><span class="tag a">基础价</span><br>区间型</td><td>1 Recrue（0）/ 2 Aspirant（500）/ 3 Sentinelle（1,500）/ 4 Défenseur（3,000）/ 5 Chevalier（5,000）/ 6 Champion（7,500）/ 7 Conquérant（10,000）/ 8 Stratège（12,500）/ 9 Commandeur（15,000）/ 10 Héros（17,500）<br><span class="note">括号内为所需荣誉点 Points d'honneur。Rétro 已确认；Dofus 3 的 Grade 规则需卖家确认。</span></td><td class="n">[7][8]</td></tr>
+
+<tr><td><b>资源种类</b><br>Ressources</td><td><span class="tag a">基础价</span><br>按次数</td><td>Halles 在售：Drop ressources Vulbis、Drop Parangon；Songes infinis 包：Bribe d'un cauchemar économe、Bribe d'un cauchemar parfait、Deux petits bouftous…、Trois petits bouftous…<br>其余普通资源按买家指定</td><td class="n">[1]</td></tr>
+
+<tr><td><b>时长</b></td><td><span class="tag a">基础价</span><br>按次数</td><td>按小时：1 / 3 / 5 / 10 / 12 / 15 / 20 / 24 小时<br>包时：1 周或 1 个月 × 每天 5 / 6 / 12 / 15 / 20 小时（G2G 现有档位）</td><td class="n">[9]</td></tr>
+
+<tr><td><b>服务器类型</b><br>Type de serveur</td><td><span class="tag">增值</span><br>× 系数</td><td>Classique（多号）/ Monocompte（单号）/ Épique（史诗：PvM 死亡永久）<br><span class="note">Héroïque 服务器已取消。</span></td><td class="n">[10][11]</td></tr>
+
+<tr><td><b>具体服务器</b><br>Serveur</td><td><span class="tag">增值</span><br>× 系数，默认 1.0</td><td>Dofus 3（13 个）<br>· Classique：Imagiro、Tal Kasha、Salar、Hell Mina、Tylezia、Rafal、Brial、Orukam<br>· Monocompte：Dakal、Kourial、Mikhal、Draconiros<br>· Épique：Ombre（G2G 写作 Shadow）<br>Rétro（3 个常驻）<br>· Classique：Fallanster、Allisteria<br>· Monocompte：Boune<br><span class="note">Hell Mina 自 2026-09-08 起只允许老玩家建角色。</span></td><td class="n">[10][12]</td></tr>
+
+<tr><td><b>成就</b><br>Succès de donjon</td><td><span class="tag">增值</span><br>+ 定额，可多选</td><td>通用：Simple（普通通关）、Duo / Trio / Quatuor（2 / 3 / 4 人通关）、Spécial（每个首领专属的条件）<br>挑战类：Statue（每回合结束站回起点）、Versatile（同一回合不重复同一动作）、Prudent（回合结束不贴敌人）、Hardi（回合结束贴着敌人）、Collant（回合结束贴着队友）、Misanthrope（回合结束不贴队友）、Zombie（每回合只用 1 PM）、Nomade（每回合用完 PM 且不被缠住）、Barbare（用武器击杀）、Focus（被攻击的敌人先死才能打下一个）、Blitzkrieg（被攻击的敌人在其回合开始前死亡）、Premier / Dernier（指定怪第一个 / 最后一个死）、Mains propres（不用直接伤害击杀）、Élémentaire（全程只用一个元素）、Duel（只能一名队友攻击指定敌人）、Survivant（无队友阵亡）、En ligne de mire（回合结束在敌人视线内）<br>其他：Liberté、Compagnon、Uchronisme（Anomalies temporelles 区域专有），条件以游戏内说明为准<br>组合包：多个成就打包，或 Full succès（全成就）<br><span class="note">每个地下城可选的成就不同，例如 Comte Harebourg：Simple、Statue、Versatile、Duo、Spécial、Compagnon。</span></td><td class="n">[1][13][14]</td></tr>
+
+<tr><td><b>角色数</b><br>Nombre de personnages</td><td><span class="tag">增值</span><br>× 系数</td><td>1–8（组队上限 8 人；多号服玩家常一人带多个角色）</td><td class="n">[1][11]</td></tr>
+
+<tr><td><b>生活职业名</b><br>Métier</td><td><span class="tag">增值</span><br>× 系数</td><td>Dofus 3<br>· 采集：Alchimiste（炼金师）、Bûcheron（伐木工）、Mineur（矿工）、Paysan（农夫）、Pêcheur（渔夫）、Chasseur（猎人）<br>· 制造：Bijoutier（珠宝匠）、Cordonnier（鞋匠）、Tailleur（裁缝）、Forgeron（铁匠）、Sculpteur（木雕匠）、Façonneur（盾牌匠）、Bricoleur（工匠）、Éleveur（饲养员）<br>· 锻造：Joaillomage、Forgemage、Sculptemage、Cordomage、Costumage、Façomage<br>Rétro<br>· 采集：Alchimiste、Bûcheron、Mineur、Paysan、Pêcheur、Chasseur<br>· 加工：Boulanger（面包师）、Boucher（屠夫）、Poissonnier（鱼贩）<br>· 制造：Bijoutier、Cordonnier、Tailleur、Bricoleur、Forgeur d'Épées / de Dagues / de Marteaux / de Pelles / de Haches / de Boucliers、Sculpteur d'Arcs / de Bâtons / de Baguettes<br>· 锻造：Joaillomage、Cordomage、Costumage、Forgemage d'Épées / de Dagues / de Marteaux / de Pelles / de Haches、Sculptemage d'Arcs / de Bâtons / de Baguettes<br><span class="note">Rétro 每个角色最多学 3 个职业。Bricoleur 在 G2G 和 Guidactik 有，Halles 的职业列表里没有，需确认 Dofus 3 是否仍单独存在。</span></td><td class="n">[1][4][5][15][16]</td></tr>
+
+<tr><td><b>材料由谁出</b></td><td><span class="tag">增值</span><br>× 系数</td><td>买家提供 / 卖家包料<br><span class="note">游戏内卖家包料时常收押金 Caution（如 Hell Mina 锻造职业包 2M + 押金 5M），一期不做押金。</span></td><td class="n">[1]</td></tr>
+
+<tr><td><b>加速服务</b></td><td><span class="tag">增值</span><br>+ 定额，可多选</td><td>加急、直播 Stream、过程截图、指定时段<br><span class="note">非游戏内名词，沿用暗黑 4 的"加速服务"；直播是 G2G 卖家的常见卖点。</span></td><td class="n">[9]</td></tr>
+
+<tr><td><b>附赠</b></td><td><span class="tag">增值</span><br>+ 定额，可多选</td><td>Parchemin de sagesse（智慧卷轴）、Parchotage（属性卷轴，常见写法"parchotage 100 tous les éléments"）、Abonnement 7 jours（7 天订阅）、Kamas bonus</td><td class="n">[9][17]</td></tr>
+
+<tr><td><b>完成方式</b></td><td><span class="tag">不计价</span><br>独立字段</td><td>Piloted（上号代打）/ Self-play（组队陪同）</td><td class="n">—</td></tr>
+
+<tr><td><b>角色职业</b><br>Classe</td><td><span class="tag">不计价</span><br>账号属性</td><td>Dofus 3（19 个）：Iop、Crâ、Sacrieur、Eniripsa、Sram、Ouginak、Forgelance、Osamodas、Enutrof、Ecaflip、Steamer、Féca、Huppermage、Zobal、Pandawa、Eliotrope、Sadida、Roublard、Xélor；第 20 个职业 Bellaphone 预计 2026 年底上线<br>Rétro（12 个）：Crâ、Ecaflip、Eniripsa、Enutrof、Féca、Iop、Osamodas、Pandawa、Sacrieur、Sadida、Sram、Xélor</td><td class="n">[1][18][19]</td></tr>
+
+<tr><td><b>阵营</b><br>Alignement</td><td><span class="tag">不计价</span><br>账号属性</td><td>Neutre（中立）/ Bonta（Bontarien，俗称 Ange 天使）/ Brâkmar（Brâkmarien，俗称 Démon 恶魔）<br><span class="note">2.x 时期部分服务器另有玩家自管的 Mercenaire 阵营，目前是否存在需确认。</span></td><td class="n">[7][20]</td></tr>
+
+<tr><td><b>角色名、语言、在线时段</b></td><td><span class="tag">不计价</span><br>账号属性</td><td>语言：Français / English / Español</td><td class="n">—</td></tr>
+</table></div>
+
+<h3>6.3 各属性对价格的影响依据</h3>
+<div class="tbl"><table>
+<tr><th>属性</th><th>归类</th><th>枚举示例</th><th>对价格的影响（依据）</th></tr>
+<tr><td><b>版本</b></td><td><span class="tag r">待定</span></td><td>Dofus 3 / Rétro / Temporis</td><td>Rétro 练级更慢，同等级区间更贵（G2G 1→150：D3 €30–37，Rétro €31–79）</td></tr>
+<tr><td><b>服务器类型</b></td><td><span class="tag">增值</span></td><td>单号 / 多号 / 史诗（Épique）</td><td>单号服 Kamas 价是多号服的 2.6 倍（Boune 2.74 vs Allisteria 1.05 €/M），代练耗时也更长</td></tr>
+<tr><td><b>具体服务器</b></td><td><span class="tag">增值</span></td><td>Hell Mina、Draconiros、Boune…</td><td>各服 Kamas 价差最多 2.3 倍（D3：0.37–0.84 €/M），游戏内同价服务换成欧元差距一样大。建议按 Kamas 价分 2–3 档服务器系数</td></tr>
+<tr><td><b>等级区间 / 目标档</b></td><td><span class="tag a">基础价</span></td><td>升级：1→100 / 100→150 / 150→200 / 199→200；副本：1–50 / 51–100 / 101–150 / 151–190 / 200</td><td>高等级段最贵：Boune 190→191 €40，50→60 €15；Hell Mina 199→200 单级 6M，接近 50→150 的 7M</td></tr>
+<tr><td><b>成就 / 难度</b></td><td><span class="tag">增值</span></td><td>Simple、Duo、Statue、Versatile、Spécial、Compagnon，可多选成组合包</td><td>多一个成就条件多一个价格档</td></tr>
+<tr><td><b>角色数</b></td><td><span class="tag">增值</span></td><td>1–N 个角色</td><td>护送按角色计价，多号服买家常带多个角色</td></tr>
+<tr><td><b>材料由谁出</b></td><td><span class="tag">增值</span></td><td>买家出 / 卖家包</td><td>职业、FM、养殖的主要成本是材料；卖家包材料时价格翻几倍，并且常要求押金</td></tr>
+<tr><td><b>时效 / 加急</b></td><td><span class="tag">增值</span></td><td>标准 / 加急</td><td>访谈中 2 名用户都说价格取决于时效</td></tr>
+<tr><td><b>数量</b></td><td><span class="tag a">基础价</span></td><td>小时数、次数、魂/资源个数</td><td>按小时、按次、按个线性计价</td></tr>
+<tr><td><b>附赠</b></td><td><span class="tag">增值</span></td><td>智慧/属性卷轴、Kamas、订阅天数</td><td>G2G 升级商品常把附赠打包进价格</td></tr>
+<tr><td>交付方式</td><td><span class="tag g">不计价</span></td><td>上号代打 / 组队陪同</td><td>和其他游戏一样先统一价格，卖家可以自己设差价</td></tr>
+<tr><td>职业</td><td><span class="tag g">不计价</span></td><td>20 个职业（含新职业 Bellaphone）</td><td>护送时用于配队；暂不计价</td></tr>
+<tr><td>阵营</td><td><span class="tag g">不计价</span></td><td>Bonta（天使）/ Brâkmar（恶魔）/ 中立</td><td>阵营服务必填</td></tr>
+<tr><td>角色名、语言、在线时段</td><td><span class="tag g">不计价</span></td><td>FR / EN / ES</td><td>组队类服务必填</td></tr>
+</table></div>
+<h3>6.4 待确认</h3>
+<ul>
+<li><b>服务器类型计价：</b>暗黑 4 定的是"平台、赛季模式属于账号属性，不参与算价"。Dofus 单号服、多号服的 Kamas 价差有 2.6 倍，建议 Dofus 例外，做成计算器属性、按系数计价。</li>
+<li><b>Dofus 3 和 Rétro 是否拆成两个品牌：</b>Rétro 没有成就、Ocre 任务和养殖，生活职业也不同，建议分开配模板。</li>
+<li><b>押金：</b>现有计价模型不支持，一期不做。</li>
+</ul>
+
+<h3>6.5 来源</h3>
+<ol class="src">
+<li><a href="https://www.halles-des-douze.fr/les-offres/passages-de-donjons/hell-mina">Halles des Douze · Hell Mina 服在售：地下城与成就、升级、Ocre、职业、Songes infinis</a>（2026-10-27 读取，游戏数据版本 3.7.12）</li>
+<li><a href="https://www.g2g.com/categories/dofus-global-boosting-service">G2G · Dofus Boosting Service</a></li>
+<li><a href="https://www.dofuserie.com/dofus/dofus-ocre/">Dofuserie · Dofus Ocre</a></li>
+<li><a href="https://wiki-dofus.eu/w/M%C3%A9tiers">Wiki Dofus · Métiers</a>（职业等级上限 200）</li>
+<li><a href="https://guidedofus.com/metiers/">GuideDofus · Métiers 1 à 100</a>（Rétro 职业与等级上限）</li>
+<li><a href="https://www.gamosaurus.com/?p=118767">Gamosaurus · Forgemagie, le guide complet</a></li>
+<li><a href="https://dofus.jeuxonline.info/article/2044/alignement-pvp">JeuxOnLine · Alignement &amp; PvP</a>（Grade 名称与荣誉点）</li>
+<li><a href="https://www.millenium.org/guide/346161.html">Millenium · Dofus Rétro Grade</a></li>
+<li><a href="https://www.g2g.com/categories/dofus-global-boosting-service">G2G · 商品标题</a>（包时档位、直播、附赠写法）</li>
+<li><a href="https://serveur-liste.com/serveurs-dofus/">Serveur-liste · Serveurs Dofus officiels 2026</a></li>
+<li><a href="https://guidactik.com/dofus-retro/quel-serveur-choisir-sur-dofus-retro/">Guidactik · Quel serveur choisir sur DOFUS Rétro</a></li>
+<li><a href="https://www.next-stage.fr/2026/05/dofus-3-unity-quel-serveur-choisir.html">Next Stage · DOFUS 3 quel serveur choisir</a>（Épique、Héroïque 已取消）</li>
+<li><a href="https://www.gamosaurus.com/?p=181247">Gamosaurus · Tous les challenges après la refonte</a>（挑战类成就条件）</li>
+<li><a href="https://www.dofuspourlesnoobs.com/les-challenges.html">Dofus pour les noobs · Les challenges</a>（Duo / Trio / Quatuor、Spécial）</li>
+<li><a href="https://www.millenium.org/guide/345651.html">Millenium · Dofus Rétro 职业</a>（Boulanger、Boucher、Poissonnier，每角色 3 个职业）</li>
+<li><a href="https://guidactik.com/dofus/quels-metiers-choisir-sur-dofus-3-tier-list/">Guidactik · Quels métiers choisir sur DOFUS 3</a></li>
+<li><a href="https://dofus.jeuxonline.info/article/7731/parchemins">JeuxOnLine · Les Parchemins</a></li>
+<li><a href="https://guidactik.com/dofus/une-nouvelle-classe-arrive-sur-dofus-les-bellaphones/">Guidactik · Bellaphones</a></li>
+<li><a href="https://129dofus.fandom.com/wiki/Class">129Dofus Wiki · Class</a>（Rétro 12 个职业）</li>
+<li><a href="https://www.millenium.org/guide/344331.html">Millenium · Dofus Rétro 阵营</a>（Bontarien = Ange，Brâkmarien = Démon）</li>
+</ol>
+</section>
+
+
+<section id="s7">
+<h2><span class="no">07</span>一期落地建议</h2>
+<div class="tbl"><table>
+<tr><th>优先级</th><th>Dofus 3</th><th>Rétro</th><th>理由</th></tr>
+<tr><td><span class="tag a">一期标准品</span></td><td>升级（等级段）<br>地下城护送 + 成就<br>Dofus Ocre 包（全包 / archimonstre / 首领）<br>职业到 200</td><td>升级（Boune / Allisteria 分开定价）<br>阵营 Grade</td><td>需求已被游戏内成交验证，竞品空白或价格虚高</td></tr>
+<tr><td><span class="tag">一期自定义</span></td><td colspan="2">一次性求助（任务、副本、稀有资源）、按小时包时、FM</td><td>需求零散，先用自定义订单 + 包时承接</td></tr>
+<tr><td><span class="tag">观察</span></td><td>养殖、Songes infinis</td><td>Dofus 掉落代刷</td><td>单价低或耗时不确定</td></tr>
+</table></div>
+<ul>
+<li><b>定价：</b>平台建议价 = 游戏内 Kamas 价 × 该服 Kamas €/M × 溢价系数（建议 1.2–1.5，覆盖平台佣金和担保）。在页面上展示游戏内参考价，直接回应用户"欧元价太高"的质疑。</li>
+<li><b>交付：</b>能组队或交易完成的服务默认标"不交号"，作为卖点；需要上号的服务提示买家准备好 Ankama Shield 验证码。</li>
+<li><b>卖家：</b>从 Halles des Douze 成交多的玩家里招募（如 ___GOGO____ 1,801 笔、Famanii 879 笔、Slow-Le-Lent 385 笔）；访谈中的 Dofus 老玩家可以先作为试用卖家或顾问。</li>
+<li><b>节点：</b>Bellaphone / 3.8 上线前准备好"新职业 1→200"商品。</li>
+<li><b>风险：</b>账号共享和真钱交易可能违反 Ankama 用户协议，有封号风险；上线前需要确认文案措辞和售后口径。</li>
+</ul>
+</section>
+
+<section id="s8">
+<h2><span class="no">08</span>来源</h2>
+<ul class="src">
+<li><a href="https://www.g2g.com/categories/dofus-global-boosting-service">G2G · Dofus Boosting Service</a>（报价、卖家、服务器分组；Kamas 价取自 G2G Dofus Kamas 当日最低价）</li>
+<li><a href="https://www.halles-des-douze.fr/">Halles des Douze</a>（护送、Ocre、职业、升级、养殖、Songes 包；Hell Mina / Draconiros）</li>
+<li><a href="https://www.eldorado.gg/dofus-kamas/g/78-0-0">Eldorado · Dofus Kamas</a></li>
+<li><a href="https://www.playerauctions.com/dofus-touch-boosting/">PlayerAuctions · Dofus Touch Boosting</a></li>
+<li><a href="https://guidactik.com/dofus/roadmap-des-mises-a-jour-de-dofus-en-2026/">Guidactik · DOFUS 2026 roadmap</a> ／ <a href="https://guidactik.com/dofus/une-nouvelle-classe-arrive-sur-dofus-les-bellaphones/">Bellaphone</a></li>
+<li><a href="https://guidactik.com/dofus-retro/quel-serveur-choisir-sur-dofus-retro/">Guidactik · Rétro 服务器</a> ／ <a href="https://guidactik.com/dofus-retro/de-nouveaux-serveurs-saisonniers-arrivent-pour-dofus-retro/">Rétro 季节服</a></li>
+<li><a href="https://www.millenium.org/guide/346161.html">Millenium · Rétro Grade</a> ／ <a href="https://www.millenium.org/guide/344376.html">Rétro 的 Dofus</a></li>
+<li><a href="https://www.dofuserie.com/dofus/dofus-ocre/">Dofuserie · Dofus Ocre</a></li>
+<li>iGV 高价值用户访谈（Dofus 用户 2 名）</li>
+</ul>
+</section>
+<footer>iGV 内部调研 · Dofus 代练 · 价格为页面标价或游戏内挂单价，非最终成交价</footer>
+</main></div></body></html>
